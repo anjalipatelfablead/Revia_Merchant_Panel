@@ -115,9 +115,15 @@ export default function App() {
         </div>
 
         {currentRoute === '/login' ? (
-          <LoginPage onLoginSuccess={() => handleNavigate('/dashboard')} />
+          <LoginPage
+            onLoginSuccess={() => handleNavigate('/dashboard')}
+            onGoToOnboarding={() => handleNavigate('/onboarding')}
+          />
         ) : (
-          <OnboardingPage onComplete={() => handleNavigate('/dashboard')} />
+          <OnboardingPage
+            onComplete={() => handleNavigate('/dashboard')}
+            onCancel={() => handleNavigate('/login')}
+          />
         )}
       </div>
     );
@@ -205,8 +211,13 @@ export default function App() {
           {currentRoute === '/customers' && (
             <CustomersPage
               customers={customers}
-              onCustomerUpdate={(updated) => {
-                setCustomers(customers.map((c) => (c.id === updated.id ? updated : c)));
+              onUpdateCustomer={(updated) => {
+                setCustomers((currentCustomers) =>
+                  currentCustomers.map((customer) => (customer.id === updated.id ? updated : customer))
+                );
+              }}
+              onAddCustomer={(newCustomer) => {
+                setCustomers((currentCustomers) => [newCustomer, ...currentCustomers]);
               }}
             />
           )}
@@ -245,9 +256,14 @@ export default function App() {
 
           {currentRoute === '/catalog' && (
             <CatalogPage
-              initialItems={catalog}
-              onSaveItem={(saved) => {
-                setCatalog(catalog.map((i) => (i.id === saved.id ? saved : i)));
+              catalog={catalog}
+              onUpdateItem={(updatedItem) => {
+                setCatalog((currentCatalog) =>
+                  currentCatalog.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+                );
+              }}
+              onAddItem={(newItem) => {
+                setCatalog((currentCatalog) => [newItem, ...currentCatalog]);
               }}
             />
           )}
@@ -265,7 +281,10 @@ export default function App() {
                   Open Full-Screen Presentation Mode ↗
                 </button>
               </div>
-              <LoginPage onLoginSuccess={() => handleNavigate('/dashboard')} />
+              <LoginPage
+                onLoginSuccess={() => handleNavigate('/dashboard')}
+                onGoToOnboarding={() => handleNavigate('/onboarding')}
+              />
             </div>
           )}
 
@@ -282,7 +301,10 @@ export default function App() {
                   Open Full-Screen Presentation Mode ↗
                 </button>
               </div>
-              <OnboardingPage onComplete={() => handleNavigate('/dashboard')} />
+              <OnboardingPage
+                onComplete={() => handleNavigate('/dashboard')}
+                onCancel={() => handleNavigate('/login')}
+              />
             </div>
           )}
         </main>

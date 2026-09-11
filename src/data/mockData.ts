@@ -320,6 +320,21 @@ export const INITIAL_BRANCHES: Branch[] = [
 
 export const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
   {
+    id: 'LOG-9402',
+    timestamp: '2026-09-11 09:42:18 UTC',
+    actor: {
+      name: 'Unknown Device',
+      avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=150&auto=format&fit=crop&q=80',
+      role: 'Unregistered Terminal',
+    },
+    action: 'ROLE_ESCALATION_BLOCKED',
+    target: 'Attempted Owner role grant to POS operator',
+    terminal: '10.0.4.89',
+    ip: 'MAC 0A:C2:8F:6B:29:DF',
+    cryptoState: 'FLAGGED',
+    hash: 'f0e1d2c3b4a5968778695a4b3c2d1e0ffedcba98765432100123456789abcdef0',
+  },
+  {
     id: 'LOG-9401',
     timestamp: '2026-09-10 21:48:12 UTC',
     actor: {
