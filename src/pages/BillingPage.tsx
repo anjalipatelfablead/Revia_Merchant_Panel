@@ -4,10 +4,12 @@ import { CreditCard, CheckCircle2, Zap, ShieldCheck, ArrowRight, ReceiptText, Se
 export const BillingPage: React.FC = () => {
   return (
     <div className="mx-auto max-w-[1600px] space-y-5 bg-[#FAF8F5] p-4 lg:p-6">
+      {/*
       <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold text-[#81776E]">
         <span>Home</span><span>/</span><span>Intelligence &amp; Admin</span><span>/</span><span className="text-[#1A1615]">Subscription &amp; Billing</span>
         <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-[#CFF6DF] px-2.5 py-1 text-[10px] font-bold text-[#16804A]"><span className="h-1.5 w-1.5 rounded-full bg-[#16804A]" /> Enterprise Multi-Venue • Auto-Renewal Active (Dec 1, 2025)</span>
       </div>
+      */}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-start sm:gap-8">
         <div>

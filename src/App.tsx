@@ -50,6 +50,7 @@ export default function App() {
   const [activeBranch, setActiveBranch] = useState<string>(AVAILABLE_BRANCHES[0]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isStandaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
 
   // Core Mock Datasets
   const [customers, setCustomers] = useState(MOCK_CUSTOMERS);
@@ -88,27 +89,12 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  if (currentRoute === '/customer-landing') {
-    return <FableadLandingPage />;
-  }
-
-  if (currentRoute === '/customer-panel') {
-    return <CustomerPanel onNavigate={(route) => handleNavigate(route as NavRoute)} />;
-  }
-
-  // Render auth and onboarding pages directly as standalone
-  if (currentRoute === '/login' || currentRoute === '/onboarding') {
+  if (isStandaloneAuthView) {
     return (
-      <div className="min-h-screen bg-[#FAF8F5] text-[#1A1615]">
-        {currentRoute === '/login' ? (
-          <LoginPage onLoginSuccess={(role) => handleNavigate(role === 'merchant' ? '/dashboard' : '/customer-panel')} />
-        ) : (
-          <OnboardingPage
-            onComplete={() => handleNavigate('/dashboard')}
-            onCancel={() => handleNavigate('/login')}
-          />
-        )}
-      </div>
+      <OnboardingPage
+        onComplete={() => handleNavigate('/dashboard')}
+        onCancel={() => setStandaloneAuthView(false)}
+      />
     );
   }
 
@@ -151,7 +137,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className="flex-1 pb-12">
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
