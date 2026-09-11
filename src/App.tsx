@@ -19,7 +19,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
-import { FableadLandingPage } from './Customer/CustomerLandingPage';
+import { CustomerLandingPage } from './Customer/CustomerLandingPage';
 import { CustomerPanel } from './Customer/CustomerPanel';
 import { CatalogPage } from './pages/CatalogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
@@ -89,7 +89,16 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  if (isStandaloneAuthView) {
+  if (currentRoute === '/customer-landing') {
+    return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute.startsWith('/customer-panel')) {
+    return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  // Render auth and onboarding pages directly as standalone
+  if (currentRoute === '/login' || currentRoute === '/onboarding') {
     return (
       <OnboardingPage
         onComplete={() => handleNavigate('/dashboard')}
@@ -246,7 +255,6 @@ export default function App() {
                     Viewing Onboarding Wizard inside Merchant Shell
                   </span>
                   <button
-                    onClick={() => setStandaloneAuthView(true)}
                     className="text-xs font-bold text-[#A37837] hover:underline"
                   >
                     Open Full-Screen Presentation Mode ↗
