@@ -3,8 +3,8 @@ import { ShieldCheck, MessageSquare, Phone, Lock, Sparkles, ArrowRight, CheckCir
 import { PrimaryButton, LiveBadge } from '../components/common/Badges';
 
 interface LoginPageProps {
-  onLoginSuccess: () => void;
-  onGoToOnboarding: () => void;
+  onLoginSuccess: (role: 'merchant' | 'customer') => void;
+  onGoToOnboarding?: () => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnboarding }) => {
@@ -51,14 +51,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
   return (
     <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-center items-center p-4 sm:p-6 select-none">
       {/* Brand Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md mb-3">
+      <div className="flex items-center justify-center gap-4 mb-8">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md shrink-0">
           <Sparkles className="w-6 h-6 text-white" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">REVIA MERCHANT SUITE</h1>
-        <p className="text-xs uppercase tracking-widest text-[#9E9A93] font-semibold mt-1">
-          Specialty Coffee & Hospitality Terminal Portal
-        </p>
+        <div className="text-left">
+          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">REVIA MERCHANT SUITE</h1>
+          <p className="text-[10px] uppercase tracking-widest text-[#9E9A93] font-semibold mt-0.5">
+            Specialty Coffee & Hospitality Terminal Portal
+          </p>
+        </div>
       </div>
 
       {/* Floating Center Auth Card */}
@@ -182,7 +184,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
 
             <PrimaryButton
               type="button"
-              onClick={onLoginSuccess}
+              onClick={() => onLoginSuccess('merchant')}
               className="w-full py-3 text-sm"
             >
               Verify PIN & Authenticate →
@@ -210,6 +212,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           >
             New Outlet? Start Onboarding
           </button>
+        </div>
+        {/* Static Login Bypass for Demo */}
+        <div className="mt-8 pt-6 border-t border-[#E5E0D8]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-3 text-center">Static Demo Access</p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => onLoginSuccess('merchant')}
+              className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
+            >
+              Login as Merchant
+            </button>
+            <button
+              onClick={() => onLoginSuccess('customer')}
+              className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
+            >
+              Login as Customer
+            </button>
+          </div>
         </div>
       </div>
 
