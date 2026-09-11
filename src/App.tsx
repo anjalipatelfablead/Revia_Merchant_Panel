@@ -33,9 +33,12 @@ import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationsPage } from './pages/NotificationsPage';
+import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+import { CustomerPanel } from './Customer/CustomerPanel';
+
 
 export default function App() {
-  const [currentRoute, setCurrentRoute] = useState<NavRoute>('/dashboard');
+  const [currentRoute, setCurrentRoute] = useState<NavRoute>('/customer-landing');
   const [activeBranch, setActiveBranch] = useState<string>(AVAILABLE_BRANCHES[0]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
@@ -67,6 +70,14 @@ export default function App() {
     setCurrentRoute(route);
     setIsMobileMenuOpen(false);
   };
+
+  if (currentRoute === '/customer-landing') {
+    return <CustomerLandingPage onNavigate={(route) => setCurrentRoute(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/customer-panel') {
+    return <CustomerPanel />;
+  }
 
   // If user is viewing login or onboarding in standalone full-screen presentation mode
   if (standaloneAuthView && (currentRoute === '/login' || currentRoute === '/onboarding')) {
