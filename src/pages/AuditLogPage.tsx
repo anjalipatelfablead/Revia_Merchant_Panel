@@ -32,13 +32,30 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   const [enforceMfa, setEnforceMfa] = useState<boolean>(true);
   const [autoSessionTimeout, setAutoSessionTimeout] = useState<boolean>(true);
   const [enforceFleetTls, setEnforceFleetTls] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const flaggedLogs = logs.filter((log) => log.cryptoState === 'FLAGGED');
   const regularLogs = logs.filter((log) => log.cryptoState !== 'FLAGGED');
+  const referenceLogs = regularLogs.filter((log) =>
+    log.action === 'POS_HEARTBEAT_RECONNECT' || log.action === 'CUSTOMER_EXPORT_REQUESTED'
+  );
+  const remainingLogs = regularLogs.filter((log) => !referenceLogs.includes(log));
   const orderedLogs = [
-    ...regularLogs.slice(0, 2),
+    ...remainingLogs.slice(0, 2),
     ...flaggedLogs,
-    ...regularLogs.slice(2),
+    ...referenceLogs,
+    ...remainingLogs.slice(2),
   ];
+  const pageSize = 5;
+  const totalPages = Math.max(1, Math.ceil(orderedLogs.length / pageSize));
+  const paginatedLogs = orderedLogs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const successLogId = orderedLogs[1]?.id;
+  const firstVisibleEntry = orderedLogs.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const lastVisibleEntry = Math.min(currentPage * pageSize, orderedLogs.length);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.min(Math.max(page, 1), totalPages));
+    setSelectedHash(null);
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -173,9 +190,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
             </div>
           </div>
           <div className="divide-y divide-[#E5E0D8] sm:hidden">
-            {orderedLogs.map((log, index) => {
+            {paginatedLogs.map((log, index) => {
               const isFlagged = log.cryptoState === 'FLAGGED';
-              const statusLabel = index === 1 && !isFlagged ? 'SUCCESS' : isFlagged ? 'CRITICAL' : 'VERIFIED';
+              const statusLabel = log.id === successLogId && !isFlagged ? 'SUCCESS' : isFlagged ? 'CRITICAL' : 'VERIFIED';
               return (
                 <button
                   key={`mobile-${log.id}`}
@@ -216,7 +233,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5E0D8]">
-                {orderedLogs.map((log, index) => (
+                {paginatedLogs.map((log, index) => (
                   <tr
                     key={log.id}
                     onClick={() => setSelectedHash(log.hash)}
@@ -261,7 +278,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                     {/* Crypto State */}
                     <td className="whitespace-nowrap px-4 py-4 text-right">
                       <span className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-bold ${log.cryptoState === 'FLAGGED' ? 'border-[#F3B7B1] bg-[#FCE7E5] text-[#B42318]' : 'border-[#BCE3D1] bg-[#E6F4ED] text-[#0D7A53]'}`}>
-                        {log.cryptoState === 'FLAGGED' ? <AlertTriangle className="h-3 w-3" /> : <CheckCircle2 className="h-3 w-3" />} {log.cryptoState === 'FLAGGED' ? 'ROLE ESCALATION BLOCKED' : index === 1 ? 'SUCCESS' : log.cryptoState}
+                        {log.cryptoState === 'FLAGGED' ? <AlertTriangle className="h-3 w-3" /> : <CheckCircle2 className="h-3 w-3" />} {log.cryptoState === 'FLAGGED' ? 'ROLE ESCALATION BLOCKED' : log.id === successLogId ? 'SUCCESS' : log.cryptoState}
                       </span>
                     </td>
                   </tr>
@@ -289,14 +306,14 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
           )}
 
           <div className="flex flex-col gap-2 border-t border-[#E5E0D8] bg-[#FCFBF9] px-3 py-2.5 text-[9px] text-[#9E9A93] sm:flex-row sm:items-center sm:justify-between">
-            <span>Showing 1–5 of 142 immutable log entries</span>
+            <span>Showing {firstVisibleEntry}–{lastVisibleEntry} of {orderedLogs.length} immutable log entries</span>
             <div className="flex items-center gap-2">
               <span><strong className="text-[#6E6A66]">Merkle Root:</strong> 0x88f...1c8d</span>
-              <button type="button" className="rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#B8B1A7]">Previous</button>
-              <button type="button" className="rounded bg-[#9E782F] px-2 py-1 font-bold text-white">1</button>
-              <button type="button" className="rounded border border-[#E5E0D8] bg-white px-2 py-1 text-[#6E6A66]">2</button>
-              <button type="button" className="rounded border border-[#E5E0D8] bg-white px-2 py-1 text-[#6E6A66]">3</button>
-              <button type="button" className="rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66]">Next</button>
+              <button type="button" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66] disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
+              {Array.from({ length: totalPages }, (_, pageIndex) => pageIndex + 1).map((page) => (
+                <button key={page} type="button" onClick={() => goToPage(page)} aria-current={currentPage === page ? 'page' : undefined} className={`rounded px-2 py-1 font-bold ${currentPage === page ? 'bg-[#9E782F] text-white' : 'border border-[#E5E0D8] bg-white text-[#6E6A66]'}`}>{page}</button>
+              ))}
+              <button type="button" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className="rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66] disabled:cursor-not-allowed disabled:opacity-40">Next</button>
             </div>
           </div>
 
@@ -305,7 +322,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               <div className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-[#B7842C]" /><h3 className="text-[12px] font-bold text-[#1A1615]">Realtime Hash Verification Node</h3></div>
               <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">ALL 142 BLOCKS VALID</span>
             </div>
-            <div className="mt-2 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-2 font-mono text-[9px] leading-relaxed text-[#6E6A66]">
+            <div className="mt-2 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-2 font-mono text-[11px] leading-relaxed text-[#6E6A66]">
               <div className="flex flex-wrap justify-between gap-x-4"><span>LAST VERIFIED BLOCK: <strong className="text-[#1A1615]">#892,104</strong></span><span>DIFFICULTY TARGET: 0000ffff...</span></div>
               <div><strong className="text-[#1A1615]">PREV_HASH:</strong> 000000000000000004f29a88c7d61dea352f683ab293410a8d67e0e1189ac6</div>
               <div className="text-[#B7842C]"><strong>CURR_HASH:</strong> 00000000000000001c91f3f09ae84227c991823c51c8ba48726190a862ef</div>
@@ -384,7 +401,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
           </div>
 
           {/* Venue Authentication Policy */}
-          <div className="space-y-3 rounded-lg border border-[#E5E0D8] bg-white p-4 shadow-xs">
+          <div className="space-y-3 rounded-lg border border-[#E5E0D8] bg-white p-4 shadow-xs lg:-mt-1">
             <div className="flex items-center gap-1.5 border-b border-[#E5E0D8] pb-2"><Lock className="h-3.5 w-3.5 text-[#B7842C]" /><h4 className="text-[12px] font-bold text-[#1A1615]">Venue Authentication Policy</h4></div>
 
             <div className="space-y-3 pt-1 text-xs">

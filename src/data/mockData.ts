@@ -409,6 +409,36 @@ export const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
     cryptoState: 'VERIFIED',
     hash: '1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
   },
+  {
+    id: 'LOG-9396',
+    timestamp: '2026-09-10 13:30:00 UTC',
+    actor: {
+      name: 'System Daemon',
+      avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
+      role: 'Mesh Integrity Guard',
+    },
+    action: 'POS_HEARTBEAT_RECONNECT',
+    target: 'POS Terminal #02 Heartbeat Reconnect',
+    terminal: 'POS-DOWNTOWN-02',
+    ip: '192.168.1.45',
+    cryptoState: 'PENDING',
+    hash: '78aa9c4d2e1f0b8a7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4',
+  },
+  {
+    id: 'LOG-9395',
+    timestamp: '2026-09-10 11:15:22 UTC',
+    actor: {
+      name: 'Elena Rostova',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      role: 'Store Manager',
+    },
+    action: 'CUSTOMER_EXPORT_REQUESTED',
+    target: 'Export Customer CRM Roster CSV',
+    terminal: 'HQ-DESKTOP-MGR',
+    ip: '172.56.21.90 (VPN)',
+    cryptoState: 'PENDING',
+    hash: '12af8d6e4c2b0a9f8e7d6c5b4a392817161514131211100f0e0d0c0b0a090807',
+  },
 ];
 
 export const RETENTION_COHORT_DATA: RetentionCohortRow[] = [
