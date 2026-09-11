@@ -16,13 +16,50 @@ import {
   AlertTriangle,
   Clock3,
   Wifi,
-  Webhook
+  Webhook,
+  Server
 } from 'lucide-react';
 import { AuditLogEntry } from '../types';
 
 interface AuditLogPageProps {
   logs: AuditLogEntry[];
 }
+
+const MobileAuditView: React.FC<{ logs: AuditLogEntry[] }> = ({ logs }) => {
+  const visibleLogs = logs.slice(0, 4);
+
+  return (
+    <div className="min-h-screen bg-[#FBF8F4] px-5 pb-6 pt-3 text-[#211C19]">
+      <div className="mx-auto w-full max-w-[430px]">
+        <header className="flex items-center justify-between border-b border-[#E9E0D7] pb-3">
+          <div className="flex items-center gap-2.5"><div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[#C99B42] text-sm font-bold text-white">R</div><div><div className="text-[10px] font-bold uppercase text-[#756D65]">Revia</div><div className="text-[18px] font-bold leading-none">Downtown Flagship⌄</div></div></div>
+          <div className="flex items-center gap-3"><div className="relative"><span className="absolute -right-0.5 -top-1 h-1.5 w-1.5 rounded-full bg-[#C99B42]" /><Clock3 className="h-4 w-4 text-[#4F4842]" /></div><div className="h-8 w-8 overflow-hidden rounded-full border-2 border-[#C99B42]"><img src="https://i.pravatar.cc/80?img=47" alt="Account" className="h-full w-full object-cover" /></div></div>
+        </header>
+
+        <section className="mt-3 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-center gap-2 text-[19px] font-bold"><ShieldCheck className="h-4 w-4 text-[#8B681F]" />Security &amp; Audit Log</div><div className="my-3 h-px bg-[#E9E0D7]" /><div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-[11px]"><span className="flex gap-1.5"><span>▤</span>Downtown<br />Flagship</span><span className="border-l border-[#E9E0D7] pl-3 text-[#756D65]">Mesh ID: REV-<br />8402</span><b className="text-[#8B681F]">99.98%<br />Uptime</b></div></section>
+
+        <nav className="mt-5 flex gap-2 overflow-hidden"><button type="button" className="shrink-0 rounded-[7px] bg-[#C99B42] px-3 py-2 text-[12px] font-semibold text-white shadow-sm"><ShieldCheck className="mr-1 inline h-3.5 w-3.5" />Audit Log</button><button type="button" className="shrink-0 rounded-[7px] border border-[#E1D9D0] bg-[#F3EFEA] px-3 py-2 text-[12px] font-semibold text-[#4F4842]"><Cpu className="mr-1 inline h-3.5 w-3.5" />POS Mesh Fleet</button><button type="button" className="shrink-0 rounded-[7px] border border-[#E1D9D0] bg-[#F3EFEA] px-3 py-2 text-[12px] font-semibold text-[#4F4842]"><Webhook className="mr-1 inline h-3.5 w-3.5" />API &amp; Webhooks</button></nav>
+
+        <section className="mt-5 grid grid-cols-2 gap-3">
+          {[
+            { label: 'Compliance', value: 'SOC-2 Type II', detail: 'Enforced · 0 breaches', Icon: ShieldCheck, tone: 'text-[#087B55]' },
+            { label: 'POS Mesh', value: '6 / 6 Online', detail: '18ms avg peer ping', Icon: Radio, tone: 'text-[#087B55]' },
+            { label: 'API Volume', value: '48,219', detail: '0 failed HMAC sigs', Icon: Activity, tone: 'text-[#087B55]' },
+            { label: 'Crypto Ledger', value: '142 Events', detail: 'SHA-256 Validated', Icon: Key, tone: 'text-[#8B681F]' },
+          ].map(({ label, value, detail, Icon, tone }) => <div key={label} className="min-h-[121px] rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]"><span>{label}</span><span className="rounded-[7px] bg-[#FCF1DF] p-1.5"><Icon className={`h-4 w-4 ${tone}`} /></span></div><div className="mt-4 text-[21px] font-extrabold leading-none tracking-[-0.04em]">{value}</div><div className={`mt-2 text-[11px] font-medium ${tone}`}>{label === 'Compliance' && '◉ '}{label === 'POS Mesh' && '• '}{detail}</div></div>)}
+        </section>
+
+        <div className="mt-5 flex items-center gap-2 rounded-[10px] bg-[#211C19] px-3 py-3 font-mono text-[10px] text-[#B6AFA8]"><span className="h-2 w-2 rounded-full bg-[#20C99A]" />WITNESS BLOCK #892,104:<b className="truncate text-[#20C99A]">sha:7b91e...4f9c</b><span className="ml-auto rounded border border-[#6D5730] px-1.5 py-1 text-[8px] text-[#C99B42]">SEALED</span></div>
+
+        <section className="mt-5 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-start justify-between"><h2 className="text-[19px] font-bold leading-none">Active Hardware<br />Mesh</h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex items-center gap-3 rounded-[8px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Cpu className="h-4 w-4" /></span><div className="flex-1 text-[12px]"><b>Downtown Counter 01</b><div className="text-[10px] text-[#756D65]">RevOS v4.2.1 · 192.168.1.104</div></div><span className="text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex items-center gap-3 rounded-[8px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Server className="h-4 w-4" /></span><div className="flex-1 text-[12px]"><b>Roastery Reserve Bar 02</b><div className="text-[10px] text-[#756D65]">RevOS v4.2.0 · 192.168.2.88</div></div><span className="text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-[8px] border border-[#E1D9D0] bg-[#F3EFEA] py-2 text-[12px] font-semibold"><Radio className="mr-1 inline h-4 w-4 text-[#8B681F]" />Ping All 6 Terminals</button></section>
+
+        <section className="mt-6"><div className="flex items-center justify-between"><div><h2 className="text-[19px] font-bold">Audit Event Stream</h2><span className="rounded-full bg-[#FFF4DC] px-2 py-1 text-[10px] font-bold text-[#8B681F]">Live SHA-256</span></div><button type="button" aria-label="Filter audit events" className="rounded-[7px] bg-white p-2 shadow-sm"><SlidersHorizontal className="h-4 w-4" /></button></div><label className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E1D9D0] bg-white px-3 py-2 text-[11px] text-[#8E847B]"><Search className="h-4 w-4" /><input className="min-w-0 flex-1 bg-transparent outline-none" placeholder="Filter by operator, IP, or hash key..." /></label><div className="mt-3 space-y-3">{visibleLogs.map((log) => { const flagged = log.cryptoState === 'FLAGGED'; return <article key={log.id} className={`rounded-[12px] border bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)] ${flagged ? 'border-[#FFB6B0] bg-[#FFF8F7]' : 'border-[#E9E0D7]'}`}><div className="flex items-start gap-2"><span className={`rounded-[7px] p-2 ${flagged ? 'bg-[#FFE3E1] text-[#C2413A]' : 'bg-[#FCF1DF] text-[#8B681F]'}`}><Download className="h-4 w-4" /></span><div className="min-w-0 flex-1"><div className={`text-[12px] font-semibold ${flagged ? 'text-[#C2413A]' : ''}`}>{log.actor.name} <span className="ml-1 rounded bg-[#F2EEE9] px-1.5 py-1 text-[9px] text-[#756D65]">{log.actor.role}</span></div><div className="text-[10px] text-[#756D65]">{log.target}</div></div><span className="text-[10px] text-[#756D65]">{log.timestamp}</span></div><div className={`mt-3 rounded-[8px] p-3 text-[12px] ${flagged ? 'border border-[#FFB6B0] bg-white text-[#C2413A]' : 'bg-[#F3EFEA]'}`}><b>{flagged ? 'Blocked unauthorized IP access attempt' : log.action.replaceAll('_', ' ')}</b><div className="mt-1 text-[10px] text-[#756D65]">{flagged ? log.ip : 'Cryptographic witness verified · hash sealed'}</div></div></article>; })}</div></section>
+
+        <button type="button" className="mt-6 flex w-full items-center justify-center gap-2 rounded-[11px] bg-gradient-to-r from-[#D4A753] to-[#9E782F] py-3.5 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><Download className="h-4 w-4" />Export Immutable Audit Dossier (CSV/PDF)</button><button type="button" className="mt-3 w-full rounded-[11px] border border-[#E1D9D0] bg-white py-3 text-[12px] font-semibold"><Lock className="mr-1 inline h-4 w-4" />Commit &amp; Seal New Policy Hash</button>
+      </div>
+    </div>
+  );
+};
 
 export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   const [selectedHash, setSelectedHash] = useState<string | null>(null);
@@ -64,6 +101,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   };
 
   return (
+    <>
+      <div className="sm:hidden"><MobileAuditView logs={logs} /></div>
+      <div className="hidden sm:block">
     <div className="space-y-3 p-2 sm:py-4 sm:pl-4 sm:pr-1">
       {/*
       <div className="flex items-center justify-between gap-2 px-1 text-[8px] font-bold uppercase tracking-[0.1em] text-[#9E9A93]">
@@ -447,5 +487,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
         <span className="inline-flex items-center gap-1.5"><Clock3 className="h-3 w-3" /> Last synchronized: 2 minutes ago</span>
       </footer>
     </div>
+      </div>
+    </>
   );
 };
