@@ -414,16 +414,16 @@ export const LoyaltyPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-6 bg-gradient-to-b from-[#F5F2EC] to-[#FAF8F5] flex justify-center">
+            <div className="p-4 sm:p-6 bg-gradient-to-b from-[#F5F2EC] to-[#FAF8F5] flex justify-center">
               {/* Live Phone Pass Preview Card */}
-              <div className="w-[320px] bg-[#FDFBF7] rounded-[24px] shadow-xl overflow-hidden border border-[#E5E0D8] relative">
+              <div className="w-full max-w-[340px] bg-[#FDFBF7] rounded-[24px] shadow-xl overflow-hidden border border-[#E5E0D8] relative">
                 {/* Top Notch Area simulation for iOS */}
                 {walletView === 'ios' && (
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-b-[16px] z-10"></div>
                 )}
 
                 {/* Pass Header */}
-                <div className="bg-[#1A1615] px-5 py-6 pb-8 text-white relative">
+                <div className="bg-[#1A1615] px-4 py-6 pb-8 text-white relative">
                   {/* Subtle noise/texture would go here */}
                   <div className="absolute top-4 right-4">
                     <div className="px-2 py-0.5 rounded bg-white/10 backdrop-blur-md border border-white/20 text-[9px] font-bold uppercase tracking-widest text-[#D4A753]">
@@ -431,18 +431,18 @@ export const LoyaltyPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 mt-4 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#D4A753] to-[#9E782F] flex items-center justify-center border-2 border-white/10 shadow-lg">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#D4A753] to-[#9E782F] flex items-center justify-center border-2 border-white/10 shadow-lg shrink-0">
                       <Coffee className="w-5 h-5 text-white" />
                     </div>
-                    <div>
-                      <div className="text-[11px] font-bold uppercase tracking-widest text-white/70">REVIA CAFE - DOWNTOWN FLAGSHIP</div>
-                      <div className="text-base font-bold text-white tracking-tight">{passBrandName || "Artisanal Stamp Pass"}</div>
+                    <div className="min-w-0">
+                      <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-white/70 truncate">REVIA CAFE - DOWNTOWN FLAGSHIP</div>
+                      <div className="text-sm sm:text-base font-bold text-white tracking-tight truncate">{passBrandName || "Artisanal Stamp Pass"}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Pass Body (Overlapping Header) */}
-                <div className="px-5 pb-5 -mt-4 relative z-10">
+                <div className="px-3 sm:px-4 pb-5 -mt-4 relative z-10">
                   <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#EFECE6]">
                     <div className="flex justify-between items-start mb-5">
                       <div>
@@ -462,7 +462,7 @@ export const LoyaltyPage: React.FC = () => {
                       {/* Row 1 (Stamps 1-5) */}
                       <div className="flex justify-between">
                         {[1, 2, 3, 4, 5].map((num) => (
-                          <div key={num} className="w-[38px] h-[38px] rounded-full flex items-center justify-center bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-inner">
+                          <div key={num} className="w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full flex items-center justify-center bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-inner shrink-0">
                             <Coffee className="w-4 h-4 fill-current" />
                           </div>
                         ))}
@@ -470,16 +470,16 @@ export const LoyaltyPage: React.FC = () => {
                       {/* Row 2 (Stamps 6-10) */}
                       <div className="flex justify-between">
                         {[6, 7, 8].map((num) => (
-                          <div key={num} className="w-[38px] h-[38px] rounded-full flex items-center justify-center bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-inner">
+                          <div key={num} className="w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full flex items-center justify-center bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-inner shrink-0">
                             <Coffee className="w-4 h-4 fill-current" />
                           </div>
                         ))}
                         {/* Stamp 9 (Empty) */}
-                        <div className="w-[38px] h-[38px] rounded-full flex items-center justify-center border-2 border-dashed border-[#D1CDC7] bg-[#FAF8F5] text-[#9E9A93] font-bold text-sm">
+                        <div className="w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full flex items-center justify-center border-2 border-dashed border-[#D1CDC7] bg-[#FAF8F5] text-[#9E9A93] font-bold text-sm shrink-0">
                           9
                         </div>
                         {/* Stamp 10 (Reward) */}
-                        <div className="w-[38px] h-[38px] rounded-full flex items-center justify-center border-2 border-[#D4A753] bg-[#FDF8EB] text-[#D4A753]">
+                        <div className="w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full flex items-center justify-center border-2 border-[#D4A753] bg-[#FDF8EB] text-[#D4A753] shrink-0">
                           <Gift className="w-4 h-4" />
                         </div>
                       </div>
