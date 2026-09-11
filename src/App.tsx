@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavRoute, OutletsData } from './types';
 import {
   MOCK_CUSTOMERS,
@@ -34,11 +34,17 @@ import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationsPage } from './pages/NotificationsPage';
 import { CustomerLandingPage } from './Customer/CustomerLandingPage';
-import { CustomerPanel } from './Customer/CustomerPanel';
+
 
 
 export default function App() {
-  const [currentRoute, setCurrentRoute] = useState<NavRoute>('/customer-landing');
+  const [currentRoute, setCurrentRouteState] = useState<NavRoute>(() => {
+    const path = window.location.pathname;
+    if (path === '/' || path === '') {
+      return '/customer-landing';
+    }
+    return path as NavRoute;
+  });
   const [activeBranch, setActiveBranch] = useState<string>(AVAILABLE_BRANCHES[0]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
@@ -67,16 +73,22 @@ export default function App() {
   const [standaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
 
   const handleNavigate = (route: NavRoute) => {
-    setCurrentRoute(route);
+    window.history.pushState({}, '', route);
+    setCurrentRouteState(route);
     setIsMobileMenuOpen(false);
   };
 
-  if (currentRoute === '/customer-landing') {
-    return <CustomerLandingPage onNavigate={(route) => setCurrentRoute(route as NavRoute)} />;
-  }
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname;
+      setCurrentRouteState((path === '/' || path === '' ? '/customer-landing' : path) as NavRoute);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
-  if (currentRoute === '/customer-panel') {
-    return <CustomerPanel />;
+  if (currentRoute === '/customer-landing') {
+    return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   // If user is viewing login or onboarding in standalone full-screen presentation mode
@@ -94,7 +106,7 @@ export default function App() {
           <button
             onClick={() => {
               setStandaloneAuthView(false);
-              setCurrentRoute('/dashboard');
+              handleNavigate('/dashboard');
             }}
             className="text-xs font-semibold text-[#A37837] hover:underline px-2.5 py-1 rounded bg-[#FAF8F5] border border-[#EAE6E1] cursor-pointer"
           >
@@ -103,9 +115,9 @@ export default function App() {
         </div>
 
         {currentRoute === '/login' ? (
-          <LoginPage onLoginSuccess={() => setCurrentRoute('/dashboard')} />
+          <LoginPage onLoginSuccess={() => handleNavigate('/dashboard')} />
         ) : (
-          <OnboardingPage onComplete={() => setCurrentRoute('/dashboard')} />
+          <OnboardingPage onComplete={() => handleNavigate('/dashboard')} />
         )}
       </div>
     );
