@@ -442,12 +442,14 @@ export const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
 ];
 
 export const RETENTION_COHORT_DATA: RetentionCohortRow[] = [
-  { cohort: 'Apr 2026', members: 1240, m1: 88, m2: 82, m3: 79, m4: 76, m5: 75, m6: 74 },
-  { cohort: 'May 2026', members: 1380, m1: 91, m2: 84, m3: 81, m4: 78, m5: 76, m6: 75 },
-  { cohort: 'Jun 2026', members: 1520, m1: 89, m2: 83, m3: 80, m4: 77, m5: 76, m6: 0 },
-  { cohort: 'Jul 2026', members: 1690, m1: 93, m2: 87, m3: 84, m4: 81, m5: 0, m6: 0 },
-  { cohort: 'Aug 2026', members: 1840, m1: 94, m2: 89, m3: 86, m4: 0, m5: 0, m6: 0 },
-  { cohort: 'Sep 2026', members: 1950, m1: 96, m2: 91, m3: 0, m4: 0, m5: 0, m6: 0 },
+  { cohort: 'Week of Sep 2', members: 412, m1: 84, m2: 78, m3: 73, m4: 66, m5: 62, m6: 0 },
+  { cohort: 'Week of Sep 9', members: 388, m1: 86, m2: 79, m3: 75, m4: 69, m5: 61, m6: 0 },
+  { cohort: 'Week of Sep 16', members: 465, m1: 89, m2: 82, m3: 77, m4: 72, m5: 66, m6: 0 },
+  { cohort: 'Week of Sep 23', members: 510, m1: 85, m2: 80, m3: 74, m4: 67, m5: 63, m6: 0 },
+  { cohort: 'Week of Sep 30', members: 430, m1: 87, m2: 83, m3: 76, m4: 71, m5: 0, m6: 0 },
+  { cohort: 'Week of Oct 7', members: 492, m1: 91, m2: 84, m3: 78, m4: 0, m5: 0, m6: 0 },
+  { cohort: 'Week of Oct 14', members: 534, m1: 88, m2: 81, m3: 0, m4: 0, m5: 0, m6: 0 },
+  { cohort: 'Week of Oct 21', members: 560, m1: 92, m2: 0, m3: 0, m4: 0, m5: 0, m6: 0 },
 ];
 
 export const MOCK_CUSTOMERS = INITIAL_CUSTOMERS;

@@ -19,7 +19,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
-import { FableadLandingPage } from './Customer/CustomerLandingPage';
+import { CustomerLandingPage } from './Customer/CustomerLandingPage';
 import { CustomerPanel } from './Customer/CustomerPanel';
 import { CatalogPage } from './pages/CatalogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
@@ -50,6 +50,7 @@ export default function App() {
   const [activeBranch, setActiveBranch] = useState<string>(AVAILABLE_BRANCHES[0]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isStandaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
 
   // Core Mock Datasets
   const [customers, setCustomers] = useState(MOCK_CUSTOMERS);
@@ -89,26 +90,20 @@ export default function App() {
   }, []);
 
   if (currentRoute === '/customer-landing') {
-    return <FableadLandingPage />;
+    return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  if (currentRoute === '/customer-panel') {
-    return <CustomerPanel onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  if (currentRoute.startsWith('/customer-panel')) {
+    return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   // Render auth and onboarding pages directly as standalone
   if (currentRoute === '/login' || currentRoute === '/onboarding') {
     return (
-      <div className="min-h-screen bg-[#FAF8F5] text-[#1A1615]">
-        {currentRoute === '/login' ? (
-          <LoginPage onLoginSuccess={(role) => handleNavigate(role === 'merchant' ? '/dashboard' : '/customer-panel')} />
-        ) : (
-          <OnboardingPage
-            onComplete={() => handleNavigate('/dashboard')}
-            onCancel={() => handleNavigate('/login')}
-          />
-        )}
-      </div>
+      <OnboardingPage
+        onComplete={() => handleNavigate('/dashboard')}
+        onCancel={() => setStandaloneAuthView(false)}
+      />
     );
   }
 
@@ -151,7 +146,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className="flex-1">
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
@@ -260,7 +255,6 @@ export default function App() {
                     Viewing Onboarding Wizard inside Merchant Shell
                   </span>
                   <button
-                    onClick={() => setStandaloneAuthView(true)}
                     className="text-xs font-bold text-[#A37837] hover:underline"
                   >
                     Open Full-Screen Presentation Mode ↗

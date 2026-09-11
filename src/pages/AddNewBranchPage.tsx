@@ -350,7 +350,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   >
                     <Tent className={`w-4 h-4 mb-2 ${venueProfile === 'popup' ? 'text-white' : 'text-[#8C827A]'}`} />
                     <div className="text-xs font-bold leading-tight">
-                      Pop-Up Atelier
+                      Pop-Up Kiosk
                     </div>
                     <div className={`text-[10px] mt-0.5 ${venueProfile === 'popup' ? 'text-white/80' : 'text-[#7C746C]'}`}>
                       Seasonal space
@@ -606,7 +606,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               {/* Designated Head of Atelier (General Manager) */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[#3D3732] block">
-                  Designated Head of Atelier (General Manager)
+                  Designated General Manager
                 </label>
                 <div className="relative">
                   <select
