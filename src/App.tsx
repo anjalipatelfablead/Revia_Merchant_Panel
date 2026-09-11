@@ -151,7 +151,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className="flex-1 pb-12">
+        <main className="flex-1">
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}

@@ -43,11 +43,23 @@ import {
   Edit2,
   AlertCircle,
   Hourglass,
-  BellRing
+  BellRing,
+  Bookmark
 } from 'lucide-react';
 
 export const CampaignBuilderPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
+  const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
+
+  const campaignTypes = [
+    { id: '% Discount', icon: Percent },
+    { id: 'Loyalty Boost', icon: Star },
+    { id: 'Flash Promo', icon: Zap },
+    { id: 'Referral Bonus', icon: Users },
+    { id: 'New Customer', icon: UserPlus },
+    { id: 'Old Customer', icon: RefreshCw },
+  ];
 
   const steps = [
     { id: 1, name: 'Basics' },
@@ -58,54 +70,89 @@ export const CampaignBuilderPage: React.FC = () => {
   ];
 
   const renderStep1 = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      <div className="lg:col-span-7 bg-white border border-[#EFECE6] rounded-xl p-6 shadow-sm space-y-6">
-        <div className="border-b border-[#EFECE6] pb-3">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+      <div className="lg:col-span-7 flex flex-col gap-4 lg:block lg:bg-white lg:border lg:border-[#EFECE6] lg:rounded-xl lg:p-6 lg:shadow-sm lg:space-y-6">
+        {/* Mobile: Estimated Reach */}
+        <div className="lg:hidden bg-white border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#FDF8EB] rounded-full flex items-center justify-center text-[#9E782F]">
+              <Users className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-0.5">ESTIMATED LIVE REACH</div>
+              <div className="text-sm font-bold text-[#1A1615]">~1,420 <span className="font-medium text-[#6E6A66]">VIP Members</span></div>
+            </div>
+          </div>
+          <div className="px-2 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded font-bold text-[10px] flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" /> +18.4%
+          </div>
+        </div>
+
+        <div className="hidden lg:block border-b border-[#EFECE6] pb-3">
           <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">CONFIG 1/5</span>
           <h3 className="text-base font-bold text-[#1A1615]">Campaign Details</h3>
         </div>
 
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66]">Campaign Name Input</label>
-            <span className="text-[11px] font-semibold text-[#9E9A93]">38 / 64 characters</span>
+        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
+          {/* Mobile Block Header */}
+          <div className="lg:hidden flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
+              <Sparkles className="w-4 h-4 text-[#D4A753]" /> Campaign Identity
+            </div>
+            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold rounded">Required</span>
           </div>
-          <input
-            type="text"
-            defaultValue="Autumn Reserve Tasting & Geisha Perk"
-            className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
-          />
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66]">Campaign Name Input</label>
+              <span className="text-[11px] font-semibold text-[#9E9A93]">38 / 64 characters</span>
+            </div>
+            <input
+              type="text"
+              defaultValue="Autumn Reserve Tasting & Geisha Perk"
+              className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66] mb-3">Campaign Type</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {campaignTypes.map((type) => {
+                const Icon = type.icon;
+                const isSelected = selectedCampaignType === type.id;
+                return (
+                  <button
+                    key={type.id}
+                    onClick={() => setSelectedCampaignType(type.id)}
+                    className={
+                      isSelected
+                        ? "p-3 bg-[#FDF8EB] border-2 border-[#D4A753] rounded-xl text-xs font-bold text-[#9E782F] flex flex-col items-center gap-2 shadow-sm relative overflow-hidden cursor-pointer"
+                        : "p-3 bg-white border border-[#EFECE6] rounded-xl text-xs font-bold text-[#6E6A66] flex flex-col items-center gap-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                    }
+                  >
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 w-3 h-3 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </div>
+                    )}
+                    <Icon className={`w-5 h-5 ${isSelected ? 'fill-[#D4A753] text-[#D4A753]' : 'text-[#9E9A93]'}`} /> {type.id}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
         </div>
 
-        <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-3">Campaign Type</label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <button className="p-3 bg-white border border-[#EFECE6] rounded-xl text-xs font-bold text-[#6E6A66] flex flex-col items-center gap-2 hover:bg-[#FAF8F5] transition-colors">
-              <Percent className="w-5 h-5 text-[#9E9A93]" /> % Discount
-            </button>
-            <button className="p-3 bg-[#FDF8EB] border-2 border-[#D4A753] rounded-xl text-xs font-bold text-[#9E782F] flex flex-col items-center gap-2 shadow-sm relative overflow-hidden">
-              <div className="absolute top-2 right-2 w-3 h-3 bg-[#D4A753] rounded-full flex items-center justify-center">
-                <Check className="w-2 h-2 text-white" />
-              </div>
-              <Star className="w-5 h-5 fill-[#D4A753] text-[#D4A753]" /> Loyalty Boost
-            </button>
-            <button className="p-3 bg-white border border-[#EFECE6] rounded-xl text-xs font-bold text-[#6E6A66] flex flex-col items-center gap-2 hover:bg-[#FAF8F5] transition-colors">
-              <Zap className="w-5 h-5 text-[#9E9A93]" /> Flash Promo
-            </button>
-            <button className="p-3 bg-white border border-[#EFECE6] rounded-xl text-xs font-bold text-[#6E6A66] flex flex-col items-center gap-2 hover:bg-[#FAF8F5] transition-colors">
-              <Users className="w-5 h-5 text-[#9E9A93]" /> Referral Bonus
-            </button>
-            <button className="p-3 bg-white border border-[#EFECE6] rounded-xl text-xs font-bold text-[#6E6A66] flex flex-col items-center gap-2 hover:bg-[#FAF8F5] transition-colors">
-              <UserPlus className="w-5 h-5 text-[#9E9A93]" /> New Customer
-            </button>
-            <button className="p-3 bg-white border border-[#EFECE6] rounded-xl text-xs font-bold text-[#6E6A66] flex flex-col items-center gap-2 hover:bg-[#FAF8F5] transition-colors">
-              <RefreshCw className="w-5 h-5 text-[#9E9A93]" /> Old Customer
-            </button>
+        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
+          {/* Mobile Block Header */}
+          <div className="lg:hidden flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
+              <Store className="w-4 h-4 text-[#D4A753]" /> Outlets & Locations
+            </div>
+            <span className="text-[#0D7A53] text-[10px] font-bold">3 Active</span>
           </div>
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between mb-3">
+          <p className="lg:hidden text-xs text-[#6E6A66] mb-3">Select participating artisan espresso bars & roasteries.</p>
+          <div className="hidden lg:flex items-center justify-between mb-3">
             <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66]">Active Outlets &amp; Locations</label>
             <button className="text-[11px] font-bold text-[#D4A753] hover:underline">Select All Branches</button>
           </div>
@@ -120,42 +167,101 @@ export const CampaignBuilderPage: React.FC = () => {
               <Check className="w-3.5 h-3.5" /> West End Kiosk - Drive-Thru
             </span>
           </div>
-          <button className="text-[11px] font-bold text-[#1A1615] flex items-center gap-1 hover:underline">
+          <button onClick={() => setIsAddLocationOpen(true)} className="text-[11px] font-bold text-[#9E782F] lg:text-[#1A1615] flex items-center gap-1 hover:underline bg-[#FDF8EB] px-3 py-1.5 rounded-full mt-2 lg:mt-0 lg:bg-transparent lg:px-0 lg:py-0 cursor-pointer">
             <Plus className="w-3.5 h-3.5" /> Add Location
           </button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Campaign Runtime Window</label>
-            <div className="flex items-center gap-3 px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg">
-              <Calendar className="w-4 h-4 text-[#9E9A93]" />
-              <span className="text-xs font-bold text-[#1A1615]">Nov 1, 2024 – Nov 30, 2024</span>
-            </div>
-          </div>
-          <div className="flex items-end pb-1">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase tracking-wider">
-              <Clock className="w-3 h-3" /> 30 DAYS TOTAL
-            </span>
+          <div className="lg:hidden flex items-start gap-2 mt-4 p-3 bg-[#FAF8F5] rounded-lg text-[11px] text-[#6E6A66]">
+            <Info className="w-4 h-4 text-[#D4A753] shrink-0" /> Includes POS terminal dispatch & mobile order integration.
           </div>
         </div>
 
-        <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Priority Level</label>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex items-center bg-[#FAF8F5] border border-[#EFECE6] rounded-lg">
-              <button className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-l-lg">-</button>
-              <span className="px-4 py-1.5 text-xs font-bold text-[#1A1615] border-x border-[#EFECE6]">1 (P1)</span>
-              <button className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-r-lg">+</button>
+        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
+          {/* Mobile Block Header */}
+          <div className="lg:hidden flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
+              <Calendar className="w-4 h-4 text-[#D4A753]" /> Timeline & Scheduling
+            </div>
+            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold rounded">30 Days Total</span>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Campaign Runtime Window</label>
+              <div className="flex items-center gap-3 px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg">
+                <Calendar className="w-4 h-4 text-[#9E9A93]" />
+                <span className="text-xs font-bold text-[#1A1615]">Nov 1, 2024 – Nov 30, 2024</span>
+              </div>
+            </div>
+            <div className="hidden lg:flex items-end pb-1">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase tracking-wider">
+                <Clock className="w-3 h-3" /> 30 DAYS TOTAL
+              </span>
             </div>
           </div>
-          <p className="text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
-            Tier 1 Override Active: Highest arbitration queue. Higher priority wins if a transaction qualifies for multiple active campaigns.
-          </p>
+          <div className="lg:hidden flex items-center justify-between mt-2 pt-3 border-t border-[#EFECE6] text-[11px] text-[#6E6A66]">
+            <div className="flex items-center gap-1"><Clock className="w-3 h-3" /> Merchant home timezone (PST - UTC-8)</div>
+            <span className="text-[#0D7A53] font-bold flex items-center gap-1"><span className="w-1 h-1 bg-[#0D7A53] rounded-full"></span> Synchronized</span>
+          </div>
+        </div>
+
+        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
+          {/* Mobile Block Header */}
+          <div className="lg:hidden flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
+              <SlidersHorizontal className="w-4 h-4 text-[#D4A753]" /> Priority & Arbitration
+            </div>
+            <span className="text-[#6E6A66] text-[10px] font-bold uppercase tracking-wider">Queue Order</span>
+          </div>
+
+          <div className="lg:hidden bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between mb-4">
+            <div>
+              <div className="text-xs font-bold text-[#1A1615] mb-1">Priority Queue Level</div>
+              <div className="text-[10px] text-[#6E6A66] max-w-[120px]">Defines precedence over competing member discounts</div>
+            </div>
+            <div className="flex items-center bg-white border border-[#EFECE6] rounded-full px-2 py-1 shadow-sm">
+              <button className="w-6 h-6 flex items-center justify-center text-[#9E9A93] bg-[#FAF8F5] rounded-full">-</button>
+              <div className="px-3 text-center">
+                <div className="text-sm font-bold text-[#D4A753]">1</div>
+                <div className="text-[10px] font-bold text-[#1A1615]">(P1)</div>
+              </div>
+              <button className="w-6 h-6 flex items-center justify-center text-[#1A1615] bg-[#FAF8F5] rounded-full">+</button>
+            </div>
+          </div>
+
+          <div className="lg:hidden flex items-start gap-2 bg-[#FDF8EB] p-3 rounded-lg border border-[#F3E5C8]">
+            <div className="w-4 h-4 bg-[#D4A753] shrink-0 rounded flex items-center justify-center mt-0.5"><div className="w-1.5 h-2 bg-white rounded-t-full"></div></div>
+            <div className="text-[10px] text-[#1A1615] font-semibold leading-tight">Tier 1 Override Active: Highest arbitration queue</div>
+          </div>
+
+          <div className="hidden lg:block">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Priority Level</label>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center bg-[#FAF8F5] border border-[#EFECE6] rounded-lg">
+                <button className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-l-lg">-</button>
+                <span className="px-4 py-1.5 text-xs font-bold text-[#1A1615] border-x border-[#EFECE6]">1 (P1)</span>
+                <button className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-r-lg">+</button>
+              </div>
+            </div>
+            <p className="text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
+              Tier 1 Override Active: Highest arbitration queue. Higher priority wins if a transaction qualifies for multiple active campaigns.
+            </p>
+          </div>
+        </div>
+
+        {/* Mobile Only Featured Cohort */}
+        <div className="lg:hidden mt-4 bg-[#1A1615] rounded-xl shadow-xl text-white relative overflow-hidden h-32">
+          <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=500&auto=format&fit=crop&q=80" alt="Coffee" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+            <div>
+              <div className="text-[10px] font-bold tracking-widest uppercase text-[#D4A753] mb-1">FEATURED COHORT</div>
+              <h4 className="text-sm font-bold text-white">Geisha Harvest Collection</h4>
+            </div>
+            <span className="px-2 py-0.5 bg-black/50 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase backdrop-blur-sm">EXCLUSIVE</span>
+          </div>
         </div>
       </div>
 
-      <div className="lg:col-span-5 space-y-4">
+      <div className="hidden lg:block lg:col-span-5 space-y-4">
         <div className="bg-[#1A1615] rounded-2xl p-6 shadow-xl text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Zap className="w-24 h-24" />
@@ -1605,10 +1711,46 @@ export const CampaignBuilderPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] pb-24 relative">
+    <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] md:pb-24 relative">
+
+      {/* Add Location Modal */}
+      {isAddLocationOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-[#1A1615]">Add Location</h3>
+              <button onClick={() => setIsAddLocationOpen(false)} className="text-[#9E9A93] hover:text-[#1A1615] bg-[#FAF8F5] p-2 rounded-full transition-colors cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1.5">Search Branch/Outlet</label>
+                <input type="text" placeholder="e.g. Downtown Flagship" className="w-full px-4 py-2.5 border border-[#EFECE6] bg-[#FAF8F5] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+              </div>
+              <button onClick={() => setIsAddLocationOpen(false)} className="w-full py-3 bg-[#1A1615] text-white rounded-lg text-sm font-bold mt-2 shadow-md hover:bg-black transition-colors cursor-pointer">Confirm Location</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2. SHARED LAYOUT & TOP HEADER BAR */}
-      <div className="bg-white border-b border-[#EFECE6] px-4 sm:px-6 py-6 flex flex-col md:flex-row md:items-center justify-between gap-6 sticky top-0 z-20 shadow-xs">
+      {/* Mobile Header */}
+      {/* <div className="lg:hidden bg-[#FAF8F5] px-4 py-3 flex items-center justify-between z-20 sticky top-0 border-b border-[#EFECE6]">
+        <button className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm">
+          <ArrowLeft className="w-5 h-5 text-[#1A1615]" />
+        </button>
+        <div className="text-center">
+          <div className="text-[10px] font-bold text-[#D4A753] uppercase tracking-widest mb-0.5">Revia Merchant</div>
+          <div className="text-base font-black text-[#1A1615] leading-none">Campaign Wizard</div>
+        </div>
+        <div className="relative">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-sm font-bold text-[#1A1615] shadow-sm">ER</div>
+          <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#0D7A53] rounded-full border-2 border-white"></div>
+        </div>
+      </div> */}
+
+      <div className="hidden lg:flex bg-white border-b border-[#EFECE6] px-4 sm:px-6 py-6 flex-col md:flex-row md:items-center justify-between gap-6 sticky top-0 z-20 shadow-xs">
         <div>
           <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-[#9E9A93] mb-3 uppercase">
             <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] rounded-full border border-[#F3E5C8]">MERCHANT SUITE CRM</span>
@@ -1647,8 +1789,20 @@ export const CampaignBuilderPage: React.FC = () => {
       <div className="p-4 sm:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
 
         {/* Stepper Indicator */}
-        <div className="flex justify-between bg-white border border-[#EFECE6] rounded-xl px-4 py-6 shadow-sm mb-6 relative">
+        <div className="lg:hidden flex justify-between items-end mb-4 px-2">
+          <div>
+            <div className="text-[10px] font-bold text-[#9E782F] uppercase tracking-widest mb-1.5">Campaign Builder</div>
+            <div className="text-[13px] text-[#6E6A66]">Step {currentStep} of 5 · {steps.find(s => s.id === currentStep)?.name}</div>
+          </div>
+          <div className="px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[11px] font-bold text-[#1A1615] flex items-center gap-1.5 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> 20% Ready
+          </div>
+        </div>
+
+        <div className="flex justify-between lg:bg-white lg:border lg:border-[#EFECE6] lg:rounded-xl px-2 lg:px-4 lg:py-6 lg:shadow-sm mb-6 relative">
           <div className="absolute top-10 left-[10%] right-[10%] h-0.5 bg-[#EFECE6] z-0 hidden md:block"></div>
+          {/* Mobile horizontal line */}
+          <div className="absolute top-4 left-[10%] right-[10%] h-[1px] bg-[#D1CDC7] z-0 lg:hidden"></div>
           {steps.map((step) => {
             const isPast = step.id < currentStep;
             const isCurrent = step.id === currentStep;
@@ -1657,7 +1811,7 @@ export const CampaignBuilderPage: React.FC = () => {
                 <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center text-xs font-bold transition-all relative z-10 ${isPast ? 'bg-[#0D7A53] text-white border-2 border-[#0D7A53]' : isCurrent ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white border-2 border-[#D4A753] ring-4 ring-[#FDF8EB]' : 'bg-white border-2 border-[#EFECE6] text-[#9E9A93] group-hover:border-[#D1CDC7]'}`}>
                   {isPast ? <Check className="w-4 h-4" /> : step.id}
                 </div>
-                <div className="mt-2 text-center w-full px-2 hidden sm:block">
+                <div className="mt-2 text-center w-full px-2">
                   <span className={`text-[11px] font-bold block ${isCurrent ? 'text-[#1A1615]' : isPast ? 'text-[#0D7A53]' : 'text-[#9E9A93]'}`}>{step.name}</span>
                 </div>
               </div>
@@ -1673,8 +1827,13 @@ export const CampaignBuilderPage: React.FC = () => {
         {currentStep === 5 && renderStep5()}
       </div>
 
-      {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#EFECE6] p-4 flex items-center justify-between z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:pl-[280px]">
+      {/* Sticky Bottom Action Bar (Static on mobile) */}
+      <div className="relative md:fixed bottom-0 left-0 right-0 bg-transparent md:bg-white border-t-0 md:border-t border-[#EFECE6] p-4 flex flex-col md:flex-row md:items-center justify-between z-30 md:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:pl-[280px] gap-3 md:gap-0 mt-6 md:mt-0">
+        {currentStep !== 5 && (
+          <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-[#6E6A66] md:hidden mb-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Autosaved just now · Basics Valid
+          </div>
+        )}
         {currentStep === 5 ? (
           <div className="flex items-center gap-3 w-full max-w-[1600px] mx-auto">
             <div className="flex items-center gap-3 flex-1">
@@ -1698,22 +1857,26 @@ export const CampaignBuilderPage: React.FC = () => {
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-4 text-[11px] font-bold text-[#6E6A66]">
+            <div className="hidden md:flex items-center gap-4 text-[11px] font-bold text-[#6E6A66]">
               <span>• Draft autosaved just now</span>
               <span className="text-[#0D7A53] bg-[#E6F4ED] px-2 py-0.5 rounded border border-[#BCE3D1]">• Validation Passed</span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
               {currentStep > 1 && (
-                <button onClick={() => setCurrentStep(prev => prev - 1)} className="px-4 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors flex items-center gap-1.5 cursor-pointer">
-                  <ArrowLeft className="w-3.5 h-3.5" /> Back
+                <button onClick={() => setCurrentStep(prev => prev - 1)} className="px-4 py-3 md:py-2 bg-[#FAF8F5] md:bg-white border border-[#EFECE6] rounded-lg text-[13px] md:text-xs font-bold text-[#1A1615] hover:bg-[#EFECE6] md:hover:bg-[#FAF8F5] transition-colors flex items-center justify-center md:justify-start gap-1.5 cursor-pointer flex-1 md:flex-none">
+                  <ArrowLeft className="w-4 h-4 md:w-3.5 md:h-3.5" /> <span className="hidden md:inline">Back</span>
                 </button>
               )}
-              <button className="px-4 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors cursor-pointer">
-                Save as Draft
+              <button className="px-4 py-3 md:py-2 bg-[#FAF8F5] md:bg-white border border-[#EFECE6] rounded-lg text-[13px] md:text-xs font-bold text-[#1A1615] hover:bg-[#EFECE6] md:hover:bg-[#FAF8F5] transition-colors cursor-pointer flex-1 md:flex-none flex items-center justify-center gap-2 md:gap-0">
+                <Bookmark className="w-4 h-4 md:hidden shrink-0" />
+                <span className="md:hidden text-center leading-tight">Save<br />Draft</span>
+                <span className="hidden md:inline">Save as Draft</span>
               </button>
               {currentStep < 5 && (
-                <button onClick={() => setCurrentStep(prev => prev + 1)} className="px-6 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-xs font-bold shadow-md transition-opacity flex items-center gap-1.5 cursor-pointer">
-                  Continue to {steps.find(s => s.id === currentStep + 1)?.name} <ArrowRight className="w-3.5 h-3.5" />
+                <button onClick={() => setCurrentStep(prev => prev + 1)} className="px-6 py-3 md:py-2 bg-[#9E782F] md:bg-gradient-to-b md:from-[#D4A753] md:to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[13px] md:text-xs font-bold shadow-md transition-opacity flex items-center justify-center md:justify-start gap-2 md:gap-1.5 cursor-pointer flex-[2] md:flex-none">
+                  <span className="md:hidden">Continue to {steps.find(s => s.id === currentStep + 1)?.name}</span>
+                  <span className="hidden md:inline">Continue to {steps.find(s => s.id === currentStep + 1)?.name}</span>
+                  <ArrowRight className="w-4 h-4 md:w-3.5 md:h-3.5" />
                 </button>
               )}
             </div>
