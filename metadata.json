@@ -1,0 +1,6 @@
+{
+  "name": "Revia Merchant Suite",
+  "description": "Pixel-perfect Revia Merchant Panel featuring loyalty program design, customer CRM, catalog operations, branch telemetry, and cryptographic audit logs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

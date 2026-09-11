@@ -1,0 +1,167 @@
+import React, { useState } from 'react';
+import {
+  LayoutDashboard,
+  Store,
+  Users,
+  Star,
+  QrCode,
+  Receipt,
+  Megaphone,
+  Gift,
+  BarChart2,
+  CreditCard,
+  Bell,
+  ShieldCheck,
+  Award,
+  Plus
+} from 'lucide-react';
+import { NavRoute } from '../../types';
+
+interface SidebarProps {
+  currentRoute: NavRoute;
+  onRouteChange: (route: NavRoute) => void;
+  activeBranch: string;
+  onBranchChange: (branch: string) => void;
+  branches: string[];
+  isMobileOpen?: boolean;
+  onMobileClose?: () => void;
+}
+
+interface NavItem {
+  name: string;
+  route: NavRoute;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({
+  currentRoute,
+  onRouteChange,
+  activeBranch,
+  onBranchChange,
+  branches,
+  isMobileOpen = false,
+  onMobileClose,
+}) => {
+  // Navigation groups matching Figma design screenshot exactly
+  const navigationGroups: NavGroup[] = [
+    {
+      label: 'MAIN',
+      items: [
+        { name: 'Dashboard', route: '/dashboard', icon: LayoutDashboard },
+        { name: 'Branches', route: '/branches', icon: Store },
+        { name: 'Staff & RBAC', route: '/staff', icon: ShieldCheck },
+        { name: 'Loyalty Program', route: '/loyalty', icon: Gift },
+        { name: 'QR Codes', route: '/qr-codes', icon: QrCode },
+      ],
+    },
+    {
+      label: 'CRM & ACTIVITY',
+      items: [
+        { name: 'Customers', route: '/customers', icon: Users },
+        { name: 'Transactions', route: '/transactions', icon: Receipt },
+        { name: 'Campaigns', route: '/campaigns/new', icon: Megaphone },
+        { name: 'Rewards', route: '/rewards', icon: Award },
+      ],
+    },
+    {
+      label: 'INSIGHTS & CONFIG',
+      items: [
+        { name: 'Analytics & Reports', route: '/analytics', icon: BarChart2 },
+        { name: 'Subscription & Billing', route: '/billing', icon: CreditCard },
+        { name: 'Notifications', route: '/notifications', icon: Bell },
+        { name: 'Settings & Audit Log', route: '/settings/audit', icon: ShieldCheck },
+      ],
+    },
+  ];
+
+  return (
+    <aside
+      className={`
+        bg-white border-r border-[#EAE6E1] flex flex-col shrink-0 h-screen transition-all duration-200 z-50
+        md:static md:w-[240px] md:translate-x-0
+        ${isMobileOpen 
+          ? 'fixed inset-y-0 left-0 w-[260px] translate-x-0 shadow-2xl' 
+          : 'fixed inset-y-0 left-0 w-[260px] -translate-x-full md:translate-x-0'}
+      `}
+    >
+      {/* Brand Header */}
+      <div className="p-4 pb-3 border-b border-[#EAE6E1]/70">
+        <div 
+          className="flex items-center gap-2.5 cursor-pointer select-none" 
+          onClick={() => onRouteChange('/dashboard')}
+        >
+          {/* Gold squircle emblem matching screenshot */}
+          <div className="w-8 h-8 rounded-lg bg-[#B38637] flex items-center justify-center text-white shadow-xs">
+            <Award className="w-4 h-4 text-white" />
+          </div>
+          <div className="leading-tight">
+            <div className="text-[13px] font-bold tracking-wider text-[#1A1615] font-serif">
+              REVIA
+            </div>
+            <div className="text-[8px] uppercase tracking-widest text-[#8C827A] font-semibold">
+              MERCHANT SUITE
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Links Area */}
+      <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-4">
+        {navigationGroups.map((group) => (
+          <div key={group.label} className="space-y-0.5">
+            <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#9C948C] uppercase">
+              {group.label}
+            </div>
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = 
+                  currentRoute === item.route || 
+                  (item.route === '/branches' && currentRoute === '/branches/new') ||
+                  (item.route === '/campaigns/new' && currentRoute === '/campaigns');
+
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      onRouteChange(item.route);
+                      if (onMobileClose) onMobileClose();
+                    }}
+                    className={`w-full flex items-center px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer whitespace-nowrap ${
+                      isActive
+                        ? 'bg-[#A37837] text-white font-semibold shadow-xs'
+                        : 'text-[#3D3732] hover:bg-[#FAF8F5] hover:text-[#1A1615]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
+                      <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />
+                      <span className="whitespace-nowrap tracking-tight">{item.name}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer Status matching Figma: ● v2.14.0-prod  LIVE */}
+      <div className="p-3 border-t border-[#EAE6E1] bg-white">
+        <div className="px-2.5 py-1.5 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-1.5 font-mono text-[11px] text-[#7C746C]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
+            <span>v2.14.0-prod</span>
+          </div>
+          <span className="bg-[#EBF7F0] text-[#15803D] font-bold text-[10px] px-2 py-0.5 rounded-sm tracking-wider">
+            LIVE
+          </span>
+        </div>
+      </div>
+    </aside>
+  );
+};
