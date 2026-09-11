@@ -138,9 +138,6 @@ export const QrCodesPage: React.FC = () => {
       {/* 2. NAVIGATION & PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
-          <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1.5">
-            Home &gt; Hardware &amp; Assets &gt; QR Codes &amp; Stands
-          </div>
           <div className="flex items-center gap-3 mb-1.5">
             <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">
               QR Codes &amp; Physical Asset Hub
