@@ -1,11 +1,117 @@
 import React, { useMemo } from 'react';
 import {
+  Award,
   BarChart3,
   Calendar,
+  ChevronDown,
   Download,
   Filter,
+  FileText,
+  LockKeyhole,
+  SlidersHorizontal,
+  Sparkles,
+  ShieldCheck,
+  Timer,
 } from 'lucide-react';
 import { RETENTION_COHORT_DATA } from '../data/mockData';
+
+const mobileRetentionDrivers = [
+  {
+    name: 'Panama Geisha Reserve',
+    subtitle: 'Single Origin Pour',
+    rate: '94% repeat',
+    detail: '420 stamps linked',
+    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=120&auto=format&fit=crop&q=80',
+  },
+  {
+    name: 'Cardamom Tahini Cruffin',
+    subtitle: 'Viennoiserie Batch',
+    rate: '88% repeat',
+    detail: '310 stamps linked',
+    image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120&auto=format&fit=crop&q=80',
+  },
+  {
+    name: 'Madagascar Vanilla Latte',
+    subtitle: 'House Bean Extraction',
+    rate: '81% repeat',
+    detail: '680 stamps linked',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=120&auto=format&fit=crop&q=80',
+  },
+];
+
+const MobileAnalyticsView: React.FC = () => {
+  const cohorts = [
+    { name: 'W1 Oct Cohort', size: '980 patrons', change: '+4.1% MoM', values: ['100%', '84%', '76%', '68%'] },
+    { name: 'W2 Oct Cohort', size: '1,120 patrons', change: '+8.6% MoM', values: ['100%', '88%', '79%', '71%'] },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#FBF6F1] px-5 pb-7 pt-3 text-[#211C19]">
+      <div className="mx-auto w-full max-w-[430px]">
+        <header className="flex items-center justify-between border-b border-[#EDE1D7] pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#211C19] text-sm font-bold text-white">R</div>
+            <div className="leading-tight">
+              <div className="flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-[0.04em]">Mayfair Flagship <ChevronDown className="h-3 w-3 text-[#756D65]" /></div>
+              <div className="text-[10px] font-bold uppercase text-[#B28529]">MoreAnalytics</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="relative text-[#5F5750]"><span className="absolute -right-0.5 -top-1 h-1.5 w-1.5 rounded-full bg-[#B7362F]" /><Sparkles className="h-4 w-4" /></div>
+            <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-white shadow-sm"><img src="https://i.pravatar.cc/80?img=47" alt="Account" className="h-full w-full object-cover" /></div>
+          </div>
+        </header>
+
+        <div className="pt-4">
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="text-[24px] font-extrabold leading-none tracking-[-0.06em]">Analytics &amp; Retention</h1>
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#B9F1CF] px-2 py-1 text-[10px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Live Telemetry</span>
+          </div>
+          <p className="mt-2 text-[13px] text-[#756D65]">Longitudinal cohort curves &amp; VIP telemetry</p>
+        </div>
+
+        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+          {['Last 30D', 'Last 90D', 'YTD', 'All Branches'].map((period, index) => (
+            <button key={period} type="button" className={`shrink-0 rounded-full px-4 py-2.5 text-[12px] font-semibold ${index === 1 ? 'bg-[#C99B42] text-white shadow-sm' : 'bg-[#F3E9DF] text-[#3D3732]'}`}>{period}</button>
+          ))}
+        </div>
+
+        <section className="mt-4 grid grid-cols-2 gap-2">
+          {[
+            { label: '30D Retention', value: '74.8%', detail: '+6.2% vs avg', icon: Timer, positive: true },
+            { label: 'Obsidian LTV', value: '$1,480', detail: '$38.90 AOV baseline', icon: Award },
+            { label: 'Stamp Velocity', value: '12.4 Days', detail: 'To 10th stamp reward', icon: Timer },
+            { label: 'Churn Risk', value: '4.2%', detail: '18 rescued this wk', icon: ShieldCheck, positive: true },
+          ].map(({ label, value, detail, icon: Icon, positive }) => (
+            <div key={label} className="min-h-[116px] rounded-[13px] bg-white p-4 shadow-[0_5px_18px_rgba(60,38,20,0.05)]">
+              <div className="flex items-center justify-between"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]">{label}</span><span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FBF1E4] text-[#A8761C]"><Icon className="h-3.5 w-3.5" /></span></div>
+              <div className="mt-3 text-[29px] font-extrabold leading-none tracking-[-0.07em]">{value}</div>
+              <div className={`mt-1 text-[11px] font-medium ${positive ? 'text-[#078157]' : 'text-[#756D65]'}`}>{positive && <span className="mr-1">↗</span>}{detail}</div>
+            </div>
+          ))}
+        </section>
+
+        <section className="mt-8 rounded-[13px] bg-white p-4 shadow-[0_5px_18px_rgba(60,38,20,0.05)]">
+          <div className="flex items-start justify-between"><div><h2 className="text-[19px] font-bold tracking-[-0.04em]">Cohort Decay Curves</h2><p className="text-[12px] text-[#756D65]">Weekly active return telemetry</p></div><SlidersHorizontal className="mt-1 h-4 w-4 text-[#756D65]" /></div>
+          <div className="mt-2 flex items-center justify-between rounded-[8px] bg-[#FCF2E7] px-3 py-2 text-[10px] text-[#756D65]"><span className="font-bold">Cohort Origin</span><span className="flex gap-2"><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#E6D5BA]" />&lt;50%</span><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#B69A5B]" />70%</span><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#806014]" />90%+</span></span></div>
+          <div className="mt-3 space-y-3">
+            {cohorts.map((cohort) => (
+              <div key={cohort.name} className="rounded-[8px] bg-[#FCF5EE] p-3"><div className="flex items-center justify-between text-[12px]"><span><b>{cohort.name}</b> <span className="text-[#756D65]">({cohort.size})</span></span><b className="text-[#087B55]">{cohort.change}</b></div><div className="mt-2 grid grid-cols-4 gap-1.5">{cohort.values.map((value, index) => <div key={value} className={`rounded-[4px] px-1 py-1.5 text-center text-white ${['bg-[#8A6200]', 'bg-[#9F7E2D]', 'bg-[#B29A5F]', 'bg-[#BDAA7C]'][index]}`}><div className="text-[9px] opacity-80">W{index === 3 ? 4 : index}</div><b className="text-[14px]">{value}</b></div>)}</div></div>
+            ))}
+          </div>
+          <div className="mt-4 flex gap-2 rounded-[8px] bg-[#FFF0D7] p-3 text-[11px] leading-[1.25] text-[#513C18]"><Award className="h-4 w-4 shrink-0 text-[#9A741E]" /><span><b>Obsidian cohort retention outperforms</b> roastery benchmark by <b className="text-[#087B55]">+22%</b> over a 90-day trajectory.</span></div>
+        </section>
+
+        <section className="mt-8 rounded-[13px] bg-white p-4 shadow-[0_5px_18px_rgba(60,38,20,0.05)]"><div className="flex items-start justify-between"><div><h2 className="text-[19px] font-bold tracking-[-0.04em]">VIP Tier Progression</h2><p className="text-[12px] text-[#756D65]">Conversion funnel &amp; velocity</p></div><span className="rounded-[4px] bg-[#F4EEE8] px-2 py-1 text-[10px] font-bold text-[#756D65]">3,420 Enrolled</span></div><div className="mt-3 space-y-2.5">{[['Guest Scan', '100%', '3,420 guests', 'bg-[#6E6862]'], ['Prive Member', '82%', '2,804 members', 'bg-[#D4A753]'], ['Black Tier', '34%', '1,162 members', 'bg-[#C39A3D]'], ['Obsidian VIP', '11.8%', '404 members', 'bg-[#8A6200]']].map(([name, value, detail, color], index) => <div key={name}><div className="flex justify-between text-[12px]"><span className="font-medium"><i className={`mr-1.5 inline-block h-2 w-2 rounded-full ${color}`} />{name}</span><b>{value} <span className="font-normal">• {detail}</span></b></div><div className="mt-1 h-2.5 rounded-full bg-[#EFE5DA]"><div className={`h-full rounded-full ${color}`} style={{ width: value }} /></div>{index > 0 && <div className="ml-3 mt-1 text-[10px] text-[#756D65]">Avg velocity: {index === 1 ? '14 days from guest activation' : index === 2 ? '42 days (3.8 visits/wk)' : 'Generates top 48.6% of gross margin'}</div>}</div>)}</div></section>
+
+        <section className="mt-8"><div className="flex items-end justify-between"><div><h2 className="text-[19px] font-bold tracking-[-0.04em]">High LTV Drivers</h2><p className="text-[12px] text-[#756D65]">Menu items prompting repeat visits</p></div><span className="text-[11px] font-bold text-[#A8761C]">TOP 3</span></div><div className="mt-3 space-y-2">{mobileRetentionDrivers.map((item) => <div key={item.name} className="flex items-center gap-3 rounded-[12px] bg-white p-3 shadow-[0_4px_14px_rgba(60,38,20,0.04)]"><img src={item.image} alt="" className="h-12 w-12 rounded-[7px] object-cover" /><div className="min-w-0 flex-1"><div className="truncate text-[13px] font-bold">{item.name}</div><div className="text-[11px] text-[#756D65]">{item.subtitle}</div></div><div className="text-right text-[11px]"><b className="block text-[#087B55]">{item.rate}</b><span>{item.detail}</span></div></div>)}</div></section>
+
+        <button type="button" className="mt-8 flex w-full items-center justify-center gap-2 rounded-[11px] bg-gradient-to-r from-[#D4A753] to-[#9E782F] py-3.5 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><FileText className="h-4 w-4" />Download Executive PDF Report</button>
+        <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-[#756D65]"><LockKeyhole className="h-3 w-3" />Encrypted TLS 1.3 telemetry • Revia Merchant Audit v4.2</div>
+      </div>
+    </div>
+  );
+};
 
 export const AnalyticsPage: React.FC = () => {
   const kpiCards = useMemo(
@@ -169,6 +275,11 @@ export const AnalyticsPage: React.FC = () => {
   };
 
   return (
+    <>
+      <div className="md:hidden">
+        <MobileAnalyticsView />
+      </div>
+      <div className="hidden md:block">
     <div className="min-h-0 bg-[#F6F3EE] px-3 pb-2 pt-4 sm:px-5 lg:px-6">
       <div className="mx-auto w-full max-w-[1400px]">
         <header className="bg-[#F6F3EE] pb-2 pt-1">
@@ -459,5 +570,7 @@ export const AnalyticsPage: React.FC = () => {
         </footer>
       </div>
     </div>
+      </div>
+    </>
   );
 };
