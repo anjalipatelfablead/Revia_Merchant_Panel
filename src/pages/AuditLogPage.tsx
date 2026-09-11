@@ -65,6 +65,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
 
   return (
     <div className="space-y-3 p-2 sm:py-4 sm:pl-4 sm:pr-1">
+      {/*
       <div className="flex items-center justify-between gap-2 px-1 text-[8px] font-bold uppercase tracking-[0.1em] text-[#9E9A93]">
         <div className="flex min-w-0 items-center gap-2 truncate">
           <span>Home</span>
@@ -79,6 +80,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
           <span className="rounded bg-[#F5F1EA] px-1.5 py-0.5 font-mono text-[#9E9A93]">Block #392,104</span>
         </div>
       </div>
+      */}
 
       {/* Settings header and section navigation */}
       <header className="rounded-xl bg-[#FCFBF9] px-2 pt-2 sm:px-3 sm:pt-2.5">
