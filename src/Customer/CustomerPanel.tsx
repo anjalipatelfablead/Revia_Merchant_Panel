@@ -22,11 +22,14 @@ import { JoinLoyaltyScreen } from './screens/pre-auth/JoinLoyaltyScreen';
 
 // Post-auth Screens
 import { HomeScreen } from './screens/post-auth/HomeScreen';
+import { CustomerScanScreen } from './screens/post-auth/CustomerScanScreen';
+import { CustomerMenuScreen } from './screens/post-auth/CustomerMenuScreen';
 import { OffersScreen } from './screens/post-auth/OffersScreen';
 import { RewardsScreen } from './screens/post-auth/RewardsScreen';
 import { RewardDetailScreen } from './screens/post-auth/RewardDetailScreen';
 import { RedemptionScreen } from './screens/post-auth/RedemptionScreen';
 import { RedemptionSuccessScreen } from './screens/post-auth/RedemptionSuccessScreen';
+import { MembershipScreen } from './screens/post-auth/MembershipScreen';
 import { HistoryScreen } from './screens/post-auth/HistoryScreen';
 import { ProfileScreen } from './screens/post-auth/ProfileScreen';
 import { PrivacyScreen } from './screens/post-auth/PrivacyScreen';
@@ -44,7 +47,8 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
 
   // Pre-auth state
   const [preScreen, setPreScreen] = useState<PreScreen>(subRoute as PreScreen);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isPostAuthRoute = ['dashboard', 'scan', 'menu', 'orders', 'coupons', 'membership', 'offers', 'rewards', 'history', 'profile'].includes(subRoute);
+  const [isAuthenticated, setIsAuthenticated] = useState(isPostAuthRoute);
   const [isExistingMember] = useState(true);
   const [mobile, setMobile] = useState('');
 
@@ -149,10 +153,16 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
         <PrivacyScreen onBack={() => setShowPrivacy(false)} />
       ) : activeTab === 'dashboard' ? (
         <HomeScreen setTab={handleSetActiveTab} setSelectedOffer={id => { setSelectedOffer(id); handleSetActiveTab('offers'); }} setSelectedReward={id => { setSelectedReward(id); handleSetActiveTab('rewards'); }} />
+      ) : activeTab === 'scan' ? (
+        <CustomerScanScreen />
+      ) : activeTab === 'menu' ? (
+        <CustomerMenuScreen />
       ) : activeTab === 'offers' || activeTab === 'coupons' ? (
-        <OffersScreen selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
-      ) : activeTab === 'rewards' || activeTab === 'membership' ? (
-        <RewardsScreen onSelectReward={id => setSelectedReward(id)} />
+        <OffersScreen type={activeTab} selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+      ) : activeTab === 'membership' ? (
+        <MembershipScreen />
+      ) : activeTab === 'rewards' ? (
+        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
       ) : activeTab === 'history' || activeTab === 'orders' ? (
         <HistoryScreen />
       ) : activeTab === 'profile' ? (

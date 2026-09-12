@@ -80,11 +80,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           <button
             type="button"
             onClick={() => setAuthMethod('sms')}
-            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              authMethod === 'sms'
-                ? 'bg-white text-[#1A1615] shadow-xs'
-                : 'text-[#6E6A66] hover:text-[#1A1615]'
-            }`}
+            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${authMethod === 'sms'
+              ? 'bg-white text-[#1A1615] shadow-xs'
+              : 'text-[#6E6A66] hover:text-[#1A1615]'
+              }`}
           >
             <Phone className="w-3.5 h-3.5 text-[#9E782F]" />
             <span>SMS OTP</span>
@@ -92,11 +91,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           <button
             type="button"
             onClick={() => setAuthMethod('whatsapp')}
-            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              authMethod === 'whatsapp'
-                ? 'bg-white text-[#1A1615] shadow-xs'
-                : 'text-[#6E6A66] hover:text-[#1A1615]'
-            }`}
+            className={`py-2 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${authMethod === 'whatsapp'
+              ? 'bg-white text-[#1A1615] shadow-xs'
+              : 'text-[#6E6A66] hover:text-[#1A1615]'
+              }`}
           >
             <MessageSquare className="w-3.5 h-3.5 text-[#0D7A53]" />
             <span>WhatsApp</span>
@@ -224,7 +222,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
               Login as Merchant
             </button>
             <button
-              onClick={() => onLoginSuccess('customer')}
+              onClick={() => onLoginSuccess('/customer/dashboard')}
               className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
             >
               Login as Customer

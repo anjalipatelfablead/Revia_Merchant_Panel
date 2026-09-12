@@ -4,27 +4,42 @@ import { Badge } from '../ui/Badge';
 import { MOCK_OFFERS } from '../../data/mockData';
 
 export const OfferCard: React.FC<{ offer: typeof MOCK_OFFERS[0]; onClick?: () => void }> = ({ offer, onClick }) => {
-  const statusBadge = { active: { v: 'green' as const, l: 'Active' }, expired: { v: 'red' as const, l: 'Expired' }, paused: { v: 'gray' as const, l: 'Paused' } };
-  const sb = statusBadge[offer.status];
+  const isActive = offer.status === 'active';
+  
+  const statusPill = {
+    active: { text: 'ACTIVE', color: 'text-[#0D7A53]' },
+    expired: { text: 'EXPIRED', color: 'text-[#D32F2F]' },
+    paused: { text: 'PAUSED', color: 'text-[#999]' }
+  };
+  const pill = statusPill[offer.status];
+
   return (
-    <div onClick={offer.status === 'active' ? onClick : undefined}
-      className={`bg-white rounded-2xl border overflow-hidden shadow-sm transition-all ${offer.status === 'active' ? 'border-[#E6E6E6] hover:shadow-md hover:border-[#C89B3C]/40 cursor-pointer active:scale-[0.99]' : 'border-[#E6E6E6] opacity-60 cursor-default'}`}>
-      <div className="h-14 bg-gradient-to-r from-[#1a1a1a] to-[#2d2d2d] flex items-center justify-between px-4">
+    <div onClick={isActive ? onClick : undefined}
+      className={`bg-white rounded-xl border border-[#E6E6E6] overflow-hidden shadow-sm transition-all ${isActive ? 'hover:shadow-md hover:border-[#C89B3C]/40 cursor-pointer active:scale-[0.99]' : 'opacity-70 cursor-default grayscale-[20%]'}`}>
+      
+      {/* Header */}
+      <div className={`p-4 flex items-start justify-between ${isActive ? 'bg-[#222]' : 'bg-[#888]'}`}>
         <div>
-          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">{offer.type}</p>
-          <p className="text-sm font-black text-white">{offer.value}</p>
+          <p className="text-[8px] font-black uppercase tracking-widest text-white/50 mb-1">{offer.type}</p>
+          <p className="text-lg font-black text-white">{offer.value}</p>
         </div>
-        <Badge variant={sb.v}>{sb.l}</Badge>
+        <div className="bg-white rounded-full px-3 py-1 mt-0.5">
+          <span className={`text-[9px] font-black uppercase tracking-widest ${pill.color}`}>{pill.text}</span>
+        </div>
       </div>
+      
+      {/* Body */}
       <div className="p-4">
-        <h4 className="text-sm font-black text-[#222] mb-1">{offer.title}</h4>
-        <p className="text-xs text-[#666] leading-relaxed mb-3">{offer.desc}</p>
-        <div className="flex items-center justify-between text-[10px] text-[#999]">
+        <h4 className={`text-sm font-black mb-1 ${isActive ? 'text-[#222]' : 'text-[#666]'}`}>{offer.title}</h4>
+        <p className="text-xs text-[#999] leading-relaxed mb-4">{offer.desc}</p>
+        
+        <div className="flex items-center justify-between text-[9px] font-bold text-[#999] uppercase tracking-wider mb-4 border-t border-[#F5F5F5] pt-4">
           <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{offer.branch}</span>
           <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{offer.validity}</span>
         </div>
-        {offer.status === 'active' && (
-          <button className="mt-3 w-full py-2 rounded-xl text-[10px] font-black text-[#C89B3C] border border-[#C89B3C]/30 bg-[#FFF8ED] hover:bg-[#C89B3C] hover:text-white transition-all">
+        
+        {isActive && (
+          <button className="w-full py-2.5 rounded-lg text-xs font-bold text-[#C89B3C] border-2 border-[#F5DEB3] hover:bg-[#FFF8ED] transition-colors">
             View Offer
           </button>
         )}

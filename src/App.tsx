@@ -102,7 +102,9 @@ export default function App() {
     return (
       <LoginPage 
         onLoginSuccess={(role) => {
-          if (role === 'customer') {
+          if (role.startsWith('/')) {
+            handleNavigate(role as NavRoute);
+          } else if (role === 'customer') {
             handleNavigate('/customer');
           } else {
             handleNavigate('/dashboard');
