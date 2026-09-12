@@ -36,6 +36,16 @@ import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationPage } from './pages/NotificationPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+
+const VALID_ROUTES = [
+  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff', 
+  '/loyalty', '/qr-codes', '/catalog', '/orders', '/invoices', 
+  '/customerlist', '/transactions', '/campaigns', '/campaigns/new', 
+  '/terminal', '/rewards', '/analytics', '/billing', '/notifications', 
+  '/settings/audit', '/settings/branding', '/login', '/onboarding', 
+  '/customer-landing', '/customer', '/customer-onboarding'
+];
 
 
 
@@ -89,6 +99,11 @@ export default function App() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/');
+  if (!isValidRoute) {
+    return <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
 
   if (currentRoute === '/customer-landing') {
     return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
