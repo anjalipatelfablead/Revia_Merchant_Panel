@@ -16,7 +16,7 @@ const MobileBillingPage: React.FC = () => {
           <div className="flex items-center gap-3"><div className="relative"><span className="absolute -right-0.5 -top-1 h-1.5 w-1.5 rounded-full bg-[#C99B42]" /><Bell className="h-4 w-4 text-[#4F4842]" /></div><div className="h-8 w-8 overflow-hidden rounded-full border-2 border-[#C99B42]"><img src="https://i.pravatar.cc/80?img=47" alt="Account" className="h-full w-full object-cover" /></div></div>
         </header>
 
-        <div className="pt-3"><div className="flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#756D65]">Administration &amp; Quotas</div><h1 className="mt-2 text-[24px] font-extrabold leading-none tracking-[-0.06em]">Subscription &amp; Billing</h1><p className="mt-1 text-[12px] text-[#756D65]">Downtown Flagship &amp; Unified Venues</p></div><span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-[#B9F1CF] px-3 py-1 text-[11px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Active</span></div></div>
+        <div className="pt-3"><div className="flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#756D65]">Administration &amp; Quotas</div><h1 className="mt-2 text-[26px] font-extrabold leading-none tracking-[-0.06em]">Subscription &amp; Billing</h1><p className="mt-1 text-[14px] text-[#756D65]">Downtown Flagship &amp; Unified Venues</p></div><span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-[#B9F1CF] px-3 py-1 text-[11px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Active</span></div></div>
 
         <section className="mt-5 grid grid-cols-2 gap-3">
           <div className="rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]"><span>Current Plan</span><CreditCard className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-[30px] font-extrabold leading-none tracking-[-0.06em]">$389<span className="ml-1 text-[12px] font-normal tracking-normal text-[#756D65]">/mo</span></div><div className="mt-1 text-[11px] font-bold text-[#A8761C]">Enterprise Atelier</div></div>
@@ -52,8 +52,8 @@ export const BillingPage: React.FC = () => {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-start sm:gap-8">
         <div>
-          <h1 className="text-[25px] font-bold tracking-tight text-[#1A1615]">Subscription &amp; Billing Management</h1>
-          <p className="mt-1 max-w-[600px] text-xs leading-relaxed text-[#7C746C]">Manage your hospitality atelier subscription plan, connected branch licensing, POS seat quotas, and tax invoice history.</p>
+          <h1 className="text-[27px] font-bold tracking-tight text-[#1A1615]">Subscription &amp; Billing Management</h1>
+          <p className="mt-1 max-w-[600px] text-sm leading-relaxed text-[#7C746C]">Manage your hospitality atelier subscription plan, connected branch licensing, POS seat quotas, and tax invoice history.</p>
         </div>
         <div className="mt-1 flex items-center gap-2">
           <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-3 py-2 text-xs font-semibold text-[#4F4842] shadow-2xs hover:bg-[#F5F1EA]"><ReceiptText className="h-3.5 w-3.5 text-[#9E782F]" /> Download Tax Dossier (PDF)</button>

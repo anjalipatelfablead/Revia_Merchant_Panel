@@ -34,7 +34,7 @@ import { QrCodesPage } from './pages/QrCodesPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
-import { NotificationsPage } from './pages/NotificationsPage';
+import { NotificationPage } from './pages/NotificationPage';
 
 
 
@@ -136,7 +136,7 @@ export default function App() {
       />
 
       {/* Main Content Viewport (Starts right next to Sidebar, no overlap!) */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
         {/* Top Header */}
         <Header
           currentRoute={currentRoute}
@@ -146,7 +146,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'}`}>
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
@@ -221,7 +221,7 @@ export default function App() {
           )}
 
           {currentRoute === '/notifications' && (
-            <NotificationsPage />
+            <NotificationPage />
           )}
 
           {currentRoute === '/settings/audit' && (

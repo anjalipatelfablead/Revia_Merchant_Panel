@@ -39,6 +39,35 @@
   transform: translateY(0);
 }
 
+.page-text-scale .text-\[6px\] {
+  font-size: 8px !important;
+}
+
+.page-text-scale .text-\[7px\] {
+  font-size: 9px !important;
+}
+
+.page-text-scale .text-\[8px\] {
+  font-size: 10px !important;
+}
+
+.page-text-scale .text-\[9px\] {
+  font-size: 11px !important;
+}
+
+.page-text-scale .text-\[10px\] {
+  font-size: 12px !important;
+}
+
+.page-text-scale .text-\[11px\] {
+  font-size: 13px !important;
+}
+
+.page-text-scale .text-\[12px\],
+.page-text-scale .text-xs {
+  font-size: 14px !important;
+}
+
 /* Custom scrollbars for master-detail and sidebar */
 ::-webkit-scrollbar {
   width: 6px;
