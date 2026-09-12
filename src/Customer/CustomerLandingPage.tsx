@@ -431,7 +431,7 @@ export const CustomerLandingPage: React.FC<Props> = ({ onNavigate }) => {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => onNavigate?.('/customer-panel')}
+                onClick={() => onNavigate?.('/customer')}
                 className="group flex items-center justify-center gap-3 bg-[#C89B3C] hover:bg-[#a07520] text-white px-8 py-4 rounded-full text-sm font-black tracking-wide transition-all shadow-2xl shadow-[#C89B3C]/30"
               >
                 Join Loyalty <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -718,7 +718,7 @@ export const CustomerLandingPage: React.FC<Props> = ({ onNavigate }) => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => onNavigate?.('/customer-panel')}
+              onClick={() => onNavigate?.('/customer')}
               className="group flex items-center justify-center gap-3 bg-[#C89B3C] hover:bg-[#a07520] text-white px-10 py-4 rounded-full text-sm font-black tracking-wide transition-all shadow-2xl shadow-[#C89B3C]/30"
             >
               Join Loyalty <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

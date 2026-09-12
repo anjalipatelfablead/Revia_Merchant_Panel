@@ -93,16 +93,31 @@ export default function App() {
     return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  if (currentRoute.startsWith('/customer-panel')) {
+  if (currentRoute.startsWith('/customer')) {
     return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   // Render auth and onboarding pages directly as standalone
-  if (currentRoute === '/login' || currentRoute === '/onboarding') {
+  if (currentRoute === '/login') {
+    return (
+      <LoginPage 
+        onLoginSuccess={(role) => {
+          if (role === 'customer') {
+            handleNavigate('/customer');
+          } else {
+            handleNavigate('/dashboard');
+          }
+        }}
+        onGoToOnboarding={() => handleNavigate('/onboarding')}
+      />
+    );
+  }
+
+  if (currentRoute === '/onboarding') {
     return (
       <OnboardingPage
         onComplete={() => handleNavigate('/dashboard')}
-        onCancel={() => setStandaloneAuthView(false)}
+        onCancel={() => handleNavigate('/login')}
       />
     );
   }

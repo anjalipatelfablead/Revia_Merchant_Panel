@@ -67,13 +67,9 @@ export const CustomerHeader: React.FC<Props> = ({
             className={`text-sm font-bold transition-colors hover:text-[#B89454] ${actionBtnColor}`}
           >Sign In</button>
           <button
-            onClick={() => onNavigate?.('/customer-panel')}
-            className="bg-[#B89454] hover:bg-[#a07520] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-[#B89454]/25"
-          >Join Loyalty</button>
-          <button
             onClick={() => onNavigate?.('/onboarding')}
             className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${partnerBtnClass}`}
-          >Become Partner</button>
+          >Become a Partner</button>
         </div>
 
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`lg:hidden ${isLightMode ? 'text-[#222]' : 'text-white'}`}>
@@ -87,8 +83,7 @@ export const CustomerHeader: React.FC<Props> = ({
           ))}
           <div className="pt-4 border-t border-[#E5E5E5] flex flex-col gap-3">
             <button onClick={() => onNavigate?.('/login')} className="w-full py-3 rounded-full text-sm font-bold border border-[#E5E5E5] text-[#222]">Sign In</button>
-            <button onClick={() => onNavigate?.('/customer-panel')} className="w-full py-3 rounded-full text-sm font-bold bg-[#B89454] text-white">Join Loyalty</button>
-            <button onClick={() => onNavigate?.('/onboarding')} className="w-full py-3 rounded-full text-sm font-bold border border-[#222] text-[#222]">Become Partner</button>
+            <button onClick={() => onNavigate?.('/onboarding')} className="w-full py-3 rounded-full text-sm font-bold border border-[#222] text-[#222]">Become a Partner</button>
           </div>
         </div>
       )}
