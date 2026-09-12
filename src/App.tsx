@@ -129,6 +129,7 @@ export default function App() {
           if (role.startsWith('/')) {
             handleNavigate(role as NavRoute);
           } else if (role === 'customer') {
+            // Navigate to onboarding after successful customer login
             handleNavigate('/customer-onboarding');
           } else {
             handleNavigate('/dashboard');
