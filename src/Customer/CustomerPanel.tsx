@@ -101,12 +101,12 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
     };
 
     return (
-      <div className="min-h-screen flex flex-col pt-[70px]">
-        <CustomerHeader onNavigate={onNavigate} />
+      <div className={`min-h-screen flex flex-col ${preScreen === 'qr' ? '' : 'pt-[70px]'}`}>
+        {preScreen !== 'qr' && <CustomerHeader onNavigate={onNavigate} />}
         <div className="flex-1 flex flex-col">
           {renderPreScreen()}
         </div>
-        <CustomerFooter onNavigate={onNavigate} />
+        {preScreen !== 'qr' && <CustomerFooter onNavigate={onNavigate} />}
       </div>
     );
   }
