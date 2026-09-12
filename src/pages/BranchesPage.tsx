@@ -681,7 +681,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
               <span className="text-[10px] uppercase font-bold text-[#8C827A] tracking-wider block">
                 OPERATIONAL SNAPSHOT
               </span>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-[#8C827A] text-[11px] block">Hours</span>
                   <span className="font-semibold text-[#1A1615] mt-0.5 block leading-tight">

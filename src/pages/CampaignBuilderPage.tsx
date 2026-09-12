@@ -62,6 +62,11 @@ export const CampaignBuilderPage: React.FC = () => {
   const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
   const [rewardType, setRewardType] = useState<'Same' | 'Different'>('Same');
 
+  const [rewardSelection, setRewardSelection] = useState<string>('Free item / BOG');
+  const [redemptionLimit, setRedemptionLimit] = useState<string>('1 Time Only');
+  const [stackingControl, setStackingControl] = useState<boolean>(true);
+  const [expirationWindow, setExpirationWindow] = useState<string>('Dynamic Qualification Window');
+
   type RuleType = 'standard1' | 'standard2' | 'bogo' | 'orGroup';
   interface RuleItem { id: number; type: RuleType; }
   const [rulesList, setRulesList] = useState<RuleItem[]>([
@@ -1120,42 +1125,32 @@ export const CampaignBuilderPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <button className="pt-5 pb-4 px-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-center hover:bg-[#EFECE6] transition-colors flex flex-col items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"><Percent className="w-4 h-4 text-[#9E9A93]" /></div>
-              <div>
-                <div className="text-[12px] font-bold text-[#1A1615]">Discount %</div>
-                <div className="text-[10px] font-medium text-[#6E6A66] mt-0.5">% off order</div>
-              </div>
-            </button>
-            <button className="pt-5 pb-4 px-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-center hover:bg-[#EFECE6] transition-colors flex flex-col items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"><DollarSign className="w-4 h-4 text-[#9E9A93]" /></div>
-              <div>
-                <div className="text-[12px] font-bold text-[#1A1615]">Fixed $</div>
-                <div className="text-[10px] font-medium text-[#6E6A66] mt-0.5">Direct bill credit</div>
-              </div>
-            </button>
-            <button className="pt-5 pb-4 px-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-center hover:bg-[#EFECE6] transition-colors flex flex-col items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"><Activity className="w-4 h-4 text-[#9E9A93]" /></div>
-              <div>
-                <div className="text-[12px] font-bold text-[#1A1615]">Cashback</div>
-                <div className="text-[10px] font-medium text-[#6E6A66] mt-0.5">Wallet credit</div>
-              </div>
-            </button>
-            <button className="pt-5 pb-4 px-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-center hover:bg-[#EFECE6] transition-colors flex flex-col items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm"><Star className="w-4 h-4 text-[#9E9A93]" /></div>
-              <div>
-                <div className="text-[12px] font-bold text-[#1A1615]">Points</div>
-                <div className="text-[10px] font-medium text-[#6E6A66] mt-0.5">Multipliers</div>
-              </div>
-            </button>
-            <button className="pt-5 pb-4 px-3 bg-[#FDF8EB] border-2 border-[#D4A753] rounded-xl text-center flex flex-col items-center gap-3 relative shadow-sm">
-              <div className="absolute -top-2.5 right-1/2 translate-x-1/2 bg-[#D4A753] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-sm">ACTIVE</div>
-              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm border border-[#F3E5C8]"><Zap className="w-4 h-4 text-[#D4A753]" /></div>
-              <div>
-                <div className="text-[12px] font-bold text-[#1A1615]">Free item / BOG</div>
-                <div className="text-[10px] font-medium text-[#9E782F] mt-0.5">Complimentary bean</div>
-              </div>
-            </button>
+            {[
+              { id: 'Discount %', label: '% off order', icon: Percent },
+              { id: 'Fixed $', label: 'Direct bill credit', icon: DollarSign },
+              { id: 'Cashback', label: 'Wallet credit', icon: Activity },
+              { id: 'Points', label: 'Multipliers', icon: Star },
+              { id: 'Free item / BOG', label: 'Complimentary bean', icon: Zap }
+            ].map(option => {
+              const isActive = rewardSelection === option.id;
+              const Icon = option.icon;
+              return (
+                <button 
+                  key={option.id} 
+                  onClick={() => setRewardSelection(option.id)}
+                  className={`pt-5 pb-4 px-3 rounded-xl text-center transition-colors flex flex-col items-center gap-3 cursor-pointer ${isActive ? 'bg-[#FDF8EB] border-2 border-[#D4A753] shadow-sm relative' : 'bg-[#FAF8F5] border border-[#EFECE6] hover:bg-[#EFECE6]'}`}
+                >
+                  {isActive && <div className="absolute -top-2.5 right-1/2 translate-x-1/2 bg-[#D4A753] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-sm">ACTIVE</div>}
+                  <div className={`w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm ${isActive ? 'border border-[#F3E5C8]' : ''}`}>
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#D4A753]' : 'text-[#9E9A93]'}`} />
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-bold text-[#1A1615]">{option.id}</div>
+                    <div className={`text-[10px] font-medium mt-0.5 ${isActive ? 'text-[#9E782F]' : 'text-[#6E6A66]'}`}>{option.label}</div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
 
           <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
@@ -1217,9 +1212,9 @@ export const CampaignBuilderPage: React.FC = () => {
           <div>
             <span className="text-[11px] font-bold text-[#1A1615] block mb-2">Redemptions per Qualifying Guest</span>
             <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1.5 mb-2">
-              <button className="flex-1 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white rounded-md text-[12px] font-bold shadow-sm">1 Time Only</button>
-              <button className="flex-1 py-2 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md text-[12px] font-bold transition-colors">Once per Week</button>
-              <button className="flex-1 py-2 text-[#6E6A66] hover:bg-[#EFECE6] rounded-md text-[12px] font-bold transition-colors">Unlimited Window</button>
+              <button onClick={() => setRedemptionLimit('1 Time Only')} className={`flex-1 py-2 rounded-md text-[12px] font-bold transition-colors cursor-pointer ${redemptionLimit === '1 Time Only' ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>1 Time Only</button>
+              <button onClick={() => setRedemptionLimit('Once per Week')} className={`flex-1 py-2 rounded-md text-[12px] font-bold transition-colors cursor-pointer ${redemptionLimit === 'Once per Week' ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Once per Week</button>
+              <button onClick={() => setRedemptionLimit('Unlimited Window')} className={`flex-1 py-2 rounded-md text-[12px] font-bold transition-colors cursor-pointer ${redemptionLimit === 'Unlimited Window' ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Unlimited Window</button>
             </div>
             <p className="text-[10px] font-medium text-[#6E6A66]">Once redeemed, the coupon barcode will automatically burn in patron mobile wallet.</p>
           </div>
@@ -1264,7 +1259,9 @@ export const CampaignBuilderPage: React.FC = () => {
               </div>
               <p className="text-[10px] font-medium text-[#6E6A66]">Prevent stacking with Member Loyalty punch cards, Happy Hour discounts, and general voucher redemptions.</p>
             </div>
-            <div className="w-10 h-6 bg-[#EFECE6] rounded-full relative cursor-pointer shrink-0"><div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5 shadow-sm"></div></div>
+            <div onClick={() => setStackingControl(!stackingControl)} className={`w-10 h-6 rounded-full relative cursor-pointer shrink-0 transition-colors ${stackingControl ? 'bg-[#0D7A53]' : 'bg-[#EFECE6]'}`}>
+              <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-all ${stackingControl ? 'translate-x-4' : 'left-0.5'}`}></div>
+            </div>
           </div>
         </div>
 
@@ -1282,13 +1279,13 @@ export const CampaignBuilderPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-[#FDF8EB] border-2 border-[#D4A753] rounded-xl p-5 relative shadow-sm">
+            <div onClick={() => setExpirationWindow('Dynamic Qualification Window')} className={`border-2 rounded-xl p-5 relative shadow-sm cursor-pointer transition-all ${expirationWindow === 'Dynamic Qualification Window' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-[#FAF8F5] border-[#EFECE6] opacity-60 grayscale hover:grayscale-0 hover:opacity-100'}`}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-white border-4 border-[#D4A753]"></div>
+                  <div className={`w-4 h-4 rounded-full bg-white border ${expirationWindow === 'Dynamic Qualification Window' ? 'border-4 border-[#D4A753]' : 'border-[#D1CDC7]'}`}></div>
                   <span className="text-[12px] font-bold text-[#1A1615]">Dynamic Qualification Window</span>
                 </div>
-                <span className="text-[9px] font-bold tracking-widest text-[#9E782F] uppercase">STANDARD</span>
+                {expirationWindow === 'Dynamic Qualification Window' && <span className="text-[9px] font-bold tracking-widest text-[#9E782F] uppercase">STANDARD</span>}
               </div>
               <p className="text-[10px] font-medium text-[#6E6A66] mb-4 h-8 leading-relaxed">Patron gets an individual rolling timer starting the moment qualification condition is met.</p>
               <div className="flex items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg px-3 py-2 shadow-sm mb-3">
@@ -1300,10 +1297,10 @@ export const CampaignBuilderPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer">
+            <div onClick={() => setExpirationWindow('Fixed Calendar Deadline')} className={`border-2 rounded-xl p-5 relative shadow-sm cursor-pointer transition-all ${expirationWindow === 'Fixed Calendar Deadline' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-[#FAF8F5] border-[#EFECE6] opacity-60 grayscale hover:grayscale-0 hover:opacity-100'}`}>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-white border border-[#D1CDC7]"></div>
+                  <div className={`w-4 h-4 rounded-full bg-white border ${expirationWindow === 'Fixed Calendar Deadline' ? 'border-4 border-[#D4A753]' : 'border-[#D1CDC7]'}`}></div>
                   <span className="text-[12px] font-bold text-[#1A1615]">Fixed Calendar Deadline</span>
                 </div>
               </div>
