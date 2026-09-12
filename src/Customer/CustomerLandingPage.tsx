@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   QrCode, ArrowRight, CheckCircle2, Star, Shield,
   Smartphone, Gift, Clock, ChevronRight, Menu, X,
-  Zap, RefreshCw, Eye, Lock, Bell, TrendingUp
+  Zap, RefreshCw, Eye, Lock, Bell, TrendingUp, Users
 } from 'lucide-react';
 import { CustomerHeader } from './components/shared/CustomerHeader';
 import { CustomerFooter } from './components/shared/CustomerFooter';
@@ -20,7 +20,7 @@ const GoldBadge = ({ children }: { children: React.ReactNode }) => (
 );
 
 const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex items-center gap-3 mb-5">
+  <div className="flex items-center justify-center gap-3 mb-5">
     <div className="w-5 h-px bg-[#C89B3C]" />
     <span className="text-[#C89B3C] text-[10px] font-black uppercase tracking-[0.25em]">{children}</span>
   </div>
@@ -52,7 +52,7 @@ const journeySteps = [
         <div className="w-12 h-12 bg-[#C89B3C] rounded-xl flex items-center justify-center mb-3 shadow-lg">
           <span className="text-white font-black text-xl">R</span>
         </div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-[#222] mb-1">Revia Coffee</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-[#222] mb-1">Your Business</p>
         <p className="text-[9px] text-[#999] mb-4">Downtown Branch</p>
         <div className="w-24 h-24 bg-white border-2 border-[#E5E5E5] rounded-2xl flex items-center justify-center mb-4 shadow-sm">
           <QrCode className="w-14 h-14 text-[#222]" />
@@ -73,7 +73,7 @@ const journeySteps = [
           <div className="w-10 h-10 bg-[#C89B3C] rounded-xl flex items-center justify-center mb-2">
             <span className="text-white font-black text-base">R</span>
           </div>
-          <p className="text-white font-bold text-sm">Revia Coffee</p>
+          <p className="text-white font-bold text-sm">Your Business</p>
           <p className="text-white/50 text-[9px]">Loyalty Program</p>
         </div>
         <div className="flex-1 px-4 py-4">
@@ -111,7 +111,7 @@ const journeySteps = [
         <div className="border-t border-[#E5E5E5] pt-3">
           <p className="text-[9px] text-[#999] text-center mb-2">Enter 6-digit OTP</p>
           <div className="grid grid-cols-6 gap-1 mb-2">
-            {['4','2','·','·','·','·'].map((d,i) => (
+            {['4', '2', '·', '·', '·', '·'].map((d, i) => (
               <div key={i} className={`h-7 rounded-lg flex items-center justify-center text-xs font-black border ${d !== '·' ? 'border-[#C89B3C] bg-[#C89B3C]/5 text-[#222]' : 'border-[#E5E5E5] text-transparent'}`}>{d !== '·' ? d : '—'}</div>
             ))}
           </div>
@@ -186,7 +186,7 @@ const journeySteps = [
           <Star className="w-7 h-7 text-white fill-current" />
         </div>
         <p className="text-sm font-black text-[#222] mb-1">Join Loyalty</p>
-        <p className="text-[9px] text-[#666] mb-3 leading-relaxed">Revia Coffee Rewards Program<br/>Earn 1 stamp per qualifying visit</p>
+        <p className="text-[9px] text-[#666] mb-3 leading-relaxed">Your Business Rewards Program<br />Earn 1 stamp per qualifying visit</p>
         <div className="w-full bg-[#F8F8F6] rounded-xl p-3 mb-4 text-left border border-[#E5E5E5]">
           <p className="text-[8px] font-black uppercase text-[#C89B3C] mb-1">Welcome Benefit</p>
           <p className="text-[10px] font-bold text-[#222]">🎁 Double stamps on your first visit</p>
@@ -198,191 +198,169 @@ const journeySteps = [
       </div>
     ),
   },
-  {
-    num: '07', title: 'Track Your Progress', icon: TrendingUp,
-    desc: 'Your beautiful digital loyalty card shows current stamps, next reward and recent activity.',
-    mockup: (
-      <div className="flex flex-col h-full bg-[#F8F8F6] p-3">
-        <div className="bg-gradient-to-br from-[#222] to-[#3a3a3a] rounded-2xl p-4 mb-3 text-white shadow-lg">
-          <div className="flex justify-between items-start mb-3">
-            <div>
-              <p className="text-[8px] font-black uppercase tracking-widest text-white/50">REVIA LOYALTY</p>
-              <p className="text-sm font-black">Revia Coffee</p>
-            </div>
-            <div className="text-right">
-              <p className="text-[8px] text-white/50">Progress</p>
-              <p className="text-base font-black text-[#C89B3C]">8 / 10</p>
-            </div>
-          </div>
-          <div className="flex gap-1 mb-2">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className={`flex-1 h-5 rounded-md flex items-center justify-center text-[8px] font-black ${i < 8 ? 'bg-[#C89B3C] text-white' : 'bg-white/10 text-white/30'}`}>
-                {i < 8 ? '●' : '○'}
-              </div>
-            ))}
-          </div>
-          <p className="text-[8px] text-white/60">2 more qualifying events to your reward</p>
-        </div>
-        <div className="bg-white rounded-xl p-3 border border-[#E5E5E5]">
-          <p className="text-[8px] font-black uppercase tracking-wider text-[#666] mb-2">Recent Activity</p>
-          {[{ label: 'Visit recorded', date: 'Today', pts: '+1' }, { label: 'Visit recorded', date: 'Mon', pts: '+1' }].map((a, i) => (
-            <div key={i} className="flex justify-between items-center py-1 border-b border-[#F5F5F5] last:border-0">
-              <p className="text-[9px] text-[#444] font-medium">{a.label}</p>
-              <div className="text-right"><p className="text-[9px] font-black text-[#C89B3C]">{a.pts}</p><p className="text-[8px] text-[#999]">{a.date}</p></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    ),
-  },
-  {
-    num: '08', title: 'Discover Your Offers', icon: Gift,
-    desc: 'See active offers and campaigns that are applicable to you based on your profile and activity.',
-    mockup: (
-      <div className="flex flex-col h-full bg-[#F8F8F6] p-3 gap-2">
-        {[
-          { tag: 'Loyalty Offer', title: 'Double Stamps Weekend', desc: 'Valid Sat–Sun only', badge: 'Active', color: '#C89B3C' },
-          { tag: 'Special Offer', title: 'Buy 1 Get 1 Free', desc: 'Downtown Branch · Expires 30 Sep', badge: 'New', color: '#0D7A53' },
-        ].map((o, i) => (
-          <div key={i} className="bg-white rounded-xl border border-[#E5E5E5] overflow-hidden shadow-sm">
-            <div className="h-14 bg-gradient-to-r from-[#222] to-[#333] flex items-center justify-between px-3">
-              <span className="text-[8px] font-black text-white/60 uppercase tracking-wider">{o.tag}</span>
-              <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full" style={{ background: o.color, color: '#fff' }}>{o.badge}</span>
-            </div>
-            <div className="p-2.5">
-              <p className="text-[10px] font-black text-[#222] mb-0.5">{o.title}</p>
-              <p className="text-[8px] text-[#999] mb-2">{o.desc}</p>
-              <button className="text-[9px] font-black text-[#C89B3C] flex items-center gap-1">View Offer <ChevronRight className="w-2.5 h-2.5" /></button>
-            </div>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    num: '09', title: 'Build Loyalty Through Activity', icon: CheckCircle2,
-    desc: 'Your qualifying activity updates your loyalty progress. Track every interaction in real time.',
-    mockup: (
-      <div className="flex flex-col h-full bg-white px-4 py-4">
-        <p className="text-xs font-black text-[#222] mb-1">Activity Update</p>
-        <div className="bg-[#F0FFF8] border border-[#BCE3D1] rounded-xl p-3 mb-3">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckCircle2 className="w-4 h-4 text-[#0D7A53]" />
-            <p className="text-[10px] font-black text-[#0D7A53]">Visit Recorded!</p>
-          </div>
-          <p className="text-[9px] text-[#666]">Revia Coffee · Downtown Branch</p>
-          <p className="text-[8px] text-[#999]">Today · 2:34 PM</p>
-        </div>
-        <div className="bg-[#F8F8F6] rounded-xl p-3 mb-3 border border-[#E5E5E5]">
-          <p className="text-[8px] font-black uppercase tracking-wider text-[#C89B3C] mb-1">Loyalty Updated</p>
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-black text-[#222]">8 → 9 / 10 stamps</p>
-            <span className="text-[9px] font-black text-white bg-[#C89B3C] px-1.5 py-0.5 rounded-full">+1</span>
-          </div>
-          <div className="mt-2 bg-[#E5E5E5] h-1.5 rounded-full overflow-hidden">
-            <div className="bg-[#C89B3C] w-[90%] h-full rounded-full" />
-          </div>
-        </div>
-        <p className="text-[9px] text-[#666] text-center bg-[#F8F8F6] rounded-lg p-2">1 more visit to unlock your reward 🎉</p>
-      </div>
-    ),
-  },
-  {
-    num: '10', title: 'Unlock Your Reward', icon: Gift,
-    desc: 'When an eligible campaign or loyalty rule is satisfied, your reward becomes available instantly.',
-    mockup: (
-      <div className="flex flex-col items-center h-full bg-white px-4 py-5 text-center">
-        <div className="relative mb-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-[#C89B3C] to-[#a07520] rounded-full flex items-center justify-center shadow-xl">
-            <Gift className="w-8 h-8 text-white" />
-          </div>
-          <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#0D7A53] rounded-full flex items-center justify-center">
-            <CheckCircle2 className="w-3 h-3 text-white" />
-          </div>
-        </div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-[#C89B3C] mb-1">Congratulations!</p>
-        <p className="text-sm font-black text-[#222] mb-1">You Earned a Reward!</p>
-        <div className="w-full bg-[#F8F8F6] border border-[#E5E5E5] rounded-xl p-3 mb-3 text-left">
-          <p className="text-[8px] text-[#999] mb-0.5">Your Reward</p>
-          <p className="text-lg font-black text-[#222]">10% OFF</p>
-          <p className="text-[9px] text-[#666]">Any purchase · Valid until 30 Sep</p>
-          <p className="text-[8px] text-[#C89B3C] font-bold mt-1">REV-8924-ABCD</p>
-        </div>
-        <button className="w-full bg-[#C89B3C] text-white text-[10px] font-black py-2.5 rounded-xl">View Reward →</button>
-      </div>
-    ),
-  },
-  {
-    num: '11', title: 'Keep All Rewards in One Place', icon: Eye,
-    desc: 'Your Rewards Wallet keeps all available, redeemed, expired and voided rewards organised.',
-    mockup: (
-      <div className="flex flex-col h-full bg-[#F8F8F6] p-3">
-        <div className="flex gap-1.5 mb-3">
-          {['Available', 'Redeemed', 'Expired'].map((t, i) => (
-            <button key={t} className={`text-[8px] font-black px-2 py-1 rounded-full ${i === 0 ? 'bg-[#222] text-white' : 'bg-white border border-[#E5E5E5] text-[#666]'}`}>{t}</button>
-          ))}
-        </div>
-        {[{ title: '10% OFF', src: 'Loyalty Reward', val: 'Any purchase', exp: 'Exp 30 Sep', status: 'Available' }].map((r, i) => (
-          <div key={i} className="bg-white rounded-xl border border-[#E5E5E5] overflow-hidden shadow-sm">
-            <div className="h-12 bg-gradient-to-r from-[#C89B3C] to-[#a07520] flex items-center justify-center">
-              <p className="text-xl font-black text-white">{r.title}</p>
-            </div>
-            <div className="p-3">
-              <p className="text-[8px] text-[#999] font-medium">{r.src}</p>
-              <p className="text-[10px] font-bold text-[#222] mb-0.5">{r.val}</p>
-              <div className="flex justify-between items-center mt-1">
-                <p className="text-[8px] text-[#999]">{r.exp}</p>
-                <button className="text-[8px] font-black text-[#C89B3C] border border-[#C89B3C] px-2 py-0.5 rounded-full">Show QR</button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    num: '12', title: 'Redeem With a Simple QR', icon: QrCode,
-    desc: 'Show your reward QR or code at the counter when you\'re ready. Staff validates instantly.',
-    mockup: (
-      <div className="flex flex-col items-center h-full bg-white px-4 py-5 text-center">
-        <p className="text-[8px] font-black uppercase tracking-widest text-[#C89B3C] mb-1">Show at Counter</p>
-        <p className="text-xs font-black text-[#222] mb-3">10% OFF — Any Purchase</p>
-        <div className="w-28 h-28 bg-[#F8F8F6] border-2 border-[#C89B3C] rounded-2xl flex items-center justify-center mb-3 shadow-sm">
-          <QrCode className="w-20 h-20 text-[#222]" />
-        </div>
-        <div className="bg-[#F8F8F6] rounded-lg px-3 py-1.5 mb-3 border border-[#E5E5E5]">
-          <p className="text-[10px] font-black tracking-widest text-[#222] font-mono">REV-8924-ABCD</p>
-        </div>
-        <div className="flex items-center gap-1 text-[8px] text-[#0D7A53] font-bold bg-[#F0FFF8] border border-[#BCE3D1] rounded-full px-3 py-1 mb-2">
-          <div className="w-1.5 h-1.5 bg-[#0D7A53] rounded-full animate-pulse" />
-          Available · Valid until 30 Sep
-        </div>
-        <p className="text-[8px] text-[#999]">Revia Coffee · Downtown Branch only</p>
-      </div>
-    ),
-  },
-  {
-    num: '13', title: 'Reward Redeemed', icon: CheckCircle2,
-    desc: 'Clear confirmation once your reward has been successfully validated and redeemed.',
-    mockup: (
-      <div className="flex flex-col items-center h-full bg-white px-4 py-5 text-center">
-        <div className="w-16 h-16 bg-[#0D7A53] rounded-full flex items-center justify-center mb-4 shadow-lg">
-          <CheckCircle2 className="w-9 h-9 text-white" />
-        </div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-[#0D7A53] mb-1">Success</p>
-        <p className="text-sm font-black text-[#222] mb-4">Reward Redeemed!</p>
-        <div className="w-full bg-[#F8F8F6] rounded-xl border border-[#E5E5E5] p-3 text-left space-y-1.5 mb-3">
-          {[['Reward', '10% OFF'], ['Business', 'Revia Coffee'], ['Branch', 'Downtown Branch'], ['Time', 'Today, 7:42 PM'], ['Ref', 'RDM-20260911-001']].map(([k, v]) => (
-            <div key={k} className="flex justify-between text-[9px]">
-              <span className="text-[#999]">{k}</span>
-              <span className="text-[#222] font-bold">{v}</span>
-            </div>
-          ))}
-        </div>
-        <button className="w-full border border-[#E5E5E5] text-[#666] text-[10px] font-bold py-2 rounded-xl">View History</button>
-      </div>
-    ),
-  },
+  // {
+  //   num: '07', title: 'Track Your Progress', icon: TrendingUp,
+  //   desc: 'Your beautiful digital loyalty card shows current stamps, next reward and recent activity.',
+  //   mockup: (
+  //     <div className="flex flex-col h-full bg-[#F8F8F6] p-3">
+  //       <div className="bg-gradient-to-br from-[#222] to-[#3a3a3a] rounded-2xl p-4 mb-3 text-white shadow-lg">
+  //         <div className="flex justify-between items-start mb-3">
+  //           <div>
+  //             <p className="text-[8px] font-black uppercase tracking-widest text-white/50">REVIA LOYALTY</p>
+  //             <p className="text-sm font-black">Your Business</p>
+  //           </div>
+  //           <div className="text-right">
+  //             <p className="text-[8px] text-white/50">Progress</p>
+  //             <p className="text-base font-black text-[#C89B3C]">8 / 10</p>
+  //           </div>
+  //         </div>
+  //         <div className="flex gap-1 mb-2">
+  //           {Array.from({ length: 10 }).map((_, i) => (
+  //             <div key={i} className={`flex-1 h-5 rounded-md flex items-center justify-center text-[8px] font-black ${i < 8 ? 'bg-[#C89B3C] text-white' : 'bg-white/10 text-white/30'}`}>
+  //               {i < 8 ? '●' : '○'}
+  //             </div>
+  //           ))}
+  //         </div>
+  //         <p className="text-[8px] text-white/60">2 more qualifying events to your reward</p>
+  //       </div>
+  //       <div className="bg-white rounded-xl p-3 border border-[#E5E5E5]">
+  //         <p className="text-[8px] font-black uppercase tracking-wider text-[#666] mb-2">Recent Activity</p>
+  //         {[{ label: 'Visit recorded', date: 'Today', pts: '+1' }, { label: 'Visit recorded', date: 'Mon', pts: '+1' }].map((a, i) => (
+  //           <div key={i} className="flex justify-between items-center py-1 border-b border-[#F5F5F5] last:border-0">
+  //             <p className="text-[9px] text-[#444] font-medium">{a.label}</p>
+  //             <div className="text-right"><p className="text-[9px] font-black text-[#C89B3C]">{a.pts}</p><p className="text-[8px] text-[#999]">{a.date}</p></div>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   num: '08', title: 'Discover Your Offers', icon: Gift,
+  //   desc: 'See active offers and campaigns that are applicable to you based on your profile and activity.',
+  //   mockup: (
+  //     <div className="flex flex-col h-full bg-[#F8F8F6] p-3 gap-2">
+  //       {[
+  //         { tag: 'Loyalty Offer', title: 'Double Stamps Weekend', desc: 'Valid Sat–Sun only', badge: 'Active', color: '#C89B3C' },
+  //         { tag: 'Special Offer', title: 'Buy 1 Get 1 Free', desc: 'Downtown Branch · Expires 30 Sep', badge: 'New', color: '#0D7A53' },
+  //       ].map((o, i) => (
+  //         <div key={i} className="bg-white rounded-xl border border-[#E5E5E5] overflow-hidden shadow-sm">
+  //           <div className="h-14 bg-gradient-to-r from-[#222] to-[#333] flex items-center justify-between px-3">
+  //             <span className="text-[8px] font-black text-white/60 uppercase tracking-wider">{o.tag}</span>
+  //             <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full" style={{ background: o.color, color: '#fff' }}>{o.badge}</span>
+  //           </div>
+  //           <div className="p-2.5">
+  //             <p className="text-[10px] font-black text-[#222] mb-0.5">{o.title}</p>
+  //             <p className="text-[8px] text-[#999] mb-2">{o.desc}</p>
+  //             <button className="text-[9px] font-black text-[#C89B3C] flex items-center gap-1">View Offer <ChevronRight className="w-2.5 h-2.5" /></button>
+  //           </div>
+  //         </div>
+  //       ))}
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   num: '09', title: 'Build Loyalty Through Activity', icon: CheckCircle2,
+  //   desc: 'Your qualifying activity updates your loyalty progress. Track every interaction in real time.',
+  //   mockup: (
+  //     <div className="flex flex-col h-full bg-white px-4 py-4">
+  //       <p className="text-xs font-black text-[#222] mb-1">Activity Update</p>
+  //       <div className="bg-[#F0FFF8] border border-[#BCE3D1] rounded-xl p-3 mb-3">
+  //         <div className="flex items-center gap-2 mb-2">
+  //           <CheckCircle2 className="w-4 h-4 text-[#0D7A53]" />
+  //           <p className="text-[10px] font-black text-[#0D7A53]">Visit Recorded!</p>
+  //         </div>
+  //         <p className="text-[9px] text-[#666]">Your Business · Downtown Branch</p>
+  //         <p className="text-[8px] text-[#999]">Today · 2:34 PM</p>
+  //       </div>
+  //       <div className="bg-[#F8F8F6] rounded-xl p-3 mb-3 border border-[#E5E5E5]">
+  //         <p className="text-[8px] font-black uppercase tracking-wider text-[#C89B3C] mb-1">Loyalty Updated</p>
+  //         <div className="flex items-center justify-between">
+  //           <p className="text-xs font-black text-[#222]">8 → 9 / 10 stamps</p>
+  //           <span className="text-[9px] font-black text-white bg-[#C89B3C] px-1.5 py-0.5 rounded-full">+1</span>
+  //         </div>
+  //         <div className="mt-2 bg-[#E5E5E5] h-1.5 rounded-full overflow-hidden">
+  //           <div className="bg-[#C89B3C] w-[90%] h-full rounded-full" />
+  //         </div>
+  //       </div>
+  //       <p className="text-[9px] text-[#666] text-center bg-[#F8F8F6] rounded-lg p-2">1 more visit to unlock your reward 🎉</p>
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   num: '10', title: 'Unlock Your Reward', icon: Gift,
+  //   desc: 'When an eligible campaign or loyalty rule is satisfied, your reward becomes available instantly.',
+  //   mockup: (
+  //     <div className="flex flex-col items-center h-full bg-white px-4 py-5 text-center">
+  //       <div className="relative mb-4">
+  //         <div className="w-16 h-16 bg-gradient-to-br from-[#C89B3C] to-[#a07520] rounded-full flex items-center justify-center shadow-xl">
+  //           <Gift className="w-8 h-8 text-white" />
+  //         </div>
+  //         <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#0D7A53] rounded-full flex items-center justify-center">
+  //           <CheckCircle2 className="w-3 h-3 text-white" />
+  //         </div>
+  //       </div>
+  //       <p className="text-[10px] font-black uppercase tracking-widest text-[#C89B3C] mb-1">Congratulations!</p>
+  //       <p className="text-sm font-black text-[#222] mb-1">You Earned a Reward!</p>
+  //       <div className="w-full bg-[#F8F8F6] border border-[#E5E5E5] rounded-xl p-3 mb-3 text-left">
+  //         <p className="text-[8px] text-[#999] mb-0.5">Your Reward</p>
+  //         <p className="text-lg font-black text-[#222]">10% OFF</p>
+  //         <p className="text-[9px] text-[#666]">Any purchase · Valid until 30 Sep</p>
+  //         <p className="text-[8px] text-[#C89B3C] font-bold mt-1">REV-8924-ABCD</p>
+  //       </div>
+  //       <button className="w-full bg-[#C89B3C] text-white text-[10px] font-black py-2.5 rounded-xl">View Reward →</button>
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   num: '11', title: 'Keep All Rewards in One Place', icon: Eye,
+  //   desc: 'Your Rewards Wallet keeps all available, redeemed, expired and voided rewards organised.',
+  //   mockup: (
+  //     <div className="flex flex-col h-full bg-[#F8F8F6] p-3">
+  //       <div className="flex gap-1.5 mb-3">
+  //         {['Available', 'Redeemed', 'Expired'].map((t, i) => (
+  //           <button key={t} className={`text-[8px] font-black px-2 py-1 rounded-full ${i === 0 ? 'bg-[#222] text-white' : 'bg-white border border-[#E5E5E5] text-[#666]'}`}>{t}</button>
+  //         ))}
+  //       </div>
+  //       {[{ title: '10% OFF', src: 'Loyalty Reward', val: 'Any purchase', exp: 'Exp 30 Sep', status: 'Available' }].map((r, i) => (
+  //         <div key={i} className="bg-white rounded-xl border border-[#E5E5E5] overflow-hidden shadow-sm">
+  //           <div className="h-12 bg-gradient-to-r from-[#C89B3C] to-[#a07520] flex items-center justify-center">
+  //             <p className="text-xl font-black text-white">{r.title}</p>
+  //           </div>
+  //           <div className="p-3">
+  //             <p className="text-[8px] text-[#999] font-medium">{r.src}</p>
+  //             <p className="text-[10px] font-bold text-[#222] mb-0.5">{r.val}</p>
+  //             <div className="flex justify-between items-center mt-1">
+  //               <p className="text-[8px] text-[#999]">{r.exp}</p>
+  //               <button className="text-[8px] font-black text-[#C89B3C] border border-[#C89B3C] px-2 py-0.5 rounded-full">Show QR</button>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       ))}
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   num: '12', title: 'Redeem Your Reward', icon: QrCode,
+  //   desc: 'Show your reward QR at the counter. Staff validates instantly and you get clear confirmation of redemption.',
+  //   mockup: (
+  //     <div className="flex flex-col items-center h-full bg-white px-4 py-5 text-center">
+  //       <p className="text-[8px] font-black uppercase tracking-widest text-[#C89B3C] mb-1">Show at Counter</p>
+  //       <p className="text-xs font-black text-[#222] mb-3">10% OFF — Any Purchase</p>
+  //       <div className="w-28 h-28 bg-[#F8F8F6] border-2 border-[#C89B3C] rounded-2xl flex items-center justify-center mb-3 shadow-sm">
+  //         <QrCode className="w-20 h-20 text-[#222]" />
+  //       </div>
+  //       <div className="bg-[#F8F8F6] rounded-lg px-3 py-1.5 mb-3 border border-[#E5E5E5]">
+  //         <p className="text-[10px] font-black tracking-widest text-[#222] font-mono">REV-8924-ABCD</p>
+  //       </div>
+  //       <div className="flex items-center gap-1 text-[8px] text-[#0D7A53] font-bold bg-[#F0FFF8] border border-[#BCE3D1] rounded-full px-3 py-1 mb-2">
+  //         <div className="w-1.5 h-1.5 bg-[#0D7A53] rounded-full animate-pulse" />
+  //         Redeemed Successfully
+  //       </div>
+  //       <p className="text-[8px] text-[#999]">Your Business · Downtown Branch</p>
+  //     </div>
+  //   ),
+  // },
 ];
 
 const benefits = [
@@ -413,55 +391,70 @@ export const CustomerLandingPage: React.FC<Props> = ({ onNavigate }) => {
       <CustomerHeader onNavigate={onNavigate} />
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0D0B0A]">
+      <section className="relative py-16 pt-20 flex items-center overflow-hidden bg-[#0D0B0A]">
         <div className="absolute inset-0">
           <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=90&w=2400" alt="" className="w-full h-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0D0B0A] via-[#0D0B0A]/70 to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 pt-28 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8 pt-6 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full">
           {/* Text */}
           <div>
-            <GoldBadge><QrCode className="w-3 h-3" /> No App Download Required</GoldBadge>
-            <h1 className="mt-8 text-5xl lg:text-7xl font-black text-white leading-[0.95] tracking-tight">
-              Scan.<br />Join.<br />Earn.<br /><span className="text-[#C89B3C]">Come Back.</span>
+            <GoldBadge><Gift className="w-3 h-3" /> No App Download Required</GoldBadge>
+            <h1 className="mt-8 text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-tight">
+              Scan. Join. Earn.<br /><span className="text-[#C89B3C]">Come Back.</span>
             </h1>
-            <p className="mt-8 text-lg text-white/50 leading-relaxed max-w-md">
+            <p className="mt-6 text-base md:text-lg text-white/70 leading-relaxed max-w-md">
               Discover loyalty benefits, unlock relevant offers, earn rewards and keep track of your activity — all from a simple mobile experience.
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => onNavigate?.('/customer-panel')}
-                className="group flex items-center justify-center gap-3 bg-[#C89B3C] hover:bg-[#a07520] text-white px-8 py-4 rounded-full text-sm font-black tracking-wide transition-all shadow-2xl shadow-[#C89B3C]/30"
+                className="group cursor-pointer flex items-center justify-center gap-3 bg-[#C89B3C] hover:bg-[#a07520] text-white px-8 py-3.5 rounded-full text-sm font-black tracking-wide transition-all shadow-2xl shadow-[#C89B3C]/30"
               >
                 Join Loyalty <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-4 rounded-full text-sm font-bold tracking-wide transition-all">
-                See How It Works
+              <button className="group flex cursor-pointer items-center justify-center gap-3 bg-transparent hover:bg-white/10 border border-white/60 hover:border-white text-white px-8 py-3.5 rounded-full text-sm font-bold tracking-wide transition-all">
+                See How It Works <ArrowRight className="w-4 h-4 text-[#C89B3C] group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
-            <div className="mt-8 flex items-center gap-2 text-white/30 text-sm">
-              <Smartphone className="w-4 h-4" />
-              <span>Works on any mobile browser · No download needed</span>
+
+            <div className="mt-10 grid grid-cols-3 gap-2 sm:flex sm:flex-row items-start sm:items-center sm:gap-6 text-white text-xs font-semibold">
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left">
+                <Gift className="w-6 h-6 sm:w-7 sm:h-7 text-[#C89B3C]" />
+                <span className="leading-tight text-[9px] sm:text-[11px]">Exclusive<br />member offers</span>
+              </div>
+              <div className="hidden sm:block w-px h-8 bg-white/20" />
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left">
+                <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-[#C89B3C] flex items-center justify-center">
+                  <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#C89B3C] fill-current" />
+                </div>
+                <span className="leading-tight text-[9px] sm:text-[11px]">Earn stamps<br />with every visit</span>
+              </div>
+              <div className="hidden sm:block w-px h-8 bg-white/20" />
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left">
+                <Smartphone className="w-6 h-6 sm:w-7 sm:h-7 text-[#C89B3C]" />
+                <span className="leading-tight text-[9px] sm:text-[11px]">Works on any<br />mobile browser</span>
+              </div>
             </div>
           </div>
 
           {/* Phone Mockup */}
-          <div className="flex justify-center lg:justify-end">
+          <div className="flex justify-center md:justify-end">
             <MobileFrame className="scale-110">
               <div className="flex flex-col h-full bg-white">
                 <div className="bg-[#222] px-4 py-5 flex flex-col items-center text-center">
                   <div className="w-12 h-12 bg-[#C89B3C] rounded-xl flex items-center justify-center mb-2 shadow-lg">
                     <span className="text-white font-black text-lg">R</span>
                   </div>
-                  <p className="text-white font-bold text-sm">Revia Coffee</p>
+                  <p className="text-white font-bold text-sm">Your Business</p>
                   <p className="text-white/40 text-[9px]">Downtown Branch · London</p>
                 </div>
                 <div className="flex-1 px-4 py-4 flex flex-col">
                   <div className="bg-[#F8F8F6] rounded-xl p-3 mb-3 border border-[#E5E5E5]">
                     <p className="text-[8px] font-black uppercase tracking-wider text-[#C89B3C] mb-1">Loyalty Program</p>
                     <p className="text-sm font-black text-[#222]">Earn 1 Stamp per Visit</p>
-                    <p className="text-[9px] text-[#666]">10 stamps = Free Coffee ☕</p>
+                    <p className="text-[9px] text-[#666]">Collect stamps and unlock exclusive rewards</p>
                   </div>
                   <div className="flex-1 flex flex-col gap-2 mb-3">
                     {['No app download needed', 'Works on any phone', 'Exclusive member offers'].map((b, i) => (
@@ -493,9 +486,9 @@ export const CustomerLandingPage: React.FC<Props> = ({ onNavigate }) => {
       </section>
 
       {/* ── VALUE PROPOSITION ─────────────────────────────────────── */}
-      <section className="py-28 lg:py-36 bg-[#F8F8F6]">
+      <section className="py-8 lg:py-8 bg-[#F8F8F6]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-center max-w-2xl mx-auto mb-8">
             <SectionLabel>Why Revia</SectionLabel>
             <h2 className="text-4xl lg:text-5xl font-black text-[#222] tracking-tight leading-[1.05] mb-4">
               Everything You Need to Make<br />Every Visit More Rewarding
@@ -524,77 +517,88 @@ export const CustomerLandingPage: React.FC<Props> = ({ onNavigate }) => {
       </section>
 
       {/* ── HOW IT WORKS — JOURNEY ─────────────────────────────────── */}
-      <section className="py-28 lg:py-36 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-20">
-            <SectionLabel>How It Works</SectionLabel>
-            <h2 className="text-4xl lg:text-5xl font-black text-[#222] tracking-tight leading-[1.05] mb-4">Your Complete Loyalty Journey</h2>
-            <p className="text-[#666] text-lg leading-relaxed">From your first QR scan to your next reward, Revia keeps the experience simple.</p>
-          </div>
-
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#E5E5E5] to-transparent -translate-x-1/2" />
-
-            <div className="space-y-20 lg:space-y-28">
-              {journeySteps.map((step, i) => {
-                const isEven = i % 2 === 0;
-                return (
-                  <div key={step.num} className={`relative grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${!isEven ? 'lg:[&>*:first-child]:order-2' : ''}`}>
-                    {/* Content */}
-                    <div className={`${isEven ? 'lg:pr-16' : 'lg:pl-16 lg:order-2'}`}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="text-[10px] font-black text-[#C89B3C] tracking-[0.2em]">STEP {step.num}</span>
-                        <div className="w-8 h-px bg-[#C89B3C]" />
-                      </div>
-                      <h3 className="text-3xl font-black text-[#222] mb-4 leading-tight">{step.title}</h3>
-                      <p className="text-[#666] text-lg leading-relaxed">{step.desc}</p>
-                    </div>
-
-                    {/* Mockup */}
-                    <div className={`flex justify-center ${isEven ? 'lg:pl-16' : 'lg:pr-16 lg:order-1'}`}>
-                      <div className="relative">
-                        {/* Timeline dot */}
-                        <div className="hidden lg:flex absolute top-1/2 -translate-y-1/2 -translate-x-1/2 left-0 lg:left-auto lg:right-auto w-8 h-8 bg-white border-2 border-[#C89B3C] rounded-full items-center justify-center text-[10px] font-black text-[#C89B3C] shadow-sm z-10" style={{ left: isEven ? 'calc(100% + 2.5rem)' : 'calc(-2.5rem - 1.5rem)' }}>
-                          {step.num}
-                        </div>
-                        <MobileFrame>{step.mockup}</MobileFrame>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+      <section className="relative py-8 lg:py-12 overflow-hidden">
+        {/* Background Image & Overlay */}
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=2400&auto=format&fit=crop"
+            alt="Coffee background 2"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#111]/95 via-[#111]/90 to-[#111]/70" />
         </div>
-      </section>
 
-      {/* ── EXPERIENCE FLOW ────────────────────────────────────────── */}
-      <section className="py-24 bg-[#F8F8F6]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <SectionLabel>The Flow</SectionLabel>
-            <h2 className="text-4xl font-black text-[#222] tracking-tight mb-4">From One Scan to Long-Term Loyalty</h2>
-            <p className="text-[#666]">Revia turns simple customer interactions into a connected loyalty journey.</p>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-5">
+              <div className="w-10 h-px bg-[#C89B3C] hidden md:block" />
+              <span className="text-[#C89B3C] text-[10px] font-black uppercase tracking-[0.25em]">HOW IT WORKS</span>
+              <div className="w-10 h-px bg-[#C89B3C]" />
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.05] mb-4 whitespace-nowrap">Your Complete Loyalty Journey</h2>
+            <p className="text-white/70 text-lg leading-relaxed">From your first QR scan to your next reward, Revia keeps the experience simple.</p>
           </div>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-0 flex-wrap">
-            {flowSteps.map((step, i) => (
-              <React.Fragment key={step.label}>
-                <div className="flex flex-col items-center text-center p-4 group">
-                  <div className="w-14 h-14 bg-white border-2 border-[#E5E5E5] rounded-2xl flex items-center justify-center mb-3 shadow-sm group-hover:border-[#C89B3C] group-hover:bg-[#C89B3C] transition-all">
-                    <step.icon className="w-5 h-5 text-[#C89B3C] group-hover:text-white transition-colors" />
-                  </div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#222] mb-0.5">{step.label}</p>
-                  <p className="text-[9px] text-[#999] max-w-[80px] leading-tight">{step.desc}</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {journeySteps.slice(0, 6).map((step) => (
+              <div key={step.num} className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-2xl p-8 border border-[#C89B3C]/30 flex flex-col items-start relative group hover:border-[#C89B3C]/60 hover:from-white/15 hover:to-white/10 hover:-translate-y-1 shadow-lg hover:shadow-[0_8px_30px_rgba(200,155,60,0.15)] transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-[10px] font-black text-[#C89B3C] tracking-[0.2em]">STEP {step.num}</span>
+                  <div className="w-8 h-px bg-[#C89B3C]" />
                 </div>
-                {i < flowSteps.length - 1 && (
-                  <ArrowRight className="w-4 h-4 text-[#C89B3C] hidden md:block mx-1 shrink-0" />
-                )}
-              </React.Fragment>
+                <div className="w-12 h-12 rounded-full border border-[#C89B3C] flex items-center justify-center mb-6 group-hover:bg-[#C89B3C]/10 transition-colors">
+                  <step.icon className="w-6 h-6 text-[#C89B3C]" />
+                </div>
+                <h3 className="text-xl font-black text-white mb-3 leading-tight">{step.title}</h3>
+                <p className="text-white/60 text-sm leading-relaxed">{step.desc}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* ── STATS COUNTER ──────────────────────────────────────────── */}
+      <section className="py-16 bg-white relative z-20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="relative rounded-[2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-[#C89B3C]/20 bg-[#0a0a0a]">
+            {/* Background Image & Overlay */}
+            <div className="absolute inset-0">
+              <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=2400&auto=format&fit=crop" alt="Crowd" className="w-full h-full object-cover opacity-20" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
+              {/* Golden Swooshes / Glows */}
+              <div className="absolute -left-32 -top-32 w-80 h-80 rounded-full border-[1px] border-[#C89B3C]/40 opacity-30 blur-[2px]" />
+              <div className="absolute -left-10 -bottom-20 w-48 h-48 rounded-full border-[2px] border-[#C89B3C]/30 opacity-20 blur-[1px]" />
+              <div className="absolute -right-32 -bottom-32 w-[30rem] h-[30rem] rounded-full border-[1px] border-[#C89B3C]/40 opacity-30 blur-[2px]" />
+              <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full border-[2px] border-[#C89B3C]/30 opacity-20 blur-[1px]" />
+            </div>
+
+            <div className="relative z-10 py-12 px-8 flex flex-col md:flex-row justify-between items-center md:items-stretch gap-10 md:gap-0">
+              {[
+                { value: '500K+', label: 'ACTIVE MEMBERS', icon: Users },
+                { value: '2M+', label: 'REWARDS REDEEMED', icon: Gift },
+                { value: '99.9%', label: 'UPTIME GUARANTEED', icon: Shield },
+              ].map((stat, i) => (
+                <React.Fragment key={i}>
+                  <div className="flex-1 flex flex-col items-center text-center px-4">
+                    <div className="relative flex items-center justify-center w-20 h-20 mb-3">
+                      <div className="absolute inset-2 bg-[#C89B3C]/20 rounded-full blur-xl" />
+                      <div className="relative w-14 h-14 flex items-center justify-center rounded-full border border-white/5 bg-white/5 backdrop-blur-sm shadow-inner">
+                        <stat.icon className="w-7 h-7 text-[#C89B3C]" strokeWidth={1.5} />
+                      </div>
+                    </div>
+                    <p className="text-4xl md:text-[2.75rem] font-black text-white mb-3 tracking-tight leading-none">{stat.value}</p>
+                    <p className="text-white/80 text-[10px] md:text-xs font-bold uppercase tracking-[0.15em]">{stat.label}</p>
+                  </div>
+                  {/* Vertical Divider */}
+                  {i < 2 && (
+                    <div className="hidden md:block w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>  
 
       {/* ── RETURNING CUSTOMER ─────────────────────────────────────── */}
       <section className="py-28 bg-white">
@@ -706,28 +710,63 @@ export const CustomerLandingPage: React.FC<Props> = ({ onNavigate }) => {
       </section>
 
       {/* ── FINAL CTA ─────────────────────────────────────────────── */}
-      <section className="py-28 bg-[#0D0B0A] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#C89B3C15_0%,_transparent_70%)]" />
-        <div className="relative z-10 max-w-3xl mx-auto px-6 lg:px-8 text-center">
-          <GoldBadge><Star className="w-3 h-3 fill-current" /> Start Your Journey</GoldBadge>
-          <h2 className="mt-8 text-4xl lg:text-6xl font-black text-white leading-[1.0] tracking-tight mb-6">
-            Ready to Start Your<br /><span className="text-[#C89B3C]">Loyalty Journey?</span>
-          </h2>
-          <p className="text-white/50 text-lg mb-10 leading-relaxed">
-            Scan, join, earn and redeem — all from one simple mobile experience. No app download required.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => onNavigate?.('/customer-panel')}
-              className="group flex items-center justify-center gap-3 bg-[#C89B3C] hover:bg-[#a07520] text-white px-10 py-4 rounded-full text-sm font-black tracking-wide transition-all shadow-2xl shadow-[#C89B3C]/30"
-            >
-              Join Loyalty <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-10 py-4 rounded-full text-sm font-bold tracking-wide transition-all">
-              Explore Revia
-            </button>
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="relative rounded-[2rem] overflow-hidden bg-[#0D0B0A] py-20 px-6 border border-[#C89B3C]/20 shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
+            
+            {/* Background Wavy Art */}
+            <div className="absolute inset-0">
+              <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2400&auto=format&fit=crop" alt="Abstract golden waves" className="w-full h-full object-cover opacity-40 mix-blend-screen grayscale-[30%] sepia-[50%] hue-rotate-[340deg] contrast-150" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/90" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle,_#C89B3C15_0%,_transparent_60%)]" />
+            </div>
+
+            <div className="relative z-10 max-w-4xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 border border-[#C89B3C]/40 bg-[#C89B3C]/5 px-4 py-1.5 rounded-full mb-8">
+                <Star className="w-3 h-3 text-[#C89B3C] fill-current" />
+                <span className="text-[#C89B3C] text-[9px] font-black uppercase tracking-[0.2em]">Start Your Journey</span>
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-[1.05] tracking-tight mb-6 whitespace-nowrap">
+                Ready to Start Your <span className="text-[#C89B3C]">Loyalty Journey?</span>
+              </h2>
+              
+              <p className="text-white/70 text-sm md:text-base mb-10 leading-relaxed max-w-full mx-auto whitespace-nowrap overflow-hidden text-ellipsis px-4">
+                Scan, join, earn and redeem — all from one simple mobile experience. No app download required.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                <button
+                  onClick={() => onNavigate?.('/customer-panel')}
+                  className="group flex items-center justify-center gap-3 bg-[#C89B3C] hover:bg-[#b08530] text-[#111] px-8 py-3.5 rounded-full text-sm font-black tracking-wide transition-all shadow-lg hover:shadow-[#C89B3C]/20"
+                >
+                  Join Loyalty <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+                <button className="flex items-center justify-center gap-3 bg-transparent hover:bg-white/5 border border-white/20 text-white px-8 py-3.5 rounded-full text-sm font-bold tracking-wide transition-all">
+                  Explore Revia
+                </button>
+              </div>
+              
+              <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 text-xs font-medium text-[#999]">
+                <div className="flex items-center gap-2">
+                  <Smartphone className="w-4 h-4 text-[#C89B3C]" /> Works on any smartphone
+                </div>
+                <div className="hidden md:block w-px h-4 bg-white/20" />
+                <div className="flex items-center gap-2">
+                  <div className="relative flex items-center justify-center w-4 h-4">
+                    <Smartphone className="w-4 h-4 text-[#C89B3C]" />
+                    <div className="absolute w-[20px] h-[1.5px] bg-[#C89B3C] -rotate-45" />
+                  </div>
+                  No app download needed
+                </div>
+                <div className="hidden md:block w-px h-4 bg-white/20" />
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-[#C89B3C]" /> Safe & Secure
+                </div>
+              </div>
+
+            </div>
           </div>
-          <p className="mt-6 text-white/20 text-sm">Works on any smartphone · No app download needed</p>
         </div>
       </section>
 
