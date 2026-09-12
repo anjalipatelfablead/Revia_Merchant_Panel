@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, MessageSquare, Phone, Lock, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, MessageSquare, Phone, Lock, Sparkles, ArrowRight, CheckCircle2, Store, Award, BarChart2 } from 'lucide-react';
 import { PrimaryButton, LiveBadge } from '../components/common/Badges';
 
 interface LoginPageProps {
@@ -49,9 +49,82 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-center items-center p-4 sm:p-6 select-none">
-      {/* Brand Header */}
-      <div className="flex items-center justify-center gap-4 mb-8">
+    <div className="h-screen w-screen flex select-none overflow-hidden">
+      {/* Left Side: Brand & Hero Image */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#1A1615] to-[#2D2624] flex-col justify-between p-8 relative overflow-hidden h-full">
+        {/* Abstract Background Elements */}
+        <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-[#D4A753] opacity-10 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-[#9E782F] opacity-10 rounded-full blur-[100px]" />
+        
+        {/* Brand Header */}
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md">
+            <Sparkles className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">REVIA MERCHANT SUITE</h1>
+            <p className="text-[10px] uppercase tracking-widest text-[#9E9A93] font-semibold mt-0.5">
+              Enterprise Commerce & Operations Engine
+            </p>
+          </div>
+        </div>
+
+        {/* Value Proposition & Visuals */}
+        <div className="relative z-10 w-full max-w-2xl mt-6 lg:pr-12">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4">
+            Unified commerce for modern businesses.
+          </h2>
+          <p className="text-[#9E9A93] text-sm leading-relaxed mb-6">
+            Seamlessly manage your operations, deploy dynamic loyalty programs, and gain real-time insights with an industry-leading unified ecosystem.
+          </p>
+          
+          {/* Feature Grid */}
+          <div className="grid grid-cols-2 gap-4 mt-6 w-full">
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm hover:bg-white/10 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-[#D4A753]/20 flex items-center justify-center mb-3">
+                <Store className="w-4 h-4 text-[#D4A753]" />
+              </div>
+              <h3 className="text-white text-sm font-bold mb-1">Multi-Outlet</h3>
+              <p className="text-[#9E9A93] text-[11px] leading-relaxed">Centralized control for all your branch locations.</p>
+            </div>
+            
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm hover:bg-white/10 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-[#0D7A53]/20 flex items-center justify-center mb-3">
+                <Award className="w-4 h-4 text-[#4ADE80]" />
+              </div>
+              <h3 className="text-white text-sm font-bold mb-1">Loyalty Engine</h3>
+              <p className="text-[#9E9A93] text-[11px] leading-relaxed">Built-in rewards & campaigns to drive retention.</p>
+            </div>
+            
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm hover:bg-white/10 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center mb-3">
+                <BarChart2 className="w-4 h-4 text-blue-400" />
+              </div>
+              <h3 className="text-white text-sm font-bold mb-1">Live Analytics</h3>
+              <p className="text-[#9E9A93] text-[11px] leading-relaxed">Real-time insights and comprehensive reporting.</p>
+            </div>
+            
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm hover:bg-white/10 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center mb-3">
+                <ShieldCheck className="w-4 h-4 text-purple-400" />
+              </div>
+              <h3 className="text-white text-sm font-bold mb-1">Enterprise Security</h3>
+              <p className="text-[#9E9A93] text-[11px] leading-relaxed">Bank-grade encryption, SOC-2, and RBAC.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Note */}
+        <div className="relative z-10 text-xs text-[#6E6A66] space-y-1">
+          <p>Revia Mesh Network Cryptographic Keypair: Active • Protocol v2.14.0</p>
+          <p className="text-[10px]">Protected by Cloudflare Magic Transit & Hardware Security Enclave (HSM)</p>
+        </div>
+      </div>
+
+      {/* Right Side: Login Form */}
+      <div className="w-full lg:w-1/2 bg-[#FAF8F5] flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 relative h-full overflow-y-auto">
+        {/* Mobile Brand Header (Hidden on Desktop) */}
+        <div className="flex lg:hidden items-center justify-center gap-4 mb-6">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md shrink-0">
           <Sparkles className="w-6 h-6 text-white" />
         </div>
@@ -64,8 +137,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
       </div>
 
       {/* Floating Center Auth Card */}
-      <div className="w-full max-w-md bg-white border border-[#E5E0D8] rounded-2xl shadow-xl p-6 sm:p-8 relative">
-        <div className="flex items-center justify-between mb-6">
+      <div className="w-full max-w-md bg-white border border-[#E5E0D8] rounded-2xl shadow-xl p-6 relative">
+        <div className="flex items-center justify-between mb-5">
           <div>
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">SECURE AUTH GATEWAY</span>
             <h2 className="text-lg font-bold text-[#1A1615] tracking-tight">Merchant Operator Sign In</h2>
@@ -141,7 +214,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
             <PrimaryButton
               type="button"
               onClick={() => setStep('verify')}
-              className="w-full py-3 text-sm mt-2"
+              className="w-full py-2.5 text-sm mt-2"
             >
               Send Verification Code →
             </PrimaryButton>
@@ -185,7 +258,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
             <PrimaryButton
               type="button"
               onClick={() => onLoginSuccess('merchant')}
-              className="w-full py-3 text-sm"
+              className="w-full py-2.5 text-sm"
             >
               Verify PIN & Authenticate →
             </PrimaryButton>
@@ -202,7 +275,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           </div>
         )}
 
-        <div className="mt-6 pt-5 border-t border-[#E5E0D8] flex items-center justify-between text-[11px] text-[#6E6A66]">
+        <div className="mt-5 pt-4 border-t border-[#E5E0D8] flex items-center justify-between text-[11px] text-[#6E6A66]">
           <span className="flex items-center gap-1 text-[10px]">
             <Lock className="w-3 h-3 text-[#9E9A93]" /> Hardware Security Enclave
           </span>
@@ -214,7 +287,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           </button>
         </div>
         {/* Static Login Bypass for Demo */}
-        <div className="mt-8 pt-6 border-t border-[#E5E0D8]">
+        <div className="mt-6 pt-5 border-t border-[#E5E0D8]">
           <p className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-3 text-center">Static Demo Access</p>
           <div className="flex gap-3">
             <button
@@ -233,10 +306,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
         </div>
       </div>
 
-      {/* Footer Note */}
-      <div className="mt-8 text-center text-xs text-[#9E9A93] space-y-1">
-        <p>Revia Mesh Network Cryptographic Keypair: Active • Protocol v2.14.0</p>
-        <p className="text-[10px]">Protected by Cloudflare Magic Transit & Hardware Security Enclave (HSM)</p>
       </div>
     </div>
   );

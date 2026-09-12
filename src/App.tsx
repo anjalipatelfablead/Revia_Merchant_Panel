@@ -20,6 +20,7 @@ import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+import { CustomerOnboardingPage } from './pages/CustomerOnboardingPage';
 import { CustomerPanel } from './Customer/CustomerPanel';
 import { CatalogPage } from './pages/CatalogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
@@ -93,6 +94,14 @@ export default function App() {
     return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
+  if (currentRoute === '/customer-onboarding') {
+    return (
+      <CustomerOnboardingPage
+        onComplete={() => handleNavigate('/customer')}
+      />
+    );
+  }
+
   if (currentRoute.startsWith('/customer')) {
     return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
@@ -103,7 +112,7 @@ export default function App() {
       <LoginPage 
         onLoginSuccess={(role) => {
           if (role === 'customer') {
-            handleNavigate('/customer');
+            handleNavigate('/customer-onboarding');
           } else {
             handleNavigate('/dashboard');
           }
@@ -262,26 +271,7 @@ export default function App() {
           )}
 
 
-          {
-            currentRoute === '/onboarding' && (
-              <div className="p-4 sm:p-6">
-                <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl border border-[#EAE6E1]">
-                  <span className="text-xs text-[#7C746C]">
-                    Viewing Onboarding Wizard inside Merchant Shell
-                  </span>
-                  <button
-                    className="text-xs font-bold text-[#A37837] hover:underline"
-                  >
-                    Open Full-Screen Presentation Mode ↗
-                  </button>
-                </div>
-                <OnboardingPage
-                  onComplete={() => handleNavigate('/dashboard')}
-                  onCancel={() => handleNavigate('/login')}
-                />
-              </div>
-            )
-          }
+
         </main >
       </div >
     </div >
