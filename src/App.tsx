@@ -39,11 +39,11 @@ import { NotificationPage } from './pages/NotificationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 const VALID_ROUTES = [
-  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff', 
-  '/loyalty', '/qr-codes', '/catalog', '/orders', '/invoices', 
-  '/customerlist', '/transactions', '/campaigns', '/campaigns/new', 
-  '/terminal', '/rewards', '/analytics', '/billing', '/notifications', 
-  '/settings/audit', '/settings/branding', '/login', '/onboarding', 
+  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
+  '/loyalty', '/qr-codes', '/catalog', '/orders', '/invoices',
+  '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
+  '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
+  '/settings/audit', '/settings/branding', '/login', '/onboarding',
   '/customer-landing', '/customer', '/customer-onboarding'
 ];
 
@@ -124,7 +124,7 @@ export default function App() {
   // Render auth and onboarding pages directly as standalone
   if (currentRoute === '/login') {
     return (
-      <LoginPage 
+      <LoginPage
         onLoginSuccess={(role) => {
           if (role.startsWith('/')) {
             handleNavigate(role as NavRoute);
