@@ -30,6 +30,9 @@ export const TransactionsPage: React.FC = () => {
   const [counterSearch, setCounterSearch] = useState('#REV-8924');
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 7;
+
   const showToast = (msg: string) => {
     setFeedbackToast(msg);
     setTimeout(() => setFeedbackToast(null), 3000);
@@ -143,6 +146,16 @@ export const TransactionsPage: React.FC = () => {
 
     return matchesSearch && matchesStatus && matchesCategory && matchesBranch && matchesPayment;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, branchFilter, paymentFilter, statusFilter, categoryFilter]);
+
+  const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE) || 1;
+  const currentTransactions = filteredTransactions.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const DropdownSelect = ({ id, value, options, onChange }: { id: string, value: string, options: string[], onChange: (v: string) => void }) => (
     <div className="relative" ref={openDropdown === id ? dropdownRef : null}>
@@ -354,7 +367,7 @@ export const TransactionsPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#EFECE6]">
-                    {filteredTransactions.map((tx, idx) => (
+                    {currentTransactions.map((tx, idx) => (
                       <tr key={idx} className="hover:bg-[#FAF8F5]/80 transition-colors">
                         <td className="py-3 px-4">
                           <div className="text-xs font-mono font-bold text-[#D4A753]">{tx.id.split(' ')[0]}</div>
@@ -417,13 +430,38 @@ export const TransactionsPage: React.FC = () => {
 
               {/* Table Footer Pagination */}
               <div className="px-5 py-4 border-t border-[#EFECE6] bg-[#FAF8F5] flex items-center justify-between text-xs">
-                <span className="font-semibold text-[#6E6A66]">Showing {filteredTransactions.length} transactions</span>
+                <span className="font-semibold text-[#6E6A66]">
+                  Showing {Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, filteredTransactions.length)} - {Math.min(currentPage * ITEMS_PER_PAGE, filteredTransactions.length)} of {filteredTransactions.length} transactions
+                </span>
                 <div className="flex items-center gap-1.5">
-                  <button className="px-3 py-1.5 font-bold text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">Previous</button>
-                  <button className="w-7 h-7 flex items-center justify-center rounded bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs">1</button>
-                  <button className="w-7 h-7 flex items-center justify-center rounded bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615] font-bold transition-colors cursor-pointer">2</button>
-                  <button className="w-7 h-7 flex items-center justify-center rounded bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615] font-bold transition-colors cursor-pointer">3</button>
-                  <button className="px-3 py-1.5 font-bold text-[#1A1615] hover:text-[#D4A753] transition-colors cursor-pointer">Next</button>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1.5 font-bold transition-colors cursor-pointer ${currentPage === 1 ? 'text-[#D1CDC7] cursor-not-allowed' : 'text-[#9E9A93] hover:text-[#1A1615]'}`}
+                  >
+                    Previous
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-7 h-7 flex items-center justify-center rounded font-bold transition-colors cursor-pointer ${currentPage === page
+                          ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-xs'
+                          : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615]'
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1.5 font-bold transition-colors cursor-pointer ${currentPage === totalPages ? 'text-[#D1CDC7] cursor-not-allowed' : 'text-[#1A1615] hover:text-[#D4A753]'}`}
+                  >
+                    Next
+                  </button>
                 </div>
               </div>
 

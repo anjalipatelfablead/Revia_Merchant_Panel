@@ -93,7 +93,7 @@ export default function App() {
     return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  if (currentRoute.startsWith('/customer')) {
+  if (currentRoute === '/customer' || currentRoute.startsWith('/customer/')) {
     return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
@@ -201,7 +201,7 @@ export default function App() {
             <QrCodesPage />
           )}
 
-          {currentRoute === '/customers' && (
+          {currentRoute === '/customerlist' && (
             <CustomersPage
               customers={customers}
               onUpdateCustomer={(updated) => {
