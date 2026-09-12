@@ -64,7 +64,7 @@ const MobileAnalyticsView: React.FC = () => {
 
         <div className="pt-4">
           <div className="flex items-center justify-between gap-2">
-            <h1 className="text-[26px] font-extrabold leading-none tracking-[-0.06em]">Analytics &amp; Retention</h1>
+            <h1 className="text-[26px] font-extrabold leading-none tracking-normal">Analytics &amp; Retention</h1>
             <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#B9F1CF] px-2 py-1 text-[10px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Live Telemetry</span>
           </div>
           <p className="mt-2 text-[15px] text-[#756D65]">Longitudinal cohort curves &amp; VIP telemetry</p>
@@ -83,9 +83,9 @@ const MobileAnalyticsView: React.FC = () => {
             { label: 'Stamp Velocity', value: '12.4 Days', detail: 'To 10th stamp reward', icon: Timer },
             { label: 'Churn Risk', value: '4.2%', detail: '18 rescued this wk', icon: ShieldCheck, positive: true },
           ].map(({ label, value, detail, icon: Icon, positive }) => (
-            <div key={label} className="min-h-[116px] rounded-[13px] bg-white p-4 shadow-[0_5px_18px_rgba(60,38,20,0.05)]">
-              <div className="flex items-center justify-between"><span className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]">{label}</span><span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FBF1E4] text-[#A8761C]"><Icon className="h-3.5 w-3.5" /></span></div>
-              <div className="mt-3 text-[29px] font-extrabold leading-none tracking-[-0.07em]">{value}</div>
+            <div key={label} className="min-h-[116px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+              <div className="flex items-center justify-between"><span className="text-xs font-medium text-[#7C746C]">{label}</span><span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FBF1E4] text-[#A8761C]"><Icon className="h-3.5 w-3.5" /></span></div>
+              <div className="mt-3 text-2xl font-bold leading-none tracking-tight">{value}</div>
               <div className={`mt-1 text-[11px] font-medium ${positive ? 'text-[#078157]' : 'text-[#756D65]'}`}>{positive && <span className="mr-1">↗</span>}{detail}</div>
             </div>
           ))}
@@ -327,12 +327,12 @@ export const AnalyticsPage: React.FC = () => {
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
             <div className="max-w-[480px]">
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-[2.125rem] font-bold tracking-[-0.06em] text-[#1A1615] leading-[1.05] sm:text-[2.375rem]">
+                <h1 className="text-[24px] font-bold tracking-normal leading-[1.05] text-[#1A1615]">
                   Analytics &amp; Cohort Retention
                 </h1>
               </div>
 
-              <p className="mt-2 max-w-[540px] text-[12px] leading-[1.45] text-[#6E6862]">
+              <p className="mt-2 max-w-[540px] text-[14px] font-normal leading-[1.45] text-[#6E6862]">
                 Longitudinal guest retention curves, VIP tier velocity, stamp redemption turnover, and lifetime value across all artisanal venues.
               </p>
             </div>

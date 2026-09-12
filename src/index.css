@@ -39,6 +39,157 @@
   transform: translateY(0);
 }
 
+@media (max-width: 767px) {
+  section.mt-6:has(button[aria-label="Filter audit events"]) > div:first-child > div:first-child {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) > div:first-child > div:first-child h2 {
+    white-space: nowrap;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) > div:first-child > div:first-child span {
+    flex-shrink: 0;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) > label {
+    height: 32px;
+    border-radius: 10px;
+    padding-inline: 10px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) > div.mt-3.space-y-3 {
+    margin-top: 10px;
+    row-gap: 8px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article {
+    min-height: 84px;
+    border-radius: 11px;
+    padding: 12px;
+    box-shadow: 0 3px 10px rgba(60, 38, 20, 0.04);
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article > div:first-child {
+    align-items: center;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article > div:first-child > span:first-child {
+    border-radius: 7px;
+    padding: 8px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article > div:last-child {
+    margin-top: 10px;
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article > div:last-child b {
+    font-size: 11px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(1) > div:last-child > div:last-child,
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(2) > div:last-child > div:last-child,
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(4) > div:last-child > div:last-child {
+    font-size: 0;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(1) > div:last-child > div:last-child::after {
+    color: #756d65;
+    content: '1,420 Guest records encrypted';
+    font-size: 10px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(2) > div:last-child > div:last-child::after {
+    color: #087b55;
+    content: '+14 loyalty stamps reconciled';
+    font-size: 10px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(4) > div:last-child > div:last-child::after {
+    color: #087b55;
+    content: 'Session token extended 4h';
+    font-size: 10px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(1) > div:last-child {
+    position: relative;
+    padding-right: 118px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(1) > div:last-child::after {
+    position: absolute;
+    top: 58%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: 1px solid #a7e7cb;
+    border-radius: 4px;
+    background: #edfff6;
+    color: #087b55;
+    content: 'VERIFIED HASH:\A sha:9f4a...0e12';
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.35;
+    padding: 6px;
+    white-space: pre;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(2) > div:last-child::after {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid #e4ddd5;
+    border-radius: 4px;
+    background: #fff;
+    color: #756d65;
+    content: 'sha:4a12...c9f1';
+    font-size: 8px;
+    font-weight: 600;
+    padding: 4px 6px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(3) > div:last-child::after {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 4px;
+    background: #ffe1e3;
+    color: #dc3f48;
+    content: 'BLOCKED';
+    font-size: 8px;
+    font-weight: 700;
+    padding: 4px 6px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(4) > div:last-child::after {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid #a7e7cb;
+    border-radius: 4px;
+    background: #edfff6;
+    color: #087b55;
+    content: 'VERIFIED';
+    font-size: 8px;
+    font-weight: 700;
+    padding: 4px 6px;
+  }
+
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(2) > div:last-child,
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(3) > div:last-child,
+  section.mt-6:has(button[aria-label="Filter audit events"]) article:nth-child(4) > div:last-child {
+    position: relative;
+    padding-right: 82px;
+  }
+}
+
 .page-text-scale .text-\[6px\] {
   font-size: 8px !important;
 }
