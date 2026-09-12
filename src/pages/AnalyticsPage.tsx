@@ -157,6 +157,26 @@ export const AnalyticsPage: React.FC = () => {
     []
   );
 
+  const exportDossier = () => {
+    const rows = [
+      ['Analytics Dossier', 'Value'],
+      ['Date Horizon', selectedDateRange],
+      ['Venue', selectedVenue],
+      [],
+      ['Metric', 'Value', 'Detail', 'Note'],
+      ...kpiCards.map(({ label, value, detail, note }) => [label, value, detail, note]),
+    ];
+    const csv = rows.map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'revia-analytics-dossier.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    setExported(true);
+    window.setTimeout(() => setExported(false), 2200);
+  };
+
   const funnelStages = [
     { label: '1st QR Counter Scan', value: '100% (2,840)', detail: 'Avg 1.2 items per order', percent: 100, accent: 'bg-[#6E6862]' },
     { label: 'Privé Member', value: '82.0% Conversion', detail: 'Achieved within 9.4 days of scan', percent: 82, accent: 'bg-[#D4A753]' },
@@ -305,14 +325,14 @@ export const AnalyticsPage: React.FC = () => {
           */}
 
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
-            <div className="max-w-[410px]">
+            <div className="max-w-[480px]">
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-[2.125rem] font-bold tracking-[-0.06em] text-[#1A1615] leading-[1.05] sm:text-[2.375rem]">
                   Analytics &amp; Cohort Retention
                 </h1>
               </div>
 
-              <p className="mt-2 max-w-[540px] text-[14px] leading-[1.45] text-[#6E6862]">
+              <p className="mt-2 max-w-[540px] text-[12px] leading-[1.45] text-[#6E6862]">
                 Longitudinal guest retention curves, VIP tier velocity, stamp redemption turnover, and lifetime value across all artisanal venues.
               </p>
             </div>
@@ -341,7 +361,7 @@ export const AnalyticsPage: React.FC = () => {
                 <span className="flex flex-col text-[9px] font-bold uppercase leading-3 tracking-[0.12em] text-[#1A1615]"><span className="text-[#8C847A]">Cohort benchmark</span><span>VIP vs New Guests</span></span>
               </div>
 
-              <button type="button" onClick={() => { setExported(true); window.setTimeout(() => setExported(false), 2200); }} className="inline-flex items-center justify-center gap-1.5 rounded-[9px] bg-gradient-to-b from-[#D4A753] to-[#9E782F] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95 lg:w-full">
+              <button type="button" onClick={exportDossier} className="inline-flex items-center justify-center gap-1.5 rounded-[9px] bg-gradient-to-b from-[#D4A753] to-[#9E782F] px-2.5 py-3 text-[10px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95 lg:w-full">
                 <Download className="h-3 w-3" />
                 {exported ? 'Dossier Ready' : 'Export CSV / PDF Dossier'}
               </button>
@@ -353,33 +373,33 @@ export const AnalyticsPage: React.FC = () => {
               {kpiCards.map(({ label, value, detail, note, accent, tone }) => (
                 <div
                   key={label}
-                  className={`${label.includes('Churn') ? 'min-h-[145px]' : 'min-h-[176px]'} rounded-[12px] border border-[#E9E1D7] bg-white p-4 shadow-[0_4px_12px_rgba(34,27,19,0.02)]`}
+                  className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="max-w-[150px] text-[11px] font-bold uppercase leading-[1.35] tracking-[0.1em] text-[#8B847B]">{label}</span>
+                    <span className="max-w-[150px] text-xs font-medium leading-[1.35] text-[#7C746C]">{label}</span>
                     {label.includes('Retention') && <span className="rounded-full border border-[#BDE8D4] bg-[#F0FBF5] px-2 py-1 text-[10px] font-bold uppercase leading-none text-[#0D7A53]">Top<br />Decile</span>}
                     {label.includes('VIP') && <span className="rounded-full border border-[#F0D98A] bg-[#FFF9E7] px-2 py-1 text-[10px] font-bold uppercase leading-none text-[#A16D1F]">+14.5%<br />MOM</span>}
                     {label.includes('Velocity') && <span className="rounded-full border border-[#BDE8D4] bg-[#F0FBF5] px-2 py-1 text-[10px] font-bold uppercase text-[#0D7A53]">-2.1 DAYS</span>}
                     {label.includes('Churn') && <span className="rounded-full border border-[#BDE8D4] bg-[#F0FBF5] px-2 py-1 text-[10px] font-bold uppercase text-[#0D7A53]">LOW RISK</span>}
                   </div>
 
-                  <div className="mt-4 flex items-end justify-between gap-2">
-                    <div className="flex items-end gap-1 text-[2.125rem] font-bold leading-none tracking-[-0.06em] text-[#1A1615]">
+                  <div className="mt-2 flex items-end justify-between gap-2">
+                    <div className="flex items-end gap-1 text-3xl font-bold leading-none tracking-tight text-[#1A1615]">
                       {value}
                       {label.includes('VIP') && <span className="mb-0.5 text-[10px] font-medium tracking-normal text-[#6E6A66]">/ member</span>}
                     </div>
-                    {label.includes('Retention') && <span className="text-[10px] font-bold text-[#0D7A53]">+6.2%</span>}
-                    {label.includes('Velocity') && <span className="text-[10px] font-bold leading-4 text-[#0D7A53]">Faster<br />Turn</span>}
-                    {label.includes('Churn') && <span className="text-[10px] font-bold text-[#0D7A53]">-1.8%</span>}
+                    {label.includes('Retention') && <span className="text-[11px] font-bold text-[#0D7A53]">+6.2%</span>}
+                    {label.includes('Velocity') && <span className="text-[11px] font-bold leading-4 text-[#0D7A53]">Faster<br />Turn</span>}
+                    {label.includes('Churn') && <span className="text-[11px] font-bold text-[#0D7A53]">-1.8%</span>}
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#EAE3D9] pt-3 text-[10px] text-[#6E6A66]">
+                  <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#EAE3D9] pt-3 text-[11px] text-[#6E6A66]">
                     {label.includes('Churn') ? (
                       <span className="flex items-start gap-1.5 leading-3 text-[9px] text-[#6E6A66]"><span className="text-[12px] text-[#D4A753]">⚡</span><span>18 dormant guests re-engaged<br />via Flash Perk</span></span>
                     ) : (
                       <span>{detail}</span>
                     )}
-                    {!label.includes('Churn') && <span className="shrink-0 font-bold text-[10px] text-[#9E782F]">{note}</span>}
+                    {!label.includes('Churn') && <span className="shrink-0 font-bold text-[11px] text-[#9E782F]">{note}</span>}
                   </div>
                   {label.includes('Retention') && (
                     <div className="mt-1 flex items-end justify-between gap-2">
