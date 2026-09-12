@@ -132,6 +132,7 @@ export interface OutletsData {
 
 export type NavRoute = 
   | '/dashboard'
+  | '/atelier'
   | '/branches'
   | '/branches/new'
   | '/staff'
@@ -153,5 +154,6 @@ export type NavRoute =
   | '/settings/branding'
   | '/login'
   | '/onboarding'
-  | '/customer-landing';
+  | '/customer-landing'
+  | '/customer-panel';
 

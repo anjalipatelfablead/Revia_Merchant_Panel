@@ -75,6 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Subscription & Billing', route: '/billing', icon: CreditCard },
         { name: 'Notifications', route: '/notifications', icon: Bell },
         { name: 'Settings & Audit Log', route: '/settings/audit', icon: ShieldCheck },
+        { name: 'Business Profile & Branding', route: '/settings/branding', icon: Store },
       ],
     },
   ];
@@ -84,15 +85,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       className={`
         bg-white border-r border-[#EAE6E1] flex flex-col shrink-0 h-screen transition-all duration-200 z-50
         md:static md:w-[240px] md:translate-x-0
-        ${isMobileOpen 
-          ? 'fixed inset-y-0 left-0 w-[260px] translate-x-0 shadow-2xl' 
+        ${isMobileOpen
+          ? 'fixed inset-y-0 left-0 w-[260px] translate-x-0 shadow-2xl'
           : 'fixed inset-y-0 left-0 w-[260px] -translate-x-full md:translate-x-0'}
       `}
     >
       {/* Brand Header */}
       <div className="p-4 pb-3 border-b border-[#EAE6E1]/70">
-        <div 
-          className="flex items-center gap-2.5 cursor-pointer select-none" 
+        <div
+          className="flex items-center gap-2.5 cursor-pointer select-none"
           onClick={() => onRouteChange('/dashboard')}
         >
           {/* Gold squircle emblem matching screenshot */}
@@ -120,8 +121,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const isActive = 
-                  currentRoute === item.route || 
+                const isActive =
+                  currentRoute === item.route ||
                   (item.route === '/branches' && currentRoute === '/branches/new') ||
                   (item.route === '/campaigns/new' && currentRoute === '/campaigns');
 
@@ -132,11 +133,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       onRouteChange(item.route);
                       if (onMobileClose) onMobileClose();
                     }}
-                    className={`w-full flex items-center px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer whitespace-nowrap ${
-                      isActive
+                    className={`w-full flex items-center px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer whitespace-nowrap ${isActive
                         ? 'bg-[#A37837] text-white font-semibold shadow-xs'
                         : 'text-[#3D3732] hover:bg-[#FAF8F5] hover:text-[#1A1615]'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
                       <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />

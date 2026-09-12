@@ -19,6 +19,8 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
+import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+import { CustomerPanel } from './Customer/CustomerPanel';
 import { CatalogPage } from './pages/CatalogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
 import { CampaignBuilderPage } from './pages/CampaignBuilderPage';
@@ -33,7 +35,7 @@ import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationsPage } from './pages/NotificationsPage';
-import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+
 
 
 
@@ -48,6 +50,7 @@ export default function App() {
   const [activeBranch, setActiveBranch] = useState<string>(AVAILABLE_BRANCHES[0]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isStandaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
 
   // Core Mock Datasets
   const [customers, setCustomers] = useState(MOCK_CUSTOMERS);
@@ -69,8 +72,7 @@ export default function App() {
     }
   };
 
-  // Standalone mode for auth and onboarding, but allow switching to shell
-  const [standaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
+
 
   const handleNavigate = (route: NavRoute) => {
     window.history.pushState({}, '', route);
@@ -91,41 +93,17 @@ export default function App() {
     return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  // If user is viewing login or onboarding in standalone full-screen presentation mode
-  if (standaloneAuthView && (currentRoute === '/login' || currentRoute === '/onboarding')) {
-    return (
-      <div className="min-h-screen bg-[#FAF8F5] text-[#1A1615]">
-        {/* Top Float Navigation Bar to return to dashboard */}
-        <div className="bg-white/80 backdrop-blur-md border-b border-[#EAE6E1] px-4 py-2.5 flex items-center justify-between sticky top-0 z-50">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#15803D]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-[#1A1615]">
-              Standalone Presentation Mode
-            </span>
-          </div>
-          <button
-            onClick={() => {
-              setStandaloneAuthView(false);
-              handleNavigate('/dashboard');
-            }}
-            className="text-xs font-semibold text-[#A37837] hover:underline px-2.5 py-1 rounded bg-[#FAF8F5] border border-[#EAE6E1] cursor-pointer"
-          >
-            ← Return to Dashboard Shell
-          </button>
-        </div>
+  if (currentRoute.startsWith('/customer-panel')) {
+    return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
 
-        {currentRoute === '/login' ? (
-          <LoginPage
-            onLoginSuccess={() => handleNavigate('/dashboard')}
-            onGoToOnboarding={() => handleNavigate('/onboarding')}
-          />
-        ) : (
-          <OnboardingPage
-            onComplete={() => handleNavigate('/dashboard')}
-            onCancel={() => handleNavigate('/login')}
-          />
-        )}
-      </div>
+  // Render auth and onboarding pages directly as standalone
+  if (currentRoute === '/login' || currentRoute === '/onboarding') {
+    return (
+      <OnboardingPage
+        onComplete={() => handleNavigate('/dashboard')}
+        onCancel={() => setStandaloneAuthView(false)}
+      />
     );
   }
 
@@ -168,7 +146,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className="flex-1 pb-12">
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
@@ -268,47 +246,29 @@ export default function App() {
             />
           )}
 
-          {currentRoute === '/login' && (
-            <div className="p-4 sm:p-6">
-              <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl border border-[#EAE6E1]">
-                <span className="text-xs text-[#7C746C]">
-                  Viewing Auth Screen inside Merchant Shell
-                </span>
-                <button
-                  onClick={() => setStandaloneAuthView(true)}
-                  className="text-xs font-bold text-[#A37837] hover:underline"
-                >
-                  Open Full-Screen Presentation Mode ↗
-                </button>
-              </div>
-              <LoginPage
-                onLoginSuccess={() => handleNavigate('/dashboard')}
-                onGoToOnboarding={() => handleNavigate('/onboarding')}
-              />
-            </div>
-          )}
 
-          {currentRoute === '/onboarding' && (
-            <div className="p-4 sm:p-6">
-              <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl border border-[#EAE6E1]">
-                <span className="text-xs text-[#7C746C]">
-                  Viewing Onboarding Wizard inside Merchant Shell
-                </span>
-                <button
-                  onClick={() => setStandaloneAuthView(true)}
-                  className="text-xs font-bold text-[#A37837] hover:underline"
-                >
-                  Open Full-Screen Presentation Mode ↗
-                </button>
+          {
+            currentRoute === '/onboarding' && (
+              <div className="p-4 sm:p-6">
+                <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl border border-[#EAE6E1]">
+                  <span className="text-xs text-[#7C746C]">
+                    Viewing Onboarding Wizard inside Merchant Shell
+                  </span>
+                  <button
+                    className="text-xs font-bold text-[#A37837] hover:underline"
+                  >
+                    Open Full-Screen Presentation Mode ↗
+                  </button>
+                </div>
+                <OnboardingPage
+                  onComplete={() => handleNavigate('/dashboard')}
+                  onCancel={() => handleNavigate('/login')}
+                />
               </div>
-              <OnboardingPage
-                onComplete={() => handleNavigate('/dashboard')}
-                onCancel={() => handleNavigate('/login')}
-              />
-            </div>
-          )}
-        </main>
-      </div>
-    </div>
+            )
+          }
+        </main >
+      </div >
+    </div >
   );
 }

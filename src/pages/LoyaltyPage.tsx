@@ -15,8 +15,24 @@ import {
   ScanBarcode,
   TrendingUp,
   Plus,
-  Check
+  Check,
+  Nfc,
+  QrCode
 } from 'lucide-react';
+
+interface Tier {
+  id: string;
+  name: string;
+  passes: string;
+  desc: string;
+  style: 'default' | 'gold' | 'dark' | 'new';
+}
+
+const initialTiers: Tier[] = [
+  { id: 'T1', name: 'Member', passes: '0–4 completed passes', desc: 'Standard 1x stamp earning velocity. Universal menu eligibility.', style: 'default' },
+  { id: 'T2', name: 'Gold Reserve', passes: '5–9 completed passes', desc: '1.25x earning speed, complimentary birthday pastry, and secret menu access.', style: 'gold' },
+  { id: 'T3', name: 'Obsidian VIP', passes: '10+ completed passes', desc: '1.5x double-stamp happy hours, private quarterly cupping tastings.', style: 'dark' }
+];
 
 export const LoyaltyPage: React.FC = () => {
   // State for forms
@@ -27,6 +43,49 @@ export const LoyaltyPage: React.FC = () => {
   const [expirationWindow, setExpirationWindow] = useState('Voucher valid for 30 days post completion');
   const [flashActive, setFlashActive] = useState<boolean>(true);
   const [walletView, setWalletView] = useState<'ios' | 'google' | 'pwa'>('ios');
+
+  // Tier Management State
+  const [tiers, setTiers] = useState<Tier[]>(initialTiers);
+  const [isAddingTier, setIsAddingTier] = useState(false);
+  const [newTierName, setNewTierName] = useState('');
+  const [newTierPasses, setNewTierPasses] = useState('');
+  const [newTierDesc, setNewTierDesc] = useState('');
+
+  // Wallet State
+  const [isAddedToWallet, setIsAddedToWallet] = useState(false);
+
+  const handleAddToWallet = () => {
+    setIsAddedToWallet(true);
+    setTimeout(() => setIsAddedToWallet(false), 3000);
+  };
+
+  // Publish State
+  const [publishStatus, setPublishStatus] = useState<'idle' | 'publishing' | 'published'>('idle');
+
+  const handlePublish = () => {
+    if (publishStatus !== 'idle') return;
+    setPublishStatus('publishing');
+    setTimeout(() => {
+      setPublishStatus('published');
+      setTimeout(() => setPublishStatus('idle'), 3000);
+    }, 1500);
+  };
+
+  const handleAddTier = () => {
+    if (!newTierName || !newTierPasses || !newTierDesc) return;
+    const newTier: Tier = {
+      id: `T${tiers.length + 1}`,
+      name: newTierName,
+      passes: newTierPasses,
+      desc: newTierDesc,
+      style: 'new'
+    };
+    setTiers([...tiers, newTier]);
+    setIsAddingTier(false);
+    setNewTierName('');
+    setNewTierPasses('');
+    setNewTierDesc('');
+  };
 
   const [branches, setBranches] = useState({
     downtown: true,
@@ -66,9 +125,9 @@ export const LoyaltyPage: React.FC = () => {
       {/* 2. PAGE HEADER & ACTIONS */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-1">
+          {/* <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-1">
             HOME &gt; MAIN &gt; LOYALTY PROGRAM
-          </div>
+          </div> */}
           <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">
             Loyalty Program Builder
           </h1>
@@ -82,9 +141,19 @@ export const LoyaltyPage: React.FC = () => {
             <Save className="w-4 h-4" />
             Save Draft
           </button>
-          <button className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] rounded-lg hover:opacity-90 transition-opacity shadow-sm cursor-pointer">
-            <Sparkles className="w-4 h-4" />
-            Publish Program Changes
+          <button
+            onClick={handlePublish}
+            disabled={publishStatus !== 'idle'}
+            className={`flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${publishStatus === 'published'
+                ? 'bg-[#0D7A53] cursor-default'
+                : publishStatus === 'publishing'
+                  ? 'bg-[#1A1615] opacity-80 cursor-wait'
+                  : 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 cursor-pointer'
+              }`}
+          >
+            {publishStatus === 'idle' && <><Sparkles className="w-4 h-4" /> Publish Program Changes</>}
+            {publishStatus === 'publishing' && <span className="animate-pulse flex items-center gap-2">Publishing...</span>}
+            {publishStatus === 'published' && <><Check className="w-4 h-4" /> Published Successfully</>}
           </button>
         </div>
       </div>
@@ -273,66 +342,116 @@ export const LoyaltyPage: React.FC = () => {
                 </div>
                 <h2 className="text-base font-bold text-[#1A1615]">3. Tier & Milestone Upgrades</h2>
               </div>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] hover:bg-[#EFECE6] border border-[#EFECE6] rounded-lg text-xs font-semibold text-[#1A1615] transition-colors cursor-pointer">
+              <button
+                onClick={() => setIsAddingTier(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] hover:bg-[#EFECE6] border border-[#EFECE6] rounded-lg text-xs font-semibold text-[#1A1615] transition-colors cursor-pointer"
+              >
                 <Plus className="w-3.5 h-3.5" /> Add Level
               </button>
             </div>
 
             <div className="ml-11 space-y-3">
-              {/* T1 - Member */}
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-[#F7F5F0] border border-[#EFECE6]">
-                <div className="w-10 h-10 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center shrink-0 shadow-xs">
-                  <span className="text-sm font-bold text-[#6E6A66]">T1</span>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-sm font-bold text-[#1A1615]">Member</h3>
-                    <span className="px-2 py-0.5 rounded-md bg-white border border-[#EFECE6] text-[10px] font-bold text-[#6E6A66]">
-                      0–4 completed passes
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#6E6A66] leading-relaxed">
-                    Standard 1x stamp earning velocity. Universal menu eligibility.
-                  </p>
-                </div>
-              </div>
+              {tiers.map((tier) => {
+                if (tier.style === 'default') {
+                  return (
+                    <div key={tier.id} className="flex items-start gap-4 p-4 rounded-xl bg-[#F7F5F0] border border-[#EFECE6]">
+                      <div className="w-10 h-10 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center shrink-0 shadow-xs">
+                        <span className="text-sm font-bold text-[#6E6A66]">{tier.id}</span>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-bold text-[#1A1615]">{tier.name}</h3>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-[#EFECE6] text-[10px] font-bold text-[#6E6A66]">
+                            {tier.passes}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6E6A66] leading-relaxed">{tier.desc}</p>
+                      </div>
+                    </div>
+                  );
+                } else if (tier.style === 'gold') {
+                  return (
+                    <div key={tier.id} className="flex items-start gap-4 p-4 rounded-xl bg-[#FDF8EB] border border-[#F3E5C8] relative overflow-hidden">
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#D4A753] to-[#9E782F]"></div>
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <span className="text-sm font-bold">{tier.id}</span>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-bold text-[#1A1615]">{tier.name}</h3>
+                          <span className="px-2 py-0.5 rounded-md bg-white border border-[#F3E5C8] text-[10px] font-bold text-[#D4A753]">
+                            {tier.passes}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#8A6A32] leading-relaxed">{tier.desc}</p>
+                      </div>
+                    </div>
+                  );
+                } else if (tier.style === 'dark') {
+                  return (
+                    <div key={tier.id} className="flex items-start gap-4 p-4 rounded-xl bg-[#1A1615] border border-[#2D2624] text-white">
+                      <div className="w-10 h-10 rounded-full bg-[#2D2624] border border-[#3E3532] text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <span className="text-sm font-bold">{tier.id}</span>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-bold text-white">{tier.name}</h3>
+                          <span className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20 text-[10px] font-bold text-white">
+                            {tier.passes}
+                          </span>
+                        </div>
+                        <p className="text-xs text-white/70 leading-relaxed">{tier.desc}</p>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div key={tier.id} className="flex items-start gap-4 p-4 rounded-xl bg-white border border-[#EFECE6] shadow-sm">
+                      <div className="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] text-[#9E782F] flex items-center justify-center shrink-0 shadow-xs">
+                        <span className="text-sm font-bold">{tier.id}</span>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-bold text-[#1A1615]">{tier.name}</h3>
+                          <span className="px-2 py-0.5 rounded-md bg-[#FAF8F5] border border-[#EFECE6] text-[10px] font-bold text-[#9E782F]">
+                            {tier.passes}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6E6A66] leading-relaxed">{tier.desc}</p>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
 
-              {/* T2 - Gold Reserve */}
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-[#FDF8EB] border border-[#F3E5C8] relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#D4A753] to-[#9E782F]"></div>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white flex items-center justify-center shrink-0 shadow-sm">
-                  <span className="text-sm font-bold">T2</span>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-sm font-bold text-[#1A1615]">Gold Reserve</h3>
-                    <span className="px-2 py-0.5 rounded-md bg-white border border-[#F3E5C8] text-[10px] font-bold text-[#D4A753]">
-                      5–9 completed passes
-                    </span>
+              {/* Add New Tier Form */}
+              {isAddingTier && (
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-white border border-[#D4A753] shadow-sm animate-in fade-in slide-in-from-top-4 duration-200">
+                  <div className="w-10 h-10 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center shrink-0">
+                    <span className="text-sm font-bold text-[#6E6A66]">T{tiers.length + 1}</span>
                   </div>
-                  <p className="text-xs text-[#8A6A32] leading-relaxed">
-                    1.25x earning speed, complimentary birthday pastry, and secret menu access.
-                  </p>
-                </div>
-              </div>
-
-              {/* T3 - Obsidian VIP */}
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-[#1A1615] border border-[#2D2624] text-white">
-                <div className="w-10 h-10 rounded-full bg-[#2D2624] border border-[#3E3532] text-white flex items-center justify-center shrink-0 shadow-sm">
-                  <span className="text-sm font-bold">T3</span>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-sm font-bold text-white">Obsidian VIP</h3>
-                    <span className="px-2 py-0.5 rounded-md bg-white/10 border border-white/20 text-[10px] font-bold text-white">
-                      10+ completed passes
-                    </span>
+                  <div className="flex-1 space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] uppercase font-bold text-[#9E9A93] mb-1 block">Tier Name</label>
+                        <input type="text" value={newTierName} onChange={(e) => setNewTierName(e.target.value)} className="w-full text-sm font-bold text-[#1A1615] bg-[#FAF8F5] border border-[#EFECE6] rounded-md px-2.5 py-1.5 focus:outline-none focus:border-[#D4A753]" placeholder="e.g. Platinum Elite" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase font-bold text-[#9E9A93] mb-1 block">Passes Required</label>
+                        <input type="text" value={newTierPasses} onChange={(e) => setNewTierPasses(e.target.value)} className="w-full text-[11px] font-bold text-[#6E6A66] bg-[#FAF8F5] border border-[#EFECE6] rounded-md px-2.5 py-1.5 focus:outline-none focus:border-[#D4A753]" placeholder="e.g. 15+ completed passes" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-[#9E9A93] mb-1 block">Perks Description</label>
+                      <input type="text" value={newTierDesc} onChange={(e) => setNewTierDesc(e.target.value)} className="w-full text-xs text-[#6E6A66] bg-[#FAF8F5] border border-[#EFECE6] rounded-md px-2.5 py-1.5 focus:outline-none focus:border-[#D4A753]" placeholder="e.g. 2x stamp earning, free merchandise." />
+                    </div>
+                    <div className="flex justify-end gap-2 pt-2">
+                      <button onClick={() => setIsAddingTier(false)} className="px-3 py-1.5 text-xs font-semibold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-md transition-colors cursor-pointer">Cancel</button>
+                      <button onClick={handleAddTier} className="px-3 py-1.5 bg-[#1A1615] hover:bg-black text-white text-xs font-bold rounded-md transition-colors cursor-pointer">Save Tier</button>
+                    </div>
                   </div>
-                  <p className="text-xs text-white/70 leading-relaxed">
-                    1.5x double-stamp happy hours, private quarterly cupping tastings.
-                  </p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -414,16 +533,16 @@ export const LoyaltyPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-6 bg-gradient-to-b from-[#F5F2EC] to-[#FAF8F5] flex justify-center">
+            <div className="p-4 sm:p-6 bg-gradient-to-b from-[#F5F2EC] to-[#FAF8F5] flex justify-center">
               {/* Live Phone Pass Preview Card */}
-              <div className="w-[320px] bg-[#FDFBF7] rounded-[24px] shadow-xl overflow-hidden border border-[#E5E0D8] relative">
+              <div className="w-full max-w-[340px] bg-[#FDFBF7] rounded-[24px] shadow-xl overflow-hidden border border-[#E5E0D8] relative">
                 {/* Top Notch Area simulation for iOS */}
                 {walletView === 'ios' && (
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-b-[16px] z-10"></div>
                 )}
 
                 {/* Pass Header */}
-                <div className="bg-[#1A1615] px-5 py-6 pb-8 text-white relative">
+                <div className="bg-[#1A1615] px-4 py-6 pb-8 text-white relative">
                   {/* Subtle noise/texture would go here */}
                   <div className="absolute top-4 right-4">
                     <div className="px-2 py-0.5 rounded bg-white/10 backdrop-blur-md border border-white/20 text-[9px] font-bold uppercase tracking-widest text-[#D4A753]">
@@ -431,18 +550,18 @@ export const LoyaltyPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 mt-4 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#D4A753] to-[#9E782F] flex items-center justify-center border-2 border-white/10 shadow-lg">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#D4A753] to-[#9E782F] flex items-center justify-center border-2 border-white/10 shadow-lg shrink-0">
                       <Coffee className="w-5 h-5 text-white" />
                     </div>
-                    <div>
-                      <div className="text-[11px] font-bold uppercase tracking-widest text-white/70">REVIA CAFE - DOWNTOWN FLAGSHIP</div>
-                      <div className="text-base font-bold text-white tracking-tight">{passBrandName || "Artisanal Stamp Pass"}</div>
+                    <div className="min-w-0">
+                      <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-white/70 truncate">REVIA CAFE - DOWNTOWN FLAGSHIP</div>
+                      <div className="text-sm sm:text-base font-bold text-white tracking-tight truncate">{passBrandName || "Artisanal Stamp Pass"}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Pass Body (Overlapping Header) */}
-                <div className="px-5 pb-5 -mt-4 relative z-10">
+                <div className="px-3 sm:px-4 pb-5 -mt-4 relative z-10">
                   <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#EFECE6]">
                     <div className="flex justify-between items-start mb-5">
                       <div>
@@ -462,7 +581,7 @@ export const LoyaltyPage: React.FC = () => {
                       {/* Row 1 (Stamps 1-5) */}
                       <div className="flex justify-between">
                         {[1, 2, 3, 4, 5].map((num) => (
-                          <div key={num} className="w-[38px] h-[38px] rounded-full flex items-center justify-center bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-inner">
+                          <div key={num} className="w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full flex items-center justify-center bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-inner shrink-0">
                             <Coffee className="w-4 h-4 fill-current" />
                           </div>
                         ))}
@@ -470,16 +589,16 @@ export const LoyaltyPage: React.FC = () => {
                       {/* Row 2 (Stamps 6-10) */}
                       <div className="flex justify-between">
                         {[6, 7, 8].map((num) => (
-                          <div key={num} className="w-[38px] h-[38px] rounded-full flex items-center justify-center bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-inner">
+                          <div key={num} className="w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full flex items-center justify-center bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-inner shrink-0">
                             <Coffee className="w-4 h-4 fill-current" />
                           </div>
                         ))}
                         {/* Stamp 9 (Empty) */}
-                        <div className="w-[38px] h-[38px] rounded-full flex items-center justify-center border-2 border-dashed border-[#D1CDC7] bg-[#FAF8F5] text-[#9E9A93] font-bold text-sm">
+                        <div className="w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full flex items-center justify-center border-2 border-dashed border-[#D1CDC7] bg-[#FAF8F5] text-[#9E9A93] font-bold text-sm shrink-0">
                           9
                         </div>
                         {/* Stamp 10 (Reward) */}
-                        <div className="w-[38px] h-[38px] rounded-full flex items-center justify-center border-2 border-[#D4A753] bg-[#FDF8EB] text-[#D4A753]">
+                        <div className="w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full flex items-center justify-center border-2 border-[#D4A753] bg-[#FDF8EB] text-[#D4A753] shrink-0">
                           <Gift className="w-4 h-4" />
                         </div>
                       </div>
@@ -501,19 +620,31 @@ export const LoyaltyPage: React.FC = () => {
                     <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
                       <ScanBarcode className="w-3.5 h-3.5" />
                     </div>
-                    •)) NFC TAP READY
+                    <Nfc className="w-4 h-4" /> NFC TAP READY
                   </div>
                   <div className="w-12 h-12 bg-white rounded-lg border border-[#EFECE6] p-1 flex items-center justify-center shadow-xs">
-                    {/* Fake QR code visualization */}
-                    <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCI+PHBhdGggZD0iTTAgMGgzdjNIMHptNSAwaDV2M0g1em0wIDRoNXYxSDV6TTAgNWgzdjNIMHptNSAwaDF2M0g1em0yIDBoM3YzSDd6IiBmaWxsPSIjMUExNjE1Ii8+PC9zdmc+')] bg-cover opacity-80"></div>
+                    {/* QR code using lucide icon */}
+                    <QrCode className="w-full h-full text-[#1A1615] opacity-80" />
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="p-5 bg-white border-t border-[#EFECE6]">
-              <button className="w-full py-3.5 bg-black hover:bg-black/90 text-white rounded-xl text-sm font-bold transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer">
-                Add Card to Apple & Google Wallet
+              <button
+                onClick={handleAddToWallet}
+                className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer ${isAddedToWallet
+                  ? 'bg-[#0D7A53] hover:bg-[#0D7A53]/90 text-white'
+                  : 'bg-black hover:bg-black/90 text-white'
+                  }`}
+              >
+                {isAddedToWallet ? (
+                  <>
+                    <Check className="w-4 h-4" /> Added to Wallet
+                  </>
+                ) : (
+                  'Add Card to Apple & Google Wallet'
+                )}
               </button>
             </div>
           </div>

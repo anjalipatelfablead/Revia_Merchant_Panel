@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @layer base {
@@ -47,9 +48,9 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E5E0D8;
+  background: #9E782F;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #C8C3BA;
+  background: #D4A753;
 }

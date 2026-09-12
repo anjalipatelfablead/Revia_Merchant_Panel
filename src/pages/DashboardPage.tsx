@@ -47,20 +47,90 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
     y2: 155,
   });
 
-  // Chart data points representing the 30-day dynamic volume curve
-  const chartPoints = [
-    { date: 'Oct 01', stamps: 740, redeemed: 110, x: 20, y1: 120, y2: 180 },
-    { date: 'Oct 05', stamps: 820, redeemed: 125, x: 80, y1: 105, y2: 172 },
-    { date: 'Oct 09', stamps: 790, redeemed: 118, x: 140, y1: 112, y2: 176 },
-    { date: 'Oct 13', stamps: 910, redeemed: 140, x: 200, y1: 92, y2: 165 },
-    { date: 'Oct 16', stamps: 860, redeemed: 132, x: 260, y1: 100, y2: 169 },
-    { date: 'Oct 20', stamps: 980, redeemed: 165, x: 320, y1: 80, y2: 160 },
-    { date: 'Oct 22', stamps: 1020, redeemed: 175, x: 380, y1: 72, y2: 158 },
-    { date: 'Thu, Oct 24', stamps: 1084, redeemed: 186, x: 440, y1: 65, y2: 155 },
-    { date: 'Oct 26', stamps: 990, redeemed: 170, x: 500, y1: 78, y2: 162 },
-    { date: 'Oct 29', stamps: 1050, redeemed: 180, x: 560, y1: 68, y2: 157 },
-    { date: 'Oct 31', stamps: 1120, redeemed: 195, x: 620, y1: 55, y2: 152 },
-  ];
+  // Dynamic Chart data and totals based on filters
+  const { chartPoints, totalStamps, totalRedeemed, ratio } = React.useMemo(() => {
+    let basePoints = [];
+    let stamps = 0;
+    let redeemed = 0;
+
+    if (activeDateRange === 'Last 7 Days') {
+      basePoints = [
+        { date: 'Mon', stamps: 820, redeemed: 120, x: 20, y1: 140, y2: 180 },
+        { date: 'Tue', stamps: 950, redeemed: 140, x: 120, y1: 120, y2: 175 },
+        { date: 'Wed', stamps: 880, redeemed: 130, x: 220, y1: 130, y2: 178 },
+        { date: 'Thu', stamps: 1100, redeemed: 180, x: 320, y1: 100, y2: 165 },
+        { date: 'Fri', stamps: 1400, redeemed: 220, x: 420, y1: 70, y2: 140 },
+        { date: 'Sat', stamps: 1600, redeemed: 280, x: 520, y1: 50, y2: 120 },
+        { date: 'Sun', stamps: 1450, redeemed: 240, x: 620, y1: 60, y2: 130 },
+      ];
+      stamps = 8200;
+      redeemed = 1310;
+    } else if (activeDateRange === 'This Quarter (Q4 2024)') {
+      basePoints = [
+        { date: 'Oct', stamps: 28410, redeemed: 4180, x: 20, y1: 120, y2: 180 },
+        { date: 'Nov', stamps: 32000, redeemed: 4800, x: 320, y1: 80, y2: 160 },
+        { date: 'Dec', stamps: 45000, redeemed: 7500, x: 620, y1: 40, y2: 120 },
+      ];
+      stamps = 105410;
+      redeemed = 16480;
+    } else if (activeDateRange === 'Year to Date (2024)') {
+      basePoints = [
+        { date: 'Q1', stamps: 65000, redeemed: 8500, x: 20, y1: 150, y2: 190 },
+        { date: 'Q2', stamps: 82000, redeemed: 11000, x: 220, y1: 120, y2: 170 },
+        { date: 'Q3', stamps: 95000, redeemed: 13500, x: 420, y1: 90, y2: 150 },
+        { date: 'Q4', stamps: 105410, redeemed: 16480, x: 620, y1: 50, y2: 110 },
+      ];
+      stamps = 347410;
+      redeemed = 49480;
+    } else {
+      // Default: Last 30 Days
+      basePoints = [
+        { date: 'Oct 01', stamps: 740, redeemed: 110, x: 20, y1: 120, y2: 180 },
+        { date: 'Oct 05', stamps: 820, redeemed: 125, x: 80, y1: 105, y2: 172 },
+        { date: 'Oct 09', stamps: 790, redeemed: 118, x: 140, y1: 112, y2: 176 },
+        { date: 'Oct 13', stamps: 910, redeemed: 140, x: 200, y1: 92, y2: 165 },
+        { date: 'Oct 16', stamps: 860, redeemed: 132, x: 260, y1: 100, y2: 169 },
+        { date: 'Oct 20', stamps: 980, redeemed: 165, x: 320, y1: 80, y2: 160 },
+        { date: 'Oct 22', stamps: 1020, redeemed: 175, x: 380, y1: 72, y2: 158 },
+        { date: 'Thu, Oct 24', stamps: 1084, redeemed: 186, x: 440, y1: 65, y2: 155 },
+        { date: 'Oct 26', stamps: 990, redeemed: 170, x: 500, y1: 78, y2: 162 },
+        { date: 'Oct 29', stamps: 1050, redeemed: 180, x: 560, y1: 68, y2: 157 },
+        { date: 'Oct 31', stamps: 1120, redeemed: 195, x: 620, y1: 55, y2: 152 },
+      ];
+      stamps = 28410;
+      redeemed = 4180;
+    }
+
+    if (timeframe === 'Weekly') {
+      stamps = Math.round(stamps * 0.25);
+      redeemed = Math.round(redeemed * 0.25);
+    } else if (timeframe === 'Monthly') {
+      stamps = Math.round(stamps * 1.05);
+      redeemed = Math.round(redeemed * 1.05);
+    }
+
+    const calculatedRatio = redeemed > 0 ? (stamps / redeemed).toFixed(2) : '0.00';
+
+    return { chartPoints: basePoints, totalStamps: stamps, totalRedeemed: redeemed, ratio: calculatedRatio };
+  }, [activeDateRange, timeframe]);
+
+  // Path generators
+  const generatePath = (points: any[], key: 'y1' | 'y2') => {
+    if (points.length === 0) return '';
+    return points.map((p, i) => {
+      if (i === 0) return `M ${p.x} ${p[key]}`;
+      const prev = points[i - 1];
+      const cx1 = prev.x + (p.x - prev.x) / 3;
+      const cy1 = prev[key];
+      const cx2 = prev.x + 2 * (p.x - prev.x) / 3;
+      const cy2 = p[key];
+      return `C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p.x} ${p[key]}`;
+    }).join(' ');
+  };
+
+  const stampsPath = generatePath(chartPoints, 'y1');
+  const redeemedPath = generatePath(chartPoints, 'y2');
+  const areaPath = chartPoints.length > 0 ? `${stampsPath} L ${chartPoints[chartPoints.length - 1].x} 190 L ${chartPoints[0].x} 190 Z` : '';
 
   return (
     <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5">
@@ -139,7 +209,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* 2. Top 4 Metric KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {/* Metric 1: Active Loyalty Members */}
         <div className="bg-white border border-[#EAE6E1] rounded-xl p-4 shadow-2xs flex flex-col justify-between">
           <div>
@@ -333,16 +403,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 <span className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#B38637]" />
                   <span className="text-[#7C746C]">Stamps Issued</span>
-                  <span className="font-bold text-[#1A1615]">28,410</span>
+                  <span className="font-bold text-[#1A1615]">{totalStamps.toLocaleString()}</span>
                 </span>
                 <span className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#1A1615]" />
                   <span className="text-[#7C746C]">Rewards Redeemed</span>
-                  <span className="font-bold text-[#1A1615]">4,180</span>
+                  <span className="font-bold text-[#1A1615]">{totalRedeemed.toLocaleString()}</span>
                 </span>
               </div>
               <div className="font-mono text-xs text-[#7C746C]">
-                Scan Ratio: <span className="font-semibold text-[#1A1615]">6.79 : 1</span>
+                Scan Ratio: <span className="font-semibold text-[#1A1615]">{ratio} : 1</span>
               </div>
             </div>
 
@@ -369,27 +439,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
                 {/* Area under stamps curve */}
                 <path
-                  d="
-                    M 20 120 
-                    C 80 105, 140 112, 200 92 
-                    C 260 100, 320 80, 380 72 
-                    C 440 65, 500 78, 560 68 
-                    C 590 62, 620 55, 620 55
-                    L 620 190 
-                    L 20 190 Z
-                  "
+                  d={areaPath}
                   fill="url(#goldAreaGrad)"
                 />
 
                 {/* Gold Line: Stamps Issued */}
                 <path
-                  d="
-                    M 20 120 
-                    C 80 105, 140 112, 200 92 
-                    C 260 100, 320 80, 380 72 
-                    C 440 65, 500 78, 560 68 
-                    C 590 62, 620 55, 620 55
-                  "
+                  d={stampsPath}
                   stroke="#B38637"
                   strokeWidth="2.5"
                   fill="none"
@@ -398,13 +454,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
                 {/* Dark Charcoal Line: Rewards Redeemed */}
                 <path
-                  d="
-                    M 20 180 
-                    C 80 172, 140 176, 200 165 
-                    C 260 169, 320 160, 380 158 
-                    C 440 155, 500 162, 560 157 
-                    C 590 154, 620 152, 620 152
-                  "
+                  d={redeemedPath}
                   stroke="#1A1615"
                   strokeWidth="2"
                   fill="none"
@@ -610,47 +660,59 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             <div className="text-[10px] uppercase font-bold text-[#8C827A] tracking-wider mb-2">
               QUICK OPERATIONAL ACTIONS
             </div>
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-3">
               {/* Action 1 */}
               <button
                 onClick={() => onNavigate('/qr-codes')}
-                className="w-full text-left bg-[#FAF8F5] hover:bg-[#F5F2EC] border border-[#EAE6E1] rounded-lg p-2.5 flex items-center justify-between transition-colors group cursor-pointer"
+                className="w-full text-left bg-[#B38637] hover:bg-[#A37837] border border-[#A37837] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-xs h-24 cursor-pointer group"
               >
-                <div className="flex items-center gap-2.5">
-                  <QrCode className="w-4 h-4 text-[#B38637]" />
-                  <span className="text-xs font-semibold text-[#1A1615]">
-                    Download Printable QR Pack
-                  </span>
+                <QrCode className="w-5 h-5 text-white mb-2" />
+                <div>
+                  <div className="text-xs font-bold text-white mb-0.5">Scan & Verify</div>
+                  <div className="text-[10px] text-[#FDF8EB] opacity-90 line-clamp-1">Counter camera launch</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C827A] group-hover:translate-x-0.5 transition-transform" />
               </button>
 
               {/* Action 2 */}
               <button
-                onClick={() => onNavigate('/staff')}
-                className="w-full text-left bg-[#FAF8F5] hover:bg-[#F5F2EC] border border-[#EAE6E1] rounded-lg p-2.5 flex items-center justify-between transition-colors group cursor-pointer"
+                onClick={() => onNavigate('/qr-codes')}
+                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
               >
-                <div className="flex items-center gap-2.5">
-                  <UserPlus className="w-4 h-4 text-[#B38637]" />
-                  <span className="text-xs font-semibold text-[#1A1615]">
-                    Add Shift Counter Staff
-                  </span>
+                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
+                  <Share2 className="w-4 h-4" />
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C827A] group-hover:translate-x-0.5 transition-transform" />
+                <div>
+                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">QR Pack Print</div>
+                  <div className="text-[10px] text-[#7C746C] line-clamp-1">Table stand templates</div>
+                </div>
               </button>
 
               {/* Action 3 */}
               <button
-                onClick={() => onNavigate('/loyalty')}
-                className="w-full text-left bg-[#FAF8F5] hover:bg-[#F5F2EC] border border-[#EAE6E1] rounded-lg p-2.5 flex items-center justify-between transition-colors group cursor-pointer"
+                onClick={() => onNavigate('/staff')}
+                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
               >
-                <div className="flex items-center gap-2.5">
-                  <Zap className="w-4 h-4 text-[#B38637]" />
-                  <span className="text-xs font-semibold text-[#1A1615]">
-                    Launch Double-Stamp Day
-                  </span>
+                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
+                  <UserPlus className="w-4 h-4" />
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C827A] group-hover:translate-x-0.5 transition-transform" />
+                <div>
+                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">Shift Staff</div>
+                  <div className="text-[10px] text-[#7C746C] line-clamp-1">4 baristas logged in</div>
+                </div>
+              </button>
+
+              {/* Action 4 */}
+              <button
+                onClick={() => onNavigate('/loyalty')}
+                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
+              >
+                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
+                  <Zap className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">Double-Stamp</div>
+                  <div className="text-[10px] text-[#7C746C] line-clamp-1">Trigger flash hour boost</div>
+                </div>
               </button>
             </div>
           </div>

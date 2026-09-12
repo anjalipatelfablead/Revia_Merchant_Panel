@@ -1,261 +1,524 @@
 import React, { useState } from 'react';
 import {
-  Palette,
-  Sparkles,
-  Upload,
-  CheckCircle2,
-  ShieldCheck,
-  Smartphone,
-  Eye,
-  RefreshCw,
-  QrCode,
-  Image as ImageIcon
+   Palette,
+   Sparkles,
+   Upload,
+   CheckCircle2,
+   ShieldCheck,
+   Smartphone,
+   Eye,
+   RefreshCw,
+   QrCode,
+   Image as ImageIcon,
+   Hexagon,
+   Store,
+   Clock,
+   RotateCcw,
+   Edit2,
+   Link as LinkIcon,
+   Search,
+   Bell,
+   ChevronRight,
+   ArrowRight,
+   Plus,
+   Gift,
+   Lock,
+   Wallet,
+   Zap,
+   Coffee,
+   Star
 } from 'lucide-react';
 import { PrimaryButton, TierBadge } from '../components/common/Badges';
 
 export const BrandingPage: React.FC = () => {
-  const [primaryGold, setPrimaryGold] = useState('#D4A753');
-  const [charcoal, setCharcoal] = useState('#1A1615');
-  const [canvasIvory, setCanvasIvory] = useState('#FAF8F5');
-  const [forestEmerald, setForestEmerald] = useState('#0D7A53');
-  const [brandName, setBrandName] = useState('Blue Bottle Specialty Roasters');
+   const [primaryGold, setPrimaryGold] = useState('#C59B46');
+   const [charcoal, setCharcoal] = useState('#1A1615');
+   const [canvasIvory, setCanvasIvory] = useState('#FAF8F5');
+   const [forestEmerald, setForestEmerald] = useState('#0D7A53');
 
-  return (
-    <div className="p-4 sm:p-6 space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-            IDENTITY ARCHITECTURE // SYSTEM THEME ENGINE
-          </span>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">Business Profile & Branding</h1>
-          <p className="text-xs text-[#6E6A66] mt-0.5">
-            Configure visual assets, color tokens, AAA contrast compliance, and live digital pass styling.
-          </p>
-        </div>
+   return (
+      <div className="flex flex-col h-full bg-[#FAF8F5] text-[#1A1615] font-sans pb-24">
 
-        <PrimaryButton onClick={() => alert('Brand design tokens successfully propagated across POS mesh!')} className="py-2 px-4 text-xs font-semibold">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Propagate Brand Tokens</span>
-        </PrimaryButton>
+         <div className="p-4 sm:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
+            {/* Page Title Section */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-8">
+               <div>
+                  <div className="flex items-center gap-3 mb-4">
+                     <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#A37837] rounded border border-[#F3E5C8] text-[9px] uppercase font-bold tracking-widest flex items-center gap-1.5">
+                        ORGANIZATION CONFIG <span className="text-[#A37837]">•</span> BRAND IDENTITY
+                     </span>
+                     <span className="text-[11px] font-medium text-[#6E6A66] flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
+                        Sync: 3 Roasteries Synced • Edge CDN Warm
+                     </span>
+                  </div>
+                  <h1 className="text-[32px] font-light tracking-tight text-[#1A1615] mb-2 leading-none font-serif">Business Profile & Branding</h1>
+                  <p className="text-[14px] text-[#6E6A66] max-w-2xl">
+                     Curate your maison's visual identity, token architecture, stamp marks, and real-time member portal experience across all physical tasting salons.
+                  </p>
+               </div>
+
+               <div className="flex flex-col items-end gap-3">
+                  <div className="flex items-center gap-1.5 text-[11px] text-[#8C827A]">
+                     <Clock className="w-3.5 h-3.5" />
+                     Last published 14m ago by <span className="font-bold text-[#1A1615]">E. Vance</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                     <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors">
+                        <RotateCcw className="w-4 h-4" /> Discard Changes
+                     </button>
+                     <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors">
+                        <Sparkles className="w-4 h-4" /> Publish Brand Tokens (⌘S)
+                     </button>
+                  </div>
+               </div>
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+               {/* Left Side: Configuration (7 cols) */}
+               <div className="lg:col-span-7 space-y-8">
+
+                  {/* Visual Assets & Brand Marks */}
+                  <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm">
+                     <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2">
+                           <Hexagon className="w-5 h-5 text-[#A37837]" />
+                           <h2 className="text-lg font-bold text-[#1A1615]">Visual Assets & Brand Marks</h2>
+                        </div>
+                        <div className="px-2.5 py-1 bg-[#F5F2EB] rounded text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">
+                           SVG / HIGH-RES PNG
+                        </div>
+                     </div>
+
+                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        {/* Primary Emblem */}
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
+                           <div className="flex items-start justify-between mb-2">
+                              <div className="text-[13px] font-bold text-[#1A1615]">Primary Emblem</div>
+                              <CheckCircle2 className="w-4 h-4 text-[#A37837]" />
+                           </div>
+                           <div className="text-[10px] text-[#8C827A] mb-4">512x512px SVG or vector</div>
+
+                           <div className="flex-1 flex flex-col items-center justify-center py-4 mb-4">
+                              <div className="w-16 h-16 bg-white border border-[#EAE6E1] rounded-xl flex items-center justify-center shadow-xs">
+                                 <Store className="w-8 h-8 text-[#A37837]" />
+                              </div>
+                           </div>
+
+                           <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
+                              <Upload className="w-3.5 h-3.5" /> Replace Emblem
+                           </button>
+                        </div>
+
+                        {/* Loyalty Stamp Crest */}
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
+                           <div className="flex items-start justify-between mb-2">
+                              <div className="text-[13px] font-bold text-[#1A1615]">Loyalty Stamp Crest</div>
+                              <CheckCircle2 className="w-4 h-4 text-[#A37837]" />
+                           </div>
+                           <div className="text-[10px] text-[#8C827A] mb-4">Pass slots (128px)</div>
+
+                           <div className="flex-1 flex flex-col items-center justify-center py-4 mb-4">
+                              <div className="w-16 h-16 bg-white border border-[#EAE6E1] rounded-xl flex items-center justify-center shadow-xs">
+                                 <Coffee className="w-8 h-8 text-[#A37837]" />
+                              </div>
+                           </div>
+
+                           <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
+                              <Edit2 className="w-3.5 h-3.5" /> Edit Crest Glyph
+                           </button>
+                        </div>
+
+                        {/* Favicon & PWA */}
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col group relative">
+                           <div className="flex items-start justify-between mb-2">
+                              <div className="text-[13px] font-bold text-[#1A1615]">Favicon & PWA</div>
+                              <CheckCircle2 className="w-4 h-4 text-[#A37837]" />
+                           </div>
+                           <div className="text-[10px] text-[#8C827A] mb-4">Browser tabs & Homescreen</div>
+
+                           <div className="flex-1 flex flex-col items-center justify-center py-4 mb-4">
+                              <div className="bg-white border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-xs">
+                                 <div className="w-6 h-6 bg-[#1A1615] rounded text-[#A37837] flex items-center justify-center font-serif font-bold text-[10px]">R</div>
+                                 <div className="w-4 h-4 bg-[#A37837] rounded-sm text-white flex items-center justify-center font-serif font-bold text-[8px]">R</div>
+                              </div>
+                              <div className="text-[9px] text-[#8C827A] mt-3">16px • 32px • 180px</div>
+                           </div>
+
+                           <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
+                              <RefreshCw className="w-3.5 h-3.5" /> Generate Sizes
+                           </button>
+                        </div>
+                     </div>
+
+                     {/* Pass Background Ambient Texture */}
+                     <div className="border border-[#EAE6E1] rounded-xl p-3 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                           <div className="w-20 h-12 rounded-lg bg-black overflow-hidden relative">
+                              <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Texture" className="w-full h-full object-cover opacity-80" />
+                           </div>
+                           <div>
+                              <div className="flex items-center gap-2">
+                                 <h3 className="text-[13px] font-bold text-[#1A1615]">Pass Background Ambient Texture</h3>
+                                 <span className="bg-[#EBF7F0] text-[#0D7A53] px-2 py-0.5 rounded text-[10px] font-bold">Active</span>
+                              </div>
+                              <p className="text-[11px] text-[#8C827A] mt-0.5">Rich tactile grain applied to digital membership keys and salon displays.</p>
+                           </div>
+                        </div>
+                        <button className="px-4 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[12px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors">
+                           Replace Scrim
+                        </button>
+                     </div>
+                  </div>
+
+                  {/* Color Architecture & Contrast Engine */}
+                  <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm">
+                     <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2">
+                           <Palette className="w-5 h-5 text-[#A37837]" />
+                           <h2 className="text-lg font-bold text-[#1A1615]">Color Architecture & Contrast Engine</h2>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#0D7A53]">
+                           <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
+                           16.2:1 AAA Verified
+                        </div>
+                     </div>
+
+                     <div className="flex items-center gap-2 p-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl w-fit mb-6">
+                        <button className="px-4 py-1.5 bg-white border border-[#EAE6E1] rounded-lg text-[12px] font-bold text-[#A37837] shadow-xs flex items-center gap-2">
+                           <span className="w-2 h-2 rounded-full bg-[#A37837]"></span> Artisanal Roastery (Default)
+                        </button>
+                        <button className="px-4 py-1.5 rounded-lg text-[12px] font-medium text-[#6E6A66] hover:bg-white hover:shadow-xs transition-all flex items-center gap-2">
+                           <span className="w-2 h-2 rounded-full bg-[#1A1615]"></span> Midnight Obsidian
+                        </button>
+                        <button className="px-4 py-1.5 rounded-lg text-[12px] font-medium text-[#6E6A66] hover:bg-white hover:shadow-xs transition-all flex items-center gap-2">
+                           <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Botanical Reserve
+                        </button>
+                     </div>
+
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Primary Gold Base */}
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-[100px]">
+                           <div className="flex items-center justify-between">
+                              <span className="text-[13px] font-bold text-[#1A1615]">Primary Gold Base</span>
+                              <span className="text-[10px] text-[#8C827A]">Buttons & Badges</span>
+                           </div>
+                           <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-[#C59B46] shadow-xs flex items-center justify-center cursor-pointer relative group">
+                                 <Edit2 className="w-3.5 h-3.5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                              <div className="bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5 flex-1 flex items-center justify-between font-mono text-[13px] font-bold text-[#1A1615]">
+                                 {primaryGold}
+                              </div>
+                              <div className="text-[9px] text-[#8C827A] font-mono leading-tight text-right uppercase w-[40px]">RGB<br />197,<br />155,<br />70</div>
+                           </div>
+                        </div>
+
+                        {/* Espresso Charcoal */}
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-[100px]">
+                           <div className="flex items-center justify-between">
+                              <span className="text-[13px] font-bold text-[#1A1615]">Espresso Charcoal</span>
+                              <span className="text-[10px] text-[#8C827A]">Typography & Marks</span>
+                           </div>
+                           <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-[#1A1615] shadow-xs flex items-center justify-center cursor-pointer relative group">
+                                 <Edit2 className="w-3.5 h-3.5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                              <div className="bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5 flex-1 flex items-center justify-between font-mono text-[13px] font-bold text-[#1A1615]">
+                                 {charcoal}
+                              </div>
+                              <div className="text-[9px] text-[#8C827A] font-mono leading-tight text-right uppercase w-[40px]">INK<br />PRIMARY</div>
+                           </div>
+                        </div>
+
+                        {/* Canvas Ivory */}
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-[100px]">
+                           <div className="flex items-center justify-between">
+                              <span className="text-[13px] font-bold text-[#1A1615]">Canvas Ivory</span>
+                              <span className="text-[10px] text-[#8C827A]">Screen Canvas Ground</span>
+                           </div>
+                           <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#EAE6E1] shadow-xs flex items-center justify-center cursor-pointer relative group">
+                                 <Edit2 className="w-3.5 h-3.5 text-[#1A1615] opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                              <div className="bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5 flex-1 flex items-center justify-between font-mono text-[13px] font-bold text-[#1A1615]">
+                                 {canvasIvory}
+                              </div>
+                              <div className="text-[9px] text-[#8C827A] font-mono leading-tight text-right uppercase w-[40px]">BACK<br />GROUND</div>
+                           </div>
+                        </div>
+
+                        {/* Forest Emerald */}
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-[100px]">
+                           <div className="flex items-center justify-between">
+                              <span className="text-[13px] font-bold text-[#1A1615]">Forest Emerald</span>
+                              <span className="text-[10px] text-[#8C827A]">Success & Flash Perks</span>
+                           </div>
+                           <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-[#0D7A53] shadow-xs flex items-center justify-center cursor-pointer relative group">
+                                 <Edit2 className="w-3.5 h-3.5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </div>
+                              <div className="bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5 flex-1 flex items-center justify-between font-mono text-[13px] font-bold text-[#1A1615]">
+                                 {forestEmerald}
+                              </div>
+                              <div className="text-[9px] text-[#8C827A] font-mono leading-tight text-right uppercase w-[40px]">SYSTEM<br />LIVE</div>
+                           </div>
+                        </div>
+
+                     </div>
+                  </div>
+
+                  {/* Public Roastery & Concierge Metadata */}
+                  <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm mb-12">
+                     <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2">
+                           <Store className="w-5 h-5 text-[#A37837]" />
+                           <h2 className="text-lg font-bold text-[#1A1615]">Public Roastery & Concierge Metadata</h2>
+                        </div>
+                        <div className="px-2.5 py-1 bg-[#FAF8F5] rounded text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">
+                           CUSTOMER-FACING
+                        </div>
+                     </div>
+
+                     <div className="space-y-5">
+                        {/* Legal Name */}
+                        <div>
+                           <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Legal Business Entity Name</label>
+                           <input type="text" defaultValue="Revia Roasters & Hospitality Co." className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                        </div>
+
+                        {/* Tagline */}
+                        <div>
+                           <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Hero Salon Statement / Tagline</label>
+                           <input type="text" defaultValue="Purveyors of Single-Origin Geisha & Bespoke Tasting Salon." className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                           {/* Industry */}
+                           <div>
+                              <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Industry Category & MCC</label>
+                              <input type="text" defaultValue="Specialty Coffee & Private Lounge (5499)" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                           </div>
+
+                           {/* Email */}
+                           <div>
+                              <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Concierge Support Email</label>
+                              <input type="text" defaultValue="concierge@revia.com" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 px-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                           </div>
+
+                           {/* Instagram */}
+                           <div>
+                              <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Instagram / Social Handle</label>
+                              <div className="relative">
+                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A] text-[13px]">@</span>
+                                 <input type="text" defaultValue="reviaroasters" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 pl-7 pr-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                              </div>
+                           </div>
+
+                           {/* URL */}
+                           <div>
+                              <label className="block text-[12px] font-bold text-[#1A1615] mb-1.5">Primary Web URL</label>
+                              <div className="relative">
+                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A] text-[13px]">https://</span>
+                                 <input type="text" defaultValue="revia.com" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg py-2.5 pl-14 pr-3 text-[13px] text-[#1A1615] focus:outline-none focus:ring-2 focus:ring-[#C59B46]/30" />
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* Synced Nodes */}
+                        <div className="pt-2">
+                           <div className="flex items-center justify-between mb-3">
+                              <h3 className="text-[13px] font-bold text-[#1A1615]">Synced Salon Nodes</h3>
+                              <button className="text-[11px] font-bold text-[#C59B46] hover:underline flex items-center gap-1">Manage Branches <ArrowRight className="w-3 h-3" /></button>
+                           </div>
+                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
+                                 <div>
+                                    <div className="text-[12px] font-bold text-[#1A1615]">Downtown Flagship</div>
+                                    <div className="text-[10px] text-[#8C827A]">SoHo Roastery</div>
+                                 </div>
+                                 <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53] mt-1.5"></span>
+                              </div>
+                              <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
+                                 <div>
+                                    <div className="text-[12px] font-bold text-[#1A1615]">Tribeca Salon</div>
+                                    <div className="text-[10px] text-[#8C827A]">Lounge & Bar</div>
+                                 </div>
+                                 <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53] mt-1.5"></span>
+                              </div>
+                              <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
+                                 <div>
+                                    <div className="text-[12px] font-bold text-[#1A1615]">Brooklyn Works</div>
+                                    <div className="text-[10px] text-[#8C827A]">Cupping Lab</div>
+                                 </div>
+                                 <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53] mt-1.5"></span>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+               </div>
+
+               {/* Right Side: Preview Panel (5 cols) */}
+               <div className="lg:col-span-5 sticky top-24 space-y-6">
+                  <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm">
+                     <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2">
+                           <Smartphone className="w-5 h-5 text-[#A37837]" />
+                           <h2 className="text-[15px] font-bold text-[#1A1615]">Client Viewport Live Preview</h2>
+                        </div>
+                        <div className="flex items-center gap-1 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-1">
+                           <button className="px-3 py-1 bg-white border border-[#EAE6E1] rounded shadow-xs text-[11px] font-bold text-[#1A1615]">Pass Ledger</button>
+                           <button className="px-3 py-1 rounded text-[11px] font-medium text-[#8C827A] hover:text-[#1A1615]">Welcome Hub</button>
+                        </div>
+                     </div>
+
+                     {/* Mobile Phone Mockup */}
+                     <div className="flex justify-center mb-6">
+                        <div className="w-[320px] bg-[#1A1615] rounded-[40px] p-2.5 shadow-2xl relative border-4 border-[#3D3732]">
+                           {/* Notch */}
+                           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#1A1615] rounded-b-3xl z-30"></div>
+
+                           {/* Screen Content */}
+                           <div className="bg-[#FAF8F5] w-full h-[650px] rounded-[32px] overflow-hidden relative border border-[#EAE6E1]">
+
+                              {/* iOS Status Bar */}
+                              <div className="h-12 w-full pt-4 px-6 flex justify-between items-center text-[#1A1615] text-[12px] font-semibold z-20 relative">
+                                 <span>9:41</span>
+                                 <div className="flex gap-1.5 items-center">
+                                    <div className="w-4 h-3 flex items-end gap-0.5">
+                                       <div className="w-1 bg-[#1A1615] h-1 rounded-sm"></div>
+                                       <div className="w-1 bg-[#1A1615] h-1.5 rounded-sm"></div>
+                                       <div className="w-1 bg-[#1A1615] h-2 rounded-sm"></div>
+                                       <div className="w-1 bg-[#1A1615] h-3 rounded-sm"></div>
+                                    </div>
+                                    <div className="w-4 h-3 bg-[#1A1615] rounded-full"></div>
+                                 </div>
+                              </div>
+
+                              {/* Main Wallet Pass Card */}
+                              <div className="px-4 py-2 space-y-4">
+                                 <div className="bg-white rounded-2xl p-4 shadow-sm border border-[#EAE6E1]">
+                                    <div className="flex justify-between items-start mb-6">
+                                       <div className="flex items-center gap-2">
+                                          <div className="w-8 h-8 bg-[#C59B46] rounded-full flex items-center justify-center text-white shadow-xs">
+                                             <Store className="w-4 h-4" />
+                                          </div>
+                                          <div>
+                                             <div className="text-[12px] font-bold text-[#1A1615]">REVIA MEMBER PASS</div>
+                                             <div className="text-[9px] text-[#8C827A]">#REV-8924</div>
+                                          </div>
+                                       </div>
+                                       <div className="bg-[#EBF7F0] text-[#0D7A53] px-2 py-0.5 rounded-full text-[9px] font-bold flex items-center gap-1 border border-[#BCE3D1]">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> NFC Ready
+                                       </div>
+                                    </div>
+
+                                    <div className="flex justify-between items-end mb-4">
+                                       <div className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">LOYALTY STAMP LEDGER</div>
+                                       <div className="text-[10px] font-bold text-[#0D7A53]">● 8 of 10 Collected</div>
+                                    </div>
+
+                                    {/* Stamps Grid */}
+                                    <div className="grid grid-cols-5 gap-2 mb-6">
+                                       {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                                          <div key={i} className="aspect-square bg-[#FDF8EB] rounded-full border border-[#F3E5C8] flex flex-col items-center justify-center relative">
+                                             <Star className="w-3 h-3 text-[#C59B46] mb-0.5 fill-[#C59B46]" />
+                                             <div className="text-[8px] text-[#C59B46] font-bold">#{i}</div>
+                                          </div>
+                                       ))}
+                                       <div className="aspect-square bg-[#FAF8F5] rounded-full border border-[#EAE6E1] border-dashed flex flex-col items-center justify-center">
+                                          <Plus className="w-3 h-3 text-[#A8A29A] mb-0.5" />
+                                          <div className="text-[8px] text-[#A8A29A] font-bold">NEXT</div>
+                                       </div>
+                                       <div className="aspect-square bg-[#EBF7F0] rounded-full border border-[#BCE3D1] flex flex-col items-center justify-center">
+                                          <Gift className="w-4 h-4 text-[#0D7A53] mb-0.5" />
+                                          <div className="text-[8px] text-[#0D7A53] font-bold">FREE</div>
+                                       </div>
+                                    </div>
+
+                                    <div className="flex justify-between items-center py-2 border-t border-[#EAE6E1]">
+                                       <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1A1615]">
+                                          <Lock className="w-3.5 h-3.5 text-[#C59B46]" /> 2 more stamps to unlock Flight
+                                       </div>
+                                       <div className="text-[10px] font-bold text-[#8C827A]">Tier 10</div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-2 mt-4">
+                                       <button className="flex-1 bg-gradient-to-b from-[#C59B46] to-[#A37837] text-white py-2.5 rounded-xl text-[12px] font-bold flex flex-col items-center justify-center shadow-xs">
+                                          <QrCode className="w-4 h-4 mb-1" />
+                                          Scan to Earn
+                                       </button>
+                                       <button className="flex-1 bg-white border border-[#EAE6E1] text-[#1A1615] py-2.5 rounded-xl text-[12px] font-bold flex flex-col items-center justify-center hover:bg-[#FAF8F5]">
+                                          <Gift className="w-4 h-4 mb-1 text-[#6E6A66]" />
+                                          Redeem
+                                       </button>
+                                       <button className="flex-1 bg-white border border-[#EAE6E1] text-[#1A1615] py-2.5 rounded-xl text-[12px] font-bold flex flex-col items-center justify-center hover:bg-[#FAF8F5]">
+                                          <Store className="w-4 h-4 mb-1 text-[#6E6A66]" />
+                                          Salon Perks
+                                       </button>
+                                    </div>
+
+                                    <button className="w-full mt-4 py-2 flex items-center justify-center gap-2 text-[11px] font-bold text-[#1A1615] hover:underline">
+                                       <Wallet className="w-4 h-4" /> Add Pass to Apple & Google Wallet <ChevronRight className="w-3 h-3" />
+                                    </button>
+                                 </div>
+
+                                 {/* Flash Perk Active */}
+                                 <div className="bg-[#EBF7F0] rounded-xl p-3 border border-[#BCE3D1] flex items-center justify-between">
+                                    <div className="flex items-start gap-2">
+                                       <Zap className="w-4 h-4 text-[#0D7A53] shrink-0 mt-0.5" />
+                                       <div>
+                                          <div className="text-[11px] font-bold text-[#1A1615]">FLASH PERK ACTIVE</div>
+                                          <div className="text-[9px] text-[#0D7A53] mt-0.5">Double Stamps 2 PM - 5 PM Today</div>
+                                       </div>
+                                    </div>
+                                    <div className="bg-[#0D7A53] text-white px-2 py-1 rounded text-[11px] font-bold">2X</div>
+                                 </div>
+
+                                 {/* Barista's Recommendation */}
+                                 <div className="bg-white rounded-xl p-3 border border-[#EAE6E1]">
+                                    <div className="flex items-center justify-between mb-3">
+                                       <div className="text-[12px] font-bold text-[#1A1615]">Barista's Recommendation</div>
+                                       <div className="text-[9px] font-bold text-[#C59B46]">Today's Roast</div>
+                                    </div>
+                                    <div className="flex gap-3">
+                                       <img src="https://images.unsplash.com/photo-1559525839-b184a4d698c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&q=80" alt="Coffee" className="w-14 h-14 rounded-lg object-cover" />
+                                       <div className="flex-1">
+                                          <div className="flex justify-between items-start">
+                                             <div className="text-[12px] font-bold text-[#1A1615]">Panama Geisha Reserve</div>
+                                             <div className="text-[9px] font-bold text-[#0D7A53] bg-[#EBF7F0] px-1.5 py-0.5 rounded border border-[#BCE3D1] whitespace-nowrap">+2 Stamps</div>
+                                          </div>
+                                          <div className="text-[9px] text-[#8C827A] mt-0.5 leading-tight mb-2">Notes of Jasmine, Bergamot & White Peach</div>
+                                          <div className="flex items-center justify-between">
+                                             <div className="text-[13px] font-bold text-[#1A1615]">$8.50</div>
+                                             <button className="px-3 py-1 bg-[#FAF8F5] border border-[#EAE6E1] rounded-full text-[10px] font-bold text-[#1A1615]">Order Ahead</button>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+
+                              </div>
+
+                              {/* iPhone Home Indicator */}
+                              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-[#1A1615]/20 rounded-full"></div>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div className="flex items-center justify-between text-[11px]">
+                        <div className="flex items-center gap-1.5 text-[#0D7A53] font-medium">
+                           <CheckCircle2 className="w-3.5 h-3.5" /> Tokens Validated for PassKit 3.0
+                        </div>
+                        <button className="font-bold text-[#C59B46] hover:underline">Test on Device</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
       </div>
-
-      {/* Main Grid: Assets & Color Engine (Left 7 cols) + Live Viewport Preview (Right 5 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Side: Upload Grid + Color Engine */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Visual Assets Upload Grid */}
-          <div className="bg-white border border-[#E5E0D8] rounded-xl p-5 shadow-xs space-y-4">
-            <div className="border-b border-[#E5E0D8] pb-3">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                HIGH-RESOLUTION ASSETS
-              </span>
-              <h3 className="text-base font-bold text-[#1A1615]">Visual Assets Upload Grid</h3>
-              <p className="text-xs text-[#6E6A66]">
-                PNG or SVG vector graphics for Apple Wallet pass header and counter kiosk displays.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {/* Asset 1: Primary Emblem */}
-              <div className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] transition-colors flex flex-col items-center text-center group cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white font-bold shadow-xs mb-2">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <div className="text-xs font-bold text-[#1A1615]">Primary Emblem</div>
-                <span className="text-[10px] text-[#9E9A93] mt-0.5">SVG • 512x512px</span>
-                <span className="mt-2 text-[10px] font-semibold text-[#9E782F] flex items-center gap-1">
-                  <Upload className="w-3 h-3" /> Replace Asset
-                </span>
-              </div>
-
-              {/* Asset 2: Loyalty Stamp Crest */}
-              <div className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] transition-colors flex flex-col items-center text-center group cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-[#1A1615] flex items-center justify-center text-[#D4A753] font-bold shadow-xs mb-2">
-                  ☕
-                </div>
-                <div className="text-xs font-bold text-[#1A1615]">Stamp Crest</div>
-                <span className="text-[10px] text-[#9E9A93] mt-0.5">Wallet Punch Icon</span>
-                <span className="mt-2 text-[10px] font-semibold text-[#9E782F] flex items-center gap-1">
-                  <Upload className="w-3 h-3" /> Replace Asset
-                </span>
-              </div>
-
-              {/* Asset 3: Favicon & PWA Icon */}
-              <div className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] transition-colors flex flex-col items-center text-center group cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-white border border-[#E5E0D8] flex items-center justify-center text-[#1A1615] font-bold shadow-xs mb-2">
-                  <ImageIcon className="w-5 h-5 text-[#9E782F]" />
-                </div>
-                <div className="text-xs font-bold text-[#1A1615]">Favicon & PWA</div>
-                <span className="text-[10px] text-[#9E9A93] mt-0.5">192x192 PNG</span>
-                <span className="mt-2 text-[10px] font-semibold text-[#9E782F] flex items-center gap-1">
-                  <Upload className="w-3 h-3" /> Replace Asset
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Color Architecture Engine */}
-          <div className="bg-white border border-[#E5E0D8] rounded-xl p-5 shadow-xs space-y-4">
-            <div className="border-b border-[#E5E0D8] pb-3 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                  COLOR ARCHITECTURE ENGINE
-                </span>
-                <h3 className="text-base font-bold text-[#1A1615]">Brand Color Tokens & Contrast Check</h3>
-              </div>
-              <div className="flex items-center gap-1 text-[11px] font-semibold text-[#0D7A53] bg-[#E6F4ED] px-2.5 py-1 rounded-full border border-[#BCE3D1]">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>WCAG AAA Verified</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Primary Gold */}
-              <div className="p-3.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                      style={{ backgroundColor: primaryGold }}
-                    />
-                    <span className="text-xs font-bold text-[#1A1615]">Brand Gold (Primary)</span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-[#9E782F]">{primaryGold}</span>
-                </div>
-                <p className="text-[10px] text-[#6E6A66]">
-                  Applied to linear gradient buttons and active tab indicators.
-                </p>
-                <div className="flex items-center justify-between pt-1 border-t border-[#E5E0D8] text-[10px]">
-                  <span className="text-[#9E9A93]">Contrast on White:</span>
-                  <span className="font-bold text-[#0D7A53]">4.82:1 (Pass AA)</span>
-                </div>
-              </div>
-
-              {/* Charcoal / Ink */}
-              <div className="p-3.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                      style={{ backgroundColor: charcoal }}
-                    />
-                    <span className="text-xs font-bold text-[#1A1615]">Espresso Charcoal</span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-[#1A1615]">{charcoal}</span>
-                </div>
-                <p className="text-[10px] text-[#6E6A66]">
-                  Primary typography ink and Obsidian VIP background badge.
-                </p>
-                <div className="flex items-center justify-between pt-1 border-t border-[#E5E0D8] text-[10px]">
-                  <span className="text-[#9E9A93]">Contrast on Canvas:</span>
-                  <span className="font-bold text-[#0D7A53]">16.4:1 (Pass AAA)</span>
-                </div>
-              </div>
-
-              {/* Canvas Ivory */}
-              <div className="p-3.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                      style={{ backgroundColor: canvasIvory }}
-                    />
-                    <span className="text-xs font-bold text-[#1A1615]">Canvas Ivory</span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-[#6E6A66]">{canvasIvory}</span>
-                </div>
-                <p className="text-[10px] text-[#6E6A66]">
-                  Neutral background tone minimizing barista eye fatigue.
-                </p>
-                <div className="flex items-center justify-between pt-1 border-t border-[#E5E0D8] text-[10px]">
-                  <span className="text-[#9E9A93]">Luminance:</span>
-                  <span className="font-bold text-[#1A1615]">97.8% Reflectance</span>
-                </div>
-              </div>
-
-              {/* Forest Emerald */}
-              <div className="p-3.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-5 h-5 rounded-md shadow-2xs border border-black/10"
-                      style={{ backgroundColor: forestEmerald }}
-                    />
-                    <span className="text-xs font-bold text-[#1A1615]">Forest Emerald</span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold text-[#0D7A53]">{forestEmerald}</span>
-                </div>
-                <p className="text-[10px] text-[#6E6A66]">
-                  Live telemetry status and positive growth metric badges.
-                </p>
-                <div className="flex items-center justify-between pt-1 border-t border-[#E5E0D8] text-[10px]">
-                  <span className="text-[#9E9A93]">Contrast on Mint:</span>
-                  <span className="font-bold text-[#0D7A53]">7.1:1 (Pass AAA)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side: Live Viewport Preview (5 cols) */}
-        <div className="lg:col-span-5 sticky top-20 space-y-4">
-          <div className="bg-white border border-[#E5E0D8] rounded-xl p-5 shadow-sm space-y-4">
-            <div className="border-b border-[#E5E0D8] pb-3 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                  REALTIME VIEWPORT
-                </span>
-                <h3 className="text-base font-bold text-[#1A1615]">Mobile Wallet Pass Rendering</h3>
-              </div>
-              <Smartphone className="w-4 h-4 text-[#9E782F]" />
-            </div>
-
-            {/* Mobile Pass Device Frame */}
-            <div className="bg-neutral-900 p-4 rounded-2xl shadow-xl">
-              <div className="bg-gradient-to-br from-[#1A1615] via-[#2A2321] to-[#1A1615] text-white rounded-xl p-4 border border-white/10 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-gradient-to-b from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white text-xs font-bold">
-                      ☕
-                    </div>
-                    <div>
-                      <div className="text-[11px] font-bold uppercase tracking-tight">
-                        {brandName}
-                      </div>
-                      <div className="text-[9px] text-[#D4A753]">Gold Reserve Pass</div>
-                    </div>
-                  </div>
-                  <TierBadge tier="Gold Reserve" />
-                </div>
-
-                <div className="py-2 border-y border-white/10 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-[9px] uppercase font-bold text-white/50 block">Passholder</span>
-                    <span className="font-bold">Sofia Chen</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[9px] uppercase font-bold text-white/50 block">Stamps</span>
-                    <span className="font-mono font-bold text-[#D4A753]">6 / 10 Active</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-1 text-[10px]">
-                  <span className="font-mono text-white/50">NFC-TOKEN-8812</span>
-                  <span className="text-[#0D7A53] font-bold bg-[#E6F4ED] px-2 py-0.5 rounded border border-[#BCE3D1]">
-                    Ready to Tap
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-3 bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg text-[11px] text-[#6E6A66] flex items-center justify-between">
-              <span>Apple PassKit & Google Pay Bundles</span>
-              <span className="font-bold text-[#0D7A53]">Signed & Valid</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+   );
 };
