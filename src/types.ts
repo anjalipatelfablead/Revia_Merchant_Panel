@@ -141,7 +141,7 @@ export type NavRoute =
   | '/catalog'
   | '/orders'
   | '/invoices'
-  | '/customers'
+  | '/customerlist'
   | '/transactions'
   | '/campaigns'
   | '/campaigns/new'

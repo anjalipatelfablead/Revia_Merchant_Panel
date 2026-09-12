@@ -172,7 +172,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
           </button>
         </div>
 
-        <nav aria-label="Settings sections" className="-mx-1 mt-2 overflow-x-auto rounded-lg border border-[#E5E0D8] bg-white p-1 sm:-mx-2">
+        <nav aria-label="Settings sections" className="-mx-1 mt-[17px] overflow-x-auto rounded-lg border border-[#E5E0D8] bg-white p-1 sm:-mx-2">
           <div className="flex min-w-full items-center gap-0.5">
             <button className="min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]" type="button">
               General & Brand
@@ -194,36 +194,36 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
       </header>
 
       {/* Governance summary */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-4">
-        <div className="group min-h-[188px] rounded-xl border border-[#E5E0D8] bg-white p-3.5 shadow-[0_2px_10px_rgba(31,29,26,0.04)] transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)] sm:col-start-1 sm:row-start-1 sm:min-h-[204px] xl:col-auto xl:row-auto">
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-[#9E9A93]">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+        <div className="group flex h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)]">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]">
             <span className="inline-flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5 text-[#0D7A53]" /> Compliance Posture</span>
             <span className="rounded-full bg-[#E6F4ED] px-1.5 py-0.5 text-[8px] text-[#0D7A53]">Enforced</span>
           </div>
-          <div className="mt-4 max-w-[180px] text-[29px] font-bold leading-[1.02] tracking-tight text-[#1A1615]">SOC-2 Type<br />II</div>
-          <p className="mt-3 max-w-[180px] text-[10px] leading-snug text-[#6E6A66]">Audit compliance sealed & certified valid</p>
-          <span className="mt-3 flex max-w-[180px] items-start gap-1 text-[10px] font-semibold leading-snug text-[#0D7A53]"><CircleCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" /> Zero policy breaches (365 days)</span>
+          <div className="mt-1.5 max-w-[180px] whitespace-nowrap text-xl font-bold leading-[1.02] tracking-tight text-[#1A1615]">SOC-2 Type II</div>
+          <p className="mt-1 max-w-[180px] text-[11px] leading-snug text-[#6E6A66]">Audit compliance sealed & certified valid</p>
+          <span className="mt-2 flex max-w-[180px] items-start gap-1 text-[11px] font-semibold leading-snug text-[#0D7A53]"><CircleCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" /> Zero policy breaches (365 days)</span>
         </div>
 
-        <div className="group h-fit rounded-xl border border-[#E5E0D8] bg-white p-3.5 shadow-[0_2px_10px_rgba(31,29,26,0.04)] transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)] sm:col-start-1 sm:row-start-2 xl:col-auto xl:row-auto">
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-[#9E9A93]"><span>Connected Terminals</span><Radio className="h-3.5 w-3.5 animate-pulse text-[#0D7A53]" /></div>
-          <div className="mt-4 text-[28px] font-bold leading-none tracking-tight text-[#1A1615]">6 / 6 <span className="text-sm font-medium">Terminals Online</span></div>
-          <p className="mt-1 text-[9px] text-[#6E6A66]">Downtown • Roastery • Northside</p>
-          <span className="mt-2 flex items-center gap-1 text-[9px] font-semibold text-[#0D7A53]"><Activity className="h-3 w-3" /> 100% Mesh Health</span>
+        <div className="group flex h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)]">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Connected Terminals</span><Radio className="h-3.5 w-3.5 animate-pulse text-[#0D7A53]" /></div>
+          <div className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-[#1A1615]">6 / 6 <span className="text-sm font-medium">Terminals Online</span></div>
+          <p className="mt-1 text-[11px] text-[#6E6A66]">Downtown • Roastery • Northside</p>
+          <span className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-[#0D7A53]"><Activity className="h-3 w-3" /> 100% Mesh Health</span>
         </div>
 
-        <div className="group h-fit rounded-xl border border-[#E5E0D8] bg-white p-3.5 shadow-[0_2px_10px_rgba(31,29,26,0.04)] transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)] sm:col-start-2 sm:row-start-2 xl:col-auto xl:row-auto">
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-[#9E9A93]"><span>Audit Events (24h)</span><Cpu className="h-3.5 w-3.5 text-[#C08B31]" /></div>
-          <div className="mt-4 text-[28px] font-bold leading-none tracking-tight text-[#1A1615]">48,219</div>
-          <p className="mt-1 text-[9px] text-[#6E6A66]">Configuration and access events recorded</p>
-          <span className="mt-2 flex items-center gap-1 text-[9px] font-semibold text-[#0D7A53]"><CircleCheck className="h-3 w-3" /> 0 failed auth signatures</span>
+        <div className="group flex h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)]">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Audit Events (24h)</span><Cpu className="h-3.5 w-3.5 text-[#C08B31]" /></div>
+          <div className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-[#1A1615]">48,219</div>
+          <p className="mt-1 text-[11px] text-[#6E6A66]">Configuration and access events recorded</p>
+          <span className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-[#0D7A53]"><CircleCheck className="h-3 w-3" /> 0 failed auth signatures</span>
         </div>
 
-        <div className="group h-fit rounded-xl border border-[#E5E0D8] bg-white p-3.5 shadow-[0_2px_10px_rgba(31,29,26,0.04)] transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)] sm:col-start-3 sm:row-start-2 xl:col-auto xl:row-auto">
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-[#9E9A93]"><span>Cryptographic Ledger</span><span className="rounded-full bg-[#FFF6DF] px-1.5 py-0.5 text-[8px] text-[#8B681F]">SHA-256</span></div>
-          <div className="mt-4 text-[28px] font-bold leading-none tracking-tight text-[#1A1615]">142 Events</div>
-          <p className="mt-1 text-[9px] text-[#6E6A66]">Stream rate: ~12.4 actions / hr</p>
-          <span className="mt-2 flex items-center gap-1 text-[9px] font-semibold text-[#8B681F]"><Lock className="h-3 w-3" /> Immutable Block State Valid</span>
+        <div className="group flex h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)]">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Cryptographic Ledger</span><span className="rounded-full bg-[#FFF6DF] px-1.5 py-0.5 text-[8px] text-[#8B681F]">SHA-256</span></div>
+          <div className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-[#1A1615]">142 Events</div>
+          <p className="mt-1 text-[11px] text-[#6E6A66]">Stream rate: ~12.4 actions / hr</p>
+          <span className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-[#8B681F]"><Lock className="h-3 w-3" /> Immutable Block State Valid</span>
         </div>
       </div>
 

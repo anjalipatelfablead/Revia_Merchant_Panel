@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       label: 'CRM & ACTIVITY',
       items: [
-        { name: 'Customers', route: '/customers', icon: Users },
+        { name: 'Customers', route: '/customerlist', icon: Users },
         { name: 'Transactions', route: '/transactions', icon: Receipt },
         { name: 'Campaigns', route: '/campaigns/new', icon: Megaphone },
         { name: 'Rewards', route: '/rewards', icon: Award },

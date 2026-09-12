@@ -23,7 +23,7 @@ export const HistoryScreen = () => {
       <div className="flex gap-2 overflow-x-auto pb-1">
         {filters.map(f => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-full text-xs font-black capitalize whitespace-nowrap transition-all ${filter === f ? 'bg-[#222] text-white' : 'bg-white border border-[#E6E6E6] text-[#666]'}`}>
+            className={`px-5 py-2 rounded-full text-xs font-bold capitalize whitespace-nowrap transition-all ${filter === f ? 'bg-[#222] text-white shadow-md' : 'bg-white border border-[#E6E6E6] text-[#666] hover:bg-[#F8F8F6]'}`}>
             {f}
           </button>
         ))}
@@ -34,7 +34,7 @@ export const HistoryScreen = () => {
         Object.entries(grouped).map(([date, items]) => (
           <div key={date}>
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#999] mb-3">{date}</p>
-            <div className="bg-white rounded-2xl border border-[#E6E6E6] p-4">
+            <div className="bg-white rounded-xl border border-[#E6E6E6] p-4 shadow-sm">
               {items.map((item, i) => <TimelineItem key={item.id} item={item} isLast={i === items.length - 1} />)}
             </div>
           </div>
