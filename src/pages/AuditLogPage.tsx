@@ -70,8 +70,21 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   const [autoSessionTimeout, setAutoSessionTimeout] = useState<boolean>(true);
   const [enforceFleetTls, setEnforceFleetTls] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const flaggedLogs = logs.filter((log) => log.cryptoState === 'FLAGGED');
-  const regularLogs = logs.filter((log) => log.cryptoState !== 'FLAGGED');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [eventType, setEventType] = useState<string>('All Event Types');
+  const [branchFilter, setBranchFilter] = useState<string>('All Branches');
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const eventTypes = Array.from(new Set(logs.map((log) => log.action))).sort();
+  const branchOptions = ['All Branches', 'Downtown', 'Roastery', 'Northside'];
+  const filteredLogs = logs.filter((log) => {
+    const searchText = `${log.actor.name} ${log.actor.role} ${log.action} ${log.target} ${log.terminal} ${log.ip} ${log.hash}`.toLowerCase();
+    const matchesSearch = searchText.includes(searchQuery.toLowerCase().trim());
+    const matchesType = eventType === 'All Event Types' || log.action === eventType;
+    const matchesBranch = branchFilter === 'All Branches' || searchText.includes(branchFilter.toLowerCase());
+    return matchesSearch && matchesType && matchesBranch;
+  });
+  const flaggedLogs = filteredLogs.filter((log) => log.cryptoState === 'FLAGGED');
+  const regularLogs = filteredLogs.filter((log) => log.cryptoState !== 'FLAGGED');
   const referenceLogs = regularLogs.filter((log) =>
     log.action === 'POS_HEARTBEAT_RECONNECT' || log.action === 'CUSTOMER_EXPORT_REQUESTED'
   );
@@ -98,6 +111,19 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
     navigator.clipboard.writeText(text);
     setCopiedHash(true);
     setTimeout(() => setCopiedHash(false), 2000);
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setEventType('All Event Types');
+    setBranchFilter('All Branches');
+    setCurrentPage(1);
+  };
+
+  const refreshLogs = () => {
+    setRefreshing(true);
+    setCurrentPage(1);
+    window.setTimeout(() => setRefreshing(false), 900);
   };
 
   return (
@@ -132,7 +158,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               </span>
               <span className="text-[8px] text-[#A09A91]">• Revision v2.14r4</span>
             </div>
-            <h1 className="mt-0.5 text-[18px] font-bold tracking-tight text-[#1A1615] sm:text-[20px]">
+            <h1 className="mt-0.5 text-[20px] font-bold tracking-tight text-[#1A1615] sm:text-[22px]">
               Merchant Settings & Security Audit Log
             </h1>
           </div>
@@ -217,17 +243,17 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 </p>
               </div>
               <div className="flex items-center gap-1.5">
-                <button type="button" className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><SlidersHorizontal className="h-3 w-3" /> Filters</button>
-                <button type="button" className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><RefreshCw className="h-3 w-3" /> Live Refresh</button>
+                <button type="button" onClick={clearFilters} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><SlidersHorizontal className="h-3 w-3" /> Clear Filters</button>
+                <button type="button" onClick={refreshLogs} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Refreshing...' : 'Live Refresh'}</button>
               </div>
             </div>
             <div className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-[minmax(0,1.7fr)_1fr_1fr_auto]">
               <label className="flex items-center gap-1.5 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] text-[#9E9A93]">
                 <Search className="h-3 w-3 shrink-0" />
-                <input aria-label="Filter audit log" placeholder="Filter by actor, IP, hash, or action" className="min-w-0 flex-1 bg-transparent text-[10px] text-[#1A1615] outline-none placeholder:text-[#B8B1A7]" />
+                <input aria-label="Filter audit log" value={searchQuery} onChange={(event) => { setSearchQuery(event.target.value); setCurrentPage(1); }} placeholder="Filter by actor, IP, hash, or action" className="min-w-0 flex-1 bg-transparent text-[10px] text-[#1A1615] outline-none placeholder:text-[#B8B1A7]" />
               </label>
-              <button type="button" className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]">All Event Types <ChevronDown className="h-3 w-3 text-[#9E9A93]" /></button>
-              <button type="button" className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]">All Branches <ChevronDown className="h-3 w-3 text-[#9E9A93]" /></button>
+              <label className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]"> <select value={eventType} onChange={(event) => { setEventType(event.target.value); setCurrentPage(1); }} className="w-full appearance-none bg-transparent outline-none"><option>All Event Types</option>{eventTypes.map((type) => <option key={type} value={type}>{type.replaceAll('_', ' ')}</option>)}</select><ChevronDown className="h-3 w-3 shrink-0 text-[#9E9A93]" /></label>
+              <label className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]"> <select value={branchFilter} onChange={(event) => { setBranchFilter(event.target.value); setCurrentPage(1); }} className="w-full appearance-none bg-transparent outline-none"><option>All Branches</option>{branchOptions.slice(1).map((branch) => <option key={branch}>{branch}</option>)}</select><ChevronDown className="h-3 w-3 shrink-0 text-[#9E9A93]" /></label>
               <button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]">Today, 2.4</button>
             </div>
           </div>

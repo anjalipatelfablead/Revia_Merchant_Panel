@@ -11,7 +11,7 @@ export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children,
   onBack?: () => void; children: React.ReactNode; onNavigateApp?: (route: string) => void;
 }) => {
   const tabs: { id: MainTab; label: string; Icon: React.ElementType; badge?: React.ReactNode }[] = [
-    { id: 'home', label: 'Home', Icon: Home },
+    { id: 'dashboard', label: 'Home', Icon: Home },
     { id: 'scan', label: 'Scan QR', Icon: Scan, badge: <span className="bg-[#EBE7E0] text-[#666] text-[10px] font-bold px-2 py-0.5 rounded-full">Table</span> },
     { id: 'menu', label: 'Menu / Order', Icon: Utensils, badge: <span className="bg-[#94F1C6] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full">Fresh</span> },
     { id: 'orders', label: 'My Orders', Icon: ReceiptText, badge: <span className="bg-[#F8F8F6] border border-[#E6E6E6] text-[#666] text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span> },

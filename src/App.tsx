@@ -34,7 +34,7 @@ import { QrCodesPage } from './pages/QrCodesPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
-import { NotificationsPage } from './pages/NotificationsPage';
+import { NotificationPage } from './pages/NotificationPage';
 
 
 
@@ -93,16 +93,31 @@ export default function App() {
     return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  if (currentRoute.startsWith('/customer-panel')) {
+  if (currentRoute.startsWith('/customer')) {
     return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   // Render auth and onboarding pages directly as standalone
-  if (currentRoute === '/login' || currentRoute === '/onboarding') {
+  if (currentRoute === '/login') {
+    return (
+      <LoginPage 
+        onLoginSuccess={(role) => {
+          if (role === 'customer') {
+            handleNavigate('/customer');
+          } else {
+            handleNavigate('/dashboard');
+          }
+        }}
+        onGoToOnboarding={() => handleNavigate('/onboarding')}
+      />
+    );
+  }
+
+  if (currentRoute === '/onboarding') {
     return (
       <OnboardingPage
         onComplete={() => handleNavigate('/dashboard')}
-        onCancel={() => setStandaloneAuthView(false)}
+        onCancel={() => handleNavigate('/login')}
       />
     );
   }
@@ -136,7 +151,7 @@ export default function App() {
       />
 
       {/* Main Content Viewport (Starts right next to Sidebar, no overlap!) */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
         {/* Top Header */}
         <Header
           currentRoute={currentRoute}
@@ -146,7 +161,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'}`}>
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
@@ -221,7 +236,7 @@ export default function App() {
           )}
 
           {currentRoute === '/notifications' && (
-            <NotificationsPage />
+            <NotificationPage />
           )}
 
           {currentRoute === '/settings/audit' && (
