@@ -3,6 +3,7 @@ import {
   Bell,
   Search,
   ChevronDown,
+  ChevronRight,
   Download,
   UserPlus,
   TrendingUp,
@@ -23,6 +24,8 @@ export const TransactionsPage: React.FC = () => {
   const [branchFilter, setBranchFilter] = useState('All Branches (Downtown)');
   const [paymentFilter, setPaymentFilter] = useState('Payment: All');
   const [statusFilter, setStatusFilter] = useState('Status: All');
+  const [expandedTxId, setExpandedTxId] = useState<string | null>(null);
+
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -158,15 +161,15 @@ export const TransactionsPage: React.FC = () => {
   );
 
   const DropdownSelect = ({ id, value, options, onChange }: { id: string, value: string, options: string[], onChange: (v: string) => void }) => (
-    <div className="relative" ref={openDropdown === id ? dropdownRef : null}>
+    <div className="relative w-full sm:w-auto" ref={openDropdown === id ? dropdownRef : null}>
       <button
         onClick={() => setOpenDropdown(openDropdown === id ? null : id)}
-        className="flex items-center gap-1.5 px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors cursor-pointer shrink-0"
+        className="flex items-center justify-between gap-1.5 px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors cursor-pointer w-full sm:w-auto"
       >
-        {value} <ChevronDown className="w-3.5 h-3.5 text-[#9E9A93]" />
+        <span className="truncate">{value}</span> <ChevronDown className="w-3.5 h-3.5 text-[#9E9A93] shrink-0" />
       </button>
       {openDropdown === id && (
-        <div className="absolute top-full mt-1 right-0 w-full min-w-[160px] bg-white border border-[#EFECE6] rounded-lg shadow-lg z-50 py-1 overflow-hidden">
+        <div className="absolute top-full mt-1 left-0 sm:left-auto sm:right-0 w-full min-w-[160px] bg-white border border-[#EFECE6] rounded-lg shadow-lg z-50 py-1 overflow-hidden">
           {options.map(opt => (
             <button
               key={opt}
@@ -221,11 +224,11 @@ export const TransactionsPage: React.FC = () => {
         <div className="p-4 sm:p-6 space-y-6 flex-1">
 
           {/* MAIN SECTION HEADER & TOP METRICS */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-3 mb-1">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1">
                 <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Transactions &amp; POS Counter Entry</h1>
-                <span className="px-2.5 py-1 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded-full uppercase tracking-wider border border-[#F3E5C8]">
+                <span className="w-fit px-2.5 py-1 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded-full uppercase tracking-wider border border-[#F3E5C8]">
                   Live Terminal Feed
                 </span>
               </div>
@@ -234,14 +237,14 @@ export const TransactionsPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
-              <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 shrink-0 mt-2 md:mt-0">
+              <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
                 <Download className="w-4 h-4 text-[#6E6A66]" />
                 Export Ledger CSV
               </button>
               <button
                 onClick={() => setFastPosModalOpen(true)}
-                className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-lg transition-opacity shadow-sm cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-lg transition-opacity shadow-sm cursor-pointer"
               >
                 <UserPlus className="w-4 h-4" />
                 Fast POS Entry
@@ -343,7 +346,7 @@ export const TransactionsPage: React.FC = () => {
                       className="w-full pl-8 pr-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs focus:outline-none focus:border-[#D4A753] text-[#1A1615] placeholder:text-[#9E9A93] font-semibold"
                     />
                   </div>
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <div className="grid grid-cols-1 sm:flex sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                     <DropdownSelect id="branch" value={branchFilter} options={['All Branches (Downtown)', 'Northside Mall', 'West End Kiosk']} onChange={setBranchFilter} />
                     <DropdownSelect id="payment" value={paymentFilter} options={['Payment: All', 'Payment: Credit Card', 'Payment: Mobile Pay', 'Payment: Voucher']} onChange={setPaymentFilter} />
                     <DropdownSelect id="status" value={statusFilter} options={['Status: All', 'Status: Completed', 'Status: Verified']} onChange={setStatusFilter} />
@@ -352,7 +355,7 @@ export const TransactionsPage: React.FC = () => {
               </div>
 
               {/* Ledger Data Table */}
-              <div className="overflow-x-auto">
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[800px]">
                   <thead>
                     <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
@@ -428,6 +431,81 @@ export const TransactionsPage: React.FC = () => {
                 </table>
               </div>
 
+              {/* Mobile Expandable List */}
+              <div className="md:hidden flex flex-col">
+                {currentTransactions.map((tx, idx) => {
+                  const isExpanded = expandedTxId === tx.id;
+
+                  return (
+                    <div key={idx} className="border-b border-[#EFECE6] last:border-b-0 overflow-hidden">
+                      <button
+                        onClick={() => setExpandedTxId(isExpanded ? null : tx.id)}
+                        className="w-full p-4 flex items-start justify-between transition-colors cursor-pointer bg-white hover:bg-[#FAF8F5]"
+                      >
+                        <div className="flex gap-3 text-left">
+                          <div className="w-8 h-8 mt-1 rounded-full bg-[#EFECE6] border border-[#D1CDC7] flex items-center justify-center text-[10px] font-bold text-[#6E6A66] shrink-0">
+                            {tx.avatar}
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-[#1A1615] mb-1">
+                              {tx.guestName}
+                            </div>
+                            <div className="text-xs font-mono font-bold text-[#D4A753]">
+                              {tx.id.split(' ')[0]}
+                            </div>
+                            <div className="text-[10px] font-semibold text-[#9E9A93] mt-0.5">
+                              {tx.id.split(' ')[1]}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col items-end gap-2 shrink-0">
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(tx.status)}
+                            {isExpanded ? (
+                              <ChevronDown className="w-4 h-4 text-[#8C827A]" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 text-[#8C827A]" />
+                            )}
+                          </div>
+                          <div className="text-xs font-bold text-[#1A1615]">{tx.amount}</div>
+                        </div>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="p-4 grid grid-cols-2 gap-4 border-t border-[#EFECE6] bg-[#FAF8F5]/50">
+                          <div className="col-span-2">
+                            <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Type &amp; Items</div>
+                            <div className="text-xs font-bold text-[#1A1615]">{tx.type}</div>
+                            <div className="text-[10px] font-semibold text-[#6E6A66] mt-0.5">{tx.items}</div>
+                          </div>
+                          <div>
+                            <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Channel / Terminal</div>
+                            <div className="text-[11px] font-semibold text-[#6E6A66]">{tx.channel}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Time</div>
+                            <div className="flex items-center justify-end gap-1 text-[11px] font-bold text-[#1A1615]">
+                              <Clock className="w-3 h-3 text-[#9E9A93]" /> {tx.time}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Stamps</div>
+                            <div className={`text-[11px] font-bold ${tx.stamps.includes('+') ? 'text-[#D4A753]' : tx.stamps.includes('-') ? 'text-[#0D7A53]' : 'text-[#1A1615]'}`}>
+                              {tx.stamps}
+                            </div>
+                          </div>
+                          <div className="col-span-2 pt-2 border-t border-[#EFECE6] flex justify-end gap-2 mt-2">
+                            <button onClick={(e) => { e.stopPropagation(); showToast('Viewing receipt...'); }} className="px-4 py-2 text-xs font-semibold text-[#1A1615] bg-white border border-[#EFECE6] rounded-lg shadow-sm hover:bg-[#FAF8F5]">View Receipt</button>
+                            <button onClick={(e) => { e.stopPropagation(); showToast('Refunding transaction...'); }} className="px-4 py-2 text-xs font-semibold text-[#DC2626] bg-[#FEE2E2] border border-[#FECACA] rounded-lg shadow-sm hover:bg-[#FCA5A5]">Refund</button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
               {/* Table Footer Pagination */}
               <div className="px-5 py-4 border-t border-[#EFECE6] bg-[#FAF8F5] flex items-center justify-between text-xs">
                 <span className="font-semibold text-[#6E6A66]">
@@ -447,8 +525,8 @@ export const TransactionsPage: React.FC = () => {
                       key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`w-7 h-7 flex items-center justify-center rounded font-bold transition-colors cursor-pointer ${currentPage === page
-                          ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-xs'
-                          : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615]'
+                        ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-xs'
+                        : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615]'
                         }`}
                     >
                       {page}
@@ -507,18 +585,19 @@ export const TransactionsPage: React.FC = () => {
 
                     {/* Active Customer Card */}
                     <div className="bg-white border-2 border-[#D4A753] rounded-xl p-4 shadow-sm relative overflow-hidden">
-                      <div className="absolute top-0 right-0 p-3">
-                        <span className="px-2 py-0.5 bg-[#E6F4ED] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest border border-[#BCE3D1]">Active Pass</span>
-                      </div>
-
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-12 h-12 rounded-full bg-[#1A1615] border-2 border-[#D4A753] flex items-center justify-center text-white font-bold text-lg">MV</div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="text-base font-bold text-[#1A1615]">Marcus Vance</h3>
-                            <span className="px-1.5 py-0.5 rounded bg-[#1A1615] text-[#D4AF37] text-[9px] font-bold tracking-wider uppercase">BLACK TIER</span>
+                      <div className="flex justify-between items-start gap-2 mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-[#1A1615] border-2 border-[#D4A753] flex items-center justify-center text-white font-bold text-lg shrink-0">MV</div>
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="text-base font-bold text-[#1A1615]">Marcus Vance</h3>
+                              <span className="px-1.5 py-0.5 rounded bg-[#1A1615] text-[#D4AF37] text-[9px] font-bold tracking-wider uppercase whitespace-nowrap">BLACK TIER</span>
+                            </div>
+                            <div className="text-[11px] font-mono font-semibold text-[#6E6A66] mt-0.5">ID: #REV-8924 • +1 (555) 392-8819</div>
                           </div>
-                          <div className="text-[11px] font-mono font-semibold text-[#6E6A66] mt-0.5">ID: #REV-8924 • +1 (555) 392-8819</div>
+                        </div>
+                        <div className="shrink-0 mt-1">
+                          <span className="px-2 py-0.5 bg-[#E6F4ED] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest border border-[#BCE3D1] whitespace-nowrap">Active Pass</span>
                         </div>
                       </div>
 

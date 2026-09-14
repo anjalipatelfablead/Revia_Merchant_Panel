@@ -123,35 +123,36 @@ export const LoyaltyPage: React.FC = () => {
   return (
     <div className="p-4 sm:p-6 space-y-6 bg-[#FAF8F5] min-h-[calc(100vh-4rem)]">
       {/* 2. PAGE HEADER & ACTIONS */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          {/* <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-1">
-            HOME &gt; MAIN &gt; LOYALTY PROGRAM
-          </div> */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        {/* Title & Mobile/iPad Discard */}
+        <div className="flex items-center justify-between w-full lg:w-auto gap-4">
           <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">
             Loyalty Program Builder
           </h1>
+          <button className="lg:hidden px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer shrink-0">
+            Discard
+          </button>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button className="px-4 py-2 text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer">
+        <div className="flex flex-row items-center gap-2 lg:gap-3 w-full lg:w-auto">
+          <button className="hidden lg:block flex-none px-4 py-2 text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
             Discard Changes
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
-            <Save className="w-4 h-4" />
+          <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer whitespace-nowrap">
+            <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Save Draft
           </button>
           <button
             onClick={handlePublish}
             disabled={publishStatus !== 'idle'}
-            className={`flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${publishStatus === 'published'
-                ? 'bg-[#0D7A53] cursor-default'
-                : publishStatus === 'publishing'
-                  ? 'bg-[#1A1615] opacity-80 cursor-wait'
-                  : 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 cursor-pointer'
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-3 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${publishStatus === 'published'
+              ? 'bg-[#0D7A53] cursor-default'
+              : publishStatus === 'publishing'
+                ? 'bg-[#1A1615] opacity-80 cursor-wait'
+                : 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 cursor-pointer'
               }`}
           >
-            {publishStatus === 'idle' && <><Sparkles className="w-4 h-4" /> Publish Program Changes</>}
+            {publishStatus === 'idle' && <><Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Publish Program Changes</span><span className="sm:hidden">Publish</span></>}
             {publishStatus === 'publishing' && <span className="animate-pulse flex items-center gap-2">Publishing...</span>}
             {publishStatus === 'published' && <><Check className="w-4 h-4" /> Published Successfully</>}
           </button>
@@ -309,7 +310,7 @@ export const LoyaltyPage: React.FC = () => {
                 <div className="space-y-2 mt-3">
                   <label className="text-xs font-bold uppercase tracking-wider text-[#9E9A93]">Branch Availability</label>
                   <div className="space-y-2">
-                    <label 
+                    <label
                       className="flex items-center gap-2 cursor-pointer group"
                       onClick={(e) => { e.preventDefault(); setBranches({ ...branches, downtown: !branches.downtown }); }}
                     >
@@ -318,7 +319,7 @@ export const LoyaltyPage: React.FC = () => {
                       </div>
                       <span className="text-sm font-semibold text-[#1A1615]">Downtown Flagship [Roastery]</span>
                     </label>
-                    <label 
+                    <label
                       className="flex items-center gap-2 cursor-pointer group"
                       onClick={(e) => { e.preventDefault(); setBranches({ ...branches, northside: !branches.northside }); }}
                     >
@@ -327,7 +328,7 @@ export const LoyaltyPage: React.FC = () => {
                       </div>
                       <span className="text-sm font-semibold text-[#1A1615]">Northside Mall Atrium Bar</span>
                     </label>
-                    <label 
+                    <label
                       className="flex items-center gap-2 cursor-pointer group"
                       onClick={(e) => { e.preventDefault(); setBranches({ ...branches, westend: !branches.westend }); }}
                     >
@@ -480,11 +481,11 @@ export const LoyaltyPage: React.FC = () => {
             </div>
 
             <div className="ml-11 mt-4">
-              <div className="bg-[#FAF8F5] rounded-xl border border-[#EFECE6] p-4 flex items-center justify-between">
+              <div className="bg-[#FAF8F5] rounded-xl border border-[#EFECE6] p-4 flex items-start sm:items-center justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h3 className="text-sm font-bold text-[#1A1615]">Weekday Afternoon Double Stamp Hours</h3>
-                    <span className="px-2 py-0.5 rounded border border-[#EFECE6] bg-white text-[10px] font-bold text-[#6E6A66]">
+                    <span className="px-2 py-0.5 rounded border border-[#EFECE6] bg-white text-[10px] font-bold text-[#6E6A66] whitespace-nowrap">
                       Mon - Fri
                     </span>
                   </div>
@@ -496,7 +497,7 @@ export const LoyaltyPage: React.FC = () => {
                 {/* Toggle Switch */}
                 <button
                   onClick={() => setFlashActive(!flashActive)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:ring-offset-2 ${flashActive ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:ring-offset-2 ${flashActive ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'
                     }`}
                 >
                   <span
@@ -667,7 +668,7 @@ export const LoyaltyPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div className="bg-[#FAF8F5] rounded-xl p-4 border border-[#EFECE6]">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-[#9E9A93] mb-1">Est. Cost Per Stamp</div>
                 <div className="text-xl font-bold text-[#1A1615] mb-1">$0.42 <span className="text-xs text-[#6E6A66] font-semibold">/ purchase</span></div>

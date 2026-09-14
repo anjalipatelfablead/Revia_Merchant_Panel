@@ -9,6 +9,34 @@
   }
 }
 
+/* Hide scrollbar for snap-scroll sliders */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@theme inline {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
 /* Custom exact Brand Tokens */
 .bg-brand-gold-gradient {
   background: linear-gradient(180deg, #D4A753 0%, #9E782F 100%);
@@ -37,6 +65,15 @@
 
 .btn-primary-gradient:active {
   transform: translateY(0);
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 @media (max-width: 767px) {

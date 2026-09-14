@@ -20,6 +20,7 @@ import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+import { MarketingLandingPage } from './pages/MarketingLandingPage';
 import { CustomerOnboardingPage } from './pages/CustomerOnboardingPage';
 import { CustomerPanel } from './Customer/CustomerPanel';
 import { CatalogPage } from './pages/CatalogPage';
@@ -37,6 +38,11 @@ import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationPage } from './pages/NotificationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+// Marketing Pages
+import { AboutUsPage } from './pages/AboutUsPage';
+import { ContactPage } from './pages/ContactPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
 
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
@@ -44,7 +50,8 @@ const VALID_ROUTES = [
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
-  '/customer-landing', '/customer', '/customer-onboarding'
+  '/customer-landing', '/customer', '/customer-onboarding', '/',
+  '/about', '/contact', '/privacy', '/terms'
 ];
 
 
@@ -54,7 +61,7 @@ export default function App() {
   const [currentRoute, setCurrentRouteState] = useState<NavRoute>(() => {
     const path = window.location.pathname;
     if (path === '/' || path === '') {
-      return '/customer-landing';
+      return '/';
     }
     return path as NavRoute;
   });
@@ -84,17 +91,17 @@ export default function App() {
   };
 
 
-
   const handleNavigate = (route: NavRoute) => {
     window.history.pushState({}, '', route);
     setCurrentRouteState(route);
     setIsMobileMenuOpen(false);
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
-      setCurrentRouteState((path === '/' || path === '' ? '/customer-landing' : path) as NavRoute);
+      setCurrentRouteState((path === '/' || path === '' ? '/' : path) as NavRoute);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -103,6 +110,26 @@ export default function App() {
   const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/');
   if (!isValidRoute) {
     return <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/') {
+    return <MarketingLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/about') {
+    return <AboutUsPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/contact') {
+    return <ContactPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/privacy') {
+    return <PrivacyPolicyPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/terms') {
+    return <TermsOfServicePage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   if (currentRoute === '/customer-landing') {
@@ -154,7 +181,7 @@ export default function App() {
       {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-xs transition-opacity cursor-pointer"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs transition-opacity cursor-pointer"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

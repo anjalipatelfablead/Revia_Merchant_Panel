@@ -412,11 +412,11 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
         {/* Left Column: Configured Outlets + Velocity Chart (8 cols or 7 cols) */}
         <div className={`${inspectorVisible ? 'lg:col-span-7' : 'lg:col-span-12'} space-y-4`}>
           {/* Section Header */}
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <Store className="w-4 h-4 text-[#B38637]" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between px-1 gap-1.5 sm:gap-0">
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              <Store className="w-4 h-4 text-[#B38637] shrink-0" />
               <h2 className="text-sm font-bold text-[#1A1615]">Configured Outlets</h2>
-              <span className="bg-[#FAF8F5] text-[#7C746C] text-[10px] font-bold px-2 py-0.5 rounded border border-[#EAE6E1]">
+              <span className="bg-[#FAF8F5] text-[#7C746C] text-[10px] font-bold px-2 py-0.5 rounded border border-[#EAE6E1] whitespace-nowrap">
                 {filteredOutlets.length} Visible
               </span>
             </div>

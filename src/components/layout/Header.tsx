@@ -22,11 +22,11 @@ export const Header: React.FC<HeaderProps> = ({
   const getBreadcrumbs = () => {
     switch (currentRoute) {
       case '/branches/new':
-        return { 
-          category: 'Outlets & Infrastructure', 
-          parentPage: 'Branches', 
+        return {
+          category: 'Outlets & Infrastructure',
+          parentPage: 'Branches',
           parentRoute: '/branches' as NavRoute,
-          page: 'Add New Branch' 
+          page: 'Add New Branch'
         };
       case '/branches':
         return { category: 'Outlets & Infrastructure', page: 'Branch Management' };
@@ -63,83 +63,37 @@ export const Header: React.FC<HeaderProps> = ({
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
       {/* Left: Mobile hamburger & Clean Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleMobileMenu}
-          className="md:hidden p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
+          className="lg:hidden p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
           aria-label="Toggle Navigation Menu"
         >
           <Menu className="w-4 h-4" />
         </button>
 
         {/* Clean Breadcrumbs matching Figma design */}
-        <div className="flex items-center gap-1.5 text-xs text-[#7C746C]">
-          <span 
+        <div className="hidden md:flex items-center gap-1.5 text-xs text-[#7C746C]">
+          <span
             className="hover:text-[#1A1615] cursor-pointer transition-colors"
             onClick={() => onNavigate('/dashboard')}
           >
             Home
           </span>
           <span className="text-[#A8A29E]">&gt;</span>
-          <span 
-            className="hover:text-[#1A1615] cursor-pointer transition-colors hidden sm:inline"
-            onClick={() => onNavigate('/branches')}
-          >
-            {breadcrumbs.category}
-          </span>
-          {breadcrumbs.parentPage && (
-            <>
-              <span className="text-[#A8A29E] hidden sm:inline">&gt;</span>
-              <span 
-                className="hover:text-[#1A1615] cursor-pointer transition-colors hidden sm:inline"
-                onClick={() => breadcrumbs.parentRoute && onNavigate(breadcrumbs.parentRoute)}
-              >
-                {breadcrumbs.parentPage}
-              </span>
-            </>
-          )}
-          <span className="text-[#A8A29E] hidden sm:inline">&gt;</span>
           <span className="text-[#1A1615] font-semibold">
             {breadcrumbs.page}
           </span>
         </div>
       </div>
 
-      {/* Middle: Universal Search Bar Input */}
-      <div className="flex-1 max-w-md hidden md:block">
-        <div 
-          onClick={onOpenSearch}
-          className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#EAE6E1] bg-[#FAF8F5] hover:bg-[#F5F2EC] text-xs text-[#7C746C] transition-colors cursor-pointer"
-        >
-          <Search className="w-3.5 h-3.5 text-[#8C827A] shrink-0" />
-          <span className="flex-1 text-left text-[#8C827A] truncate">
-            Search staff, ledger, roles...
-          </span>
-          <kbd className="px-1.5 py-0.5 bg-white border border-[#E5E0D8] rounded text-[10px] font-mono font-medium text-[#6E6A66] shadow-2xs">
-            ⌘K
-          </kbd>
-        </div>
-      </div>
+      {/* Middle: Removed Search Bar per user request */}
+      <div className="flex-1" />
 
       {/* Right: Scanner Status Pill, Notification Bell, Profile Info */}
-      <div className="flex items-center gap-3">
-        {/* Mobile search button */}
-        <button
-          onClick={onOpenSearch}
-          className="md:hidden p-2 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
-          aria-label="Search"
-        >
-          <Search className="w-4 h-4" />
-        </button>
-
-        {/* Status Pill matching Figma: ● Scanner Online ((•)) */}
-        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[#EBF7F0] text-[#15803D] border border-[#CEEBD9]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] animate-pulse" />
-          <span>Scanner Online</span>
-          <Radio className="w-3 h-3 text-[#15803D] ml-0.5" />
-        </div>
+      <div className="flex items-center gap-3 ml-auto">
 
         {/* Notifications Bell with Badge */}
         <div className="relative">
