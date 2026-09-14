@@ -155,19 +155,19 @@ export const QrCodesPage: React.FC = () => {
         )}
 
         {/* 2. NAVIGATION & PAGE HEADER */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1.5">
               <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">
                 QR Codes &amp; Physical Asset Hub
               </h1>
               <div className="hidden sm:flex items-center gap-2">
-                <span className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded border border-[#BCE3D1] tracking-wider uppercase">
+                {/* <span className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded border border-[#BCE3D1] tracking-wider uppercase">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> DYNAMIC ROUTING FABRIC
-                </span>
-                <span className="px-2.5 py-1 text-[10px] font-bold bg-white text-[#1A1615] rounded border border-[#EFECE6] tracking-wider uppercase">
+                </span> */}
+                {/* <span className="px-2.5 py-1 text-[10px] font-bold bg-white text-[#1A1615] rounded border border-[#EFECE6] tracking-wider uppercase">
                   18 ACTIVE ASSETS
-                </span>
+                </span> */}
               </div>
             </div>
             <p className="text-sm text-[#6E6A66] max-w-3xl">

@@ -181,7 +181,7 @@ export default function App() {
       {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-xs transition-opacity cursor-pointer"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs transition-opacity cursor-pointer"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

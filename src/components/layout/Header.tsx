@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleMobileMenu}
-          className="md:hidden p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
+          className="lg:hidden p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
           aria-label="Toggle Navigation Menu"
         >
           <Menu className="w-4 h-4" />
@@ -89,32 +89,11 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Middle: Universal Search Bar Input */}
-      <div className="flex-1 max-w-md hidden md:block ml-2 lg:ml-6">
-        <div
-          onClick={onOpenSearch}
-          className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#EAE6E1] bg-[#FAF8F5] hover:bg-[#F5F2EC] text-xs text-[#7C746C] transition-colors cursor-pointer"
-        >
-          <Search className="w-3.5 h-3.5 text-[#8C827A] shrink-0" />
-          <span className="flex-1 text-left text-[#8C827A] truncate">
-            Search staff, ledger, roles...
-          </span>
-          <kbd className="px-1.5 py-0.5 bg-white border border-[#E5E0D8] rounded text-[10px] font-mono font-medium text-[#6E6A66] shadow-2xs">
-            ⌘K
-          </kbd>
-        </div>
-      </div>
+      {/* Middle: Removed Search Bar per user request */}
+      <div className="flex-1" />
 
       {/* Right: Scanner Status Pill, Notification Bell, Profile Info */}
       <div className="flex items-center gap-3 ml-auto">
-        {/* Mobile search button */}
-        <button
-          onClick={onOpenSearch}
-          className="md:hidden p-2 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
-          aria-label="Search"
-        >
-          <Search className="w-4 h-4" />
-        </button>
 
         {/* Notifications Bell with Badge */}
         <div className="relative">

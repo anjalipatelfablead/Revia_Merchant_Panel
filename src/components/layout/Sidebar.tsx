@@ -84,10 +84,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside
       className={`
         bg-white border-r border-[#EAE6E1] flex flex-col shrink-0 h-screen transition-all duration-200 z-50
-        md:static md:w-[240px] md:translate-x-0
+        lg:static lg:w-[240px] lg:translate-x-0
         ${isMobileOpen
           ? 'fixed inset-y-0 left-0 w-[260px] translate-x-0 shadow-2xl'
-          : 'fixed inset-y-0 left-0 w-[260px] -translate-x-full md:translate-x-0'}
+          : 'fixed inset-y-0 left-0 w-[260px] -translate-x-full lg:translate-x-0'}
       `}
     >
       {/* Brand Header */}

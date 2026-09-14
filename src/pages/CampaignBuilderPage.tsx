@@ -2394,10 +2394,8 @@ export const CampaignBuilderPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex justify-between lg:bg-white lg:border lg:border-[#EFECE6] lg:rounded-xl px-2 lg:px-4 lg:py-6 lg:shadow-sm mb-6 relative">
-          <div className="absolute top-10 left-[10%] right-[10%] h-0.5 bg-[#EFECE6] z-0 hidden md:block"></div>
-          {/* Mobile horizontal line */}
-          <div className="absolute top-4 left-[10%] right-[10%] h-[1px] bg-[#D1CDC7] z-0 lg:hidden"></div>
+        <div className="flex justify-between bg-white border border-[#EFECE6] rounded-xl px-1 sm:px-4 py-6 shadow-sm mb-6 relative">
+          <div className="absolute top-10 left-[10%] right-[10%] h-0.5 bg-[#EFECE6] z-0"></div>
           {steps.map((step) => {
             const isPast = step.id < currentStep;
             const isCurrent = step.id === currentStep;
@@ -2406,8 +2404,8 @@ export const CampaignBuilderPage: React.FC = () => {
                 <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center text-xs font-bold transition-all relative z-10 ${isPast ? 'bg-[#0D7A53] text-white border-2 border-[#0D7A53]' : isCurrent ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white border-2 border-[#D4A753] ring-4 ring-[#FDF8EB]' : 'bg-white border-2 border-[#EFECE6] text-[#9E9A93] group-hover:border-[#D1CDC7]'}`}>
                   {isPast ? <Check className="w-4 h-4" /> : step.id}
                 </div>
-                <div className="mt-2 text-center w-full px-2">
-                  <span className={`text-[11px] font-bold block ${isCurrent ? 'text-[#1A1615]' : isPast ? 'text-[#0D7A53]' : 'text-[#9E9A93]'}`}>{step.name}</span>
+                <div className="mt-2 text-center w-full px-0 sm:px-1 lg:px-2">
+                  <span className={`text-[9px] sm:text-[10px] lg:text-[11px] font-bold block leading-tight ${isCurrent ? 'text-[#1A1615]' : isPast ? 'text-[#0D7A53]' : 'text-[#9E9A93]'}`}>{step.name}</span>
                 </div>
               </div>
             );
