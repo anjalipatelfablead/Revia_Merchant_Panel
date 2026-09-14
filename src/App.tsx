@@ -38,6 +38,11 @@ import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationPage } from './pages/NotificationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+// Marketing Pages
+import { AboutUsPage } from './pages/AboutUsPage';
+import { ContactPage } from './pages/ContactPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
 
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
@@ -45,7 +50,8 @@ const VALID_ROUTES = [
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
-  '/customer-landing', '/customer', '/customer-onboarding', '/'
+  '/customer-landing', '/customer', '/customer-onboarding', '/',
+  '/about', '/contact', '/privacy', '/terms'
 ];
 
 
@@ -85,11 +91,11 @@ export default function App() {
   };
 
 
-
   const handleNavigate = (route: NavRoute) => {
     window.history.pushState({}, '', route);
     setCurrentRouteState(route);
     setIsMobileMenuOpen(false);
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
@@ -108,6 +114,22 @@ export default function App() {
 
   if (currentRoute === '/') {
     return <MarketingLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/about') {
+    return <AboutUsPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/contact') {
+    return <ContactPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/privacy') {
+    return <PrivacyPolicyPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/terms') {
+    return <TermsOfServicePage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   if (currentRoute === '/customer-landing') {

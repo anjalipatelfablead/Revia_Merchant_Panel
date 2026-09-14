@@ -130,8 +130,12 @@ export interface OutletsData {
   };
 }
 
-export type NavRoute = 
+export type NavRoute =
   | '/'
+  | '/about'
+  | '/contact'
+  | '/privacy'
+  | '/terms'
   | '/dashboard'
   | '/atelier'
   | '/branches'

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
    QrCode, ArrowRight, CheckCircle2, Star, Shield,
@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { StaggerTestimonials } from '../components/ui/stagger-testimonials';
 import { FAQSection } from '../components/ui/faqsection';
+import { MarketingFooter } from '../components/layout/MarketingFooter';
 
 interface Props {
    onNavigate?: (route: string) => void;
@@ -52,8 +53,8 @@ const MobileFrame = ({ children, className = '' }: { children: React.ReactNode; 
    <motion.div
       animate={{ y: [0, -10, 0] }}
       transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      className={`relative w-[280px] bg-white rounded-[36px] border-[10px] border-[#241C15] shadow-2xl overflow-hidden flex flex-col ${className}`}
-      style={{ height: 560, boxShadow: '0 25px 50px -12px rgba(217, 169, 78, 0.25)' }}
+      className={`relative w-[280px] sm:w-[300px] bg-white rounded-[36px] border-[8px] sm:border-[10px] border-[#241C15] shadow-2xl overflow-hidden flex flex-col ${className}`}
+      style={{ height: 'auto', minHeight: 440, boxShadow: '0 25px 50px -12px rgba(217, 169, 78, 0.25)' }}
    >
       {/* Status bar */}
       <div className="bg-white flex items-center justify-between px-6 pt-5 pb-3 shrink-0 z-10">
@@ -103,11 +104,39 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
    const [activeFaq, setActiveFaq] = useState<number | null>(null);
    const [isAnnual, setIsAnnual] = useState(true);
+   const [activePlanIndex, setActivePlanIndex] = useState(1);
+   const pricingScrollRef = useRef<HTMLDivElement>(null);
+
+   const handlePricingScroll = useCallback(() => {
+      const el = pricingScrollRef.current;
+      if (!el) return;
+      const scrollLeft = el.scrollLeft;
+      const cardWidth = el.offsetWidth;
+      const index = Math.round(scrollLeft / cardWidth);
+      setActivePlanIndex(Math.min(2, Math.max(0, index)));
+   }, []);
+
+   const scrollToPlan = useCallback((index: number) => {
+      const el = pricingScrollRef.current;
+      if (!el) return;
+      el.scrollTo({ left: index * el.offsetWidth, behavior: 'smooth' });
+   }, []);
 
    useEffect(() => {
       const handleScroll = () => setIsScrolled(window.scrollY > 20);
       window.addEventListener('scroll', handleScroll);
       return () => window.removeEventListener('scroll', handleScroll);
+   }, []);
+
+   // Auto-scroll mobile pricing to Growth (Most Popular) plan on mount
+   useEffect(() => {
+      const el = pricingScrollRef.current;
+      if (!el) return;
+      // Small delay to ensure layout is ready
+      const timer = setTimeout(() => {
+         el.scrollTo({ left: el.offsetWidth, behavior: 'instant' as ScrollBehavior });
+      }, 100);
+      return () => clearTimeout(timer);
    }, []);
 
    const faqs = [
@@ -169,8 +198,12 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   animate={{ opacity: 1, x: 0 }}
                   className="hidden md:flex items-center gap-6"
                >
-                  <button onClick={() => onNavigate?.('/login')} className="text-sm font-bold text-gray-700 hover:text-[#B8862E] transition-colors">Log In</button>
-                  <button onClick={() => onNavigate?.('/onboarding')} className="bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#D9A94E]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                  <button onClick={() => onNavigate?.('/login')} className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-[#B8862E] transition-colors">
+                     <Lock className="w-4 h-4" />
+                     Log In
+                  </button>
+                  <button onClick={() => onNavigate?.('/onboarding')} className="flex items-center gap-2 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#D9A94E]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                     <Store className="w-4 h-4" />
                      Become Merchant
                   </button>
                </motion.div>
@@ -204,7 +237,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          {/* ═══════════════════════════════════════ */}
          {/* 2. HERO SECTION                       */}
          {/* ═══════════════════════════════════════ */}
-         <section className="pt-32 lg:pt-30 pb-12 lg:pb-20 overflow-hidden relative z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]">
+         <section className="pt-28 sm:pt-32 lg:pt-30 pb-8 sm:pb-12 lg:pb-20 overflow-hidden relative z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]">
             {/* Animated decorative blobs */}
             <motion.div
                animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
@@ -217,13 +250,13 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                className="absolute bottom-[10%] right-[5%] w-[30rem] h-[30rem] bg-[#241C15]/5 rounded-[60%_40%_30%_70%] blur-3xl pointer-events-none z-0"
             />
 
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-16 items-center relative z-10">
                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="relative">
                   <div className="absolute -left-6 -top-6 w-20 h-20 bg-[radial-gradient(circle_at_center,rgba(217,169,78,0.15)_0,transparent_50%)]" />
                   <motion.div variants={itemVariants}>
                      <GoldBadge><Sparkles className="w-3 h-3" /> Loyalty & Retention Platform</GoldBadge>
                   </motion.div>
-                  <motion.h1 variants={itemVariants} className="mt-8 text-5xl lg:text-[4rem] font-black leading-[1.05] tracking-tight text-[#241C15] drop-shadow-sm">
+                  <motion.h1 variants={itemVariants} className="mt-6 sm:mt-8 text-3xl sm:text-5xl lg:text-[4rem] font-black leading-[1.08] tracking-tight text-[#241C15] drop-shadow-sm">
                      Turn every customer into a <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D9A94E] via-[#C89B3C] to-[#B8862E] relative inline-block">
                         repeat customer
                         <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 100 12" preserveAspectRatio="none">
@@ -231,15 +264,15 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         </svg>
                      </span>
                   </motion.h1>
-                  <motion.p variants={itemVariants} className="mt-10 text-xl text-gray-600 leading-relaxed max-w-lg font-medium">
+                  <motion.p variants={itemVariants} className="mt-6 sm:mt-10 text-base sm:text-xl text-gray-600 leading-relaxed max-w-lg font-medium">
                      QR-based loyalty, targeted campaigns, and rewards — no app download required for your customers. Built to seamlessly integrate with your counter.
                   </motion.p>
-                  <motion.div variants={itemVariants} className="mt-12 flex flex-col sm:flex-row gap-4">
-                     <button onClick={() => onNavigate?.('/onboarding')} className="bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-8 py-4 rounded-xl text-base font-black shadow-xl shadow-[#D9A94E]/30 hover:shadow-[0_20px_40px_rgba(217,169,78,0.25)] hover:scale-105 transition-all duration-300 flex justify-center items-center gap-3 group relative overflow-hidden">
+                  <motion.div variants={itemVariants} className="mt-8 sm:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                     <button onClick={() => onNavigate?.('/onboarding')} className="bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black shadow-xl shadow-[#D9A94E]/30 hover:shadow-[0_20px_40px_rgba(217,169,78,0.25)] hover:scale-105 transition-all duration-300 flex justify-center items-center gap-3 group relative overflow-hidden">
                         <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                         <span className="relative z-10 flex items-center gap-2">Start Free <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></span>
                      </button>
-                     <button className="bg-white/80 backdrop-blur-md border-2 border-gray-200 hover:border-[#D9A94E]/50 text-[#241C15] px-8 py-4 rounded-xl text-base font-black transition-all shadow-sm hover:shadow-lg flex justify-center items-center">
+                     <button className="bg-white/80 backdrop-blur-md border-2 border-gray-200 hover:border-[#D9A94E]/50 text-[#241C15] px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black transition-all shadow-sm hover:shadow-lg flex justify-center items-center">
                         Become Merchant
                      </button>
                   </motion.div>
@@ -248,7 +281,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   </motion.p>
                </motion.div>
 
-               <div className="flex justify-center lg:justify-end lg:pr-12 h-[580px] items-center mt-10 lg:mt-0">
+               <div className="flex justify-center lg:justify-end lg:pr-12 h-auto sm:h-[580px] items-center mt-6 sm:mt-10 lg:mt-0 pb-4 sm:pb-0">
                   <div className="relative">
                      {/* Ambient glow behind phone */}
                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-gradient-to-br from-[#D9A94E]/40 to-[#241C15]/10 rounded-full blur-[80px]" />
@@ -258,7 +291,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         initial={{ opacity: 0, x: -50, y: -20 }}
                         animate={{ opacity: 1, x: 0, y: [0, 15, 0] }}
                         transition={{ duration: 0.8, y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}
-                        className="absolute top-[20%] -left-12 lg:-left-20 z-20 bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white flex items-center gap-4 hover:scale-105 transition-transform cursor-default"
+                        className="absolute top-[20%] -left-12 lg:-left-20 z-20 bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white hidden sm:flex items-center gap-4 hover:scale-105 transition-transform cursor-default"
                      >
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center shadow-lg shadow-green-500/30">
                            <TrendingUp className="w-5 h-5 text-white" />
@@ -277,7 +310,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         initial={{ opacity: 0, x: 50, y: 20 }}
                         animate={{ opacity: 1, x: 0, y: [0, -15, 0] }}
                         transition={{ duration: 0.8, delay: 0.2, y: { duration: 6, repeat: Infinity, ease: "easeInOut" } }}
-                        className="absolute bottom-[20%] -right-8 lg:-right-16 z-30 bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white flex items-center gap-3 hover:scale-105 transition-transform cursor-default"
+                        className="absolute bottom-[20%] -right-8 lg:-right-16 z-30 bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white hidden sm:flex items-center gap-3 hover:scale-105 transition-transform cursor-default"
                      >
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#D9A94E] to-[#B8862E] flex items-center justify-center shadow-lg shadow-[#D9A94E]/30">
                            <Users className="w-5 h-5 text-white" />
@@ -351,7 +384,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                <p className="text-center text-[11px] font-black uppercase tracking-widest text-gray-400 mb-8">
                   Built for cafés, salons, gyms, and retail businesses
                </p>
-               <div className="flex justify-center flex-wrap gap-12 lg:gap-28 opacity-50">
+               <div className="flex justify-center flex-wrap gap-8 sm:gap-12 lg:gap-28 opacity-50">
                   <motion.div whileHover={{ scale: 1.1, color: '#D9A94E' }} className="transition-colors"><Coffee className="w-8 h-8" /></motion.div>
                   <motion.div whileHover={{ scale: 1.1, color: '#D9A94E' }} className="transition-colors"><Scissors className="w-8 h-8" /></motion.div>
                   <motion.div whileHover={{ scale: 1.1, color: '#D9A94E' }} className="transition-colors"><Dumbbell className="w-8 h-8" /></motion.div>
@@ -377,11 +410,11 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   className="text-center max-w-4xl mx-auto mb-20"
                >
                   <SectionLabel>The Problem</SectionLabel>
-                  <h2 className="text-4xl lg:text-6xl font-black text-white tracking-tight mb-8 mt-4">Most customers visit once.<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D9A94E] to-[#B8862E]">They don't come back.</span></h2>
-                  <p className="text-xl text-white/70 leading-relaxed font-medium">Losing a first-time customer is losing future revenue. Revia turns anonymous walk-ins into trackable, loyal regulars.</p>
+                  <h2 className="text-2xl sm:text-4xl lg:text-6xl font-black text-white tracking-tight mb-6 sm:mb-8 mt-4">Most customers visit once.<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D9A94E] to-[#B8862E]">They don't come back.</span></h2>
+                  <p className="text-base sm:text-xl text-white/70 leading-relaxed font-medium">Losing a first-time customer is losing future revenue. Revia turns anonymous walk-ins into trackable, loyal regulars.</p>
                </motion.div>
 
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
                   {[
                      { icon: Smartphone, title: "No app needed", desc: "Customers join in seconds via QR, no download required. Frictionless onboarding." },
                      { icon: Megaphone, title: "Built-in campaigns", desc: "Reward the right customer at the right time with automated SMS and push offers." },
@@ -394,14 +427,14 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ delay: i * 0.15 }}
                      >
-                        <div className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl p-10 h-full group hover:-translate-y-2 transition-all duration-300 hover:bg-white/10 text-center relative overflow-hidden">
+                        <div className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl p-6 sm:p-10 h-full group hover:-translate-y-2 transition-all duration-300 hover:bg-white/10 text-center relative overflow-hidden">
                            {/* Card subtle glow on hover */}
                            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                           <div className="w-20 h-20 bg-gradient-to-br from-[#241C15] to-[#1A1410] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-[0_0_30px_rgba(217,169,78,0.15)] group-hover:shadow-[0_0_40px_rgba(217,169,78,0.3)] transition-shadow relative z-10">
-                              <val.icon className="w-10 h-10 text-[#D9A94E]" />
+                           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#241C15] to-[#1A1410] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-[0_0_30px_rgba(217,169,78,0.15)] group-hover:shadow-[0_0_40px_rgba(217,169,78,0.3)] transition-shadow relative z-10">
+                              <val.icon className="w-8 h-8 sm:w-10 sm:h-10 text-[#D9A94E]" />
                            </div>
-                           <h3 className="text-2xl font-black mb-4 text-white relative z-10">{val.title}</h3>
+                           <h3 className="text-xl sm:text-2xl font-black mb-3 sm:mb-4 text-white relative z-10">{val.title}</h3>
                            <p className="text-white/60 leading-relaxed relative z-10">{val.desc}</p>
                         </div>
                      </motion.div>
@@ -413,11 +446,11 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          {/* ═══════════════════════════════════════ */}
          {/* 5. HOW IT WORKS                       */}
          {/* ═══════════════════════════════════════ */}
-         <section className="py-22 bg-white relative z-10" id="how-it-works">
+         <section className="py-12 sm:py-22 bg-white relative z-10" id="how-it-works">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                <SectionLabel>How Revia Works</SectionLabel>
-               <div className="text-center mb-24">
-                  <h2 className="text-4xl lg:text-5xl font-black text-[#241C15]">A simple flow for you and your customers</h2>
+               <div className="text-center mb-12 sm:mb-24">
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#241C15]">A simple flow for you and your customers</h2>
                </div>
 
                <div className="relative">
@@ -430,7 +463,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      className="hidden lg:block absolute top-[60px] left-[10%] right-[10%] h-[3px] bg-gradient-to-r from-[#D9A94E] to-[#B8862E] rounded-full origin-left"
                   />
 
-                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-16 lg:gap-6 relative">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-16 lg:gap-6 relative">
                      {[
                         { step: 1, title: "Generate your QR", icon: QrCode, desc: "Print and place at your counter." },
                         { step: 2, title: "Customer scans", icon: Smartphone, desc: "Frictionless mobile sign-up." },
@@ -445,14 +478,14 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                            transition={{ delay: idx * 0.2 }}
                            className="relative flex flex-col items-center text-center group"
                         >
-                           <div className="w-[120px] h-[120px] bg-gradient-to-br from-[#D9A94E] to-[#B8862E] rounded-full shadow-xl shadow-[#D9A94E]/30 flex items-center justify-center mb-8 relative z-10 group-hover:scale-110 transition-transform duration-500 border-4 border-white">
-                              <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-[#241C15] to-[#1A1410] text-white rounded-full flex items-center justify-center text-sm font-black shadow-lg transform translate-x-2 -translate-y-2 border-2 border-white">
+                           <div className="w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] bg-gradient-to-br from-[#D9A94E] to-[#B8862E] rounded-full shadow-xl shadow-[#D9A94E]/30 flex items-center justify-center mb-4 sm:mb-8 relative z-10 group-hover:scale-110 transition-transform duration-500 border-4 border-white">
+                              <div className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-[#241C15] to-[#1A1410] text-white rounded-full flex items-center justify-center text-xs sm:text-sm font-black shadow-lg transform translate-x-1 sm:translate-x-2 -translate-y-1 sm:-translate-y-2 border-2 border-white">
                                  {item.step}
                               </div>
-                              <item.icon className="w-12 h-12 text-white drop-shadow-md" />
+                              <item.icon className="w-8 h-8 sm:w-12 sm:h-12 text-white drop-shadow-md" />
                            </div>
-                           <h3 className="text-xl font-black mb-3 text-[#241C15]">{item.title}</h3>
-                           <p className="text-base text-gray-500 max-w-[200px]">{item.desc}</p>
+                           <h3 className="text-sm sm:text-xl font-black mb-1 sm:mb-3 text-[#241C15]">{item.title}</h3>
+                           <p className="text-xs sm:text-base text-gray-500 max-w-[200px]">{item.desc}</p>
                         </motion.div>
                      ))}
                   </div>
@@ -465,11 +498,11 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          {/* ═══════════════════════════════════════ */}
          <section className="py-12 relative z-10 bg-[#FAF6EE]" id="features">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
-               <div className="text-center max-w-3xl mx-auto mb-20">
-                  <h2 className="text-4xl lg:text-5xl font-black text-[#241C15]">Everything you need to build repeat business</h2>
+               <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-20">
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#241C15]">Everything you need to build repeat business</h2>
                </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
                   {[
                      { title: "Loyalty Program Builder", desc: "Stamp-based rewards, fully configurable to match your brand.", icon: Star },
                      { title: "Campaign Builder", desc: "Targeted offers, BOGO, tier-based discounts, linked conditions.", icon: Megaphone },
@@ -481,13 +514,13 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      <motion.div
                         key={idx}
                         whileHover={{ y: -5 }}
-                        className="bg-white rounded-[32px] p-8 shadow-sm border border-white hover:border-[#D9A94E]/40 hover:shadow-2xl hover:shadow-[#D9A94E]/10 transition-all duration-300 group cursor-pointer"
+                        className="bg-white rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 shadow-sm border border-white hover:border-[#D9A94E]/40 hover:shadow-2xl hover:shadow-[#D9A94E]/10 transition-all duration-300 group cursor-pointer"
                      >
-                        <div className="w-16 h-16 rounded-2xl bg-[#FAF6EE] flex items-center justify-center mb-8 group-hover:bg-gradient-to-br from-[#D9A94E] to-[#B8862E] transition-colors duration-300 shadow-sm">
-                           <feat.icon className="w-8 h-8 text-[#B8862E] group-hover:text-white transition-colors duration-300" />
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-[#FAF6EE] flex items-center justify-center mb-4 sm:mb-8 group-hover:bg-gradient-to-br from-[#D9A94E] to-[#B8862E] transition-colors duration-300 shadow-sm">
+                           <feat.icon className="w-6 h-6 sm:w-8 sm:h-8 text-[#B8862E] group-hover:text-white transition-colors duration-300" />
                         </div>
-                        <h3 className="text-2xl font-black mb-3 text-[#241C15]">{feat.title}</h3>
-                        <p className="text-gray-500 mb-8 leading-relaxed font-medium">{feat.desc}</p>
+                        <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-[#241C15]">{feat.title}</h3>
+                        <p className="text-sm sm:text-base text-gray-500 mb-4 sm:mb-8 leading-relaxed font-medium">{feat.desc}</p>
                      </motion.div>
                   ))}
                </div>
@@ -574,7 +607,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          <section className="py-12 bg-white relative z-10" id="pricing">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                <div className="text-center mb-10">
-                  <h2 className="text-4xl lg:text-5xl font-black text-[#241C15] mb-8">Simple, transparent pricing</h2>
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#241C15] mb-6 sm:mb-8">Simple, transparent pricing</h2>
 
                   <div className="inline-flex bg-gray-100 p-1 rounded-full relative">
                      <button
@@ -590,11 +623,12 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         Annual
                         <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${isAnnual ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700'}`}>Save 20%</span>
                      </button>
-                     <div className={`absolute top-1 bottom-1 bg-[#241C15] rounded-full transition-all duration-300 ease-out shadow-md ${isAnnual ? 'translate-x-[98px] w-[170px]' : 'translate-x-0 w-[98px]'}`} />
+                     <div className={`absolute top-1 bottom-1 bg-[#241C15] rounded-full transition-all duration-300 ease-out shadow-md ${isAnnual ? 'translate-x-[98px] w-[140px] sm:w-[170px]' : 'translate-x-0 w-[90px] sm:w-[98px]'}`} />
                   </div>
                </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center mt-2">
+               {/* Desktop pricing grid */}
+               <div className="hidden md:grid grid-cols-3 gap-8 max-w-6xl mx-auto items-center mt-2">
                   {/* Starter */}
                   <div className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-xl shadow-gray-200/40 hover:-translate-y-2 transition-transform duration-300">
                      <h3 className="text-2xl font-black mb-2 text-[#241C15]">Starter</h3>
@@ -657,6 +691,100 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      </button>
                   </div>
                </div>
+
+               {/* Mobile pricing slider */}
+               <div className="md:hidden mt-4">
+                  <div
+                     ref={pricingScrollRef}
+                     onScroll={handlePricingScroll}
+                     className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-0"
+                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+                  >
+                     {/* Starter */}
+                     <div className="snap-center shrink-0 w-full px-4">
+                        <div className="bg-white rounded-[28px] p-6 border border-gray-100 shadow-xl shadow-gray-200/40">
+                           <h3 className="text-2xl font-black mb-2 text-[#241C15]">Starter</h3>
+                           <div className="flex items-end gap-1 mb-6">
+                              <span className="text-4xl font-black">${isAnnual ? '39' : '49'}</span>
+                              <span className="text-gray-500 font-bold mb-1">/mo</span>
+                           </div>
+                           <ul className="space-y-3 mb-8">
+                              {['1 Branch Limit', '3 Staff Seats', 'Basic Campaigns', 'Standard Support'].map((feat, i) => (
+                                 <li key={i} className="flex items-center gap-3 text-sm text-gray-600 font-bold">
+                                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" /> {feat}
+                                 </li>
+                              ))}
+                           </ul>
+                           <button onClick={() => onNavigate?.('/onboarding')} className="w-full py-3 rounded-xl font-black text-base bg-[#FAF6EE] text-[#241C15] hover:bg-[#F0EBE1] transition-colors border border-gray-200/50">
+                              Start Free Trial
+                           </button>
+                        </div>
+                     </div>
+
+                     {/* Growth */}
+                     <div className="snap-center shrink-0 w-full px-4">
+                        <div className="relative">
+                           <div className="absolute inset-0 bg-gradient-to-b from-[#D9A94E] to-[#B8862E] rounded-[28px] blur-xl opacity-40 -z-10" />
+                           <div className="bg-[#241C15] text-white rounded-[28px] p-6 shadow-2xl relative border border-white/10">
+                              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white text-[10px] font-black uppercase tracking-widest px-5 py-2 rounded-full shadow-lg">
+                                 Most Popular
+                              </div>
+                              <h3 className="text-2xl font-black mb-2 mt-2">Growth</h3>
+                              <div className="flex items-end gap-1 mb-6">
+                                 <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#D9A94E] to-[#B8862E]">${isAnnual ? '79' : '99'}</span>
+                                 <span className="text-gray-400 font-bold mb-1">/mo</span>
+                              </div>
+                              <ul className="space-y-3 mb-8">
+                                 {['3 Branch Limit', '10 Staff Seats', 'Advanced Campaigns', 'Deep Analytics', 'Priority Support'].map((feat, i) => (
+                                    <li key={i} className="flex items-center gap-3 text-sm text-gray-300 font-bold">
+                                       <CheckCircle2 className="w-5 h-5 text-[#D9A94E] shrink-0" /> {feat}
+                                    </li>
+                                 ))}
+                              </ul>
+                              <button onClick={() => onNavigate?.('/onboarding')} className="w-full py-3 rounded-xl font-black text-base bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white shadow-xl shadow-[#D9A94E]/20">
+                                 Start Free Trial
+                              </button>
+                           </div>
+                        </div>
+                     </div>
+
+                     {/* Enterprise */}
+                     <div className="snap-center shrink-0 w-full px-4">
+                        <div className="bg-white rounded-[28px] p-6 border border-gray-100 shadow-xl shadow-gray-200/40">
+                           <h3 className="text-2xl font-black mb-2 text-[#241C15]">Enterprise</h3>
+                           <div className="flex items-end gap-1 mb-6">
+                              <span className="text-4xl font-black">Custom</span>
+                           </div>
+                           <ul className="space-y-3 mb-8">
+                              {['Unlimited Branches', 'Unlimited Staff', 'Custom Integration', 'Dedicated Success Mgr'].map((feat, i) => (
+                                 <li key={i} className="flex items-center gap-3 text-sm text-gray-600 font-bold">
+                                    <CheckCircle2 className="w-5 h-5 text-gray-300 shrink-0" /> {feat}
+                                 </li>
+                              ))}
+                           </ul>
+                           <button className="w-full py-3 rounded-xl font-black text-base bg-white border-2 border-gray-200 hover:border-[#241C15] text-[#241C15] transition-colors">
+                              Talk to Sales
+                           </button>
+                        </div>
+                     </div>
+                  </div>
+
+                  {/* Dot indicators */}
+                  <div className="flex justify-center items-center gap-2.5 mt-6">
+                     {['Starter', 'Growth', 'Enterprise'].map((label, i) => (
+                        <button
+                           key={i}
+                           onClick={() => scrollToPlan(i)}
+                           className={`transition-all duration-300 rounded-full ${
+                              activePlanIndex === i
+                                 ? 'w-8 h-2.5 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] shadow-sm'
+                                 : 'w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400'
+                           }`}
+                           aria-label={`Go to ${label} plan`}
+                        />
+                     ))}
+                  </div>
+               </div>
             </div>
          </section>
 
@@ -670,7 +798,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
             <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
                <div className="text-center mb-12">
                   <SectionLabel>Wall of Love</SectionLabel>
-                  <h2 className="text-4xl lg:text-5xl font-black text-[#241C15] mt-6">Results that speak for themselves</h2>
+                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#241C15] mt-6">Results that speak for themselves</h2>
                </div>
 
                <StaggerTestimonials />
@@ -690,13 +818,13 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          {/* ═══════════════════════════════════════ */}
          {/* 11. FINAL CTA BANNER                  */}
          {/* ═══════════════════════════════════════ */}
-         <section className="relative overflow-hidden z-10 max-w-6xl mx-auto my-12 lg:my-20 rounded-[32px] bg-[#1A1410] border border-[#D9A94E]/20 shadow-2xl flex flex-col md:flex-row">
+         <section className="relative overflow-hidden z-10 max-w-6xl mx-4 sm:mx-auto my-8 sm:my-12 lg:my-20 rounded-[24px] sm:rounded-[32px] bg-[#1A1410] border border-[#D9A94E]/20 shadow-2xl flex flex-col md:flex-row">
             {/* Ambient Lighting & Glows for the right side */}
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#D9A94E]/10 rounded-full blur-[100px] pointer-events-none" />
             
             {/* Left Image Area */}
             <div 
-               className="w-full md:w-5/12 min-h-[350px] relative bg-cover bg-center"
+               className="w-full md:w-5/12 min-h-[200px] sm:min-h-[350px] relative bg-cover bg-center"
                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=800&fit=crop&q=80')" }}
             >
                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#1A1410] md:hidden" />
@@ -704,19 +832,19 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
             </div>
 
             {/* Right Content Area */}
-            <div className="w-full md:w-7/12 p-10 md:p-16 flex flex-col justify-center text-left relative z-10">
+            <div className="w-full md:w-7/12 p-6 sm:p-10 md:p-16 flex flex-col justify-center text-left relative z-10">
                <span className="text-[#D9A94E] font-bold text-sm tracking-widest uppercase mb-2">Try it risk-free</span>
                
-               <h2 className="text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 leading-tight">
+               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 leading-tight">
                   Ready to bring customers back?
                </h2>
                
-               <p className="text-lg text-gray-400 mb-8 max-w-lg font-medium leading-relaxed">
+               <p className="text-base sm:text-lg text-gray-400 mb-6 sm:mb-8 max-w-lg font-medium leading-relaxed">
                   Join hundreds of local businesses growing their revenue with Revia's frictionless loyalty platform.
                </p>
                
                <div className="flex flex-col sm:flex-row gap-4 items-start">
-                  <button onClick={() => onNavigate?.('/onboarding')} className="bg-[#FAF6EE] text-[#241C15] px-8 py-4 rounded-xl text-lg font-black shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                  <button onClick={() => onNavigate?.('/onboarding')} className="bg-[#FAF6EE] text-[#241C15] px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-black shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
                      Become Merchant
                   </button>
                </div>
@@ -726,135 +854,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          {/* ═══════════════════════════════════════ */}
          {/* 12. FOOTER                            */}
          {/* ═══════════════════════════════════════ */}
-         <footer className="bg-[#FAF8F5] pt-10 pb-10 relative z-10 font-sans">
-            <div className="w-full max-w-[1600px] mx-auto px-6 lg:px-12 relative">
-               
-               {/* The White Card */}
-               <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-10 lg:p-12 relative">
-                  
-                  {/* Tape Decorations */}
-                  <div className="absolute -top-4 -left-4 w-16 h-6 bg-[#D9A94E] -rotate-12 rounded-sm opacity-90 shadow-sm" />
-                  <div className="absolute -top-4 -right-4 w-16 h-6 bg-[#D9A94E] rotate-12 rounded-sm opacity-90 shadow-sm" />
-                  <div className="absolute -top-3 -right-6 w-12 h-6 bg-[#D9A94E] rotate-[45deg] rounded-sm opacity-90 shadow-sm" />
-
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16 mb-7">
-                     
-                     {/* Column 1: Brand */}
-                     <div className="md:col-span-1">
-                        <div className="flex items-center gap-2 mb-6">
-                           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D9A94E] to-[#B8862E] flex items-center justify-center shadow-lg">
-                              <span className="text-white font-black text-lg">R</span>
-                           </div>
-                           <span className="text-2xl font-black tracking-tight text-[#241C15]">Revia</span>
-                        </div>
-                        <p className="text-[15px] text-gray-600 leading-relaxed font-medium">
-                           The easiest way for local businesses to build loyalty, retain customers, and grow revenue.
-                        </p>
-                     </div>
-
-                     {/* Column 2: Product */}
-                     <div>
-                        <h4 className="font-bold mb-6 text-[13px] tracking-wider text-gray-500 uppercase">Product</h4>
-                        <ul className="space-y-4 text-[15px] font-medium text-gray-600">
-                           <li>
-                              <a href="#features" className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
-                                 <Star className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
-                                 Features
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#pricing" className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
-                                 <CreditCard className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
-                                 Pricing
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#how-it-works" className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
-                                 <RefreshCw className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
-                                 How It Works
-                              </a>
-                           </li>
-                        </ul>
-                     </div>
-
-                     {/* Column 3: Company */}
-                     <div>
-                        <h4 className="font-bold mb-6 text-[13px] tracking-wider text-gray-500 uppercase">Company</h4>
-                        <ul className="space-y-4 text-[15px] font-medium text-gray-600">
-                           <li>
-                              <a href="#" className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
-                                 <Users className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
-                                 About Us
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#" className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
-                                 <Megaphone className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
-                                 Contact
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#" className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
-                                 <Lock className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
-                                 Privacy Policy
-                              </a>
-                           </li>
-                           <li>
-                              <a href="#" className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
-                                 <CheckCircle2 className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
-                                 Terms of Service
-                              </a>
-                           </li>
-                        </ul>
-                     </div>
-
-                     {/* Column 4: Contact Info */}
-                     <div>
-                        <h4 className="font-bold mb-6 text-[13px] tracking-wider text-gray-500 uppercase">Contact</h4>
-                        <ul className="space-y-4 text-[15px] font-medium text-gray-600">
-                           <li className="flex gap-3">
-                              <MapPin className="w-5 h-5 text-[#D9A94E] shrink-0" />
-                              <span>123 Innovation Drive<br />Tech City, TC 90210</span>
-                           </li>
-                           <li className="flex items-center gap-3">
-                              <Phone className="w-5 h-5 text-[#D9A94E] shrink-0" />
-                              <span>(555) 123-4567</span>
-                           </li>
-                           <li className="flex items-center gap-3">
-                              <Mail className="w-5 h-5 text-[#D9A94E] shrink-0" />
-                              <span>hello@revia.com</span>
-                           </li>
-                        </ul>
-                     </div>
-                  </div>
-               </div>
-
-               {/* Bottom Row outside the card */}
-               <div className="pt-8 px-4 flex flex-col md:flex-row items-center justify-between gap-6 text-[14px] font-medium text-slate-500">
-                  <p>© 2026 Revia. All rights reserved.</p>
-                  <div className="flex gap-4">
-                     {/* Facebook */}
-                     <a href="#" className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-500 hover:bg-[#D9A94E] hover:text-white transition-colors">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                           <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
-                        </svg>
-                     </a>
-                     {/* Twitter */}
-                     <a href="#" className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-500 hover:bg-[#D9A94E] hover:text-white transition-colors">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                           <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                        </svg>
-                     </a>
-                     {/* Instagram */}
-                     <a href="#" className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-500 hover:bg-[#D9A94E] hover:text-white transition-colors">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                           <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
-                        </svg>
-                     </a>
-                  </div>
-               </div>
-            </div>
-         </footer>
+         <MarketingFooter onNavigate={onNavigate} />
       </div>
    );
 };
