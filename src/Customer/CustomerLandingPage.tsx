@@ -111,7 +111,7 @@ const journeySteps = [
         <div className="border-t border-[#E5E5E5] pt-3">
           <p className="text-[9px] text-[#999] text-center mb-2">Enter 6-digit OTP</p>
           <div className="grid grid-cols-6 gap-1 mb-2">
-            {['4','2','·','·','·','·'].map((d,i) => (
+            {['4', '2', '·', '·', '·', '·'].map((d, i) => (
               <div key={i} className={`h-7 rounded-lg flex items-center justify-center text-xs font-black border ${d !== '·' ? 'border-[#C89B3C] bg-[#C89B3C]/5 text-[#222]' : 'border-[#E5E5E5] text-transparent'}`}>{d !== '·' ? d : '—'}</div>
             ))}
           </div>
@@ -186,7 +186,7 @@ const journeySteps = [
           <Star className="w-7 h-7 text-white fill-current" />
         </div>
         <p className="text-sm font-black text-[#222] mb-1">Join Loyalty</p>
-        <p className="text-[9px] text-[#666] mb-3 leading-relaxed">Revia Coffee Rewards Program<br/>Earn 1 stamp per qualifying visit</p>
+        <p className="text-[9px] text-[#666] mb-3 leading-relaxed">Revia Coffee Rewards Program<br />Earn 1 stamp per qualifying visit</p>
         <div className="w-full bg-[#F8F8F6] rounded-xl p-3 mb-4 text-left border border-[#E5E5E5]">
           <p className="text-[8px] font-black uppercase text-[#C89B3C] mb-1">Welcome Benefit</p>
           <p className="text-[10px] font-bold text-[#222]">🎁 Double stamps on your first visit</p>
@@ -431,7 +431,7 @@ export const CustomerLandingPage: React.FC<Props> = ({ onNavigate }) => {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => onNavigate?.('/customer-panel')}
+                onClick={() => onNavigate?.('/customer')}
                 className="group flex items-center justify-center gap-3 bg-[#C89B3C] hover:bg-[#a07520] text-white px-8 py-4 rounded-full text-sm font-black tracking-wide transition-all shadow-2xl shadow-[#C89B3C]/30"
               >
                 Join Loyalty <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -718,7 +718,7 @@ export const CustomerLandingPage: React.FC<Props> = ({ onNavigate }) => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => onNavigate?.('/customer-panel')}
+              onClick={() => onNavigate?.('/customer')}
               className="group flex items-center justify-center gap-3 bg-[#C89B3C] hover:bg-[#a07520] text-white px-10 py-4 rounded-full text-sm font-black tracking-wide transition-all shadow-2xl shadow-[#C89B3C]/30"
             >
               Join Loyalty <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

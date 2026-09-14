@@ -7,6 +7,16 @@ export const MOCK_OFFERS = [
   { id: '4', type: 'Branch Offer', title: 'Grand Opening Bonus', desc: 'Triple stamps on your first visit to our Canary Wharf location.', value: '3× Stamps', validity: 'Paused', branch: 'Canary Wharf', status: 'paused' as const },
 ];
 
+export const MOCK_COUPONS = [
+  { id: 'c1', type: 'Welcome Coupon', title: '$10 Off Your Next Meal', desc: 'Get $10 off when you spend $50 or more on your next visit.', value: '$10 OFF', validity: 'Valid 30 Days', branch: 'All Branches', status: 'active' as const },
+  { id: 'c2', type: 'Birthday Coupon', title: 'Free Dessert', desc: 'Celebrate your birthday with a free dessert of your choice.', value: 'FREE', validity: 'Expires 15 Oct', branch: 'Downtown Branch', status: 'active' as const },
+];
+export const MOCK_ADDONS = [
+  { id: 'a1', name: 'Extra Shot', price: 0.5, icon: 'Coffee' },
+  { id: 'a2', name: 'Soy Milk', price: 0.3, icon: 'Droplet' },
+  { id: 'a3', name: 'Whipped Cream', price: 0.4, icon: 'Cloud' },
+];
+
 export const MOCK_REWARDS = {
   available: [{ id: 'r1', title: 'Free Coffee', value: '10% OFF', source: 'Loyalty Program · 10 Stamps', validity: 'Valid until 30 Sep 2026', code: 'REVIA-8F42K', business: 'Grand Café', branch: 'Downtown Branch' }],
   redeemed: [{ id: 'r2', title: 'Buy 1 Get 1', value: 'BOGO', source: 'Special Campaign', validity: 'Redeemed 2 Sep 2026', code: 'REVIA-7X9PM', business: 'Grand Café', branch: 'All Branches' }],

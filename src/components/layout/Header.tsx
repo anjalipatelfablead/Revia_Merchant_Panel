@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
         return { category: 'Loyalty Engine', page: 'Loyalty Program Rules' };
       case '/qr-codes':
         return { category: 'Hardware & Beacons', page: 'Dynamic QR Codes' };
-      case '/customers':
+      case '/customerlist':
         return { category: 'CRM & Audience', page: 'Customer Directory' };
       case '/transactions':
         return { category: 'POS Ledger', page: 'Transactions' };

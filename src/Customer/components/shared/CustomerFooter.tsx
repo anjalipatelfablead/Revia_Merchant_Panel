@@ -33,7 +33,7 @@ export const CustomerFooter: React.FC<Props> = ({ onNavigate }) => {
             <ul className="space-y-3">
               {[
                 { l: 'Sign In', a: () => onNavigate?.('/login') },
-                { l: 'My Account', a: () => onNavigate?.('/customer-panel') },
+                { l: 'My Account', a: () => onNavigate?.('/customer') },
                 { l: 'Become Partner', a: () => onNavigate?.('/onboarding') },
                 { l: 'Privacy Policy', a: () => {} },
                 { l: 'Terms', a: () => {} },

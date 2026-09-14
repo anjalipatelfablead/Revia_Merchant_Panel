@@ -20,6 +20,7 @@ import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+import { CustomerOnboardingPage } from './pages/CustomerOnboardingPage';
 import { CustomerPanel } from './Customer/CustomerPanel';
 import { CatalogPage } from './pages/CatalogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
@@ -34,7 +35,17 @@ import { QrCodesPage } from './pages/QrCodesPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
-import { NotificationsPage } from './pages/NotificationsPage';
+import { NotificationPage } from './pages/NotificationPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+
+const VALID_ROUTES = [
+  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
+  '/loyalty', '/qr-codes', '/catalog', '/orders', '/invoices',
+  '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
+  '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
+  '/settings/audit', '/settings/branding', '/login', '/onboarding',
+  '/customer-landing', '/customer', '/customer-onboarding'
+];
 
 
 
@@ -89,20 +100,51 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/');
+  if (!isValidRoute) {
+    return <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
   if (currentRoute === '/customer-landing') {
     return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  if (currentRoute.startsWith('/customer-panel')) {
+  if (currentRoute === '/customer-onboarding') {
+    return (
+      <CustomerOnboardingPage
+        onComplete={() => handleNavigate('/customer')}
+      />
+    );
+  }
+
+  if (currentRoute === '/customer' || currentRoute.startsWith('/customer/')) {
     return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   // Render auth and onboarding pages directly as standalone
-  if (currentRoute === '/login' || currentRoute === '/onboarding') {
+  if (currentRoute === '/login') {
+    return (
+      <LoginPage
+        onLoginSuccess={(role) => {
+          if (role.startsWith('/')) {
+            handleNavigate(role as NavRoute);
+          } else if (role === 'customer') {
+            // Navigate to onboarding after successful customer login
+            handleNavigate('/customer-onboarding');
+          } else {
+            handleNavigate('/dashboard');
+          }
+        }}
+        onGoToOnboarding={() => handleNavigate('/onboarding')}
+      />
+    );
+  }
+
+  if (currentRoute === '/onboarding') {
     return (
       <OnboardingPage
         onComplete={() => handleNavigate('/dashboard')}
-        onCancel={() => setStandaloneAuthView(false)}
+        onCancel={() => handleNavigate('/login')}
       />
     );
   }
@@ -136,7 +178,7 @@ export default function App() {
       />
 
       {/* Main Content Viewport (Starts right next to Sidebar, no overlap!) */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
         {/* Top Header */}
         <Header
           currentRoute={currentRoute}
@@ -146,7 +188,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'}`}>
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
@@ -186,7 +228,7 @@ export default function App() {
             <QrCodesPage />
           )}
 
-          {currentRoute === '/customers' && (
+          {currentRoute === '/customerlist' && (
             <CustomersPage
               customers={customers}
               onUpdateCustomer={(updated) => {
@@ -221,7 +263,7 @@ export default function App() {
           )}
 
           {currentRoute === '/notifications' && (
-            <NotificationsPage />
+            <NotificationPage />
           )}
 
           {currentRoute === '/settings/audit' && (
@@ -247,26 +289,7 @@ export default function App() {
           )}
 
 
-          {
-            currentRoute === '/onboarding' && (
-              <div className="p-4 sm:p-6">
-                <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl border border-[#EAE6E1]">
-                  <span className="text-xs text-[#7C746C]">
-                    Viewing Onboarding Wizard inside Merchant Shell
-                  </span>
-                  <button
-                    className="text-xs font-bold text-[#A37837] hover:underline"
-                  >
-                    Open Full-Screen Presentation Mode ↗
-                  </button>
-                </div>
-                <OnboardingPage
-                  onComplete={() => handleNavigate('/dashboard')}
-                  onCancel={() => handleNavigate('/login')}
-                />
-              </div>
-            )
-          }
+
         </main >
       </div >
     </div >

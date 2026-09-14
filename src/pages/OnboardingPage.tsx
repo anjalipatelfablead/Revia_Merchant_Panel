@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { LoginPage } from './LoginPage';
 import {
   Check,
   Building2,
@@ -14,7 +15,8 @@ import {
   Info,
   Sparkles,
   Zap,
-  Lock
+  Lock,
+  CreditCard
 } from 'lucide-react';
 import { PrimaryButton, LiveBadge } from '../components/common/Badges';
 
@@ -24,20 +26,39 @@ interface OnboardingPageProps {
 }
 
 export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCancel }) => {
-  const [activeStep, setActiveStep] = useState<number>(3); // 3: First Branch (Active) as requested
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [activeStep, setActiveStep] = useState<number>(1);
+  
+  // M-01 Registration
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // M-02 Business Info
+  const [businessName, setBusinessName] = useState('');
+  const [businessCategory, setBusinessCategory] = useState('');
+  const [ownerName, setOwnerName] = useState('');
+
+  // Step 3 First Branch
   const [branchName, setBranchName] = useState('Blue Bottle Cafe - Downtown Flagship');
   const [address, setAddress] = useState('315 Montgomery St, Financial District, San Francisco, CA');
   const [timezone, setTimezone] = useState('America/Los_Angeles (PST - UTC-8)');
   const [hours, setHours] = useState('06:30 AM - 07:00 PM PST');
   const [registerType, setRegisterType] = useState<'counter' | 'salon' | 'express'>('counter');
 
+  // Step 4 & 5
+  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'pro' | 'enterprise'>('pro');
+
   const steps = [
     { id: 1, name: 'Business Info', icon: Building2 },
     { id: 2, name: 'Category & Time', icon: Clock },
     { id: 3, name: 'First Branch', icon: Store },
-    { id: 4, name: 'Loyalty Basics', icon: Award },
-    { id: 5, name: 'Invite Staff', icon: Users },
+    { id: 4, name: 'Select Plan', icon: Sparkles },
+    { id: 5, name: 'Payment', icon: CreditCard },
   ];
+
+  if (!isRegistered) {
+    return <LoginPage onLoginSuccess={() => setIsRegistered(true)} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] pb-16">
@@ -119,21 +140,71 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
           {/* Main Form Area (8 cols) */}
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-white border border-[#E5E0D8] rounded-xl p-6 shadow-xs">
-              <div className="border-b border-[#E5E0D8] pb-4 mb-6">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                  STEP 03 // PHYSICAL RETAIL PROFILE
-                </span>
-                <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
-                  Configure Flagship Outlet & Register Setup
-                </h2>
-                <p className="text-xs text-[#6E6A66] mt-1">
-                  Define the operating parameters and hardware profile for your initial physical location.
-                </p>
-              </div>
+              {activeStep === 1 && (
+                <>
+                  <div className="border-b border-[#E5E0D8] pb-4 mb-6">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
+                      STEP 01 // BUSINESS PROFILE
+                    </span>
+                    <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
+                      Business Information
+                    </h2>
+                    <p className="text-xs text-[#6E6A66] mt-1">
+                      Set up your tenant profile and business details.
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Business Name</label>
+                      <input type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Owner Name</label>
+                      <input type="text" value={ownerName} onChange={(e) => setOwnerName(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
+                    </div>
+                  </div>
+                </>
+              )}
 
-              {/* Branch Details */}
-              <div className="space-y-4">
-                <div>
+              {activeStep === 2 && (
+                <>
+                  <div className="border-b border-[#E5E0D8] pb-4 mb-6">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
+                      STEP 02 // OPERATIONS
+                    </span>
+                    <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
+                      Category & Settings
+                    </h2>
+                    <p className="text-xs text-[#6E6A66] mt-1">
+                      Define your primary business category and regional preferences.
+                    </p>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Business Category</label>
+                      <input type="text" value={businessCategory} onChange={(e) => setBusinessCategory(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" placeholder="e.g. Coffee Shop, Retail" />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeStep === 3 && (
+                <>
+                  <div className="border-b border-[#E5E0D8] pb-4 mb-6">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
+                      STEP 03 // PHYSICAL RETAIL PROFILE
+                    </span>
+                    <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
+                      Configure Flagship Outlet & Register Setup
+                    </h2>
+                    <p className="text-xs text-[#6E6A66] mt-1">
+                      Define the operating parameters and hardware profile for your initial physical location.
+                    </p>
+                  </div>
+
+                  {/* Branch Details */}
+                  <div className="space-y-4">
+                    <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
                     Official Branch Name
                   </label>
@@ -287,16 +358,162 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   </div>
                 </div>
               </div>
+              </>
+              )}
+
+              {activeStep === 4 && (
+                <>
+                  <div className="border-b border-[#E5E0D8] pb-4 mb-6">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
+                      STEP 04 // SUBSCRIPTION
+                    </span>
+                    <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
+                      Choose Your Plan
+                    </h2>
+                    <p className="text-xs text-[#6E6A66] mt-1">
+                      Select the tier that best fits your business needs.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {/* Plan Options */}
+                    <div
+                      onClick={() => setSelectedPlan('starter')}
+                      className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                        selectedPlan === 'starter'
+                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
+                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-bold text-[#1A1615]">Starter</div>
+                          <div className="text-[11px] text-[#6E6A66]">Essential tools for single-location shops.</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-bold text-[#1A1615]">$49<span className="text-[10px] text-[#9E9A93] font-normal">/mo</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setSelectedPlan('pro')}
+                      className={`p-4 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+                        selectedPlan === 'pro'
+                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
+                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
+                      }`}
+                    >
+                      <div className="absolute top-0 right-0 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg">RECOMMENDED</div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-bold text-[#1A1615]">Pro</div>
+                          <div className="text-[11px] text-[#6E6A66]">Advanced loyalty and multi-branch support.</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-bold text-[#1A1615]">$99<span className="text-[10px] text-[#9E9A93] font-normal">/mo</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => setSelectedPlan('enterprise')}
+                      className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                        selectedPlan === 'enterprise'
+                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
+                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-bold text-[#1A1615]">Enterprise</div>
+                          <div className="text-[11px] text-[#6E6A66]">Custom deployments and API access.</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-bold text-[#1A1615]">Custom</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeStep === 5 && (
+                <>
+                  <div className="border-b border-[#E5E0D8] pb-4 mb-6">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
+                      STEP 05 // PAYMENT
+                    </span>
+                    <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
+                      Payment Details
+                    </h2>
+                    <p className="text-xs text-[#6E6A66] mt-1">
+                      Enter your payment information to finalize your {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan subscription.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-4 flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-white border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
+                          <CreditCard className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider">Total Due Today</div>
+                          <div className="text-sm font-bold text-[#1A1615]">
+                            {selectedPlan === 'starter' ? '$49.00' : selectedPlan === 'pro' ? '$99.00' : 'Contact Sales'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {selectedPlan !== 'enterprise' ? (
+                      <>
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Cardholder Name</label>
+                          <input type="text" placeholder="Name on card" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Card Number</label>
+                          <input type="text" placeholder="0000 0000 0000 0000" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Expiry Date</label>
+                            <input type="text" placeholder="MM/YY" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">CVC</label>
+                            <input type="text" placeholder="123" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-4 text-[#0D7A53] text-[10px] font-bold bg-[#E6F4ED] p-3 rounded-lg border border-[#BCE3D1]">
+                          <Lock className="w-3.5 h-3.5" /> All transactions are secure and encrypted.
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-8 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl border-dashed">
+                        <p className="text-sm font-semibold text-[#1A1615]">Enterprise Setup Pending</p>
+                        <p className="text-xs text-[#6E6A66] mt-1">An enterprise sales representative will contact you to set up billing and custom provisioning.</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
 
               {/* Bottom Actions */}
               <div className="mt-8 pt-5 border-t border-[#E5E0D8] flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setActiveStep(2)}
-                  className="px-4 py-2.5 rounded-lg border border-[#E5E0D8] text-xs font-semibold text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
-                >
-                  ← Back to Category & Time
-                </button>
+                {activeStep > 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => setActiveStep(activeStep - 1)}
+                    className="px-4 py-2.5 rounded-lg border border-[#E5E0D8] text-xs font-semibold text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
+                  >
+                    ← Back
+                  </button>
+                ) : (
+                  <div></div>
+                )}
                 <PrimaryButton
                   type="button"
                   onClick={() => {
@@ -305,7 +522,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   }}
                   className="py-2.5 px-5 text-xs font-semibold"
                 >
-                  Continue to Loyalty Basics →
+                  {activeStep === 5 ? 'Complete Onboarding' : 'Continue →'}
                 </PrimaryButton>
               </div>
             </div>
@@ -319,12 +536,12 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
                   PROGRESS CHECKLIST
                 </span>
-                <span className="text-xs font-bold text-[#9E782F]">60% Complete</span>
+                <span className="text-xs font-bold text-[#9E782F]">{Math.round(((activeStep - 1) / steps.length) * 100)}% Complete</span>
               </div>
 
               {/* Progress bar */}
               <div className="w-full h-2 bg-[#FAF8F5] rounded-full overflow-hidden border border-[#E5E0D8] mb-4">
-                <div className="h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] w-3/5 rounded-full" />
+                <div className={`h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-full`} style={{ width: `${((activeStep - 1) / steps.length) * 100}%` }} />
               </div>
 
               <div className="space-y-3 text-xs">
@@ -334,39 +551,32 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   </span>
                   <span className="text-[10px] font-bold">DONE</span>
                 </div>
-                <div className="flex items-center justify-between text-[#0D7A53]">
-                  <span className="flex items-center gap-2 font-medium">
-                    <CheckCircle2 className="w-4 h-4" /> Business Tax ID & Timezone
-                  </span>
-                  <span className="text-[10px] font-bold">DONE</span>
-                </div>
-                <div className="flex items-center justify-between text-[#1A1615] font-semibold">
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-[#9E782F] text-white flex items-center justify-center text-[10px]">
-                      3
+                {steps.map((step) => {
+                  const isDone = activeStep > step.id;
+                  const isCurrent = activeStep === step.id;
+                  
+                  return (
+                    <div key={step.id} className={`flex items-center justify-between ${isDone ? 'text-[#0D7A53]' : isCurrent ? 'text-[#1A1615] font-semibold' : 'text-[#9E9A93]'}`}>
+                      <span className="flex items-center gap-2 font-medium">
+                        {isDone ? (
+                          <CheckCircle2 className="w-4 h-4" />
+                        ) : isCurrent ? (
+                          <div className="w-4 h-4 rounded-full bg-[#9E782F] text-white flex items-center justify-center text-[10px]">
+                            {step.id}
+                          </div>
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border border-[#E5E0D8] text-[10px] flex items-center justify-center">
+                            {step.id}
+                          </div>
+                        )}
+                        {step.name}
+                      </span>
+                      <span className={`text-[10px] font-bold ${isDone ? '' : isCurrent ? 'text-[#9E782F]' : 'font-normal'}`}>
+                        {isDone ? 'DONE' : isCurrent ? 'IN PROGRESS' : 'PENDING'}
+                      </span>
                     </div>
-                    First Flagship Branch Setup
-                  </span>
-                  <span className="text-[10px] text-[#9E782F] font-bold">IN PROGRESS</span>
-                </div>
-                <div className="flex items-center justify-between text-[#9E9A93]">
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full border border-[#E5E0D8] text-[10px] flex items-center justify-center">
-                      4
-                    </div>
-                    Loyalty Stamp Mechanics
-                  </span>
-                  <span className="text-[10px]">PENDING</span>
-                </div>
-                <div className="flex items-center justify-between text-[#9E9A93]">
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full border border-[#E5E0D8] text-[10px] flex items-center justify-center">
-                      5
-                    </div>
-                    Staff & Terminal Passkeys
-                  </span>
-                  <span className="text-[10px]">PENDING</span>
-                </div>
+                  );
+                })}
               </div>
             </div>
 

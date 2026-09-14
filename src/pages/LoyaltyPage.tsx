@@ -309,19 +309,28 @@ export const LoyaltyPage: React.FC = () => {
                 <div className="space-y-2 mt-3">
                   <label className="text-xs font-bold uppercase tracking-wider text-[#9E9A93]">Branch Availability</label>
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 cursor-pointer group">
+                    <label 
+                      className="flex items-center gap-2 cursor-pointer group"
+                      onClick={(e) => { e.preventDefault(); setBranches({ ...branches, downtown: !branches.downtown }); }}
+                    >
                       <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${branches.downtown ? 'bg-[#1A1615] border-[#1A1615]' : 'border-[#D1CDC7] group-hover:border-[#1A1615] bg-white'}`}>
                         {branches.downtown && <Check className="w-3 h-3 text-white" />}
                       </div>
                       <span className="text-sm font-semibold text-[#1A1615]">Downtown Flagship [Roastery]</span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer group">
+                    <label 
+                      className="flex items-center gap-2 cursor-pointer group"
+                      onClick={(e) => { e.preventDefault(); setBranches({ ...branches, northside: !branches.northside }); }}
+                    >
                       <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${branches.northside ? 'bg-[#1A1615] border-[#1A1615]' : 'border-[#D1CDC7] group-hover:border-[#1A1615] bg-white'}`}>
                         {branches.northside && <Check className="w-3 h-3 text-white" />}
                       </div>
                       <span className="text-sm font-semibold text-[#1A1615]">Northside Mall Atrium Bar</span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer group">
+                    <label 
+                      className="flex items-center gap-2 cursor-pointer group"
+                      onClick={(e) => { e.preventDefault(); setBranches({ ...branches, westend: !branches.westend }); }}
+                    >
                       <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${branches.westend ? 'bg-[#1A1615] border-[#1A1615]' : 'border-[#D1CDC7] group-hover:border-[#1A1615] bg-white'}`}>
                         {branches.westend && <Check className="w-3 h-3 text-white" />}
                       </div>

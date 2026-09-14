@@ -16,13 +16,13 @@ const MobileBillingPage: React.FC = () => {
           <div className="flex items-center gap-3"><div className="relative"><span className="absolute -right-0.5 -top-1 h-1.5 w-1.5 rounded-full bg-[#C99B42]" /><Bell className="h-4 w-4 text-[#4F4842]" /></div><div className="h-8 w-8 overflow-hidden rounded-full border-2 border-[#C99B42]"><img src="https://i.pravatar.cc/80?img=47" alt="Account" className="h-full w-full object-cover" /></div></div>
         </header>
 
-        <div className="pt-3"><div className="flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#756D65]">Administration &amp; Quotas</div><h1 className="mt-2 text-[24px] font-extrabold leading-none tracking-[-0.06em]">Subscription &amp; Billing</h1><p className="mt-1 text-[12px] text-[#756D65]">Downtown Flagship &amp; Unified Venues</p></div><span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-[#B9F1CF] px-3 py-1 text-[11px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Active</span></div></div>
+        <div className="pt-3"><div className="flex items-center justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#756D65]">Administration &amp; Quotas</div><h1 className="mt-2 text-[26px] font-extrabold leading-none tracking-normal">Subscription &amp; Billing</h1><p className="mt-1 text-[14px] text-[#756D65]">Downtown Flagship &amp; Unified Venues</p></div><span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-[#B9F1CF] px-3 py-1 text-[11px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Active</span></div></div>
 
         <section className="mt-5 grid grid-cols-2 gap-3">
-          <div className="rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]"><span>Current Plan</span><CreditCard className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-[30px] font-extrabold leading-none tracking-[-0.06em]">$389<span className="ml-1 text-[12px] font-normal tracking-normal text-[#756D65]">/mo</span></div><div className="mt-1 text-[11px] font-bold text-[#A8761C]">Enterprise Atelier</div></div>
-          <div className="rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]"><span>Next Cycle</span><CalendarDays className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-4 text-[19px] font-bold">Dec 1, 2025</div><div className="mt-1 text-[11px] text-[#756D65]"><span className="text-[#087B55]">✓</span> Auto-pay enabled</div></div>
-          <div className="rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]"><span>Licensed Venues</span><Building2 className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-[30px] font-extrabold leading-none">3<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 5 nodes</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div></div>
-          <div className="rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]"><span>Scan Volume</span><Zap className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-[30px] font-extrabold leading-none">14.2k<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 25k</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-[57%] rounded-full bg-[#087B55]" /></div></div>
+          <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Current Plan</span><CreditCard className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">$389<span className="ml-1 text-[12px] font-normal tracking-normal text-[#756D65]">/mo</span></div><div className="mt-1 text-[11px] font-bold text-[#A8761C]">Enterprise Atelier</div></div>
+          <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Next Cycle</span><CalendarDays className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-4 text-2xl font-bold tracking-tight">Dec 1, 2025</div><div className="mt-1 text-[11px] text-[#756D65]"><span className="text-[#087B55]">✓</span> Auto-pay enabled</div></div>
+          <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Licensed Venues</span><Building2 className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">3<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 5 nodes</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div></div>
+          <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Scan Volume</span><Zap className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">14.2k<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 25k</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-[57%] rounded-full bg-[#087B55]" /></div></div>
         </section>
 
         <section className="mt-7 rounded-[13px] bg-white p-5 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-start justify-between"><div><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#B28529]">Tier Architecture</div><h2 className="mt-2 text-[23px] font-bold leading-none tracking-[-0.04em]">Enterprise Atelier</h2></div><span className="rounded-[9px] bg-[#F4EEE8] p-2.5 text-[#211C19]"><ShieldCheck className="h-5 w-5" /></span></div><div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-semibold"><span className="rounded-[7px] bg-[#FCF0E3] px-2 py-1.5">✓ 5 Venues Included</span><span className="rounded-[7px] bg-[#FCF0E3] px-2 py-1.5">✓ 20 Mesh Nodes</span><span className="rounded-[7px] bg-[#FCF0E3] px-2 py-1.5">✓ VIP Pass Portal</span><span className="rounded-[7px] bg-[#FCF0E3] px-2 py-1.5">✓ SOC-2 Audit Log</span></div><div className="mt-6 space-y-3 text-[12px]"><div><div className="flex justify-between"><span>Branch Locations</span><span className="text-[#756D65]">3 of 5 used (60%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div></div><div><div className="flex justify-between"><span>Active POS Mesh Nodes</span><span className="text-[#756D65]">12 of 20 used (60%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div></div><div><div className="flex justify-between"><span>Monthly Scan Transactions</span><span className="text-[#756D65]">14,240 / 25,000 (57%)</span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-[57%] rounded-full bg-[#087B55]" /></div></div></div><button type="button" className="mt-6 w-full rounded-[11px] bg-gradient-to-r from-[#D4A753] to-[#9E782F] py-3 text-[13px] font-bold text-white"><ArrowRight className="mr-1 inline h-4 w-4" />Upgrade Plan Quota</button></section>
@@ -52,50 +52,50 @@ export const BillingPage: React.FC = () => {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-start sm:gap-8">
         <div>
-          <h1 className="text-[25px] font-bold tracking-tight text-[#1A1615]">Subscription &amp; Billing Management</h1>
-          <p className="mt-1 max-w-[600px] text-xs leading-relaxed text-[#7C746C]">Manage your hospitality atelier subscription plan, connected branch licensing, POS seat quotas, and tax invoice history.</p>
+          <h1 className="text-[24px] font-bold tracking-tight text-[#1A1615]">Subscription &amp; Billing Management</h1>
+          <p className="mt-1 max-w-[600px] text-[14px] font-normal leading-relaxed text-[#7C746C]">Manage your hospitality atelier subscription plan, connected branch licensing, POS seat quotas, and tax invoice history.</p>
         </div>
         <div className="mt-1 flex items-center gap-2">
-          <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-3 py-2 text-xs font-semibold text-[#4F4842] shadow-2xs hover:bg-[#F5F1EA]"><ReceiptText className="h-3.5 w-3.5 text-[#9E782F]" /> Download Tax Dossier (PDF)</button>
-          <button type="button" className="inline-flex items-center gap-1.5 rounded-lg bg-[#B7842C] px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#9E782F]"><Zap className="h-3.5 w-3.5" /> Upgrade Plan Quota</button>
+          <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-3 py-2 text-xs font-semibold text-[#4F4842] shadow-2xs hover:bg-[#F5F1EA]"><ReceiptText className="h-3.5 w-3.5 text-[#9E782F]" /> Download Tax Dossier (PDF)</button>
+          <button type="button" onClick={() => document.getElementById('subscription-allocation')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex items-center gap-1.5 rounded-lg bg-[#B7842C] px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#9E782F]"><Zap className="h-3.5 w-3.5" /> Upgrade Plan Quota</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#81776E]"><span>Current Plan</span><span className="rounded-full bg-[#CFF6DF] px-2 py-1 text-[9px] normal-case tracking-normal text-[#16804A]">● Active • Tier 3</span></div>
-          <div className="mt-3 text-lg font-bold text-[#1A1615]">Enterprise Atelier</div>
-          <p className="mt-0.5 text-xs text-[#81776E]">$389/mo • Billed annually<br />($4,668/yr)</p>
-          <div className="mt-4 flex items-center justify-between text-xs font-semibold text-[#B7842C]">Includes 5 venue licenses <ArrowRight className="h-4 w-4" /></div>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+        <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Current Plan</span><span className="rounded-full bg-[#CFF6DF] px-2 py-1 text-[9px] font-bold text-[#16804A]">● Active • Tier 3</span></div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">Enterprise Atelier</div>
+          <p className="mt-0.5 text-[10px] text-[#81776E]">$389/mo • Billed annually<br />($4,668/yr)</p>
+          <div className="mt-2 flex items-center justify-between text-[10px] font-semibold text-[#B7842C]">Includes 5 venue licenses <ArrowRight className="h-4 w-4" /></div>
         </div>
 
-        <div className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#81776E]"><span>Active Venues &amp; POS</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] normal-case tracking-normal text-[#4F4842]">75% Cap</span></div>
-          <div className="mt-3 text-lg font-bold text-[#1A1615]">3 of 5 Venues Active</div>
-          <p className="mt-0.5 text-xs text-[#81776E]">12 of 16 POS terminals active</p>
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-3/4 rounded-full bg-[#C99B42]" /></div>
-          <div className="mt-1.5 flex justify-between text-[10px] text-[#81776E]"><span className="font-semibold">Mesh Sync Healthy</span><span>4 Seats Available</span></div>
+        <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Active Venues &amp; POS</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#4F4842]">75% Cap</span></div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">3 of 5 Venues Active</div>
+          <p className="mt-0.5 text-[10px] text-[#81776E]">12 of 16 POS terminals active</p>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-3/4 rounded-full bg-[#C99B42]" /></div>
+          <div className="mt-1 flex justify-between text-[10px] text-[#81776E]"><span className="font-semibold">Mesh Sync Healthy</span><span>4 Seats Available</span></div>
         </div>
 
-        <div className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#81776E]"><span>Billing Cycle</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] normal-case tracking-normal text-[#81776E]">Net 0</span></div>
-          <div className="mt-3 text-lg font-bold text-[#1A1615]">$389.00 due Dec 1</div>
-          <p className="mt-0.5 text-xs text-[#81776E]">Next auto-charge via Mastercard<br />•••• 8814</p>
-          <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[#16804A]"><ShieldCheck className="h-4 w-4" /> Auto-pay configured &amp; guaranteed</div>
+        <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Billing Cycle</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#81776E]">Net 0</span></div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">$389.00 due Dec 1</div>
+          <p className="mt-0.5 text-[10px] text-[#81776E]">Next auto-charge via Mastercard<br />•••• 8814</p>
+          <div className="mt-2 flex items-center gap-1.5 text-[10px] font-semibold text-[#16804A]"><ShieldCheck className="h-4 w-4" /> Auto-pay configured &amp; guaranteed</div>
         </div>
 
-        <div className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#81776E]"><span>Loyalty Volume Quota</span><span className="rounded-full bg-[#FFE0A2] px-2 py-1 text-[9px] normal-case tracking-normal text-[#4F4842]">56.8% Used</span></div>
-          <div className="mt-3 text-lg font-bold text-[#1A1615]">14.2k / 25k Scans</div>
-          <p className="mt-0.5 text-xs text-[#81776E]">Overage protection is ON<br />(capped)</p>
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-[57%] rounded-full bg-[#80611D]" /></div>
-          <div className="mt-1.5 text-[10px] font-semibold text-[#81776E]">10,760 scans left <span className="text-[#B7842C]">Resets in 11 days</span></div>
+        <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Loyalty Volume Quota</span><span className="rounded-full bg-[#FFE0A2] px-2 py-1 text-[9px] font-bold text-[#4F4842]">56.8% Used</span></div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">14.2k / 25k Scans</div>
+          <p className="mt-0.5 text-[10px] text-[#81776E]">Overage protection is ON<br />(capped)</p>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-[57%] rounded-full bg-[#80611D]" /></div>
+          <div className="mt-1 text-[10px] font-semibold text-[#81776E]">10,760 scans left <span className="text-[#B7842C]">Resets in 11 days</span></div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
-          <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
+          <section id="subscription-allocation" className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div><span className="text-[9px] font-bold uppercase tracking-wider text-[#B7842C]">Allocations &amp; Entitlements</span><h2 className="text-[16px] font-bold text-[#1A1615]">Subscription Tier &amp; Entitlement Allocation</h2></div>
               <div className="flex gap-1.5"><button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2 py-1 text-[9px] font-semibold text-[#4F4842]">Manage Venue Licenses</button><button type="button" className="rounded-md bg-[#C99B42] px-2 py-1 text-[9px] font-bold text-white">Change Tier</button></div>

@@ -4,7 +4,7 @@ import { MainTab } from '../../types';
 
 export const BottomNav = ({ active, onChange }: { active: MainTab; onChange: (t: MainTab) => void }) => {
   const tabs: { id: MainTab; label: string; Icon: React.ElementType }[] = [
-    { id: 'home', label: 'Home', Icon: Home },
+    { id: 'dashboard', label: 'Home', Icon: Home },
     { id: 'offers', label: 'Offers', Icon: Zap },
     { id: 'rewards', label: 'Rewards', Icon: Gift },
     { id: 'history', label: 'History', Icon: ReceiptText },
