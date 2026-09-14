@@ -3,7 +3,7 @@ import { ShieldCheck, MessageSquare, Phone, Lock, Sparkles, ArrowRight, CheckCir
 import { PrimaryButton, LiveBadge } from '../components/common/Badges';
 
 interface LoginPageProps {
-  onLoginSuccess: (role: 'merchant' | 'customer') => void;
+  onLoginSuccess: (role: 'merchant' | 'customer' | string) => void;
   onGoToOnboarding?: () => void;
 }
 
@@ -289,13 +289,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           <p className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-3 text-center">Static Demo Access</p>
           <div className="flex gap-3">
             <button
-              onClick={() => onLoginSuccess('merchant')}
+              onClick={() => onLoginSuccess('/onboarding')}
               className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
             >
               Login as Merchant
             </button>
             <button
-              onClick={() => onLoginSuccess('/customer/dashboard')}
+              onClick={() => onLoginSuccess('/customer/qr')}
               className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
             >
               Login as Customer
