@@ -141,7 +141,7 @@ export type NavRoute =
   | '/catalog'
   | '/orders'
   | '/invoices'
-  | '/customers'
+  | '/customerlist'
   | '/transactions'
   | '/campaigns'
   | '/campaigns/new'
@@ -155,5 +155,6 @@ export type NavRoute =
   | '/login'
   | '/onboarding'
   | '/customer-landing'
-  | '/customer-panel';
+  | '/customer'
+  | '/customer-onboarding';
 

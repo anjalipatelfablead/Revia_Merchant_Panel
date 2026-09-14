@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       label: 'CRM & ACTIVITY',
       items: [
-        { name: 'Customers', route: '/customers', icon: Users },
+        { name: 'Customers', route: '/customerlist', icon: Users },
         { name: 'Transactions', route: '/transactions', icon: Receipt },
         { name: 'Campaigns', route: '/campaigns/new', icon: Megaphone },
         { name: 'Rewards', route: '/rewards', icon: Award },
@@ -112,14 +112,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Navigation Links Area */}
-      <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-4">
+      <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5">
         {navigationGroups.map((group) => (
-          <div key={group.label} className="space-y-0.5">
-            <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#9C948C] uppercase">
-              {group.label}
-            </div>
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
+          <React.Fragment key={group.label}>
+            {group.items.map((item) => {
                 const Icon = item.icon;
                 const isActive =
                   currentRoute === item.route ||
@@ -145,8 +141,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </button>
                 );
               })}
-            </div>
-          </div>
+          </React.Fragment>
         ))}
       </div>
 

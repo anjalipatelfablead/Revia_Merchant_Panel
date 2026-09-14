@@ -29,6 +29,66 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || '');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [newCustName, setNewCustName] = useState('');
+  const [newCustPhone, setNewCustPhone] = useState('');
+  const [newCustEmail, setNewCustEmail] = useState('');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(customers.length / itemsPerPage);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editCustName, setEditCustName] = useState('');
+  const [editCustPhone, setEditCustPhone] = useState('');
+  const [editCustEmail, setEditCustEmail] = useState('');
+
+  const handleRegister = () => {
+    if (!newCustName || !newCustPhone) return;
+    const newCust: Customer = {
+      id: `C${Math.floor(100000 + Math.random() * 900000)}`,
+      name: newCustName,
+      phone: newCustPhone,
+      email: newCustEmail,
+      tier: 'Standard',
+      stampsCount: 0,
+      stampsMax: 10,
+      lifetimeSpend: 0,
+      totalVisits: 0,
+      joinedDate: 'Today',
+      lastVisit: 'Never',
+      preferredBranch: 'Downtown Flagship',
+      favoriteItem: 'None',
+      recentActivity: [],
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newCustName)}&background=FAF8F5&color=1A1615`
+    };
+    onAddCustomer(newCust);
+    setIsRegisterModalOpen(false);
+    setNewCustName('');
+    setNewCustPhone('');
+    setNewCustEmail('');
+    setSelectedCustomerId(newCust.id);
+  };
+
+  const handleEditOpen = () => {
+    if (!selectedCustomer) return;
+    setEditCustName(selectedCustomer.name);
+    setEditCustPhone(selectedCustomer.phone);
+    setEditCustEmail(selectedCustomer.email);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSave = () => {
+    if (!selectedCustomer) return;
+    onUpdateCustomer({
+      ...selectedCustomer,
+      name: editCustName,
+      phone: editCustPhone,
+      email: editCustEmail,
+    });
+    setIsEditModalOpen(false);
+  };
+
   const selectedCustomer = customers.find((c) => c.id === selectedCustomerId) || customers[0];
 
   const handleAddStamp = () => {
@@ -93,7 +153,10 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               <Download className="w-4 h-4" />
               Export CSV
             </button>
-            <button className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-lg transition-opacity shadow-sm cursor-pointer">
+            <button
+              onClick={() => setIsRegisterModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-lg transition-opacity shadow-sm cursor-pointer"
+            >
               <UserPlus className="w-4 h-4" />
               Register Customer
             </button>
@@ -115,7 +178,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#EFECE6]">
-                  {customers.map((cust) => {
+                  {customers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((cust) => {
                     const isSelected = cust.id === selectedCustomerId;
                     const progressPct = (cust.stampsCount / cust.stampsMax) * 100;
                     return (
@@ -166,13 +229,31 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
             {/* Table Footer / Pagination */}
             <div className="px-5 py-4 border-t border-[#EFECE6] bg-[#FAF8F5] flex items-center justify-between text-xs">
-              <span className="font-semibold text-[#6E6A66]">Showing 1 to {customers.length} of 24,850 records</span>
+              <span className="font-semibold text-[#6E6A66]">
+                Showing {customers.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, customers.length)} of {customers.length} records
+              </span>
               <div className="flex items-center gap-1.5">
-                <button className="px-3 py-1.5 font-bold text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">Previous</button>
-                <button className="w-7 h-7 flex items-center justify-center rounded bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs">1</button>
-                <button className="w-7 h-7 flex items-center justify-center rounded bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615] font-bold transition-colors cursor-pointer">2</button>
-                <button className="w-7 h-7 flex items-center justify-center rounded bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615] font-bold transition-colors cursor-pointer">3</button>
-                <button className="px-3 py-1.5 font-bold text-[#1A1615] hover:text-[#D4A753] transition-colors cursor-pointer">Next</button>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 font-bold text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >Previous</button>
+
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`w-7 h-7 flex items-center justify-center rounded font-bold transition-colors cursor-pointer ${currentPage === i + 1 ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:text-[#1A1615]'}`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className="px-3 py-1.5 font-bold text-[#1A1615] hover:text-[#D4A753] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >Next</button>
               </div>
             </div>
           </div>
@@ -281,7 +362,10 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                 >
                   Add Stamp
                 </button>
-                <button className="px-6 py-3 text-[13px] font-bold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer">
+                <button
+                  onClick={handleEditOpen}
+                  className="px-6 py-3 text-[13px] font-bold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
+                >
                   Edit Profile
                 </button>
               </div>
@@ -290,6 +374,71 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
           )}
         </div>
       </div>
+
+      {/* Register Customer Modal */}
+      {isRegisterModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setIsRegisterModalOpen(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <div className="p-5 border-b border-[#EFECE6] flex justify-between items-center bg-[#FAF8F5]">
+              <h2 className="text-[15px] font-bold text-[#1A1615]">Register New Customer</h2>
+              <button onClick={() => setIsRegisterModalOpen(false)} className="p-1 text-[#9E9A93] hover:text-[#1A1615] rounded transition-colors"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Full Name <span className="text-red-500">*</span></label>
+                <input type="text" value={newCustName} onChange={e => setNewCustName(e.target.value)} placeholder="e.g. Jane Doe" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Phone Number <span className="text-red-500">*</span></label>
+                <input type="tel" value={newCustPhone} onChange={e => setNewCustPhone(e.target.value)} placeholder="e.g. (555) 123-4567" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Email Address</label>
+                <input type="email" value={newCustEmail} onChange={e => setNewCustEmail(e.target.value)} placeholder="e.g. jane@example.com" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+              </div>
+              <button
+                onClick={handleRegister}
+                disabled={!newCustName || !newCustPhone}
+                className="w-full py-2.5 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-sm mt-2 hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Register & Create Wallet Pass
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Edit Customer Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setIsEditModalOpen(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <div className="p-5 border-b border-[#EFECE6] flex justify-between items-center bg-[#FAF8F5]">
+              <h2 className="text-[15px] font-bold text-[#1A1615]">Edit Customer Profile</h2>
+              <button onClick={() => setIsEditModalOpen(false)} className="p-1 text-[#9E9A93] hover:text-[#1A1615] rounded transition-colors"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Full Name <span className="text-red-500">*</span></label>
+                <input type="text" value={editCustName} onChange={e => setEditCustName(e.target.value)} placeholder="e.g. Jane Doe" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Phone Number <span className="text-red-500">*</span></label>
+                <input type="tel" value={editCustPhone} onChange={e => setEditCustPhone(e.target.value)} placeholder="e.g. (555) 123-4567" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Email Address</label>
+                <input type="email" value={editCustEmail} onChange={e => setEditCustEmail(e.target.value)} placeholder="e.g. jane@example.com" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+              </div>
+              <button
+                onClick={handleEditSave}
+                disabled={!editCustName || !editCustPhone}
+                className="w-full py-2.5 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-sm mt-2 hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

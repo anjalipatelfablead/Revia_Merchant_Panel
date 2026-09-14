@@ -26,7 +26,24 @@ interface AuditLogPageProps {
 }
 
 const MobileAuditView: React.FC<{ logs: AuditLogEntry[] }> = ({ logs }) => {
-  const visibleLogs = logs.slice(0, 4);
+  const verifiedLogs = logs.filter((log) => log.cryptoState !== 'FLAGGED');
+  const flaggedLogs = logs.filter((log) => log.cryptoState === 'FLAGGED');
+  const mobileEventOverrides = [
+    { name: 'Elena Vance', role: 'Admin', timestamp: '2m ago', target: 'Owner · Downtown Flagship', action: 'CRM Customer Directory Export (.csv)', ip: '1,420 Guest records encrypted' },
+    { name: 'Terminal POS-01', role: 'System', timestamp: '18m ago', target: 'Automated Ledger Mesh Node', action: 'Fast Stamp Ledger Sync', ip: '+14 loyalty stamps reconciled' },
+    { name: 'Security Daemon', role: 'ALERT', timestamp: '1h ago', target: 'Cloudflare WAF Ingress', action: 'Blocked unauthorized IP access attempt', ip: '198.51.100.42 (Rate-limit)' },
+    { name: 'Marcus Vance', role: 'Shift Lead', timestamp: '3h ago', target: 'Roastery Reserve Register 02', action: 'PIN Authentication Override', ip: 'Session token extended 4h' },
+  ];
+  const visibleLogs = [verifiedLogs[0], verifiedLogs[1], flaggedLogs[0], verifiedLogs[2]]
+    .filter((log): log is AuditLogEntry => Boolean(log))
+    .map((log, index) => ({
+      ...log,
+      timestamp: mobileEventOverrides[index].timestamp,
+      actor: { ...log.actor, name: mobileEventOverrides[index].name, role: mobileEventOverrides[index].role },
+      target: mobileEventOverrides[index].target,
+      action: mobileEventOverrides[index].action,
+      ip: mobileEventOverrides[index].ip,
+    }));
 
   return (
     <div className="min-h-screen bg-[#FBF8F4] px-5 pb-6 pt-3 text-[#211C19]">
@@ -46,12 +63,12 @@ const MobileAuditView: React.FC<{ logs: AuditLogEntry[] }> = ({ logs }) => {
             { label: 'POS Mesh', value: '6 / 6 Online', detail: '18ms avg peer ping', Icon: Radio, tone: 'text-[#087B55]' },
             { label: 'API Volume', value: '48,219', detail: '0 failed HMAC sigs', Icon: Activity, tone: 'text-[#087B55]' },
             { label: 'Crypto Ledger', value: '142 Events', detail: 'SHA-256 Validated', Icon: Key, tone: 'text-[#8B681F]' },
-          ].map(({ label, value, detail, Icon, tone }) => <div key={label} className="min-h-[121px] rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.08em] text-[#756D65]"><span>{label}</span><span className="rounded-[7px] bg-[#FCF1DF] p-1.5"><Icon className={`h-4 w-4 ${tone}`} /></span></div><div className="mt-4 text-[21px] font-extrabold leading-none tracking-[-0.04em]">{value}</div><div className={`mt-2 text-[11px] font-medium ${tone}`}>{label === 'Compliance' && '◉ '}{label === 'POS Mesh' && '• '}{detail}</div></div>)}
+          ].map(({ label, value, detail, Icon, tone }) => <div key={label} className="h-[116px] rounded-xl border border-[#EAE6E1] bg-white p-3 shadow-2xs"><div className="flex items-center justify-between text-[10px] font-medium text-[#7C746C]"><span>{label}</span><span className="rounded-[7px] bg-[#FCF1DF] p-1.5"><Icon className={`h-4 w-4 ${tone}`} /></span></div><div className="mt-2 text-xl font-bold leading-none tracking-tight">{value}</div><div className={`mt-2 text-[10px] font-medium leading-tight ${tone}`}>{label === 'Compliance' && '◉ '}{label === 'POS Mesh' && '• '}{detail}</div></div>)}
         </section>
 
-        <div className="mt-5 flex items-center gap-2 rounded-[10px] bg-[#211C19] px-3 py-3 font-mono text-[10px] text-[#B6AFA8]"><span className="h-2 w-2 rounded-full bg-[#20C99A]" />WITNESS BLOCK #892,104:<b className="truncate text-[#20C99A]">sha:7b91e...4f9c</b><span className="ml-auto rounded border border-[#6D5730] px-1.5 py-1 text-[8px] text-[#C99B42]">SEALED</span></div>
+        <div className="mt-5 flex min-h-[62px] items-center gap-2 rounded-xl bg-[#211C19] px-4 py-3 font-mono text-[10px] text-[#B6AFA8]"><span className="h-2 w-2 shrink-0 rounded-full bg-[#20C99A]" /><span className="shrink-0">WITNESS BLOCK #892,104:</span><b className="min-w-0 truncate text-[#20C99A]">sha:7b91e...4f9c</b><span className="ml-auto shrink-0 rounded border border-[#6D5730] px-1.5 py-1 text-[8px] text-[#C99B42]">SEALED</span></div>
 
-        <section className="mt-5 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-start justify-between"><h2 className="text-[19px] font-bold leading-none">Active Hardware<br />Mesh</h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex items-center gap-3 rounded-[8px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Cpu className="h-4 w-4" /></span><div className="flex-1 text-[12px]"><b>Downtown Counter 01</b><div className="text-[10px] text-[#756D65]">RevOS v4.2.1 · 192.168.1.104</div></div><span className="text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex items-center gap-3 rounded-[8px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Server className="h-4 w-4" /></span><div className="flex-1 text-[12px]"><b>Roastery Reserve Bar 02</b><div className="text-[10px] text-[#756D65]">RevOS v4.2.0 · 192.168.2.88</div></div><span className="text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-[8px] border border-[#E1D9D0] bg-[#F3EFEA] py-2 text-[12px] font-semibold"><Radio className="mr-1 inline h-4 w-4 text-[#8B681F]" />Ping All 6 Terminals</button></section>
+        <section className="mt-5 rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex items-start justify-between"><h2 className="flex items-start gap-2 text-[19px] font-bold leading-none"><Cpu className="mt-1 h-4 w-4 shrink-0 text-[#8B681F]" /><span>Active Hardware<br />Mesh</span></h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Cpu className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Downtown Counter 01</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.1 ·<br />192.168.1.104</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Server className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Roastery Reserve Bar 02</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.0 ·<br />192.168.2.88</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-[10px] border border-[#E1D9D0] bg-[#F3EFEA] py-2.5 text-[12px] font-semibold"><Radio className="mr-1 inline h-4 w-4 text-[#8B681F]" />Ping All 6 Terminals</button></section>
 
         <section className="mt-6"><div className="flex items-center justify-between"><div><h2 className="text-[19px] font-bold">Audit Event Stream</h2><span className="rounded-full bg-[#FFF4DC] px-2 py-1 text-[10px] font-bold text-[#8B681F]">Live SHA-256</span></div><button type="button" aria-label="Filter audit events" className="rounded-[7px] bg-white p-2 shadow-sm"><SlidersHorizontal className="h-4 w-4" /></button></div><label className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E1D9D0] bg-white px-3 py-2 text-[11px] text-[#8E847B]"><Search className="h-4 w-4" /><input className="min-w-0 flex-1 bg-transparent outline-none" placeholder="Filter by operator, IP, or hash key..." /></label><div className="mt-3 space-y-3">{visibleLogs.map((log) => { const flagged = log.cryptoState === 'FLAGGED'; return <article key={log.id} className={`rounded-[12px] border bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)] ${flagged ? 'border-[#FFB6B0] bg-[#FFF8F7]' : 'border-[#E9E0D7]'}`}><div className="flex items-start gap-2"><span className={`rounded-[7px] p-2 ${flagged ? 'bg-[#FFE3E1] text-[#C2413A]' : 'bg-[#FCF1DF] text-[#8B681F]'}`}><Download className="h-4 w-4" /></span><div className="min-w-0 flex-1"><div className={`text-[12px] font-semibold ${flagged ? 'text-[#C2413A]' : ''}`}>{log.actor.name} <span className="ml-1 rounded bg-[#F2EEE9] px-1.5 py-1 text-[9px] text-[#756D65]">{log.actor.role}</span></div><div className="text-[10px] text-[#756D65]">{log.target}</div></div><span className="text-[10px] text-[#756D65]">{log.timestamp}</span></div><div className={`mt-3 rounded-[8px] p-3 text-[12px] ${flagged ? 'border border-[#FFB6B0] bg-white text-[#C2413A]' : 'bg-[#F3EFEA]'}`}><b>{flagged ? 'Blocked unauthorized IP access attempt' : log.action.replaceAll('_', ' ')}</b><div className="mt-1 text-[10px] text-[#756D65]">{flagged ? log.ip : 'Cryptographic witness verified · hash sealed'}</div></div></article>; })}</div></section>
 
@@ -70,8 +87,21 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   const [autoSessionTimeout, setAutoSessionTimeout] = useState<boolean>(true);
   const [enforceFleetTls, setEnforceFleetTls] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const flaggedLogs = logs.filter((log) => log.cryptoState === 'FLAGGED');
-  const regularLogs = logs.filter((log) => log.cryptoState !== 'FLAGGED');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [eventType, setEventType] = useState<string>('All Event Types');
+  const [branchFilter, setBranchFilter] = useState<string>('All Branches');
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const eventTypes = Array.from(new Set(logs.map((log) => log.action))).sort();
+  const branchOptions = ['All Branches', 'Downtown', 'Roastery', 'Northside'];
+  const filteredLogs = logs.filter((log) => {
+    const searchText = `${log.actor.name} ${log.actor.role} ${log.action} ${log.target} ${log.terminal} ${log.ip} ${log.hash}`.toLowerCase();
+    const matchesSearch = searchText.includes(searchQuery.toLowerCase().trim());
+    const matchesType = eventType === 'All Event Types' || log.action === eventType;
+    const matchesBranch = branchFilter === 'All Branches' || searchText.includes(branchFilter.toLowerCase());
+    return matchesSearch && matchesType && matchesBranch;
+  });
+  const flaggedLogs = filteredLogs.filter((log) => log.cryptoState === 'FLAGGED');
+  const regularLogs = filteredLogs.filter((log) => log.cryptoState !== 'FLAGGED');
   const referenceLogs = regularLogs.filter((log) =>
     log.action === 'POS_HEARTBEAT_RECONNECT' || log.action === 'CUSTOMER_EXPORT_REQUESTED'
   );
@@ -98,6 +128,19 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
     navigator.clipboard.writeText(text);
     setCopiedHash(true);
     setTimeout(() => setCopiedHash(false), 2000);
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setEventType('All Event Types');
+    setBranchFilter('All Branches');
+    setCurrentPage(1);
+  };
+
+  const refreshLogs = () => {
+    setRefreshing(true);
+    setCurrentPage(1);
+    window.setTimeout(() => setRefreshing(false), 900);
   };
 
   return (
@@ -132,7 +175,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               </span>
               <span className="text-[8px] text-[#A09A91]">• Revision v2.14r4</span>
             </div>
-            <h1 className="mt-0.5 text-[18px] font-bold tracking-tight text-[#1A1615] sm:text-[20px]">
+            <h1 className="mt-0.5 text-[24px] font-bold tracking-tight text-[#1A1615]">
               Merchant Settings & Security Audit Log
             </h1>
           </div>
@@ -146,7 +189,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
           </button>
         </div>
 
-        <nav aria-label="Settings sections" className="-mx-1 mt-2 overflow-x-auto rounded-lg border border-[#E5E0D8] bg-white p-1 sm:-mx-2">
+        <nav aria-label="Settings sections" className="-mx-1 mt-[17px] overflow-x-auto rounded-lg border border-[#E5E0D8] bg-white p-1 sm:-mx-2">
           <div className="flex min-w-full items-center gap-0.5">
             <button className="min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]" type="button">
               General & Brand
@@ -168,36 +211,36 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
       </header>
 
       {/* Governance summary */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-4">
-        <div className="group min-h-[188px] rounded-xl border border-[#E5E0D8] bg-white p-3.5 shadow-[0_2px_10px_rgba(31,29,26,0.04)] transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)] sm:col-start-1 sm:row-start-1 sm:min-h-[204px] xl:col-auto xl:row-auto">
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-[#9E9A93]">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+        <div className="group flex h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)]">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]">
             <span className="inline-flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5 text-[#0D7A53]" /> Compliance Posture</span>
             <span className="rounded-full bg-[#E6F4ED] px-1.5 py-0.5 text-[8px] text-[#0D7A53]">Enforced</span>
           </div>
-          <div className="mt-4 max-w-[180px] text-[29px] font-bold leading-[1.02] tracking-tight text-[#1A1615]">SOC-2 Type<br />II</div>
-          <p className="mt-3 max-w-[180px] text-[10px] leading-snug text-[#6E6A66]">Audit compliance sealed & certified valid</p>
-          <span className="mt-3 flex max-w-[180px] items-start gap-1 text-[10px] font-semibold leading-snug text-[#0D7A53]"><CircleCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" /> Zero policy breaches (365 days)</span>
+          <div className="mt-1.5 max-w-[180px] whitespace-nowrap text-xl font-bold leading-[1.02] tracking-tight text-[#1A1615]">SOC-2 Type II</div>
+          <p className="mt-1 max-w-[180px] text-[11px] leading-snug text-[#6E6A66]">Audit compliance sealed & certified valid</p>
+          <span className="mt-2 flex max-w-[180px] items-start gap-1 text-[11px] font-semibold leading-snug text-[#0D7A53]"><CircleCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" /> Zero policy breaches (365 days)</span>
         </div>
 
-        <div className="group h-fit rounded-xl border border-[#E5E0D8] bg-white p-3.5 shadow-[0_2px_10px_rgba(31,29,26,0.04)] transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)] sm:col-start-1 sm:row-start-2 xl:col-auto xl:row-auto">
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-[#9E9A93]"><span>Connected Terminals</span><Radio className="h-3.5 w-3.5 animate-pulse text-[#0D7A53]" /></div>
-          <div className="mt-4 text-[28px] font-bold leading-none tracking-tight text-[#1A1615]">6 / 6 <span className="text-sm font-medium">Terminals Online</span></div>
-          <p className="mt-1 text-[9px] text-[#6E6A66]">Downtown • Roastery • Northside</p>
-          <span className="mt-2 flex items-center gap-1 text-[9px] font-semibold text-[#0D7A53]"><Activity className="h-3 w-3" /> 100% Mesh Health</span>
+        <div className="group flex h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)]">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Connected Terminals</span><Radio className="h-3.5 w-3.5 animate-pulse text-[#0D7A53]" /></div>
+          <div className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-[#1A1615]">6 / 6 <span className="text-sm font-medium">Terminals Online</span></div>
+          <p className="mt-1 text-[11px] text-[#6E6A66]">Downtown • Roastery • Northside</p>
+          <span className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-[#0D7A53]"><Activity className="h-3 w-3" /> 100% Mesh Health</span>
         </div>
 
-        <div className="group h-fit rounded-xl border border-[#E5E0D8] bg-white p-3.5 shadow-[0_2px_10px_rgba(31,29,26,0.04)] transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)] sm:col-start-2 sm:row-start-2 xl:col-auto xl:row-auto">
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-[#9E9A93]"><span>Audit Events (24h)</span><Cpu className="h-3.5 w-3.5 text-[#C08B31]" /></div>
-          <div className="mt-4 text-[28px] font-bold leading-none tracking-tight text-[#1A1615]">48,219</div>
-          <p className="mt-1 text-[9px] text-[#6E6A66]">Configuration and access events recorded</p>
-          <span className="mt-2 flex items-center gap-1 text-[9px] font-semibold text-[#0D7A53]"><CircleCheck className="h-3 w-3" /> 0 failed auth signatures</span>
+        <div className="group flex h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)]">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Audit Events (24h)</span><Cpu className="h-3.5 w-3.5 text-[#C08B31]" /></div>
+          <div className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-[#1A1615]">48,219</div>
+          <p className="mt-1 text-[11px] text-[#6E6A66]">Configuration and access events recorded</p>
+          <span className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-[#0D7A53]"><CircleCheck className="h-3 w-3" /> 0 failed auth signatures</span>
         </div>
 
-        <div className="group h-fit rounded-xl border border-[#E5E0D8] bg-white p-3.5 shadow-[0_2px_10px_rgba(31,29,26,0.04)] transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)] sm:col-start-3 sm:row-start-2 xl:col-auto xl:row-auto">
-          <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-[#9E9A93]"><span>Cryptographic Ledger</span><span className="rounded-full bg-[#FFF6DF] px-1.5 py-0.5 text-[8px] text-[#8B681F]">SHA-256</span></div>
-          <div className="mt-4 text-[28px] font-bold leading-none tracking-tight text-[#1A1615]">142 Events</div>
-          <p className="mt-1 text-[9px] text-[#6E6A66]">Stream rate: ~12.4 actions / hr</p>
-          <span className="mt-2 flex items-center gap-1 text-[9px] font-semibold text-[#8B681F]"><Lock className="h-3 w-3" /> Immutable Block State Valid</span>
+        <div className="group flex h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs transition-shadow hover:shadow-[0_6px_18px_rgba(31,29,26,0.08)]">
+          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Cryptographic Ledger</span><span className="rounded-full bg-[#FFF6DF] px-1.5 py-0.5 text-[8px] text-[#8B681F]">SHA-256</span></div>
+          <div className="mt-1.5 text-2xl font-bold leading-none tracking-tight text-[#1A1615]">142 Events</div>
+          <p className="mt-1 text-[11px] text-[#6E6A66]">Stream rate: ~12.4 actions / hr</p>
+          <span className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-[#8B681F]"><Lock className="h-3 w-3" /> Immutable Block State Valid</span>
         </div>
       </div>
 
@@ -217,17 +260,17 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 </p>
               </div>
               <div className="flex items-center gap-1.5">
-                <button type="button" className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><SlidersHorizontal className="h-3 w-3" /> Filters</button>
-                <button type="button" className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><RefreshCw className="h-3 w-3" /> Live Refresh</button>
+                <button type="button" onClick={clearFilters} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><SlidersHorizontal className="h-3 w-3" /> Clear Filters</button>
+                <button type="button" onClick={refreshLogs} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Refreshing...' : 'Live Refresh'}</button>
               </div>
             </div>
             <div className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-[minmax(0,1.7fr)_1fr_1fr_auto]">
               <label className="flex items-center gap-1.5 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] text-[#9E9A93]">
                 <Search className="h-3 w-3 shrink-0" />
-                <input aria-label="Filter audit log" placeholder="Filter by actor, IP, hash, or action" className="min-w-0 flex-1 bg-transparent text-[10px] text-[#1A1615] outline-none placeholder:text-[#B8B1A7]" />
+                <input aria-label="Filter audit log" value={searchQuery} onChange={(event) => { setSearchQuery(event.target.value); setCurrentPage(1); }} placeholder="Filter by actor, IP, hash, or action" className="min-w-0 flex-1 bg-transparent text-[10px] text-[#1A1615] outline-none placeholder:text-[#B8B1A7]" />
               </label>
-              <button type="button" className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]">All Event Types <ChevronDown className="h-3 w-3 text-[#9E9A93]" /></button>
-              <button type="button" className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]">All Branches <ChevronDown className="h-3 w-3 text-[#9E9A93]" /></button>
+              <label className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]"> <select value={eventType} onChange={(event) => { setEventType(event.target.value); setCurrentPage(1); }} className="w-full appearance-none bg-transparent outline-none"><option>All Event Types</option>{eventTypes.map((type) => <option key={type} value={type}>{type.replaceAll('_', ' ')}</option>)}</select><ChevronDown className="h-3 w-3 shrink-0 text-[#9E9A93]" /></label>
+              <label className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]"> <select value={branchFilter} onChange={(event) => { setBranchFilter(event.target.value); setCurrentPage(1); }} className="w-full appearance-none bg-transparent outline-none"><option>All Branches</option>{branchOptions.slice(1).map((branch) => <option key={branch}>{branch}</option>)}</select><ChevronDown className="h-3 w-3 shrink-0 text-[#9E9A93]" /></label>
               <button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]">Today, 2.4</button>
             </div>
           </div>

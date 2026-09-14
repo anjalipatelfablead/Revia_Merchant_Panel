@@ -52,6 +52,82 @@ export const CampaignBuilderPage: React.FC = () => {
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
   const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
 
+  const [priorityLevel, setPriorityLevel] = useState<number>(1);
+  const [selectedTiers, setSelectedTiers] = useState<string[]>(['Obsidian VIP', 'Gold Reserve']);
+  const [lifecycleType, setLifecycleType] = useState<string>('Both');
+  const [birthdayHorizon, setBirthdayHorizon] = useState<number>(7);
+  const [minAge, setMinAge] = useState<number>(21);
+  const [maxAge, setMaxAge] = useState<number>(65);
+
+  const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
+  const [rewardType, setRewardType] = useState<'Same' | 'Different'>('Same');
+
+  type RuleType = 'standard1' | 'standard2' | 'bogo' | 'orGroup';
+  interface RuleItem { id: number; type: RuleType; }
+  const [rulesList, setRulesList] = useState<RuleItem[]>([
+    { id: 1, type: 'standard1' },
+    { id: 2, type: 'standard2' },
+    { id: 3, type: 'bogo' },
+    { id: 4, type: 'orGroup' }
+  ]);
+  const addRule = (type: RuleType) => setRulesList([...rulesList, { id: Date.now(), type }]);
+  const removeRule = (id: number) => setRulesList(rulesList.filter(r => r.id !== id));
+  const duplicateRule = (id: number) => {
+    const rule = rulesList.find(r => r.id === id);
+    if (rule) setRulesList([...rulesList, { ...rule, id: Date.now() }]);
+  };
+
+  const [orGroupItems, setOrGroupItems] = useState<{ id: number, type: 'tier' | 'stamp' }[]>([
+    { id: 1, type: 'tier' },
+    { id: 2, type: 'stamp' }
+  ]);
+  const addOrGroupItem = () => setOrGroupItems([...orGroupItems, { id: Date.now(), type: 'stamp' }]);
+  const removeOrGroupItem = (id: number) => setOrGroupItems(orGroupItems.filter(i => i.id !== id));
+
+  const [activeBranches, setActiveBranches] = useState<string[]>(['Downtown Flagship', 'Northside Mall', 'West End Kiosk']);
+  const availableBranches = ['Airport Lounge', 'Eastside Store', 'Uptown Boutique'];
+  const handleAddLocation = () => {
+    const nextBranch = availableBranches.find(b => !activeBranches.includes(b));
+    if (nextBranch) setActiveBranches([...activeBranches, nextBranch]);
+    else showToast('All locations added');
+  };
+  const handleRemoveLocation = (branchToRemove: string) => {
+    setActiveBranches(activeBranches.filter(b => b !== branchToRemove));
+  };
+
+  const [draggedRuleId, setDraggedRuleId] = useState<number | null>(null);
+  const handleDragStart = (id: number) => setDraggedRuleId(id);
+  const handleDragOver = (e: React.DragEvent, targetId: number) => {
+    e.preventDefault();
+    if (draggedRuleId === null || draggedRuleId === targetId) return;
+    const draggedIndex = rulesList.findIndex(r => r.id === draggedRuleId);
+    const targetIndex = rulesList.findIndex(r => r.id === targetId);
+    if (draggedIndex < 0 || targetIndex < 0) return;
+    const newRules = [...rulesList];
+    const [draggedItem] = newRules.splice(draggedIndex, 1);
+    newRules.splice(targetIndex, 0, draggedItem);
+    setRulesList(newRules);
+  };
+  const handleDragEnd = () => setDraggedRuleId(null);
+
+
+  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setFeedbackToast(msg);
+    setTimeout(() => setFeedbackToast(null), 3000);
+  };
+
+  const toggleTier = (tier: string) => {
+    if (tier === 'All Tiers') {
+      setSelectedTiers(['Obsidian VIP', 'Gold Reserve', 'Silver Tier']);
+    } else {
+      setSelectedTiers(prev =>
+        prev.includes(tier) ? prev.filter(t => t !== tier) : [...prev, tier]
+      );
+    }
+  };
+
   const campaignTypes = [
     { id: '% Discount', icon: Percent },
     { id: 'Loyalty Boost', icon: Star },
@@ -218,31 +294,31 @@ export const CampaignBuilderPage: React.FC = () => {
               <div className="text-[10px] text-[#6E6A66] max-w-[120px]">Defines precedence over competing member discounts</div>
             </div>
             <div className="flex items-center bg-white border border-[#EFECE6] rounded-full px-2 py-1 shadow-sm">
-              <button className="w-6 h-6 flex items-center justify-center text-[#9E9A93] bg-[#FAF8F5] rounded-full">-</button>
+              <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="w-6 h-6 flex items-center justify-center text-[#9E9A93] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">-</button>
               <div className="px-3 text-center">
-                <div className="text-sm font-bold text-[#D4A753]">1</div>
-                <div className="text-[10px] font-bold text-[#1A1615]">(P1)</div>
+                <div className="text-sm font-bold text-[#D4A753]">{priorityLevel}</div>
+                <div className="text-[10px] font-bold text-[#1A1615]">(P{priorityLevel})</div>
               </div>
-              <button className="w-6 h-6 flex items-center justify-center text-[#1A1615] bg-[#FAF8F5] rounded-full">+</button>
+              <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="w-6 h-6 flex items-center justify-center text-[#1A1615] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">+</button>
             </div>
           </div>
 
           <div className="lg:hidden flex items-start gap-2 bg-[#FDF8EB] p-3 rounded-lg border border-[#F3E5C8]">
             <div className="w-4 h-4 bg-[#D4A753] shrink-0 rounded flex items-center justify-center mt-0.5"><div className="w-1.5 h-2 bg-white rounded-t-full"></div></div>
-            <div className="text-[10px] text-[#1A1615] font-semibold leading-tight">Tier 1 Override Active: Highest arbitration queue</div>
+            <div className="text-[10px] text-[#1A1615] font-semibold leading-tight">Tier {priorityLevel} Override Active: Highest arbitration queue</div>
           </div>
 
           <div className="hidden lg:block">
             <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Priority Level</label>
             <div className="flex items-center gap-3 mb-2">
               <div className="flex items-center bg-[#FAF8F5] border border-[#EFECE6] rounded-lg">
-                <button className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-l-lg">-</button>
-                <span className="px-4 py-1.5 text-xs font-bold text-[#1A1615] border-x border-[#EFECE6]">1 (P1)</span>
-                <button className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-r-lg">+</button>
+                <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-l-lg cursor-pointer">-</button>
+                <span className="px-4 py-1.5 text-xs font-bold text-[#1A1615] border-x border-[#EFECE6] w-[60px] text-center">{priorityLevel} (P{priorityLevel})</span>
+                <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-r-lg cursor-pointer">+</button>
               </div>
             </div>
             <p className="text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
-              Tier 1 Override Active: Highest arbitration queue. Higher priority wins if a transaction qualifies for multiple active campaigns.
+              Tier {priorityLevel} Override Active: Highest arbitration queue. Higher priority wins if a transaction qualifies for multiple active campaigns.
             </p>
           </div>
         </div>
@@ -335,20 +411,23 @@ export const CampaignBuilderPage: React.FC = () => {
             <p className="text-[13px] text-[#6E6A66]">Select eligible member tiers that can unlock this campaign perk.</p>
           </div>
           <div className="flex flex-wrap gap-2.5">
-            <button className="flex items-center gap-2 px-4 py-2 bg-[#1A1615] text-white rounded-full text-[13px] font-bold shadow-sm">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> Obsidian VIP <X className="w-4 h-4 text-white/50 hover:text-white transition-colors" />
+            <button onClick={() => toggleTier('Obsidian VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Obsidian VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Obsidian VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Obsidian VIP
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] rounded-full text-[13px] font-bold shadow-sm">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" /> Gold Reserve <X className="w-4 h-4 text-[#9E782F]/50 hover:text-[#9E782F] transition-colors" />
+            <button onClick={() => toggleTier('Gold Reserve')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Gold Reserve') ? 'bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Gold Reserve') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" /> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Gold Reserve
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EFECE6] text-[#6E6A66] rounded-full text-[13px] font-bold hover:bg-[#FAF8F5] transition-colors">
-              <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span> Silver Tier
+            <button onClick={() => toggleTier('Silver Tier')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Silver Tier') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Silver Tier') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Silver Tier
             </button>
-            <button className="flex items-center px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded-full text-[13px] font-bold hover:bg-[#EFECE6] transition-colors">
+            <button onClick={() => toggleTier('All Tiers')} className={`flex items-center px-4 py-2 rounded-full text-[13px] font-bold transition-colors ${selectedTiers.length === 3 ? 'bg-[#EFECE6] text-[#1A1615]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] hover:bg-[#EFECE6]'}`}>
               All Tiers
             </button>
           </div>
-          <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FAF8F5] text-[#9E782F] border border-[#EFECE6] rounded-full text-[12px] font-bold hover:bg-[#FDF8EB] transition-colors mt-1">
+          <button onClick={() => showToast('Custom segment builder will open.')} className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FAF8F5] text-[#9E782F] border border-[#EFECE6] rounded-full text-[12px] font-bold hover:bg-[#FDF8EB] transition-colors mt-1 cursor-pointer">
             <Plus className="w-3 h-3" /> Add Custom Segment
           </button>
         </div>
@@ -361,10 +440,14 @@ export const CampaignBuilderPage: React.FC = () => {
             <p className="text-[13px] text-[#6E6A66]">Target new first-time salon guests or re-engage loyal recurring patrons.</p>
           </div>
           <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-1.5">
-            <button className="flex-1 py-2.5 text-[13px] font-bold text-[#6E6A66] rounded-lg hover:bg-[#EFECE6] transition-colors">New Patrons</button>
-            <button className="flex-1 py-2.5 text-[13px] font-bold text-[#6E6A66] rounded-lg hover:bg-[#EFECE6] transition-colors">Returning Patrons</button>
-            <button className="flex-1 py-2.5 text-[13px] font-bold text-white bg-gradient-to-b from-[#C59B46] to-[#9E782F] shadow-sm rounded-lg flex items-center justify-center gap-2 border border-[#9E782F]">
-              Both (Active Cohort) <Check className="w-4 h-4" />
+            <button onClick={() => setLifecycleType('New')} className={`flex-1 py-2.5 text-[13px] font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${lifecycleType === 'New' ? 'text-white bg-gradient-to-b from-[#C59B46] to-[#9E782F] shadow-sm border border-[#9E782F]' : 'text-[#6E6A66] hover:bg-[#EFECE6] cursor-pointer'}`}>
+              New Patrons {lifecycleType === 'New' && <Check className="w-4 h-4" />}
+            </button>
+            <button onClick={() => setLifecycleType('Returning')} className={`flex-1 py-2.5 text-[13px] font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${lifecycleType === 'Returning' ? 'text-white bg-gradient-to-b from-[#C59B46] to-[#9E782F] shadow-sm border border-[#9E782F]' : 'text-[#6E6A66] hover:bg-[#EFECE6] cursor-pointer'}`}>
+              Returning Patrons {lifecycleType === 'Returning' && <Check className="w-4 h-4" />}
+            </button>
+            <button onClick={() => setLifecycleType('Both')} className={`flex-1 py-2.5 text-[13px] font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${lifecycleType === 'Both' ? 'text-white bg-gradient-to-b from-[#C59B46] to-[#9E782F] shadow-sm border border-[#9E782F]' : 'text-[#6E6A66] hover:bg-[#EFECE6] cursor-pointer'}`}>
+              Both (Active Cohort) {lifecycleType === 'Both' && <Check className="w-4 h-4" />}
             </button>
           </div>
         </div>
@@ -388,9 +471,9 @@ export const CampaignBuilderPage: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center bg-white border border-[#EFECE6] rounded-lg shadow-sm">
-              <button className="px-3.5 py-2 text-[#1A1615] hover:bg-[#FAF8F5] transition-colors rounded-l-lg border-r border-[#EFECE6] font-bold text-lg leading-none">-</button>
-              <div className="px-4 py-2 text-[14px] font-bold text-[#1A1615]">7 <span className="font-semibold text-[13px]">days</span></div>
-              <button className="px-3.5 py-2 text-[#1A1615] hover:bg-[#FAF8F5] transition-colors rounded-r-lg border-l border-[#EFECE6] font-bold text-lg leading-none">+</button>
+              <button onClick={() => setBirthdayHorizon(Math.max(1, birthdayHorizon - 1))} className="px-3.5 py-2 text-[#1A1615] hover:bg-[#FAF8F5] transition-colors rounded-l-lg border-r border-[#EFECE6] font-bold text-lg leading-none cursor-pointer">-</button>
+              <div className="px-4 py-2 text-[14px] font-bold text-[#1A1615]">{birthdayHorizon} <span className="font-semibold text-[13px]">days</span></div>
+              <button onClick={() => setBirthdayHorizon(birthdayHorizon + 1)} className="px-3.5 py-2 text-[#1A1615] hover:bg-[#FAF8F5] transition-colors rounded-r-lg border-l border-[#EFECE6] font-bold text-lg leading-none cursor-pointer">+</button>
             </div>
           </div>
           <div className="flex items-start gap-2 text-[12px] font-medium text-[#6E6A66]">
@@ -415,14 +498,14 @@ export const CampaignBuilderPage: React.FC = () => {
                 <div className="flex-1 bg-white border border-[#EFECE6] rounded-lg p-3 shadow-sm flex items-center justify-between">
                   <div>
                     <div className="text-[10px] uppercase font-bold text-[#9E9A93] mb-1">MIN AGE</div>
-                    <div className="text-[20px] font-bold text-[#1A1615]">21 <span className="text-xs font-semibold text-[#6E6A66]">yrs</span></div>
+                    <div className="text-[20px] font-bold text-[#1A1615]">{minAge} <span className="text-xs font-semibold text-[#6E6A66]">yrs</span></div>
                   </div>
                   <div className="text-[#6E6A66]"><SlidersHorizontal className="w-5 h-5 opacity-50" /></div>
                 </div>
                 <div className="flex-1 bg-white border border-[#EFECE6] rounded-lg p-3 shadow-sm flex items-center justify-between">
                   <div>
                     <div className="text-[10px] uppercase font-bold text-[#9E9A93] mb-1">MAX AGE</div>
-                    <div className="text-[20px] font-bold text-[#1A1615]">65 <span className="text-xs font-semibold text-[#6E6A66]">yrs</span></div>
+                    <div className="text-[20px] font-bold text-[#1A1615]">{maxAge} <span className="text-xs font-semibold text-[#6E6A66]">yrs</span></div>
                   </div>
                   <div className="text-[#6E6A66]"><SlidersHorizontal className="w-5 h-5 opacity-50" /></div>
                 </div>
@@ -430,13 +513,40 @@ export const CampaignBuilderPage: React.FC = () => {
 
               <div className="px-2">
                 <div className="h-1.5 bg-[#EFECE6] rounded-full relative mb-3">
-                  <div className="absolute left-[10%] right-[30%] h-full bg-[#D4A753] rounded-full"></div>
-                  <div className="absolute left-[10%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm"></div>
-                  <div className="absolute right-[30%] top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm"></div>
+                  <div
+                    className="absolute h-full bg-[#D4A753] rounded-full"
+                    style={{ left: `${((minAge - 18) / (80 - 18)) * 100}%`, right: `${100 - ((maxAge - 18) / (80 - 18)) * 100}%` }}
+                  ></div>
+
+                  <input
+                    type="range"
+                    min="18"
+                    max="80"
+                    value={minAge}
+                    onChange={(e) => setMinAge(Math.min(maxAge - 1, Number(e.target.value)))}
+                    className="absolute w-full top-1/2 -translate-y-1/2 opacity-0 cursor-pointer pointer-events-auto"
+                  />
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm pointer-events-none"
+                    style={{ left: `${((minAge - 18) / (80 - 18)) * 100}%` }}
+                  ></div>
+
+                  <input
+                    type="range"
+                    min="18"
+                    max="80"
+                    value={maxAge}
+                    onChange={(e) => setMaxAge(Math.max(minAge + 1, Number(e.target.value)))}
+                    className="absolute w-full top-1/2 -translate-y-1/2 opacity-0 cursor-pointer pointer-events-auto"
+                  />
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm pointer-events-none"
+                    style={{ left: `${((maxAge - 18) / (80 - 18)) * 100}%` }}
+                  ></div>
                 </div>
                 <div className="flex justify-between items-center text-[11px] font-bold text-[#6E6A66]">
                   <span>18 yrs</span>
-                  <span className="text-[#D4A753]">Active Segment: 21–65</span>
+                  <span className="text-[#D4A753]">Active Segment: {minAge}–{maxAge}</span>
                   <span>80+ yrs</span>
                 </div>
               </div>
@@ -595,167 +705,188 @@ export const CampaignBuilderPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <span className="text-[12px] font-bold text-[#6E6A66] tracking-wider">MATCH</span>
               <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1">
-                <button className="px-4 py-1.5 bg-[#1A1615] text-white text-[12px] font-bold rounded-md shadow-sm">ALL (AND)</button>
-                <button className="px-4 py-1.5 text-[#6E6A66] text-[12px] font-bold rounded-md hover:bg-[#EFECE6] transition-colors">ANY (OR)</button>
+                <button onClick={() => setMatchType('ALL')} className={`px-4 py-1.5 text-[12px] font-bold rounded-md transition-colors cursor-pointer ${matchType === 'ALL' ? 'bg-[#1A1615] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>ALL (AND)</button>
+                <button onClick={() => setMatchType('ANY')} className={`px-4 py-1.5 text-[12px] font-bold rounded-md transition-colors cursor-pointer ${matchType === 'ANY' ? 'bg-[#1A1615] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>ANY (OR)</button>
               </div>
               <span className="text-[12px] font-medium text-[#6E6A66]">of the following condition criteria:</span>
             </div>
 
             <div className="space-y-4">
-              {/* Rule 1 */}
-              <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 pr-4 shadow-sm">
-                <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E9A93]" /></div>
-                <div className="flex-1 grid grid-cols-3 gap-3">
-                  <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>Customer Lifetime $</option></select>
-                  <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-medium text-[#6E6A66] focus:outline-none"><option>is greater than or equal to</option></select>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1A1615] font-bold text-[13px]">$</span>
-                    <input type="text" defaultValue="250.00" className="w-full bg-white border border-[#EFECE6] rounded-lg pl-7 pr-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 pl-2 border-l border-[#EFECE6]">
-                  <button className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] transition-colors"><Copy className="w-4 h-4" /></button>
-                  <button className="p-1.5 text-[#9E9A93] hover:text-[#EF4444] transition-colors"><X className="w-4 h-4" /></button>
-                </div>
-              </div>
-
-              {/* Rule 2 */}
-              <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 pr-4 shadow-sm">
-                <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E9A93]" /></div>
-                <div className="flex-1 grid grid-cols-3 gap-3">
-                  <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>Last Visit Date</option></select>
-                  <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-medium text-[#6E6A66] focus:outline-none"><option>is within the last</option></select>
-                  <div className="flex bg-white border border-[#EFECE6] rounded-lg overflow-hidden">
-                    <input type="text" defaultValue="14" className="w-12 text-center text-[13px] font-bold text-[#1A1615] focus:outline-none border-r border-[#EFECE6]" />
-                    <span className="flex-1 px-3 py-2 text-[13px] font-medium text-[#6E6A66] bg-[#FAF8F5] flex items-center">days</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 pl-2 border-l border-[#EFECE6]">
-                  <button className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] transition-colors"><Copy className="w-4 h-4" /></button>
-                  <button className="p-1.5 text-[#9E9A93] hover:text-[#EF4444] transition-colors"><X className="w-4 h-4" /></button>
-                </div>
-              </div>
-
-              {/* BOGO Rule */}
-              <div className="bg-[#FDF8EB] border-2 border-[#F3E5C8] rounded-xl p-5 shadow-sm relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E782F]" /></div>
-                    <span className="px-2.5 py-1 bg-[#D4A753]/20 text-[#9E782F] font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5 border border-[#D4A753]/30">
-                      <Gift className="w-3 h-3" /> BOGO
-                    </span>
-                    <span className="text-[13px] font-bold text-[#1A1615]">Item Quantity in Order (Buy X Get Y)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="p-1.5 text-[#9E782F]/70 hover:text-[#9E782F] transition-colors"><Copy className="w-4 h-4" /></button>
-                    <button className="p-1.5 text-[#9E782F]/70 hover:text-[#EF4444] transition-colors"><X className="w-4 h-4" /></button>
-                  </div>
-                </div>
-
-                <div className="ml-8 space-y-4">
-                  <div className="flex items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-2 pr-3 shadow-sm">
-                    <select className="flex-1 bg-transparent text-[13px] font-bold text-[#1A1615] px-2 focus:outline-none"><option>Espresso</option></select>
-                    <span className="text-[13px] font-medium text-[#6E6A66]">buy quantity of</span>
-                    <input type="text" defaultValue="3" className="w-12 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[14px] font-bold text-[#1A1615] focus:outline-none" />
-                  </div>
-
-                  <div className="pl-6 border-l-2 border-[#D4A753]/30 relative pt-2">
-                    <div className="absolute top-1/2 -left-[2px] w-4 h-[2px] bg-[#D4A753]/30"></div>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-3 shadow-sm relative z-10">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-bold text-[#1A1615]">Customer gets</span>
-                        <input type="text" defaultValue="1" className="w-10 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[13px] font-bold text-[#1A1615] focus:outline-none" />
+              {rulesList.map(rule => (
+                <div
+                  key={rule.id}
+                  draggable
+                  onDragStart={() => handleDragStart(rule.id)}
+                  onDragOver={(e) => handleDragOver(e, rule.id)}
+                  onDragEnd={handleDragEnd}
+                  className={`transition-all ${draggedRuleId === rule.id ? 'opacity-50 scale-[0.98]' : 'opacity-100'}`}
+                >
+                  {rule.type === 'standard1' && (
+                    <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 pr-4 shadow-sm">
+                      <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E9A93]" /></div>
+                      <div className="flex-1 grid grid-cols-3 gap-3">
+                        <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>Customer Lifetime $</option></select>
+                        <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-medium text-[#6E6A66] focus:outline-none"><option>is greater than or equal to</option></select>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1A1615] font-bold text-[13px]">$</span>
+                          <input type="text" defaultValue="250.00" className="w-full bg-white border border-[#EFECE6] rounded-lg pl-7 pr-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none" />
+                        </div>
                       </div>
-
-                      <div className="flex-1 flex items-center gap-3">
-                        <select className="flex-1 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>same item (Espresso)</option></select>
-                        <span className="text-[13px] font-bold text-[#1A1615]">free</span>
-                      </div>
-
-                      <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1 shrink-0">
-                        <button className="px-3 py-1.5 bg-white text-[#9E782F] border border-[#F3E5C8] rounded-md text-[11px] font-bold shadow-sm">Same<br />Item</button>
-                        <button className="px-3 py-1.5 text-[#6E6A66] text-[11px] font-semibold hover:bg-[#EFECE6] transition-colors rounded-md text-center">Different<br />Item</button>
+                      <div className="flex items-center gap-2 pl-2 border-l border-[#EFECE6]">
+                        <button onClick={() => duplicateRule(rule.id)} className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer"><Copy className="w-4 h-4" /></button>
+                        <button onClick={() => removeRule(rule.id)} className="p-1.5 text-[#9E9A93] hover:text-[#EF4444] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
                       </div>
                     </div>
-                    <div className="mt-3 ml-4">
-                      <span className="px-2.5 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded text-[10px] font-bold uppercase tracking-widest border border-[#BCE3D1]">100% item waiver</span>
-                    </div>
-                  </div>
-                </div>
+                  )}
 
-                <div className="mt-5 pt-4 border-t border-[#F3E5C8] flex items-center gap-2 text-[12px] font-medium text-[#9E782F]">
-                  <Info className="w-4 h-4 shrink-0" /> Preview: Buy 3 Espresso, get 1 Espresso free (100% item waiver)
-                </div>
-              </div>
-
-              {/* OR GROUP block */}
-              <div className="bg-white border-2 border-[#EFECE6] rounded-xl p-5 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="px-2.5 py-1 bg-[#9E782F] text-white font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5">
-                      <Network className="w-3 h-3" /> OR GROUP
-                    </span>
-                    <span className="text-[13px] font-bold text-[#1A1615]">Customer satisfies AT LEAST ONE criteria below:</span>
-                  </div>
-                  <button className="text-[12px] font-bold text-[#EF4444] hover:underline flex items-center gap-1.5">
-                    <X className="w-3.5 h-3.5" /> Remove Group
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-3 shadow-sm">
-                    <CornerDownRight className="w-4 h-4 text-[#9E9A93] shrink-0" />
-                    <div className="flex-1 flex flex-wrap items-center gap-2">
-                      <div className="flex items-center gap-2 bg-white border border-[#EFECE6] rounded-lg px-3 py-1.5 shadow-sm">
-                        <span className="text-[13px] font-medium text-[#1A1615]">Current Tier</span>
-                        <Lock className="w-3 h-3 text-[#9E9A93]" />
+                  {rule.type === 'standard2' && (
+                    <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 pr-4 shadow-sm">
+                      <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E9A93]" /></div>
+                      <div className="flex-1 grid grid-cols-3 gap-3">
+                        <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>Last Visit Date</option></select>
+                        <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-medium text-[#6E6A66] focus:outline-none"><option>is within the last</option></select>
+                        <div className="flex bg-white border border-[#EFECE6] rounded-lg overflow-hidden">
+                          <input type="text" defaultValue="14" className="w-12 text-center text-[13px] font-bold text-[#1A1615] focus:outline-none border-r border-[#EFECE6]" />
+                          <span className="flex-1 px-3 py-2 text-[13px] font-medium text-[#6E6A66] bg-[#FAF8F5] flex items-center">days</span>
+                        </div>
                       </div>
-                      <span className="text-[13px] font-medium text-[#6E6A66]">is one of</span>
-                      <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#1A1615] text-white rounded-full text-[11px] font-bold shadow-sm">
-                        <Star className="w-3 h-3 text-[#D4A753]" /> Obsidian VIP <X className="w-3.5 h-3.5 text-white/60 hover:text-white cursor-pointer" />
-                      </span>
-                      <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] rounded-full text-[11px] font-bold shadow-sm">
-                        <Trophy className="w-3 h-3 text-[#D4A753]" /> Gold Reserve <X className="w-3.5 h-3.5 text-[#9E782F]/60 hover:text-[#9E782F] cursor-pointer" />
-                      </span>
-                      <button className="w-7 h-7 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center text-[#9E9A93] hover:text-[#1A1615] hover:border-[#D1CDC7] transition-all shadow-sm">
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <button className="p-2 text-[#9E9A93] hover:text-[#EF4444] transition-colors shrink-0"><X className="w-4 h-4" /></button>
-                  </div>
-
-                  <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-3 shadow-sm">
-                    <CornerDownRight className="w-4 h-4 text-[#9E9A93] shrink-0" />
-                    <div className="flex-1 grid grid-cols-3 gap-3">
-                      <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm"><option>Total Stamp Cycle</option></select>
-                      <div className="flex items-center">
-                        <span className="text-[13px] font-medium text-[#6E6A66] px-3">is greater than</span>
+                      <div className="flex items-center gap-2 pl-2 border-l border-[#EFECE6]">
+                        <button onClick={() => duplicateRule(rule.id)} className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer"><Copy className="w-4 h-4" /></button>
+                        <button onClick={() => removeRule(rule.id)} className="p-1.5 text-[#9E9A93] hover:text-[#EF4444] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex bg-white border border-[#EFECE6] rounded-lg overflow-hidden flex-1 shadow-sm">
-                          <input type="text" defaultValue="8" className="w-12 text-center text-[13px] font-bold text-[#1A1615] focus:outline-none border-r border-[#EFECE6]" />
-                          <span className="px-3 py-2 text-[13px] font-medium text-[#1A1615] bg-[#FAF8F5] flex items-center">stamps</span>
+                    </div>
+                  )}
+
+                  {rule.type === 'bogo' && (
+                    <div className="bg-[#FDF8EB] border-2 border-[#F3E5C8] rounded-xl p-5 shadow-sm relative">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E782F]" /></div>
+                          <span className="px-2.5 py-1 bg-[#D4A753]/20 text-[#9E782F] font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5 border border-[#D4A753]/30">
+                            <Gift className="w-3 h-3" /> BOGO
+                          </span>
+                          <span className="text-[13px] font-bold text-[#1A1615]">Item Quantity in Order (Buy X Get Y)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => duplicateRule(rule.id)} className="p-1.5 text-[#9E782F]/70 hover:text-[#9E782F] transition-colors cursor-pointer"><Copy className="w-4 h-4" /></button>
+                          <button onClick={() => removeRule(rule.id)} className="p-1.5 text-[#9E782F]/70 hover:text-[#EF4444] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
+                        </div>
+                      </div>
+
+                      <div className="ml-8 space-y-4">
+                        <div className="flex items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-2 pr-3 shadow-sm">
+                          <select className="flex-1 bg-transparent text-[13px] font-bold text-[#1A1615] px-2 focus:outline-none"><option>Espresso</option></select>
+                          <span className="text-[13px] font-medium text-[#6E6A66]">buy quantity of</span>
+                          <input type="text" defaultValue="3" className="w-12 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[14px] font-bold text-[#1A1615] focus:outline-none" />
+                        </div>
+
+                        <div className="pl-6 border-l-2 border-[#D4A753]/30 relative pt-2">
+                          <div className="absolute top-1/2 -left-[2px] w-4 h-[2px] bg-[#D4A753]/30"></div>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-3 shadow-sm relative z-10">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[13px] font-bold text-[#1A1615]">Customer gets</span>
+                              <input type="text" defaultValue="1" className="w-10 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[13px] font-bold text-[#1A1615] focus:outline-none" />
+                            </div>
+
+                            <div className="flex-1 flex items-center gap-3">
+                              <select className="flex-1 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>same item (Espresso)</option></select>
+                              <span className="text-[13px] font-bold text-[#1A1615]">free</span>
+                            </div>
+
+                            <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1 shrink-0">
+                              <button onClick={() => setRewardType('Same')} className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${rewardType === 'Same' ? 'bg-white text-[#9E782F] border border-[#F3E5C8] shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Same<br />Item</button>
+                              <button onClick={() => setRewardType('Different')} className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors cursor-pointer text-center ${rewardType === 'Different' ? 'bg-white text-[#9E782F] border border-[#F3E5C8] shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Different<br />Item</button>
+                            </div>
+                          </div>
+                          <div className="mt-3 ml-4">
+                            <span className="px-2.5 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded text-[10px] font-bold uppercase tracking-widest border border-[#BCE3D1]">100% item waiver</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 pt-4 border-t border-[#F3E5C8] flex items-center gap-2 text-[12px] font-medium text-[#9E782F]">
+                        <Info className="w-4 h-4 shrink-0" /> Preview: Buy 3 Espresso, get 1 Espresso free (100% item waiver)
+                      </div>
+                    </div>
+                  )}
+
+                  {rule.type === 'orGroup' && (
+                    <div className="bg-white border-2 border-[#EFECE6] rounded-xl p-5 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <span className="px-2.5 py-1 bg-[#9E782F] text-white font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5">
+                            <Network className="w-3 h-3" /> OR GROUP
+                          </span>
+                          <span className="text-[13px] font-bold text-[#1A1615]">Customer satisfies AT LEAST ONE criteria below:</span>
+                        </div>
+                        <button onClick={() => removeRule(rule.id)} className="text-[12px] font-bold text-[#EF4444] hover:underline flex items-center gap-1.5 cursor-pointer">
+                          <X className="w-3.5 h-3.5" /> Remove Group
+                        </button>
+                      </div>
+
+                      <div className="space-y-3">
+                        {orGroupItems.map((item) => (
+                          <div key={item.id}>
+                            {item.type === 'tier' ? (
+                              <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-3 shadow-sm">
+                                <CornerDownRight className="w-4 h-4 text-[#9E9A93] shrink-0" />
+                                <div className="flex-1 flex flex-wrap items-center gap-2">
+                                  <div className="flex items-center gap-2 bg-white border border-[#EFECE6] rounded-lg px-3 py-1.5 shadow-sm">
+                                    <span className="text-[13px] font-medium text-[#1A1615]">Current Tier</span>
+                                    <Lock className="w-3 h-3 text-[#9E9A93]" />
+                                  </div>
+                                  <span className="text-[13px] font-medium text-[#6E6A66]">is one of</span>
+                                  <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#1A1615] text-white rounded-full text-[11px] font-bold shadow-sm">
+                                    <Star className="w-3 h-3 text-[#D4A753]" /> Obsidian VIP
+                                  </span>
+                                  <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] rounded-full text-[11px] font-bold shadow-sm">
+                                    <Trophy className="w-3 h-3 text-[#D4A753]" /> Gold Reserve
+                                  </span>
+                                  <button className="w-7 h-7 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center text-[#9E9A93] hover:text-[#1A1615] hover:border-[#D1CDC7] transition-all shadow-sm cursor-pointer">
+                                    <Plus className="w-4 h-4" />
+                                  </button>
+                                </div>
+                                <button onClick={() => removeOrGroupItem(item.id)} className="p-2 text-[#9E9A93] hover:text-[#EF4444] transition-colors shrink-0 cursor-pointer"><X className="w-4 h-4" /></button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-3 shadow-sm">
+                                <CornerDownRight className="w-4 h-4 text-[#9E9A93] shrink-0" />
+                                <div className="flex-1 grid grid-cols-3 gap-3">
+                                  <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm"><option>Total Stamp Cycle</option></select>
+                                  <div className="flex items-center">
+                                    <span className="text-[13px] font-medium text-[#6E6A66] px-3">is greater than</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex bg-white border border-[#EFECE6] rounded-lg overflow-hidden flex-1 shadow-sm">
+                                      <input type="text" defaultValue="8" className="w-12 text-center text-[13px] font-bold text-[#1A1615] focus:outline-none border-r border-[#EFECE6]" />
+                                      <span className="px-3 py-2 text-[13px] font-medium text-[#1A1615] bg-[#FAF8F5] flex items-center">stamps</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="text-[10px] font-medium text-[#9E9A93] text-right w-16 leading-tight shrink-0 mr-2">(out of 10 stamps ledger pass)</div>
+                                <button onClick={() => removeOrGroupItem(item.id)} className="p-2 text-[#9E9A93] hover:text-[#EF4444] transition-colors shrink-0 cursor-pointer"><X className="w-4 h-4" /></button>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+
+                        <div className="pl-9 mt-3 pt-1">
+                          <button onClick={() => addOrGroupItem()} className="px-3 py-1.5 bg-white border border-[#EFECE6] rounded-full text-[11px] font-bold text-[#9E782F] hover:bg-[#FDF8EB] transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            <Plus className="w-3 h-3" /> Add condition inside this OR block
+                          </button>
                         </div>
                       </div>
                     </div>
-                    <div className="text-[10px] font-medium text-[#9E9A93] text-right w-16 leading-tight shrink-0 mr-2">(out of 10 stamps ledger pass)</div>
-                    <button className="p-2 text-[#9E9A93] hover:text-[#EF4444] transition-colors shrink-0"><X className="w-4 h-4" /></button>
-                  </div>
-
-                  <div className="pl-9 mt-3 pt-1">
-                    <button className="px-3 py-1.5 bg-white border border-[#EFECE6] rounded-full text-[11px] font-bold text-[#9E782F] hover:bg-[#FDF8EB] transition-colors flex items-center gap-1.5 shadow-sm">
-                      <Plus className="w-3 h-3" /> Add condition inside this OR block
-                    </button>
-                  </div>
+                  )}
                 </div>
-              </div>
+              ))}
             </div>
 
             <div className="flex gap-4 items-center">
-              <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EFECE6] rounded-xl text-[13px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors shadow-sm">
+              <button onClick={() => addRule('standard1')} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EFECE6] rounded-xl text-[13px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors shadow-sm cursor-pointer">
                 <Plus className="w-4 h-4" /> Add Condition Rule
               </button>
-              <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EFECE6] rounded-xl text-[13px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors shadow-sm">
+              <button onClick={() => addRule('orGroup')} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EFECE6] rounded-xl text-[13px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors shadow-sm cursor-pointer">
                 <Network className="w-4 h-4 text-[#9E782F]" /> Add Nested Condition Group (AND/OR)
               </button>
             </div>
@@ -811,20 +942,17 @@ export const CampaignBuilderPage: React.FC = () => {
 
           <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
             <div className="flex items-center justify-between mb-4">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-[#6E6A66]">ACTIVE BRANCHES (3 SELECTED)</label>
-              <button className="text-[12px] font-bold text-[#0D7A53] hover:underline">All retail locations active</button>
+              <label className="text-[11px] font-bold uppercase tracking-widest text-[#6E6A66]">ACTIVE BRANCHES ({activeBranches.length} SELECTED)</label>
+              <button onClick={() => showToast('Location manager opened')} className="text-[12px] font-bold text-[#0D7A53] hover:underline cursor-pointer">All retail locations active</button>
             </div>
             <div className="flex flex-wrap gap-3">
-              <span className="px-3 py-2 bg-white border border-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold flex items-center gap-2 shadow-sm">
-                <Check className="w-4 h-4 text-[#0D7A53]" /> Downtown Flagship
-              </span>
-              <span className="px-3 py-2 bg-white border border-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold flex items-center gap-2 shadow-sm">
-                <Check className="w-4 h-4 text-[#0D7A53]" /> Northside Mall
-              </span>
-              <span className="px-3 py-2 bg-white border border-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold flex items-center gap-2 shadow-sm">
-                <Check className="w-4 h-4 text-[#0D7A53]" /> West End Kiosk
-              </span>
-              <button className="px-3 py-2 bg-transparent border border-dashed border-[#D4A753] text-[#9E782F] rounded-lg text-[13px] font-bold flex items-center gap-2 hover:bg-[#FDF8EB] transition-colors">
+              {activeBranches.map(branch => (
+                <span key={branch} className="px-3 py-2 bg-white border border-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold flex items-center gap-2 shadow-sm">
+                  <Check className="w-4 h-4 text-[#0D7A53]" /> {branch}
+                  <X className="w-3.5 h-3.5 text-[#9E9A93] hover:text-[#EF4444] cursor-pointer ml-1" onClick={() => handleRemoveLocation(branch)} />
+                </span>
+              ))}
+              <button onClick={handleAddLocation} className="px-3 py-2 bg-transparent border border-dashed border-[#D4A753] text-[#9E782F] rounded-lg text-[13px] font-bold flex items-center gap-2 hover:bg-[#FDF8EB] transition-colors cursor-pointer">
                 <Plus className="w-4 h-4" /> Add Location
               </button>
             </div>
@@ -1752,10 +1880,7 @@ export const CampaignBuilderPage: React.FC = () => {
 
       <div className="hidden lg:flex bg-white border-b border-[#EFECE6] px-4 sm:px-6 py-6 flex-col md:flex-row md:items-center justify-between gap-6 sticky top-0 z-20 shadow-xs">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-[#9E9A93] mb-3 uppercase">
-            <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] rounded-full border border-[#F3E5C8]">MERCHANT SUITE CRM</span>
-            <span>• Module CMP-8821</span>
-          </div>
+
           <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] mb-2 leading-none">Campaign Builder</h1>
           <p className="text-[14px] text-[#6E6A66] font-medium max-w-xl">Audit parameters, preview the live guest pass token, and deploy the campaign across roastery registers.</p>
         </div>
@@ -1883,6 +2008,14 @@ export const CampaignBuilderPage: React.FC = () => {
           </>
         )}
       </div>
+
+      {/* Global Toast Notification */}
+      {feedbackToast && (
+        <div className="fixed bottom-6 right-6 z-[100] bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-fade-in-up border border-[#332e2d]">
+          <CheckCircle2 className="w-5 h-5 text-[#D4A753]" />
+          <span className="text-sm font-bold">{feedbackToast}</span>
+        </div>
+      )}
 
     </div>
   );

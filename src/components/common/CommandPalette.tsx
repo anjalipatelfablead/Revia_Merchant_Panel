@@ -29,7 +29,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
   if (!isOpen) return null;
 
   const quickActions = [
-    { title: 'Customer Directory & CRM', category: 'CRM & ACTIVITY', route: '/customers' as NavRoute, icon: UserCheck },
+    { title: 'Customer Directory & CRM', category: 'CRM & ACTIVITY', route: '/customerlist' as NavRoute, icon: UserCheck },
     { title: 'Loyalty Program Builder & Wallet Passes', category: 'MAIN', route: '/loyalty' as NavRoute, icon: Award },
     { title: 'Item & Product Catalog Management', category: 'CATALOG & ORDERS', route: '/catalog' as NavRoute, icon: Coffee },
     { title: 'Branch & Outlets Network', category: 'MAIN', route: '/branches' as NavRoute, icon: Store },

@@ -7,16 +7,16 @@ export const TimelineItem: React.FC<{ item: typeof MOCK_HISTORY[0]; isLast: bool
     check: { Icon: CheckCircle2, bg: 'bg-[#F0FFF8]', color: 'text-[#0D7A53]' },
     star: { Icon: Star, bg: 'bg-[#FFF8ED]', color: 'text-[#C89B3C]' },
     gift: { Icon: Gift, bg: 'bg-[#FFF8ED]', color: 'text-[#C89B3C]' },
-    redemption: { Icon: CheckCircle2, bg: 'bg-[#F0F5FF]', color: 'text-[#3B5BDB]' },
+    redemption: { Icon: CheckCircle2, bg: 'bg-[#F0FFF8]', color: 'text-[#0D7A53]' },
   };
   const ic = iconMap[item.icon] || iconMap['check'];
   return (
     <div className="flex gap-4">
       <div className="flex flex-col items-center">
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${ic.bg}`}>
-          <ic.Icon className={`w-4 h-4 ${ic.color}`} />
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border border-white shadow-sm ${ic.bg}`}>
+          <ic.Icon className={`w-[18px] h-[18px] ${ic.color}`} />
         </div>
-        {!isLast && <div className="w-px flex-1 bg-[#E6E6E6] mt-1" />}
+        {!isLast && <div className="w-px flex-1 bg-[#E6E6E6] my-1" />}
       </div>
       <div className={`flex-1 min-w-0 ${!isLast ? 'pb-5' : 'pb-1'}`}>
         <div className="flex justify-between items-start gap-2">
@@ -25,8 +25,8 @@ export const TimelineItem: React.FC<{ item: typeof MOCK_HISTORY[0]; isLast: bool
             <p className="text-xs text-[#666] mt-0.5 truncate">{item.sub}</p>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-[10px] text-[#999]">{item.time}</p>
-            {item.badge && <p className="text-[9px] font-black text-[#C89B3C] mt-0.5">{item.badge}</p>}
+            <p className="text-[10px] text-[#999] font-medium">{item.time}</p>
+            {item.badge && <p className={`text-[9px] font-black mt-0.5 ${item.badge.includes('+') ? 'text-[#C89B3C]' : item.badge === 'Redeemed' ? 'text-[#0D7A53]' : 'text-[#C89B3C]'}`}>{item.badge}</p>}
           </div>
         </div>
       </div>
