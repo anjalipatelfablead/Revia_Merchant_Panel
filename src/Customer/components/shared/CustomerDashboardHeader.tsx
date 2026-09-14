@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, User, Search, Menu, LogOut, Settings, Heart } from 'lucide-react';
+import { Bell, User, Search, Menu, LogOut, Settings, Heart, ShoppingBag } from 'lucide-react';
 
 import { MainTab } from '../../types';
 
@@ -9,9 +9,10 @@ interface Props {
   tabs?: { id: MainTab; label: string; Icon: React.ElementType; badge?: React.ReactNode }[];
   activeTab?: MainTab;
   setTab?: (t: MainTab) => void;
+  cartCount?: number;
 }
 
-export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuClick, tabs = [], activeTab, setTab }) => {
+export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuClick, tabs = [], activeTab, setTab, cartCount }) => {
   // Separate primary tabs from secondary ("More") tabs
   const primaryTabs = tabs.slice(0, 4);
   const moreTabs = tabs.slice(4);
@@ -41,6 +42,17 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
       {/* Right Section: Icons and Profile */}
       <div className="flex items-center justify-end gap-2 sm:gap-4 flex-1">
 
+        <button 
+          onClick={() => setTab?.('checkout')}
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#222] transition-colors relative"
+        >
+          <ShoppingBag className="w-5 h-5" />
+          {cartCount !== undefined && cartCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-black rounded-full flex items-center justify-center border border-white">
+              {cartCount}
+            </span>
+          )}
+        </button>
 
         <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#666] transition-colors relative">
           <Bell className="w-5 h-5" />

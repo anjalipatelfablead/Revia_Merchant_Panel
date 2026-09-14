@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Star, Gift, Users, Store, ArrowRight, ChevronLeft, ChevronRight, BarChart2, TrendingUp, Calendar, MapPin } from 'lucide-react';
 import { MainTab } from '../../types';
 import { LoyaltyCard } from '../../components/shared/LoyaltyCard';
@@ -7,8 +8,26 @@ export const HomeScreen = ({ setTab, setSelectedOffer, setSelectedReward }: {
   setTab: (t: MainTab) => void;
   setSelectedOffer: (id: string) => void;
   setSelectedReward: (id: string) => void;
-}) => (
+}) => {
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  return (
   <div className="max-w-[1280px] mx-auto pb-12 space-y-8">
+    
+    {showWelcome && typeof document !== 'undefined' && createPortal(
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm h-screen w-screen overflow-hidden">
+        <div className="bg-white rounded-2xl p-8 max-w-sm w-full relative text-center shadow-2xl animate-in fade-in zoom-in-95 duration-300">
+          <button onClick={() => setShowWelcome(false)} className="absolute top-4 right-4 text-[#999] hover:text-[#222]">✕</button>
+          <div className="w-16 h-16 bg-[#FFF8ED] rounded-full flex items-center justify-center mx-auto mb-4">
+            <Gift className="w-8 h-8 text-[#C89B3C]" />
+          </div>
+          <h3 className="text-2xl font-black text-[#222] mb-2">Welcome to Grand Café!</h3>
+          <p className="text-[#666] mb-6 text-sm">As a new customer, you've received a welcome reward: <strong className="text-[#222]">Free Coffee</strong> on your first visit!</p>
+          <button onClick={() => { setShowWelcome(false); setTab('rewards'); }} className="w-full bg-[#222] hover:bg-black text-white py-3 rounded-lg font-bold transition-colors">View My Rewards</button>
+        </div>
+      </div>,
+      document.body
+    )}
 
     {/* Dark Hero Banner */}
     <div className="relative overflow-hidden bg-[#161616] rounded-md p-8 md:p-10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5">
@@ -244,4 +263,5 @@ export const HomeScreen = ({ setTab, setSelectedOffer, setSelectedReward }: {
       </div>
     </div>
   </div>
-);
+  );
+};
