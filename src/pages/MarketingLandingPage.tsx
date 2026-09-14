@@ -202,7 +202,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      <Lock className="w-4 h-4" />
                      Log In
                   </button>
-                  <button onClick={() => onNavigate?.('/onboarding')} className="flex items-center gap-2 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#D9A94E]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                  <button onClick={() => onNavigate?.('/login')} className="flex items-center gap-2 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#D9A94E]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
                      <Store className="w-4 h-4" />
                      Become Merchant
                   </button>
@@ -228,7 +228,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black border-b border-gray-100 pb-4">FAQ</a>
                   <div className="flex flex-col gap-4 mt-auto pb-12">
                      <button onClick={() => { setIsMobileMenuOpen(false); onNavigate?.('/login'); }} className="w-full bg-[#FAF6EE] text-[#241C15] py-4 rounded-xl font-black text-lg border border-[#D9A94E]/20">Log In</button>
-                     <button onClick={() => { setIsMobileMenuOpen(false); onNavigate?.('/onboarding'); }} className="w-full bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-[#D9A94E]/30">Become Merchant</button>
+                     <button onClick={() => { setIsMobileMenuOpen(false); onNavigate?.('/login'); }} className="w-full bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-[#D9A94E]/30">Become Merchant</button>
                   </div>
                </motion.div>
             )}
@@ -272,7 +272,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                         <span className="relative z-10 flex items-center gap-2">Start Free <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></span>
                      </button>
-                     <button className="bg-white/80 backdrop-blur-md border-2 border-gray-200 hover:border-[#D9A94E]/50 text-[#241C15] px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black transition-all shadow-sm hover:shadow-lg flex justify-center items-center">
+                     <button onClick={() => onNavigate?.('/login')} className="bg-white/80 backdrop-blur-md border-2 border-gray-200 hover:border-[#D9A94E]/50 text-[#241C15] px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black transition-all shadow-sm hover:shadow-lg flex justify-center items-center">
                         Become Merchant
                      </button>
                   </motion.div>
@@ -775,11 +775,10 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         <button
                            key={i}
                            onClick={() => scrollToPlan(i)}
-                           className={`transition-all duration-300 rounded-full ${
-                              activePlanIndex === i
+                           className={`transition-all duration-300 rounded-full ${activePlanIndex === i
                                  ? 'w-8 h-2.5 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] shadow-sm'
                                  : 'w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400'
-                           }`}
+                              }`}
                            aria-label={`Go to ${label} plan`}
                         />
                      ))}
@@ -821,9 +820,9 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          <section className="relative overflow-hidden z-10 max-w-6xl mx-4 sm:mx-auto my-8 sm:my-12 lg:my-20 rounded-[24px] sm:rounded-[32px] bg-[#1A1410] border border-[#D9A94E]/20 shadow-2xl flex flex-col md:flex-row">
             {/* Ambient Lighting & Glows for the right side */}
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#D9A94E]/10 rounded-full blur-[100px] pointer-events-none" />
-            
+
             {/* Left Image Area */}
-            <div 
+            <div
                className="w-full md:w-5/12 min-h-[200px] sm:min-h-[350px] relative bg-cover bg-center"
                style={{ backgroundImage: "url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=800&fit=crop&q=80')" }}
             >
@@ -834,17 +833,17 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
             {/* Right Content Area */}
             <div className="w-full md:w-7/12 p-6 sm:p-10 md:p-16 flex flex-col justify-center text-left relative z-10">
                <span className="text-[#D9A94E] font-bold text-sm tracking-widest uppercase mb-2">Try it risk-free</span>
-               
+
                <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight mb-4 leading-tight">
                   Ready to bring customers back?
                </h2>
-               
+
                <p className="text-base sm:text-lg text-gray-400 mb-6 sm:mb-8 max-w-lg font-medium leading-relaxed">
                   Join hundreds of local businesses growing their revenue with Revia's frictionless loyalty platform.
                </p>
-               
+
                <div className="flex flex-col sm:flex-row gap-4 items-start">
-                  <button onClick={() => onNavigate?.('/onboarding')} className="bg-[#FAF6EE] text-[#241C15] px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-black shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                  <button onClick={() => onNavigate?.('/login')} className="bg-[#FAF6EE] text-[#241C15] px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-black shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
                      Become Merchant
                   </button>
                </div>

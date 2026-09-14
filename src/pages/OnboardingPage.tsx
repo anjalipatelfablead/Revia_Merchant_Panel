@@ -26,7 +26,7 @@ interface OnboardingPageProps {
 }
 
 export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCancel }) => {
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(true);
   const [activeStep, setActiveStep] = useState<number>(1);
   
   // M-01 Registration
