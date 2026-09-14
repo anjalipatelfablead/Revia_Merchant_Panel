@@ -20,6 +20,7 @@ import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
 import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+import { MarketingLandingPage } from './pages/MarketingLandingPage';
 import { CustomerOnboardingPage } from './pages/CustomerOnboardingPage';
 import { CustomerPanel } from './Customer/CustomerPanel';
 import { CatalogPage } from './pages/CatalogPage';
@@ -39,12 +40,12 @@ import { NotificationPage } from './pages/NotificationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 const VALID_ROUTES = [
-  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff', 
-  '/loyalty', '/qr-codes', '/catalog', '/orders', '/invoices', 
-  '/customerlist', '/transactions', '/campaigns', '/campaigns/new', 
-  '/terminal', '/rewards', '/analytics', '/billing', '/notifications', 
-  '/settings/audit', '/settings/branding', '/login', '/onboarding', 
-  '/customer-landing', '/customer', '/customer-onboarding'
+  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
+  '/loyalty', '/qr-codes', '/catalog', '/orders', '/invoices',
+  '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
+  '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
+  '/settings/audit', '/settings/branding', '/login', '/onboarding',
+  '/customer-landing', '/customer', '/customer-onboarding', '/'
 ];
 
 
@@ -54,7 +55,7 @@ export default function App() {
   const [currentRoute, setCurrentRouteState] = useState<NavRoute>(() => {
     const path = window.location.pathname;
     if (path === '/' || path === '') {
-      return '/customer-landing';
+      return '/';
     }
     return path as NavRoute;
   });
@@ -94,7 +95,7 @@ export default function App() {
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
-      setCurrentRouteState((path === '/' || path === '' ? '/customer-landing' : path) as NavRoute);
+      setCurrentRouteState((path === '/' || path === '' ? '/' : path) as NavRoute);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -103,6 +104,10 @@ export default function App() {
   const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/');
   if (!isValidRoute) {
     return <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/') {
+    return <MarketingLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   if (currentRoute === '/customer-landing') {
@@ -124,11 +129,12 @@ export default function App() {
   // Render auth and onboarding pages directly as standalone
   if (currentRoute === '/login') {
     return (
-      <LoginPage 
+      <LoginPage
         onLoginSuccess={(role) => {
           if (role.startsWith('/')) {
             handleNavigate(role as NavRoute);
           } else if (role === 'customer') {
+            // Navigate to onboarding after successful customer login
             handleNavigate('/customer-onboarding');
           } else {
             handleNavigate('/dashboard');

@@ -12,9 +12,9 @@ export const MOCK_COUPONS = [
   { id: 'c2', type: 'Birthday Coupon', title: 'Free Dessert', desc: 'Celebrate your birthday with a free dessert of your choice.', value: 'FREE', validity: 'Expires 15 Oct', branch: 'Downtown Branch', status: 'active' as const },
 ];
 export const MOCK_ADDONS = [
-  { id: 'a1', name: 'Extra Shot', price: 0.5, icon: 'Coffee' },
-  { id: 'a2', name: 'Soy Milk', price: 0.3, icon: 'Droplet' },
-  { id: 'a3', name: 'Whipped Cream', price: 0.4, icon: 'Cloud' },
+  { id: 'a1', name: 'Extra Shot', price: 0.5, icon: 'Coffee', image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=100&h=100' },
+  { id: 'a2', name: 'Soy Milk', price: 0.3, icon: 'Droplet', image: 'https://images.unsplash.com/photo-1588720188725-780c85c2d3bc?auto=format&fit=crop&q=80&w=100&h=100' },
+  { id: 'a3', name: 'Whipped Cream', price: 0.4, icon: 'Cloud', image: 'https://images.unsplash.com/photo-1579992357154-faf4bde95b3d?auto=format&fit=crop&q=80&w=100&h=100' },
 ];
 
 export const MOCK_REWARDS = {
@@ -31,4 +31,85 @@ export const MOCK_HISTORY = [
   { id: '4', date: '5 Sep', type: 'visit', icon: 'check', title: 'Visit Recorded', sub: 'Grand Café · Downtown Branch', time: '3:15 PM', badge: null },
   { id: '5', date: '2 Sep', type: 'loyalty', icon: 'star', title: 'Loyalty Progress', sub: '7 / 10 Stamps', time: '1:00 PM', badge: '+1 Stamp' },
   { id: '6', date: '2 Sep', type: 'visit', icon: 'check', title: 'Visit Recorded', sub: 'Grand Café · Downtown Branch', time: '12:50 PM', badge: null },
+];
+
+import { CustomerMembership, Campaign, CustomerCampaignProgress } from '../../types/campaign';
+
+export const MOCK_MEMBERSHIP: CustomerMembership = {
+  customerId: 'cust-123',
+  tier: 'VIP',
+  totalBilledAmount: 125000,
+  startDate: '2026-01-01',
+  expiryDate: '2026-12-31',
+  status: 'Active'
+};
+
+export const MOCK_ACTIVE_CAMPAIGNS: Campaign[] = [
+  {
+    id: 'camp-1',
+    merchantId: 'm-1',
+    name: 'Coffee Lover Stamps',
+    category: 'Existing_Customer',
+    type: 'Stamp',
+    qualifyingItemId: 'item-coffee',
+    qualifyingItemName: 'Any Coffee',
+    requiredStamps: 10,
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    status: 'Active',
+    rewardType: 'Free_Item',
+    rewardValue: 'Free Coffee'
+  },
+  {
+    id: 'camp-2',
+    merchantId: 'm-1',
+    name: 'High Roller Monthly',
+    category: 'Existing_Customer',
+    type: 'Billing',
+    frequency: 'Monthly',
+    targetBillingAmount: 100000,
+    startDate: '2026-09-01',
+    endDate: '2026-09-30',
+    status: 'Active',
+    rewardType: 'Cashback',
+    rewardValue: 500
+  },
+  {
+    id: 'camp-3',
+    merchantId: 'm-1',
+    name: 'Weekend Happy Hours',
+    category: 'Happy_Hours',
+    startTime: '14:00',
+    endTime: '18:00',
+    applicableDays: ['Saturday', 'Sunday'],
+    excludeHolidays: true,
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    status: 'Active',
+    rewardType: 'Discount_Percentage',
+    rewardValue: 20
+  }
+];
+
+export const MOCK_CAMPAIGN_PROGRESS: CustomerCampaignProgress[] = [
+  {
+    campaignId: 'camp-1',
+    campaignName: 'Coffee Lover Stamps',
+    type: 'Stamp',
+    currentProgress: 7,
+    targetProgress: 10,
+    progressText: '7 / 10 Stamps',
+    rewardType: 'Free_Item',
+    rewardValue: 'Free Coffee'
+  },
+  {
+    campaignId: 'camp-2',
+    campaignName: 'High Roller Monthly',
+    type: 'Billing',
+    currentProgress: 45000,
+    targetProgress: 100000,
+    progressText: '₹45,000 / ₹1,00,000',
+    rewardType: 'Cashback',
+    rewardValue: '₹500 Cashback'
+  }
 ];

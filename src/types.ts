@@ -131,6 +131,7 @@ export interface OutletsData {
 }
 
 export type NavRoute = 
+  | '/'
   | '/dashboard'
   | '/atelier'
   | '/branches'

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, Check, Crown, CreditCard, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { MOCK_MEMBERSHIP } from '../../data/mockData';
 
 const PLANS = [
   {
@@ -62,16 +63,50 @@ const PLANS = [
 ];
 
 export const MembershipScreen = () => {
-  // Simulate that the user is already subscribed to the 'gold' plan
   const [activePlanId, setActivePlanId] = useState<string | null>('gold');
+  
+  const membership = MOCK_MEMBERSHIP;
+  const nextTierAmount = 1000000; // Mock target for VVIP
+  const progressPercent = Math.min((membership.totalBilledAmount / nextTierAmount) * 100, 100);
 
   return (
     <div className="max-w-[1280px] mx-auto pb-24">
       {/* Header */}
       <div className="mb-10 text-center md:text-left">
-        <h1 className="text-3xl md:text-4xl font-black text-[#222] mb-3">Loyalty Memberships</h1>
-        <p className="text-[#666] md:text-lg max-w-2xl">Subscribe to premium loyalty plans from your favorite stores to unlock exclusive perks, freebies, and accelerated rewards.</p>
+        <h1 className="text-3xl md:text-4xl font-black text-[#222] mb-3">Your Membership</h1>
+        <p className="text-[#666] md:text-lg max-w-2xl">Track your loyalty tier progress and explore premium subscription plans.</p>
       </div>
+
+      {/* Current Tier Card */}
+      <div className="bg-[#1A1A1A] rounded-[24px] p-6 md:p-10 text-white mb-12 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#C89B3C]/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
+          <div>
+            <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-1">Current Status</p>
+            <div className="flex items-center gap-3">
+              <Crown className="w-8 h-8 text-[#C89B3C]" />
+              <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E0B85E] to-[#C89B3C]">{membership.tier} Tier</h2>
+            </div>
+            <p className="text-white/80 mt-3 text-sm">Valid until {new Date(membership.expiryDate).toLocaleDateString()}</p>
+          </div>
+          
+          <div className="w-full md:w-[400px] bg-white/5 rounded-xl p-5 border border-white/10">
+            <div className="flex justify-between text-sm font-bold mb-2">
+              <span className="text-white">₹{(membership.totalBilledAmount).toLocaleString()}</span>
+              <span className="text-white/60">₹{(nextTierAmount).toLocaleString()} for VVIP</span>
+            </div>
+            <div className="w-full h-3 bg-black/50 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-[#C89B3C] to-[#E0B85E] rounded-full" 
+                style={{ width: `${progressPercent}%` }}
+              ></div>
+            </div>
+            <p className="text-white/50 text-xs mt-3 text-right">Keep spending to unlock the next tier benefits.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 className="text-2xl font-black text-[#222] mb-6 text-center md:text-left">Explore Premium Plans</h2>
 
       {/* Pricing Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">

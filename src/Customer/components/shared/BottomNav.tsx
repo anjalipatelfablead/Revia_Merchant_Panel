@@ -1,11 +1,11 @@
 import React from 'react';
-import { Home, Zap, Gift, ReceiptText, User } from 'lucide-react';
+import { Home, Zap, Gift, ReceiptText, User, Utensils } from 'lucide-react';
 import { MainTab } from '../../types';
 
 export const BottomNav = ({ active, onChange }: { active: MainTab; onChange: (t: MainTab) => void }) => {
   const tabs: { id: MainTab; label: string; Icon: React.ElementType }[] = [
     { id: 'dashboard', label: 'Home', Icon: Home },
-    { id: 'offers', label: 'Offers', Icon: Zap },
+    { id: 'menu', label: 'Menu', Icon: Utensils },
     { id: 'rewards', label: 'Rewards', Icon: Gift },
     { id: 'history', label: 'History', Icon: ReceiptText },
     { id: 'profile', label: 'Profile', Icon: User },
