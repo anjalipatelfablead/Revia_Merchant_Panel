@@ -53,6 +53,14 @@ export const CampaignBuilderPage: React.FC = () => {
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
   const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
 
+  // Step 1 – Basics state
+  const [campaignName, setCampaignName] = useState('');
+  const [topLevelType, setTopLevelType] = useState<'new_customer' | 'existing_customer' | 'happy_hours' | ''>('');
+  const [existingSubType, setExistingSubType] = useState<'existing_visit' | 'existing_billing' | 'existing_stamp' | ''>('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [statusDraft, setStatusDraft] = useState(true);
+
   const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
@@ -102,6 +110,12 @@ export const CampaignBuilderPage: React.FC = () => {
   const removeOrGroupItem = (id: number) => setOrGroupItems(orGroupItems.filter(i => i.id !== id));
 
   const [activeBranches, setActiveBranches] = useState<string[]>(['Downtown Flagship', 'Northside Mall', 'West End Kiosk']);
+  const allBranchOptions = ['Downtown Flagship', 'Northside Mall', 'West End Kiosk', 'Airport Lounge', 'Eastside Store'];
+  const toggleBranch = (branch: string) => {
+    setActiveBranches(prev =>
+      prev.includes(branch) ? prev.filter(b => b !== branch) : [...prev, branch]
+    );
+  };
   const availableBranches = ['Airport Lounge', 'Eastside Store', 'Uptown Boutique'];
   const handleAddLocation = () => {
     const nextBranch = availableBranches.find(b => !activeBranches.includes(b));
@@ -167,18 +181,26 @@ export const CampaignBuilderPage: React.FC = () => {
     { id: 5, name: 'Review & Publish' },
   ];
 
+  // Derived full campaign type key for Step 3 routing
+  const fullCampaignType =
+    topLevelType === 'existing_customer' && existingSubType
+      ? existingSubType
+      : topLevelType;
+
+  const step1Valid = campaignName.trim().length > 0 && fullCampaignType !== '';
+
   const renderStep1 = () => (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+      {/* ── LEFT COLUMN ── */}
       <div className="lg:col-span-7 flex flex-col gap-4 lg:block lg:bg-white lg:border lg:border-[#EFECE6] lg:rounded-xl lg:p-6 lg:shadow-sm lg:space-y-6">
-        {/* Mobile: Estimated Reach */}
+
+        {/* Mobile: Estimated Reach banner */}
         <div className="lg:hidden bg-white border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#FDF8EB] rounded-full flex items-center justify-center text-[#9E782F]">
-              <Users className="w-5 h-5" />
-            </div>
+            <div className="w-10 h-10 bg-[#FDF8EB] rounded-full flex items-center justify-center text-[#9E782F]"><Users className="w-5 h-5" /></div>
             <div>
               <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-0.5">ESTIMATED LIVE REACH</div>
-              <div className="text-sm font-bold text-[#1A1615]">~1,420 <span className="font-medium text-[#6E6A66]">VIP Members</span></div>
+              <div className="text-sm font-bold text-[#1A1615]">~1,840 <span className="font-medium text-[#6E6A66]">VIP Members</span></div>
             </div>
           </div>
           <div className="px-2 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded font-bold text-[10px] flex items-center gap-1">
@@ -186,356 +208,320 @@ export const CampaignBuilderPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Desktop section label */}
         <div className="hidden lg:block border-b border-[#EFECE6] pb-3">
           <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">CONFIG 1/5</span>
           <h3 className="text-base font-bold text-[#1A1615]">Campaign Details</h3>
         </div>
 
+        {/* ── CAMPAIGN NAME ── */}
         <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
-          {/* Mobile Block Header */}
           <div className="lg:hidden flex items-center justify-between mb-4">
             <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
               <Sparkles className="w-4 h-4 text-[#D4A753]" /> Campaign Identity
             </div>
             <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold rounded">Required</span>
           </div>
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66]">Campaign Name Input</label>
-              <span className="text-[11px] font-semibold text-[#9E9A93]">38 / 64 characters</span>
+
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66]">Campaign Name</label>
+              <span className="text-[11px] font-semibold text-[#9E9A93]">{campaignName.length} / 64 characters</span>
             </div>
             <input
+              id="campaign-name-input"
               type="text"
-              defaultValue="Autumn Reserve Tasting & Geisha Perk"
-              className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+              value={campaignName}
+              maxLength={64}
+              onChange={e => setCampaignName(e.target.value)}
+              placeholder="e.g. Autumn Reserve Tasting & Geisha Perk"
+              className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] placeholder:text-[#B0ABA5] focus:outline-none focus:border-[#D4A753] transition-colors"
             />
           </div>
 
+          {/* ── CAMPAIGN TYPE (nested radio-cards) ── */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66] mb-3">Campaign Type</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {campaignTypes.map((type) => {
-                const Icon = type.icon;
-                const isSelected = selectedCampaignType === type.id;
-                return (
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66] mb-3">
+              Campaign Type <span className="text-[#B7362F] ml-0.5">*</span>
+            </label>
+
+            {/* Level 1 – 3 top-level cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-2">
+              {/* New Customer */}
+              <button
+                id="type-new-customer"
+                type="button"
+                onClick={() => { setTopLevelType('new_customer'); setExistingSubType(''); }}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'new_customer'
+                    ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                    : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  }`}
+              >
+                {topLevelType === 'new_customer' && (
+                  <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'new_customer' ? 'bg-[#D4A753]/20' : 'bg-[#F3EDE6]'
+                  }`}>
+                  <Sparkles className={`w-5 h-5 ${topLevelType === 'new_customer' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                </div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'new_customer' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                  }`}>New Customer</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">Welcome offer for first-time customers</div>
+              </button>
+
+              {/* Existing Customer */}
+              <button
+                id="type-existing-customer"
+                type="button"
+                onClick={() => setTopLevelType('existing_customer')}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'existing_customer'
+                    ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                    : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  }`}
+              >
+                {topLevelType === 'existing_customer' && (
+                  <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'existing_customer' ? 'bg-[#D4A753]/20' : 'bg-[#F3EDE6]'
+                  }`}>
+                  <RefreshCw className={`w-5 h-5 ${topLevelType === 'existing_customer' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                </div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'existing_customer' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                  }`}>Existing Customer</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">Reward repeat customers</div>
+              </button>
+
+              {/* Happy Hours */}
+              <button
+                id="type-happy-hours"
+                type="button"
+                onClick={() => { setTopLevelType('happy_hours'); setExistingSubType(''); }}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'happy_hours'
+                    ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                    : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  }`}
+              >
+                {topLevelType === 'happy_hours' && (
+                  <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'happy_hours' ? 'bg-[#D4A753]/20' : 'bg-[#F3EDE6]'
+                  }`}>
+                  <Clock className={`w-5 h-5 ${topLevelType === 'happy_hours' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                </div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'happy_hours' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                  }`}>Happy Hours</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">Time &amp; day-based offers</div>
+              </button>
+            </div>
+
+            {/* Level 2 – Existing Customer sub-types */}
+            {topLevelType === 'existing_customer' && (
+              <div className="mt-2 ml-0 sm:ml-2 pl-3 border-l-2 border-[#D4A753]/40">
+                <p className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider mb-2">Select Reward Trigger</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Visit Type */}
                   <button
-                    key={type.id}
-                    onClick={() => setSelectedCampaignType(type.id)}
-                    className={
-                      isSelected
-                        ? "p-3 bg-[#FDF8EB] border-2 border-[#D4A753] rounded-xl text-xs font-bold text-[#9E782F] flex flex-col items-center gap-2 shadow-sm relative overflow-hidden cursor-pointer"
-                        : "p-3 bg-white border border-[#EFECE6] rounded-xl text-xs font-bold text-[#6E6A66] flex flex-col items-center gap-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer"
-                    }
+                    id="subtype-visit"
+                    type="button"
+                    onClick={() => setExistingSubType('existing_visit')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_visit'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
                   >
-                    {isSelected && (
-                      <div className="absolute top-2 right-2 w-3 h-3 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    {existingSubType === 'existing_visit' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
                         <Check className="w-2 h-2 text-white" />
-                      </div>
+                      </span>
                     )}
-                    <Icon className={`w-5 h-5 ${isSelected ? 'fill-[#D4A753] text-[#D4A753]' : 'text-[#9E9A93]'}`} /> {type.id}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'existing_visit' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <Activity className={`w-4 h-4 ${existingSubType === 'existing_visit' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'existing_visit' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>Visit Type</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward after N qualifying visits</div>
                   </button>
-                );
-              })}
-            </div>
+
+                  {/* Billing Type */}
+                  <button
+                    id="subtype-billing"
+                    type="button"
+                    onClick={() => setExistingSubType('existing_billing')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_billing'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'existing_billing' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'existing_billing' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <DollarSign className={`w-4 h-4 ${existingSubType === 'existing_billing' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'existing_billing' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>Billing Type</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward based on cumulative spend</div>
+                  </button>
+
+                  {/* Stamp Type */}
+                  <button
+                    id="subtype-stamp"
+                    type="button"
+                    onClick={() => setExistingSubType('existing_stamp')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_stamp'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'existing_stamp' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'existing_stamp' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <FileText className={`w-4 h-4 ${existingSubType === 'existing_stamp' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'existing_stamp' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>Stamp Type</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward after N purchases of a specific item</div>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Resolved type pill */}
+            {fullCampaignType && (
+              <div className="mt-3 flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#0D7A53]" />
+                <span className="text-[11px] font-bold text-[#0D7A53]">
+                  Type resolved: <span className="capitalize">{fullCampaignType.replace(/_/g, ' ')}</span>
+                </span>
+              </div>
+            )}
           </div>
-
-          <div className="space-y-4 mt-6 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">MANDATORY CAMPAIGN VALIDITY</label>
-              <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase">Required</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Start Date &amp; Time</label>
-                <input type="datetime-local" defaultValue="2024-11-01T00:00" className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm" />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">End Date &amp; Time</label>
-                <input type="datetime-local" defaultValue="2024-11-30T23:59" className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Status</label>
-                <select className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm">
-                  <option>Active</option>
-                  <option>Draft</option>
-                  <option>Inactive</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Applicable Customer Type</label>
-                <select className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm">
-                  <option>All Customers</option>
-                  <option>VIP Members</option>
-                  <option>New Customers</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Reward Type</label>
-                <select className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm mb-2">
-                  <option>Cashback</option>
-                  <option>Discount - Fixed Amount</option>
-                  <option>Discount - Percentage</option>
-                  <option>Reward Points</option>
-                  <option>Free Item</option>
-                </select>
-                <p className="text-[10px] text-[#6E6A66] leading-tight">
-                  The reward configuration shall depend on the campaign type. The Reward Engine must generate the reward only when all applicable campaign conditions are satisfied.
-                </p>
-              </div>
-              <div>
-                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Campaign-specific Conditions</label>
-                <input type="text" placeholder="e.g. Min spend $50" className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm" />
-              </div>
-            </div>
-
-            <div className="bg-[#E0F9ED] border border-[#BCE3D1] p-3 rounded-lg flex items-start gap-2 mt-4">
-              <CheckCircle2 className="w-4 h-4 text-[#0D7A53] shrink-0 mt-0.5" />
-              <p className="text-[11px] font-medium text-[#0D7A53] leading-tight">
-                A campaign shall be considered active only when: Current Date/Time ≥ Start Date/Time <strong>AND</strong> Current Date/Time ≤ End Date/Time <strong>AND</strong> Campaign Status = Active
-              </p>
-            </div>
-          </div>
-
         </div>
 
-        {/* Dynamic Campaign Forms based on selected type */}
-        {['Welcome Campaign', 'Visit Campaign', 'Billing Campaign', 'Stamp Campaign', 'Happy Hours'].includes(selectedCampaignType) && (
-          <div className="mt-6 p-4 border border-[#D4A753] bg-[#FDF8EB] rounded-xl shadow-sm">
-            <h4 className="text-[13px] font-bold text-[#9E782F] mb-4 flex items-center gap-2">
-              <Sparkles className="w-4 h-4" /> {selectedCampaignType} Configuration
-            </h4>
-
-            {selectedCampaignType === 'Welcome Campaign' && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-bold text-[#1A1615]">First qualifying transaction</span>
-                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-bold text-[#1A1615]">One-time reward usage</span>
-                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-bold text-[#1A1615]">Show whether the welcome reward has already been used</span>
-                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
-                </div>
-              </div>
-            )}
-
-            {selectedCampaignType === 'Visit Campaign' && (
-              <div className="space-y-4">
-                <div>
-                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Required number of qualifying visits</label>
-                  <input type="number" defaultValue={5} className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
-                </div>
-                <div>
-                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Minimum billing amount per visit</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold">₹</span>
-                    <input type="number" defaultValue={500} className="w-full pl-7 pr-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-bold text-[#1A1615]">Enable visit progress tracking</span>
-                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
-                </div>
-              </div>
-            )}
-
-            {selectedCampaignType === 'Billing Campaign' && (
-              <div className="space-y-4">
-                <div>
-                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Billing Frequency target</label>
-                  <select className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
-                    <option>One-Time</option>
-                    <option>Monthly</option>
-                    <option>Quarterly</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Target billing amount</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold">₹</span>
-                    <input type="number" defaultValue={5000} className="w-full pl-7 pr-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-bold text-[#1A1615]">Enable cumulative billing progress</span>
-                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
-                </div>
-              </div>
-            )}
-
-            {selectedCampaignType === 'Stamp Campaign' && (
-              <div className="space-y-4">
-                <div>
-                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Select qualifying product/item</label>
-                  <input type="text" placeholder="e.g. Geisha Pour Over" className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Target stamp count</label>
-                    <input type="number" defaultValue={10} className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
-                  </div>
-                  <div>
-                    <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Current stamp progress tracking</label>
-                    <select className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
-                      <option>Enabled</option>
-                      <option>Disabled</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {selectedCampaignType === 'Happy Hours' && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Start Time</label>
-                    <input type="time" defaultValue="14:00" className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
-                  </div>
-                  <div>
-                    <label className="text-[12px] font-bold text-[#1A1615] block mb-1">End Time</label>
-                    <input type="time" defaultValue="17:00" className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Applicable days</label>
-                  <div className="flex gap-2">
-                    {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
-                      <button key={idx} className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${idx < 5 ? 'bg-[#9E782F] text-white' : 'bg-white border border-[#F3E5C8] text-[#6E6A66]'}`}>{day}</button>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-bold text-[#1A1615]">Holiday exclusion</span>
-                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
-                </div>
-              </div>
-            )}
-
-            {/* Shared Reward Configuration */}
-            <div className="mt-6 pt-4 border-t border-[#F3E5C8]">
-              <h5 className="text-[12px] font-bold text-[#1A1615] mb-3 uppercase tracking-wider">Reward Configuration</h5>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Reward Type</label>
-                  <select className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
-                    <option>Cashback</option>
-                    <option>Discount - Fixed Amount</option>
-                    <option>Discount - Percentage</option>
-                    <option>Reward Points</option>
-                    <option>Free Item</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Reward Value</label>
-                  <input type="text" placeholder="e.g. 100 or 10%" className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
-                </div>
-              </div>
-            </div>
-
+        {/* ── DATE RANGE & STATUS ── */}
+        <div className="space-y-4 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">MANDATORY CAMPAIGN VALIDITY</label>
+            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase">Required</span>
           </div>
-        )}
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Start Date</label>
+              <input
+                id="start-date-input"
+                type="date"
+                value={startDate}
+                onChange={e => setStartDate(e.target.value)}
+                className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-sm"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">End Date</label>
+              <input
+                id="end-date-input"
+                type="date"
+                value={endDate}
+                onChange={e => setEndDate(e.target.value)}
+                className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-sm"
+              />
+            </div>
+          </div>
 
+          {/* Status Toggle */}
+          <div>
+            <label className="text-[11px] font-bold text-[#6E6A66] block mb-2">Status</label>
+            <div className="inline-flex items-center bg-white border border-[#EFECE6] rounded-full p-1 shadow-sm">
+              <button
+                id="status-draft"
+                type="button"
+                onClick={() => setStatusDraft(true)}
+                className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusDraft
+                    ? 'bg-[#1A1615] text-white shadow'
+                    : 'text-[#6E6A66] hover:text-[#1A1615]'
+                  }`}
+              >
+                Draft
+              </button>
+              <button
+                id="status-active"
+                type="button"
+                onClick={() => setStatusDraft(false)}
+                className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${!statusDraft
+                    ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow'
+                    : 'text-[#6E6A66] hover:text-[#1A1615]'
+                  }`}
+              >
+                Active
+              </button>
+            </div>
+            <p className="mt-1.5 text-[10px] text-[#9E9A93] font-medium">
+              Campaign activates only when Status = Active AND current date is within range.
+            </p>
+          </div>
+
+          <div className="bg-[#E0F9ED] border border-[#BCE3D1] p-3 rounded-lg flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#0D7A53] shrink-0 mt-0.5" />
+            <p className="text-[11px] font-medium text-[#0D7A53] leading-tight">
+              Active = Status is Active <strong>AND</strong> current date &ge; Start Date <strong>AND</strong> current date &le; End Date.
+            </p>
+          </div>
+        </div>
+
+        {/* ── ACTIVE BRANCHES ── */}
         <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
-          {/* Mobile Block Header */}
-          <div className="lg:hidden flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
-              <Store className="w-4 h-4 text-[#D4A753]" /> Outlets & Locations
-            </div>
-            <span className="text-[#0D7A53] text-[10px] font-bold">3 Active</span>
-          </div>
-          <p className="lg:hidden text-xs text-[#6E6A66] mb-3">Select participating artisan espresso bars & roasteries.</p>
-          <div className="hidden lg:flex items-center justify-between mb-3">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66]">Active Outlets &amp; Locations</label>
-            <button className="text-[11px] font-bold text-[#D4A753] hover:underline">Select All Branches</button>
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66]">Active Branches</label>
+            <button
+              type="button"
+              onClick={() => setActiveBranches([...allBranchOptions])}
+              className="text-[11px] font-bold text-[#D4A753] hover:underline cursor-pointer"
+            >
+              Select All
+            </button>
           </div>
           <div className="flex flex-wrap gap-2 mb-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#E6F4ED] border border-[#BCE3D1] text-[#0D7A53] rounded-full text-xs font-bold">
-              <Check className="w-3.5 h-3.5" /> Downtown Flagship - Main Bar
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#E6F4ED] border border-[#BCE3D1] text-[#0D7A53] rounded-full text-xs font-bold">
-              <Check className="w-3.5 h-3.5" /> Northside Mall - Espresso Bar
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#E6F4ED] border border-[#BCE3D1] text-[#0D7A53] rounded-full text-xs font-bold">
-              <Check className="w-3.5 h-3.5" /> West End Kiosk - Drive-Thru
-            </span>
+            {allBranchOptions.map(branch => {
+              const selected = activeBranches.includes(branch);
+              return (
+                <button
+                  key={branch}
+                  type="button"
+                  id={`branch-${branch.replace(/\s+/g, '-').toLowerCase()}`}
+                  onClick={() => toggleBranch(branch)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${selected
+                      ? 'bg-[#E6F4ED] border-[#BCE3D1] text-[#0D7A53]'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] text-[#6E6A66] hover:border-[#D4A753]/50'
+                    }`}
+                >
+                  {selected ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                  {branch}
+                </button>
+              );
+            })}
           </div>
-          <button onClick={() => setIsAddLocationOpen(true)} className="text-[11px] font-bold text-[#9E782F] lg:text-[#1A1615] flex items-center gap-1 hover:underline bg-[#FDF8EB] px-3 py-1.5 rounded-full mt-2 lg:mt-0 lg:bg-transparent lg:px-0 lg:py-0 cursor-pointer">
-            <Plus className="w-3.5 h-3.5" /> Add Location
-          </button>
-          <div className="lg:hidden flex items-start gap-2 mt-4 p-3 bg-[#FAF8F5] rounded-lg text-[11px] text-[#6E6A66]">
-            <Info className="w-4 h-4 text-[#D4A753] shrink-0" /> Includes POS terminal dispatch & mobile order integration.
-          </div>
-        </div>
-
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
-          {/* Mobile Block Header */}
-          <div className="lg:hidden flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
-              <Calendar className="w-4 h-4 text-[#D4A753]" /> Timeline & Scheduling
-            </div>
-            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold rounded">30 Days Total</span>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Campaign Runtime Window</label>
-              <div className="flex items-center gap-3 px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg">
-                <Calendar className="w-4 h-4 text-[#9E9A93]" />
-                <span className="text-xs font-bold text-[#1A1615]">Nov 1, 2024 – Nov 30, 2024</span>
-              </div>
-            </div>
-            <div className="hidden lg:flex items-end pb-1">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase tracking-wider">
-                <Clock className="w-3 h-3" /> 30 DAYS TOTAL
-              </span>
-            </div>
-          </div>
-          <div className="lg:hidden flex items-center justify-between mt-2 pt-3 border-t border-[#EFECE6] text-[11px] text-[#6E6A66]">
-            <div className="flex items-center gap-1"><Clock className="w-3 h-3" /> Merchant home timezone (PST - UTC-8)</div>
-            <span className="text-[#0D7A53] font-bold flex items-center gap-1"><span className="w-1 h-1 bg-[#0D7A53] rounded-full"></span> Synchronized</span>
+          <div className="text-[11px] text-[#6E6A66] flex items-center gap-1">
+            <Info className="w-3.5 h-3.5 text-[#D4A753] shrink-0" />
+            {activeBranches.length} branch{activeBranches.length !== 1 ? 'es' : ''} selected
           </div>
         </div>
 
+        {/* ── PRIORITY ── */}
         <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
-          {/* Mobile Block Header */}
-          <div className="lg:hidden flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
-              <SlidersHorizontal className="w-4 h-4 text-[#D4A753]" /> Priority & Arbitration
-            </div>
-            <span className="text-[#6E6A66] text-[10px] font-bold uppercase tracking-wider">Queue Order</span>
-          </div>
-
-          <div className="lg:hidden bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between mb-4">
-            <div>
-              <div className="text-xs font-bold text-[#1A1615] mb-1">Priority Queue Level</div>
-              <div className="text-[10px] text-[#6E6A66] max-w-[120px]">Defines precedence over competing member discounts</div>
-            </div>
-            <div className="flex items-center bg-white border border-[#EFECE6] rounded-full px-2 py-1 shadow-sm">
-              <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="w-6 h-6 flex items-center justify-center text-[#9E9A93] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">-</button>
-              <div className="px-3 text-center">
-                <div className="text-sm font-bold text-[#D4A753]">{priorityLevel}</div>
-                <div className="text-[10px] font-bold text-[#1A1615]">(P{priorityLevel})</div>
-              </div>
-              <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="w-6 h-6 flex items-center justify-center text-[#1A1615] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">+</button>
-            </div>
-          </div>
-
-          <div className="lg:hidden flex items-start gap-2 bg-[#FDF8EB] p-3 rounded-lg border border-[#F3E5C8]">
-            <div className="w-4 h-4 bg-[#D4A753] shrink-0 rounded flex items-center justify-center mt-0.5"><div className="w-1.5 h-2 bg-white rounded-t-full"></div></div>
-            <div className="text-[10px] text-[#1A1615] font-semibold leading-tight">Tier {priorityLevel} Override Active: Highest arbitration queue</div>
-          </div>
-
           <div className="hidden lg:block">
             <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Priority Level</label>
             <div className="flex items-center gap-3 mb-2">
@@ -549,10 +535,25 @@ export const CampaignBuilderPage: React.FC = () => {
               Tier {priorityLevel} Override Active: Highest arbitration queue. Higher priority wins if a transaction qualifies for multiple active campaigns.
             </p>
           </div>
+          {/* Mobile priority */}
+          <div className="lg:hidden bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <div className="text-xs font-bold text-[#1A1615] mb-1">Priority Queue Level</div>
+              <div className="text-[10px] text-[#6E6A66] max-w-[120px]">Defines precedence over competing discounts</div>
+            </div>
+            <div className="flex items-center bg-white border border-[#EFECE6] rounded-full px-2 py-1 shadow-sm">
+              <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="w-6 h-6 flex items-center justify-center text-[#9E9A93] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">-</button>
+              <div className="px-3 text-center">
+                <div className="text-sm font-bold text-[#D4A753]">{priorityLevel}</div>
+                <div className="text-[10px] font-bold text-[#1A1615]">(P{priorityLevel})</div>
+              </div>
+              <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="w-6 h-6 flex items-center justify-center text-[#1A1615] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">+</button>
+            </div>
+          </div>
         </div>
 
-        {/* Mobile Only Featured Cohort */}
-        <div className="lg:hidden mt-4 bg-[#1A1615] rounded-xl shadow-xl text-white relative overflow-hidden h-32">
+        {/* Mobile featured cohort banner */}
+        <div className="lg:hidden mt-2 bg-[#1A1615] rounded-xl shadow-xl text-white relative overflow-hidden h-32">
           <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=500&auto=format&fit=crop&q=80" alt="Coffee" className="absolute inset-0 w-full h-full object-cover opacity-60" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
           <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
@@ -563,8 +564,23 @@ export const CampaignBuilderPage: React.FC = () => {
             <span className="px-2 py-0.5 bg-black/50 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase backdrop-blur-sm">EXCLUSIVE</span>
           </div>
         </div>
+
+        {/* Continue Button */}
+        <button
+          id="step1-continue"
+          type="button"
+          disabled={!step1Valid}
+          onClick={() => step1Valid && setCurrentStep(2)}
+          className={`w-full py-3.5 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-all ${step1Valid
+              ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
+              : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
+            }`}
+        >
+          Continue to Audience <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
 
+      {/* ── RIGHT COLUMN – Live Preview ── */}
       <div className="hidden lg:block lg:col-span-5 space-y-4">
         <div className="bg-[#1A1615] rounded-2xl p-6 shadow-xl text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
@@ -573,37 +589,44 @@ export const CampaignBuilderPage: React.FC = () => {
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">REVIA ARTISAN PASS</span>
-              <span className="px-2 py-0.5 bg-[#D4A753]/20 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase">LOYALTY BOOST</span>
+              <span className="px-2 py-0.5 bg-[#D4A753]/20 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase">
+                {topLevelType ? topLevelType.replace(/_/g, ' ').toUpperCase() : 'NEW CAMPAIGN'}
+              </span>
             </div>
             <div className="h-32 bg-neutral-800 rounded-xl mb-4 overflow-hidden border border-neutral-700">
               <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=500&auto=format&fit=crop&q=80" alt="Coffee Flight" className="w-full h-full object-cover opacity-80" />
             </div>
-            <h4 className="text-lg font-bold mb-2">Autumn Reserve Tasting &amp; Geisha Perk</h4>
+            <h4 className="text-lg font-bold mb-2">{campaignName || 'Untitled Campaign'}</h4>
             <div className="space-y-1.5">
               <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#0D7A53]" /> 3 Flagship Branches
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#0D7A53]" /> {activeBranches.length} Branch{activeBranches.length !== 1 ? 'es' : ''} Selected
               </div>
               <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
-                <Calendar className="w-3.5 h-3.5 text-[#D4A753]" /> Nov 1 – Nov 30, 2024
+                <Calendar className="w-3.5 h-3.5 text-[#D4A753]" />
+                {startDate && endDate ? `${startDate} – ${endDate}` : 'No dates set'}
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" />
+                Status: {statusDraft ? 'Draft' : 'Active'}
               </div>
             </div>
           </div>
         </div>
 
         <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm space-y-4">
-          <h4 className="text-[11px] uppercase font-bold tracking-wider text-[#1A1615]">Summary Specs Widget</h4>
+          <h4 className="text-[11px] uppercase font-bold tracking-wider text-[#1A1615]">Summary Specs</h4>
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs font-semibold">
-              <span className="text-[#6E6A66]">Branch Eligibility</span>
-              <span className="text-[#1A1615]">3 Outlets Attached</span>
+              <span className="text-[#6E6A66]">Campaign Type</span>
+              <span className="text-[#1A1615] capitalize">{fullCampaignType ? fullCampaignType.replace(/_/g, ' ') : '—'}</span>
             </div>
             <div className="flex items-center justify-between text-xs font-semibold">
-              <span className="text-[#6E6A66]">Program Horizon</span>
-              <span className="text-[#1A1615]">30 Calendar Days</span>
+              <span className="text-[#6E6A66]">Branch Eligibility</span>
+              <span className="text-[#1A1615]">{activeBranches.length} Outlet{activeBranches.length !== 1 ? 's' : ''}</span>
             </div>
             <div className="flex items-center justify-between text-xs font-semibold">
               <span className="text-[#6E6A66]">Conflict Resolution</span>
-              <span className="text-[#1A1615]">Level 1 (Highest Arbitration)</span>
+              <span className="text-[#1A1615]">Level {priorityLevel} (P{priorityLevel})</span>
             </div>
             <div className="pt-3 border-t border-[#EFECE6] flex items-center justify-between">
               <div>
@@ -617,6 +640,7 @@ export const CampaignBuilderPage: React.FC = () => {
       </div>
     </div>
   );
+
 
   const renderStep2 = () => (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
