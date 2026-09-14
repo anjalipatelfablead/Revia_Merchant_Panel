@@ -9,6 +9,7 @@ import {
   UserPlus,
   Edit2,
   ChevronDown,
+  ChevronRight,
   SlidersHorizontal,
   KeyRound,
   Store,
@@ -216,6 +217,7 @@ export const StaffPage: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string>('All');
   const [branchFilter, setBranchFilter] = useState<string>('All');
   const [statusFilter, setStatusFilter] = useState<string>('All');
+  const [expandedStaffRow, setExpandedStaffRow] = useState<string | null>(null);
 
   // Modals & Interactivity
   const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false);
@@ -520,8 +522,8 @@ export const StaffPage: React.FC = () => {
               </span>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[#F2EFE9] text-[10px] uppercase font-bold tracking-wider text-[#8C827A] bg-[#FAF8F5]/50">
@@ -594,6 +596,73 @@ export const StaffPage: React.FC = () => {
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Expandable List */}
+            <div className="sm:hidden flex flex-col">
+              {filteredStaff.map((member) => {
+                const isSelected = member.id === selectedStaff.id;
+                const isExpanded = expandedStaffRow === member.id;
+                
+                return (
+                  <div key={member.id} className="border-b border-[#F2EFE9] last:border-b-0 overflow-hidden">
+                    <button
+                      onClick={() => {
+                        setSelectedStaffId(member.id);
+                        setExpandedStaffRow(isExpanded ? null : member.id);
+                      }}
+                      className={`w-full p-4 flex items-center justify-between transition-colors cursor-pointer ${
+                        isSelected ? 'bg-[#FAF6EE]/70' : 'bg-white hover:bg-[#FAF8F5]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {member.avatar ? (
+                          <img
+                            src={member.avatar}
+                            alt={member.name}
+                            className="w-10 h-10 rounded-full object-cover ring-1 ring-[#EAE6E1]"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-[#F5F2EC] text-[#5C554E] flex items-center justify-center font-bold text-sm ring-1 ring-[#EAE6E1]">
+                            {member.initials || 'ST'}
+                          </div>
+                        )}
+                        <div className="text-left">
+                          <div className="font-bold text-[#1A1615] text-[13px]">{member.name}</div>
+                          <div className="text-[11px] text-[#7C746C]">{member.email}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-semibold ${member.roleTierClass}`}>
+                          {member.roleTierLabel}
+                        </span>
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4 text-[#8C827A]" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-[#8C827A]" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {isExpanded && (
+                      <div className={`p-4 grid grid-cols-2 gap-4 border-t border-[#F2EFE9] ${isSelected ? 'bg-[#FAF6EE]/30' : 'bg-[#FAF8F5]/50'}`}>
+                        <div>
+                          <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Assigned Venues</div>
+                          <div className="font-medium text-[#3D3732] text-xs">{member.assignedVenues}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Terminal PIN</div>
+                          <div className="font-mono">
+                            <span className="text-[#8C827A] mr-1.5 font-bold">••••</span>
+                            <span className="text-[#15803D] font-medium text-xs">Active</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

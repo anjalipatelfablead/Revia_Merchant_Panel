@@ -11,7 +11,8 @@ import {
   X,
   Sparkles,
   Plus,
-  ChevronRight
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 import { Customer, LoyaltyTier } from '../types';
 
@@ -27,6 +28,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
   onAddCustomer,
 }) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || '');
+  const [expandedCustomerRow, setExpandedCustomerRow] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -167,7 +169,8 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
           {/* 4. LEFT SECTION: CUSTOMER DATA TABLE */}
           <div className="xl:col-span-7 2xl:col-span-8 bg-white rounded-xl border border-[#EFECE6] shadow-sm flex flex-col overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[700px]">
                 <thead>
                   <tr className="bg-[#F7F5F0] border-b border-[#EFECE6]">
@@ -225,6 +228,72 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Expandable List */}
+            <div className="md:hidden flex flex-col">
+              {customers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((cust) => {
+                const isSelected = cust.id === selectedCustomerId;
+                const isExpanded = expandedCustomerRow === cust.id;
+                const progressPct = (cust.stampsCount / cust.stampsMax) * 100;
+
+                return (
+                  <div key={cust.id} className="border-b border-[#EFECE6] last:border-b-0 overflow-hidden">
+                    <button
+                      onClick={() => {
+                        setSelectedCustomerId(cust.id);
+                        setExpandedCustomerRow(isExpanded ? null : cust.id);
+                      }}
+                      className={`w-full p-4 flex items-center justify-between transition-colors cursor-pointer ${
+                        isSelected ? 'bg-[#FDF8EB]/60' : 'bg-white hover:bg-[#FAF8F5]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <img src={cust.avatar} alt={cust.name} className="w-10 h-10 rounded-full object-cover border border-[#EFECE6] shadow-xs" />
+                        <div className="text-left">
+                          <div className="text-sm font-bold text-[#1A1615] flex items-center gap-2">
+                            {cust.name}
+                            {isSelected && <span className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#D4A753]"></span>}
+                          </div>
+                          <div className="text-[11px] font-mono font-semibold text-[#9E9A93]">{cust.id}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 shrink-0">
+                         {getTierBadge(cust.tier)}
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4 text-[#8C827A]" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-[#8C827A]" />
+                        )}
+                      </div>
+                    </button>
+
+                    {isExpanded && (
+                      <div className={`p-4 grid grid-cols-2 gap-4 border-t border-[#EFECE6] ${isSelected ? 'bg-[#FDF8EB]/30' : 'bg-[#FAF8F5]/50'}`}>
+                        <div>
+                          <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Phone / Contact</div>
+                          <div className="text-xs font-mono font-bold text-[#1A1615]">{cust.phone}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[9px] uppercase font-bold text-[#9E9A93] mb-1 tracking-wider">Loyalty Stamps</div>
+                          <div className="flex flex-col items-end gap-1.5">
+                            <div className="text-xs font-mono font-bold text-[#1A1615]">
+                              {cust.stampsCount} / 10
+                            </div>
+                            <div className="w-24 h-1.5 bg-[#EFECE6] rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-full transition-all duration-500 ease-out"
+                                style={{ width: `${progressPct}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
             {/* Table Footer / Pagination */}

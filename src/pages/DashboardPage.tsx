@@ -31,6 +31,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const [timeframe, setTimeframe] = useState<'Daily' | 'Weekly' | 'Monthly'>('Daily');
   const [activeDateRange, setActiveDateRange] = useState('Last 30 Days (Oct 1 - Oct 31, 2024)');
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
+  const [expandedBranch, setExpandedBranch] = useState<string | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<{
     date: string;
     stamps: number;
@@ -177,9 +178,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                       setActiveDateRange(range);
                       setDateDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${
-                      range === activeDateRange ? 'font-bold text-[#A37837] bg-[#FAF6EE]' : 'text-[#1A1615]'
-                    }`}
+                    className={`w-full text-left px-3 py-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${range === activeDateRange ? 'font-bold text-[#A37837] bg-[#FAF6EE]' : 'text-[#1A1615]'
+                      }`}
                   >
                     {range}
                   </button>
@@ -365,14 +365,17 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
       {/* 3. Middle Grid: Visits/Redemptions (8 cols) & Program Velocity (4 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Left Chart: Customer Visits & Reward Redemptions */}
+        {/* Left Card: Volume Trends Chart */}
         <div className="lg:col-span-8 bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs flex flex-col justify-between">
-          <div>
+          <div className="flex flex-col flex-1">
             {/* Card Header & Toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-bold text-[#1A1615]">
-                  Customer Visits &amp; Reward Redemptions
+                <h2 className="text-base font-bold text-[#1A1615] flex items-center gap-2">
+                  Volume Trends
+                  <span className="text-[10px] font-bold bg-[#EBF7F0] text-[#15803D] border border-[#CEEBD9] px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    Live
+                  </span>
                 </h2>
                 <p className="text-xs text-[#7C746C] mt-0.5">
                   Dynamic volume comparison across all terminal stamps
@@ -385,11 +388,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                   <button
                     key={t}
                     onClick={() => setTimeframe(t)}
-                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-                      timeframe === t
-                        ? 'bg-[#B38637] text-white shadow-2xs'
-                        : 'text-[#7C746C] hover:text-[#1A1615]'
-                    }`}
+                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${timeframe === t
+                      ? 'bg-[#B38637] text-white shadow-2xs'
+                      : 'text-[#7C746C] hover:text-[#1A1615]'
+                      }`}
                   >
                     {t}
                   </button>
@@ -417,9 +419,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             </div>
 
             {/* Interactive SVG Chart Viewport */}
-            <div className="relative mt-4 h-64 w-full select-none">
+            <div className="relative mt-4 min-h-[16rem] flex-1 w-full select-none">
               <svg
-                className="w-full h-full overflow-visible"
+                className="w-full h-full overflow-visible absolute inset-0"
                 viewBox="0 0 640 210"
                 preserveAspectRatio="none"
               >
@@ -724,16 +726,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* Left: Real-time Branch Activity */}
         <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-[#1A1615]">
-                  Real-time Branch Activity
-                </h2>
-                <span className="w-2 h-2 rounded-full bg-[#15803D] animate-pulse" />
+            <div className="flex items-start sm:items-center justify-between gap-2">
+              <h2 className="text-base font-bold text-[#1A1615]">
+                Real-time Branch Activity
+              </h2>
+              <div className="flex items-center gap-1.5 shrink-0 mt-1 sm:mt-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] animate-pulse" />
+                <span className="font-mono text-[11px] sm:text-xs text-[#5C554E] whitespace-nowrap">
+                  Stream: Connected
+                </span>
               </div>
-              <span className="font-mono text-xs text-[#5C554E]">
-                Stream: Connected
-              </span>
             </div>
             <p className="text-xs text-[#7C746C] mt-0.5 mb-4">
               Instant log of counter scans, member tier upgrades, and verified redemptions
@@ -856,15 +858,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           </div>
 
           {/* Footer Action */}
-          <div className="mt-4 pt-3 border-t border-[#F5F2EC] flex items-center justify-between">
+          <div className="mt-4 pt-3 border-t border-[#F5F2EC] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-0">
             <button
               onClick={() => onNavigate('/settings/audit')}
-              className="text-xs font-bold text-[#A37837] hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-[11px] sm:text-xs font-bold text-[#A37837] hover:underline flex items-center gap-1 cursor-pointer w-fit"
             >
               <span>View full activity audit ledger</span>
               <span>→</span>
             </button>
-            <span className="text-[11px] text-[#8C827A]">
+            <span className="text-[10px] sm:text-[11px] text-[#8C827A] flex items-center gap-1">
+              <span className="w-1 h-1 rounded-full bg-[#8C827A] sm:hidden"></span>
               Refreshed automatically
             </span>
           </div>
@@ -877,7 +880,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <h2 className="text-base font-bold text-[#1A1615]">
                 Branch Comparison &amp; Stand Status
               </h2>
-              <button 
+              <button
                 className="text-[#8C827A] hover:text-[#1A1615] p-1 cursor-pointer"
                 aria-label="Options"
               >
@@ -888,8 +891,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               Operational stand performance across live retail sites
             </p>
 
-            {/* Performance Table */}
-            <div className="overflow-x-auto">
+            {/* Desktop Performance Table */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[#F2EFE9] text-[10px] uppercase font-bold tracking-wider text-[#8C827A]">
@@ -901,94 +904,83 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F5F2EC] text-xs">
-                  {/* Row 1 */}
-                  <tr>
-                    <td className="py-3">
-                      <div className="font-bold text-[#1A1615]">
-                        Downtown Flagship
-                      </div>
-                      <div className="text-[10px] text-[#8C827A]">
-                        742 Evergreen Terr.
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className="flex items-center gap-1.5 font-medium text-[#1A1615]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
-                        6 Active
-                      </span>
-                    </td>
-                    <td className="py-3 font-bold text-[#1A1615]">
-                      412
-                    </td>
-                    <td className="py-3 font-bold text-[#B38637]">
-                      38
-                    </td>
-                    <td className="py-3 text-right">
-                      <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[11px] font-medium px-2.5 py-0.5 rounded-full inline-block">
-                        3 On-duty
-                      </span>
-                    </td>
-                  </tr>
-
-                  {/* Row 2 */}
-                  <tr>
-                    <td className="py-3">
-                      <div className="font-bold text-[#1A1615]">
-                        Northside Mall
-                      </div>
-                      <div className="text-[10px] text-[#8C827A]">
-                        Atrium Level 2, Unit 4B
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className="flex items-center gap-1.5 font-medium text-[#1A1615]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
-                        4 Active
-                      </span>
-                    </td>
-                    <td className="py-3 font-bold text-[#1A1615]">
-                      245
-                    </td>
-                    <td className="py-3 font-bold text-[#B38637]">
-                      22
-                    </td>
-                    <td className="py-3 text-right">
-                      <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[11px] font-medium px-2.5 py-0.5 rounded-full inline-block">
-                        2 On-duty
-                      </span>
-                    </td>
-                  </tr>
-
-                  {/* Row 3 */}
-                  <tr>
-                    <td className="py-3">
-                      <div className="font-bold text-[#1A1615]">
-                        West End Kiosk
-                      </div>
-                      <div className="text-[10px] text-[#8C827A]">
-                        Transit Plaza Central
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className="flex items-center gap-1.5 font-medium text-[#1A1615]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
-                        2 Active
-                      </span>
-                    </td>
-                    <td className="py-3 font-bold text-[#1A1615]">
-                      118
-                    </td>
-                    <td className="py-3 font-bold text-[#B38637]">
-                      14
-                    </td>
-                    <td className="py-3 text-right">
-                      <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[11px] font-medium px-2.5 py-0.5 rounded-full inline-block">
-                        1 On-duty
-                      </span>
-                    </td>
-                  </tr>
+                  {[
+                    { id: 'downtown', name: 'Downtown Flagship', address: '742 Evergreen Terr.', stands: 6, scans: 412, redeemed: 38, staff: '3 On-duty' },
+                    { id: 'northside', name: 'Northside Mall', address: 'Atrium Level 2, Unit 4B', stands: 4, scans: 245, redeemed: 22, staff: '2 On-duty' },
+                    { id: 'westend', name: 'West End Kiosk', address: 'Transit Plaza Central', stands: 2, scans: 118, redeemed: 14, staff: '1 On-duty' }
+                  ].map(branch => (
+                    <tr key={branch.id}>
+                      <td className="py-3">
+                        <div className="font-bold text-[#1A1615]">{branch.name}</div>
+                        <div className="text-[10px] text-[#8C827A]">{branch.address}</div>
+                      </td>
+                      <td className="py-3">
+                        <span className="flex items-center gap-1.5 font-medium text-[#1A1615]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
+                          {branch.stands} Active
+                        </span>
+                      </td>
+                      <td className="py-3 font-bold text-[#1A1615]">{branch.scans}</td>
+                      <td className="py-3 font-bold text-[#B38637]">{branch.redeemed}</td>
+                      <td className="py-3 text-right">
+                        <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[11px] font-medium px-2.5 py-0.5 rounded-full inline-block">
+                          {branch.staff}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Expandable List */}
+            <div className="sm:hidden space-y-3">
+              {[
+                { id: 'downtown', name: 'Downtown Flagship', address: '742 Evergreen Terr.', stands: 6, scans: 412, redeemed: 38, staff: '3 On-duty' },
+                { id: 'northside', name: 'Northside Mall', address: 'Atrium Level 2, Unit 4B', stands: 4, scans: 245, redeemed: 22, staff: '2 On-duty' },
+                { id: 'westend', name: 'West End Kiosk', address: 'Transit Plaza Central', stands: 2, scans: 118, redeemed: 14, staff: '1 On-duty' }
+              ].map(branch => (
+                <div key={branch.id} className="border border-[#EAE6E1] rounded-xl overflow-hidden shadow-2xs">
+                  <button
+                    onClick={() => setExpandedBranch(expandedBranch === branch.id ? null : branch.id)}
+                    className="w-full bg-[#FAF8F5] p-3 flex items-center justify-between transition-colors cursor-pointer hover:bg-[#F5F2EC]"
+                  >
+                    <div className="text-left">
+                      <div className="font-bold text-[#1A1615] text-xs">{branch.name}</div>
+                      <div className="text-[10px] text-[#8C827A]">{branch.address}</div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-1 font-medium text-[#1A1615] text-[11px]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
+                        {branch.stands} Active
+                      </span>
+                      {expandedBranch === branch.id ? (
+                        <ChevronDown className="w-4 h-4 text-[#8C827A]" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-[#8C827A]" />
+                      )}
+                    </div>
+                  </button>
+                  {expandedBranch === branch.id && (
+                    <div className="p-3 bg-white grid grid-cols-3 gap-3 border-t border-[#EAE6E1]">
+                      <div>
+                        <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Today Scans</div>
+                        <div className="font-bold text-[#1A1615] text-sm">{branch.scans}</div>
+                      </div>
+                      <div>
+                        <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Redeemed</div>
+                        <div className="font-bold text-[#B38637] text-sm">{branch.redeemed}</div>
+                      </div>
+                      <div className="text-right flex flex-col items-end">
+                        <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Staff Active</div>
+                        <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[10px] font-medium px-2 py-0.5 rounded-full inline-block">
+                          {branch.staff}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* Terminal Telemetry Box */}

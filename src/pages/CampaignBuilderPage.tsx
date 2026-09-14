@@ -44,13 +44,25 @@ import {
   AlertCircle,
   Hourglass,
   BellRing,
-  Bookmark
+  Bookmark,
+  ChevronRight
 } from 'lucide-react';
 
 export const CampaignBuilderPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
   const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
+
+  const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>('dashboard');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All Status');
+  const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
+
+  const [campaigns, setCampaigns] = useState([
+    { id: 1, name: 'Autumn Reserve Tasting', type: 'Welcome Campaign', status: 'Active', target: 'VIP', startDate: 'Nov 1, 2024', endDate: 'Nov 30, 2024', progress: 85, reward: 'Free Geisha Pour Over' },
+    { id: 2, name: 'Holiday Triple Stamps', type: 'Stamp Campaign', status: 'Draft', target: 'All Customers', startDate: 'Dec 1, 2024', endDate: 'Dec 31, 2024', progress: 0, reward: 'Free Pastry' },
+    { id: 3, name: 'Morning Happy Hour', type: 'Happy Hours', status: 'Active', target: 'Gold', startDate: 'Oct 15, 2024', endDate: 'Ongoing', progress: 42, reward: '10% Discount' },
+  ]);
 
   const [priorityLevel, setPriorityLevel] = useState<number>(1);
   const [selectedTiers, setSelectedTiers] = useState<string[]>(['Obsidian VIP', 'Gold Reserve']);
@@ -140,6 +152,11 @@ export const CampaignBuilderPage: React.FC = () => {
     { id: 'Referral Bonus', icon: Users },
     { id: 'New Customer', icon: UserPlus },
     { id: 'Old Customer', icon: RefreshCw },
+    { id: 'Welcome Campaign', icon: Sparkles },
+    { id: 'Visit Campaign', icon: Activity },
+    { id: 'Billing Campaign', icon: DollarSign },
+    { id: 'Stamp Campaign', icon: FileText },
+    { id: 'Happy Hours', icon: Clock },
   ];
 
   const steps = [
@@ -222,7 +239,213 @@ export const CampaignBuilderPage: React.FC = () => {
             </div>
           </div>
 
+          <div className="space-y-4 mt-6 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">MANDATORY CAMPAIGN VALIDITY</label>
+              <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase">Required</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Start Date &amp; Time</label>
+                <input type="datetime-local" defaultValue="2024-11-01T00:00" className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm" />
+              </div>
+              <div>
+                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">End Date &amp; Time</label>
+                <input type="datetime-local" defaultValue="2024-11-30T23:59" className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Status</label>
+                <select className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm">
+                  <option>Active</option>
+                  <option>Draft</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Applicable Customer Type</label>
+                <select className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm">
+                  <option>All Customers</option>
+                  <option>VIP Members</option>
+                  <option>New Customers</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Reward Type</label>
+                <select className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm mb-2">
+                  <option>Cashback</option>
+                  <option>Discount - Fixed Amount</option>
+                  <option>Discount - Percentage</option>
+                  <option>Reward Points</option>
+                  <option>Free Item</option>
+                </select>
+                <p className="text-[10px] text-[#6E6A66] leading-tight">
+                  The reward configuration shall depend on the campaign type. The Reward Engine must generate the reward only when all applicable campaign conditions are satisfied.
+                </p>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Campaign-specific Conditions</label>
+                <input type="text" placeholder="e.g. Min spend $50" className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm" />
+              </div>
+            </div>
+
+            <div className="bg-[#E0F9ED] border border-[#BCE3D1] p-3 rounded-lg flex items-start gap-2 mt-4">
+              <CheckCircle2 className="w-4 h-4 text-[#0D7A53] shrink-0 mt-0.5" />
+              <p className="text-[11px] font-medium text-[#0D7A53] leading-tight">
+                A campaign shall be considered active only when: Current Date/Time ≥ Start Date/Time <strong>AND</strong> Current Date/Time ≤ End Date/Time <strong>AND</strong> Campaign Status = Active
+              </p>
+            </div>
+          </div>
+
         </div>
+
+        {/* Dynamic Campaign Forms based on selected type */}
+        {['Welcome Campaign', 'Visit Campaign', 'Billing Campaign', 'Stamp Campaign', 'Happy Hours'].includes(selectedCampaignType) && (
+          <div className="mt-6 p-4 border border-[#D4A753] bg-[#FDF8EB] rounded-xl shadow-sm">
+            <h4 className="text-[13px] font-bold text-[#9E782F] mb-4 flex items-center gap-2">
+              <Sparkles className="w-4 h-4" /> {selectedCampaignType} Configuration
+            </h4>
+
+            {selectedCampaignType === 'Welcome Campaign' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-bold text-[#1A1615]">First qualifying transaction</span>
+                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-bold text-[#1A1615]">One-time reward usage</span>
+                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-bold text-[#1A1615]">Show whether the welcome reward has already been used</span>
+                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
+                </div>
+              </div>
+            )}
+
+            {selectedCampaignType === 'Visit Campaign' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Required number of qualifying visits</label>
+                  <input type="number" defaultValue={5} className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                </div>
+                <div>
+                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Minimum billing amount per visit</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold">₹</span>
+                    <input type="number" defaultValue={500} className="w-full pl-7 pr-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-bold text-[#1A1615]">Enable visit progress tracking</span>
+                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
+                </div>
+              </div>
+            )}
+
+            {selectedCampaignType === 'Billing Campaign' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Billing Frequency target</label>
+                  <select className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
+                    <option>One-Time</option>
+                    <option>Monthly</option>
+                    <option>Quarterly</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Target billing amount</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold">₹</span>
+                    <input type="number" defaultValue={5000} className="w-full pl-7 pr-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-bold text-[#1A1615]">Enable cumulative billing progress</span>
+                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
+                </div>
+              </div>
+            )}
+
+            {selectedCampaignType === 'Stamp Campaign' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Select qualifying product/item</label>
+                  <input type="text" placeholder="e.g. Geisha Pour Over" className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Target stamp count</label>
+                    <input type="number" defaultValue={10} className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                  <div>
+                    <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Current stamp progress tracking</label>
+                    <select className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
+                      <option>Enabled</option>
+                      <option>Disabled</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedCampaignType === 'Happy Hours' && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Start Time</label>
+                    <input type="time" defaultValue="14:00" className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                  <div>
+                    <label className="text-[12px] font-bold text-[#1A1615] block mb-1">End Time</label>
+                    <input type="time" defaultValue="17:00" className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[12px] font-bold text-[#1A1615] block mb-1">Applicable days</label>
+                  <div className="flex gap-2">
+                    {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
+                      <button key={idx} className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${idx < 5 ? 'bg-[#9E782F] text-white' : 'bg-white border border-[#F3E5C8] text-[#6E6A66]'}`}>{day}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-bold text-[#1A1615]">Holiday exclusion</span>
+                  <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#D4A753]" />
+                </div>
+              </div>
+            )}
+
+            {/* Shared Reward Configuration */}
+            <div className="mt-6 pt-4 border-t border-[#F3E5C8]">
+              <h5 className="text-[12px] font-bold text-[#1A1615] mb-3 uppercase tracking-wider">Reward Configuration</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Reward Type</label>
+                  <select className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
+                    <option>Cashback</option>
+                    <option>Discount - Fixed Amount</option>
+                    <option>Discount - Percentage</option>
+                    <option>Reward Points</option>
+                    <option>Free Item</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Reward Value</label>
+                  <input type="text" placeholder="e.g. 100 or 10%" className="w-full px-3 py-2 bg-white border border-[#F3E5C8] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        )}
+
 
         <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
           {/* Mobile Block Header */}
@@ -420,18 +643,60 @@ export const CampaignBuilderPage: React.FC = () => {
               {selectedTiers.includes('Obsidian VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
               Obsidian VIP
             </button>
-            <button onClick={() => toggleTier('Gold Reserve')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Gold Reserve') ? 'bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
-              {selectedTiers.includes('Gold Reserve') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" /> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
-              Gold Reserve
+            <button onClick={() => toggleTier('VVIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('VVIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('VVIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              VVIP
             </button>
-            <button onClick={() => toggleTier('Silver Tier')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Silver Tier') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
-              {selectedTiers.includes('Silver Tier') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
-              Silver Tier
+            <button onClick={() => toggleTier('VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              VIP
             </button>
-            <button onClick={() => toggleTier('All Tiers')} className={`flex items-center px-4 py-2 rounded-full text-[13px] font-bold transition-colors ${selectedTiers.length === 3 ? 'bg-[#EFECE6] text-[#1A1615]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] hover:bg-[#EFECE6]'}`}>
-              All Tiers
+            <button onClick={() => toggleTier('Gold')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Gold') ? 'bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Gold') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" /> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Gold
+            </button>
+            <button onClick={() => toggleTier('Silver')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Silver') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Silver') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Silver
+            </button>
+            <button onClick={() => toggleTier('Bronze')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Bronze') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Bronze') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Bronze
+            </button>
+            <button onClick={() => toggleTier('All Tiers')} className={`flex items-center px-4 py-2 rounded-full text-[13px] font-bold transition-colors ${selectedTiers.includes('All Tiers') ? 'bg-[#EFECE6] text-[#1A1615]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] hover:bg-[#EFECE6]'}`}>
+              All Customers
             </button>
           </div>
+
+          {selectedTiers.some(t => ['VIP', 'VVIP', 'Gold', 'Silver', 'Bronze'].includes(t)) && (
+            <div className="mt-4 p-4 border border-[#EFECE6] bg-white rounded-xl shadow-sm space-y-4">
+              <h5 className="text-[12px] font-bold text-[#1A1615] uppercase tracking-wider">Customer Type Conditions</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Minimum Billing Amount</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold">₹</span>
+                    <input type="number" defaultValue={1000} className="w-full pl-7 pr-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Status</label>
+                  <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
+                    <option>Active</option>
+                    <option>Inactive</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Start Date</label>
+                  <input type="date" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Expiry Date</label>
+                  <input type="date" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                </div>
+              </div>
+            </div>
+          )}
           <button onClick={() => showToast('Custom segment builder will open.')} className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FAF8F5] text-[#9E782F] border border-[#EFECE6] rounded-full text-[12px] font-bold hover:bg-[#FDF8EB] transition-colors mt-1 cursor-pointer">
             <Plus className="w-3 h-3" /> Add Custom Segment
           </button>
@@ -444,7 +709,7 @@ export const CampaignBuilderPage: React.FC = () => {
             </div>
             <p className="text-[13px] text-[#6E6A66]">Target new first-time salon guests or re-engage loyal recurring patrons.</p>
           </div>
-          <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-1.5">
+          <div className="flex flex-col sm:flex-row gap-1.5 sm:gap-0 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-1.5">
             <button onClick={() => setLifecycleType('New')} className={`flex-1 py-2.5 text-[13px] font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${lifecycleType === 'New' ? 'text-white bg-gradient-to-b from-[#C59B46] to-[#9E782F] shadow-sm border border-[#9E782F]' : 'text-[#6E6A66] hover:bg-[#EFECE6] cursor-pointer'}`}>
               New Patrons {lifecycleType === 'New' && <Check className="w-4 h-4" />}
             </button>
@@ -465,7 +730,7 @@ export const CampaignBuilderPage: React.FC = () => {
             <p className="text-[13px] text-[#6E6A66]">Trigger perk availability around patron birthdays or anniversary milestones.</p>
           </div>
 
-          <div className="bg-[#FDF8EB] border border-[#F3E5C8] rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-[#FDF8EB] border border-[#F3E5C8] rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm border border-[#EFECE6]">
                 <Calendar className="w-5 h-5 text-[#D4A753]" />
@@ -688,8 +953,8 @@ export const CampaignBuilderPage: React.FC = () => {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       <div className="lg:col-span-8 space-y-6">
         <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm space-y-8">
-          <div className="flex items-center justify-between border-b border-[#EFECE6] pb-5">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#EFECE6] pb-5 gap-4 md:gap-0">
+            <div className="flex items-start md:items-center gap-4">
               <div className="w-12 h-12 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6]">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#D4A753]"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
               </div>
@@ -707,7 +972,7 @@ export const CampaignBuilderPage: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <span className="text-[12px] font-bold text-[#6E6A66] tracking-wider">MATCH</span>
               <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1">
                 <button onClick={() => setMatchType('ALL')} className={`px-4 py-1.5 text-[12px] font-bold rounded-md transition-colors cursor-pointer ${matchType === 'ALL' ? 'bg-[#1A1615] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>ALL (AND)</button>
@@ -729,7 +994,7 @@ export const CampaignBuilderPage: React.FC = () => {
                   {rule.type === 'standard1' && (
                     <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 pr-4 shadow-sm">
                       <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E9A93]" /></div>
-                      <div className="flex-1 grid grid-cols-3 gap-3">
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
                         <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>Customer Lifetime $</option></select>
                         <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-medium text-[#6E6A66] focus:outline-none"><option>is greater than or equal to</option></select>
                         <div className="relative">
@@ -747,7 +1012,7 @@ export const CampaignBuilderPage: React.FC = () => {
                   {rule.type === 'standard2' && (
                     <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 pr-4 shadow-sm">
                       <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E9A93]" /></div>
-                      <div className="flex-1 grid grid-cols-3 gap-3">
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
                         <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>Last Visit Date</option></select>
                         <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-medium text-[#6E6A66] focus:outline-none"><option>is within the last</option></select>
                         <div className="flex bg-white border border-[#EFECE6] rounded-lg overflow-hidden">
@@ -764,8 +1029,8 @@ export const CampaignBuilderPage: React.FC = () => {
 
                   {rule.type === 'bogo' && (
                     <div className="bg-[#FDF8EB] border-2 border-[#F3E5C8] rounded-xl p-5 shadow-sm relative">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3 md:gap-0">
+                        <div className="flex items-start md:items-center gap-3">
                           <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E782F]" /></div>
                           <span className="px-2.5 py-1 bg-[#D4A753]/20 text-[#9E782F] font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5 border border-[#D4A753]/30">
                             <Gift className="w-3 h-3" /> BOGO
@@ -779,23 +1044,25 @@ export const CampaignBuilderPage: React.FC = () => {
                       </div>
 
                       <div className="ml-8 space-y-4">
-                        <div className="flex items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-2 pr-3 shadow-sm">
-                          <select className="flex-1 bg-transparent text-[13px] font-bold text-[#1A1615] px-2 focus:outline-none"><option>Espresso</option></select>
-                          <span className="text-[13px] font-medium text-[#6E6A66]">buy quantity of</span>
-                          <input type="text" defaultValue="3" className="w-12 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[14px] font-bold text-[#1A1615] focus:outline-none" />
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-2 sm:pr-3 shadow-sm">
+                          <select className="w-full sm:flex-1 bg-transparent text-[13px] font-bold text-[#1A1615] px-2 focus:outline-none"><option>Espresso</option></select>
+                          <div className="flex items-center gap-2 px-2 sm:px-0 pb-1 sm:pb-0">
+                            <span className="text-[13px] font-medium text-[#6E6A66] whitespace-nowrap">buy quantity of</span>
+                            <input type="text" defaultValue="3" className="w-12 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[14px] font-bold text-[#1A1615] focus:outline-none" />
+                          </div>
                         </div>
 
                         <div className="pl-6 border-l-2 border-[#D4A753]/30 relative pt-2">
                           <div className="absolute top-1/2 -left-[2px] w-4 h-[2px] bg-[#D4A753]/30"></div>
                           <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-3 shadow-sm relative z-10">
                             <div className="flex items-center gap-2">
-                              <span className="text-[13px] font-bold text-[#1A1615]">Customer gets</span>
+                              <span className="text-[13px] font-bold text-[#1A1615] whitespace-nowrap">Customer gets</span>
                               <input type="text" defaultValue="1" className="w-10 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[13px] font-bold text-[#1A1615] focus:outline-none" />
                             </div>
 
-                            <div className="flex-1 flex items-center gap-3">
-                              <select className="flex-1 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>same item (Espresso)</option></select>
-                              <span className="text-[13px] font-bold text-[#1A1615]">free</span>
+                            <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-3 w-full">
+                              <select className="w-full sm:flex-1 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>same item (Espresso)</option></select>
+                              <span className="text-[13px] font-bold text-[#1A1615] self-end sm:self-auto">free</span>
                             </div>
 
                             <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1 shrink-0">
@@ -817,9 +1084,9 @@ export const CampaignBuilderPage: React.FC = () => {
 
                   {rule.type === 'orGroup' && (
                     <div className="bg-white border-2 border-[#EFECE6] rounded-xl p-5 shadow-sm">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="px-2.5 py-1 bg-[#9E782F] text-white font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3 md:gap-0">
+                        <div className="flex items-start md:items-center gap-3 flex-wrap md:flex-nowrap">
+                          <span className="px-2.5 py-1 bg-[#9E782F] text-white font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5 shrink-0">
                             <Network className="w-3 h-3" /> OR GROUP
                           </span>
                           <span className="text-[13px] font-bold text-[#1A1615]">Customer satisfies AT LEAST ONE criteria below:</span>
@@ -835,28 +1102,32 @@ export const CampaignBuilderPage: React.FC = () => {
                             {item.type === 'tier' ? (
                               <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-3 shadow-sm">
                                 <CornerDownRight className="w-4 h-4 text-[#9E9A93] shrink-0" />
-                                <div className="flex-1 flex flex-wrap items-center gap-2">
-                                  <div className="flex items-center gap-2 bg-white border border-[#EFECE6] rounded-lg px-3 py-1.5 shadow-sm">
-                                    <span className="text-[13px] font-medium text-[#1A1615]">Current Tier</span>
-                                    <Lock className="w-3 h-3 text-[#9E9A93]" />
+                                <div className="flex-1 flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <div className="flex items-center gap-2 bg-white border border-[#EFECE6] rounded-lg px-3 py-1.5 shadow-sm">
+                                      <span className="text-[13px] font-medium text-[#1A1615]">Current Tier</span>
+                                      <Lock className="w-3 h-3 text-[#9E9A93]" />
+                                    </div>
+                                    <span className="text-[13px] font-medium text-[#6E6A66]">is one of</span>
                                   </div>
-                                  <span className="text-[13px] font-medium text-[#6E6A66]">is one of</span>
-                                  <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#1A1615] text-white rounded-full text-[11px] font-bold shadow-sm">
-                                    <Star className="w-3 h-3 text-[#D4A753]" /> Obsidian VIP
-                                  </span>
-                                  <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] rounded-full text-[11px] font-bold shadow-sm">
-                                    <Trophy className="w-3 h-3 text-[#D4A753]" /> Gold Reserve
-                                  </span>
-                                  <button className="w-7 h-7 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center text-[#9E9A93] hover:text-[#1A1615] hover:border-[#D1CDC7] transition-all shadow-sm cursor-pointer">
-                                    <Plus className="w-4 h-4" />
-                                  </button>
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#1A1615] text-white rounded-full text-[11px] font-bold shadow-sm">
+                                      <Star className="w-3 h-3 text-[#D4A753]" /> Obsidian VIP
+                                    </span>
+                                    <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] rounded-full text-[11px] font-bold shadow-sm">
+                                      <Trophy className="w-3 h-3 text-[#D4A753]" /> Gold Reserve
+                                    </span>
+                                    <button className="w-7 h-7 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center text-[#9E9A93] hover:text-[#1A1615] hover:border-[#D1CDC7] transition-all shadow-sm cursor-pointer">
+                                      <Plus className="w-4 h-4" />
+                                    </button>
+                                  </div>
                                 </div>
                                 <button onClick={() => removeOrGroupItem(item.id)} className="p-2 text-[#9E9A93] hover:text-[#EF4444] transition-colors shrink-0 cursor-pointer"><X className="w-4 h-4" /></button>
                               </div>
                             ) : (
                               <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-3 shadow-sm">
                                 <CornerDownRight className="w-4 h-4 text-[#9E9A93] shrink-0" />
-                                <div className="flex-1 grid grid-cols-3 gap-3">
+                                <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
                                   <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm"><option>Total Stamp Cycle</option></select>
                                   <div className="flex items-center">
                                     <span className="text-[13px] font-medium text-[#6E6A66] px-3">is greater than</span>
@@ -887,7 +1158,7 @@ export const CampaignBuilderPage: React.FC = () => {
               ))}
             </div>
 
-            <div className="flex gap-4 items-center">
+            <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
               <button onClick={() => addRule('standard1')} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EFECE6] rounded-xl text-[13px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors shadow-sm cursor-pointer">
                 <Plus className="w-4 h-4" /> Add Condition Rule
               </button>
@@ -904,7 +1175,7 @@ export const CampaignBuilderPage: React.FC = () => {
         </div>
 
         <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex flex-col md:flex-row items-start justify-between mb-6 gap-4 md:gap-0">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6]">
                 <Store className="w-6 h-6 text-[#D4A753]" />
@@ -1135,8 +1406,8 @@ export const CampaignBuilderPage: React.FC = () => {
               const isActive = rewardSelection === option.id;
               const Icon = option.icon;
               return (
-                <button 
-                  key={option.id} 
+                <button
+                  key={option.id}
                   onClick={() => setRewardSelection(option.id)}
                   className={`pt-5 pb-4 px-3 rounded-xl text-center transition-colors flex flex-col items-center gap-3 cursor-pointer ${isActive ? 'bg-[#FDF8EB] border-2 border-[#D4A753] shadow-sm relative' : 'bg-[#FAF8F5] border border-[#EFECE6] hover:bg-[#EFECE6]'}`}
                 >
@@ -1835,6 +2106,207 @@ export const CampaignBuilderPage: React.FC = () => {
     </div>
   );
 
+  const renderDashboard = () => (
+    <div className="min-h-screen bg-[#FAF8F5] p-6 lg:p-10 font-sans text-[#1A1615]">
+      <div className="max-w-[1400px] mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] mb-2 leading-none">Campaign &amp; Loyalty Management</h1>
+            <p className="text-[14px] text-[#6E6A66] font-medium">Create, monitor, and optimize your customer engagement programs.</p>
+          </div>
+          <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="px-6 py-3 bg-[#1A1615] text-white rounded-xl text-sm font-bold shadow-md hover:bg-black transition-colors flex items-center justify-center gap-2">
+            <Plus className="w-4 h-4" /> Create New Campaign
+          </button>
+        </div>
+
+        {/* Filters & Search */}
+        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm mb-6 flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-[#9E9A93]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search campaigns by name or reward..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2.5 border border-[#EFECE6] rounded-lg bg-[#FAF8F5] text-sm focus:outline-none focus:ring-1 focus:ring-[#D4A753] focus:border-[#D4A753]"
+            />
+          </div>
+          <div className="grid grid-cols-2 md:flex md:items-center gap-3 w-full md:w-auto">
+            <select className="w-full md:w-auto border border-[#EFECE6] rounded-lg bg-[#FAF8F5] py-2.5 px-2 md:px-4 text-xs md:text-sm font-semibold text-[#1A1615] focus:outline-none focus:ring-1 focus:ring-[#D4A753]">
+              <option>All Types</option>
+              <option>Visit Type</option>
+              <option>Billing Type</option>
+              <option>Stamp Type</option>
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full md:w-auto border border-[#EFECE6] rounded-lg bg-[#FAF8F5] py-2.5 px-2 md:px-4 text-xs md:text-sm font-semibold text-[#1A1615] focus:outline-none focus:ring-1 focus:ring-[#D4A753]"
+            >
+              <option>All Status</option>
+              <option>Active</option>
+              <option>Draft</option>
+              <option>Ended</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Campaign List */}
+        <div className="bg-white border border-[#EFECE6] rounded-xl shadow-sm overflow-hidden">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
+                  <th className="py-3 px-5 text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Campaign Info</th>
+                  <th className="py-3 px-5 text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Type &amp; Target</th>
+                  <th className="py-3 px-5 text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Status</th>
+                  <th className="py-3 px-5 text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Timeline</th>
+                  <th className="py-3 px-5 text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Performance</th>
+                  <th className="py-3 px-5 text-[11px] font-bold uppercase tracking-wider text-[#9E9A93] text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {campaigns.filter(c =>
+                  (statusFilter === 'All' || statusFilter === 'All Status' || c.status === statusFilter) &&
+                  (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).map(c => (
+                  <tr key={c.id} className="border-b border-[#EFECE6] hover:bg-[#FAF8F5]/50 transition-colors">
+                    <td className="py-4 px-5">
+                      <div className="text-sm font-bold text-[#1A1615] mb-0.5">{c.name}</div>
+                      <div className="text-xs font-medium text-[#6E6A66] flex items-center gap-1.5"><Gift className="w-3.5 h-3.5" /> {c.reward}</div>
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="text-sm font-semibold text-[#1A1615] mb-0.5">{c.type}</div>
+                      <div className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider bg-[#FDF8EB] border border-[#F3E5C8] inline-block px-2 py-0.5 rounded">{c.target}</div>
+                    </td>
+                    <td className="py-4 px-5">
+                      {c.status === 'Active' ? (
+                        <span className="px-2.5 py-1 bg-[#E0F9ED] border border-[#BCE3D1] text-[#0D7A53] rounded-full text-[11px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#0D7A53] rounded-full"></span> {c.status}
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 bg-[#EFECE6] text-[#6E6A66] rounded-full text-[11px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#9E9A93] rounded-full"></span> {c.status}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="text-xs font-semibold text-[#1A1615]">{c.startDate}</div>
+                      <div className="text-[11px] text-[#6E6A66]">{c.endDate}</div>
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <div className="h-1.5 flex-1 bg-[#EFECE6] rounded-full overflow-hidden">
+                          <div className="h-full bg-[#D4A753] rounded-full" style={{ width: `${c.progress}%` }}></div>
+                        </div>
+                        <span className="text-[11px] font-bold text-[#1A1615] w-8">{c.progress}%</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 text-right space-x-2 flex justify-end">
+                      <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EFECE6] rounded-lg shadow-sm transition-colors" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                      <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EFECE6] rounded-lg shadow-sm transition-colors" title="Duplicate"><Copy className="w-4 h-4" /></button>
+                      <button className="p-1.5 text-[#6E6A66] hover:text-[#EF4444] bg-white border border-[#EFECE6] rounded-lg shadow-sm transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Accordion List */}
+          <div className="md:hidden flex flex-col">
+            {campaigns.filter(c =>
+              (statusFilter === 'All' || statusFilter === 'All Status' || c.status === statusFilter) &&
+              (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
+            ).map((c) => {
+              const isExpanded = expandedCampaignId === c.id;
+
+              return (
+                <div key={c.id} className="border-b border-[#EFECE6] last:border-b-0 overflow-hidden">
+                  <button
+                    onClick={() => setExpandedCampaignId(isExpanded ? null : c.id)}
+                    className="w-full flex items-center justify-between p-4 bg-white hover:bg-[#FAF8F5] transition-colors text-left"
+                  >
+                    <div>
+                      <div className="text-sm font-bold text-[#1A1615] mb-1">{c.name}</div>
+                      <div className="text-xs font-medium text-[#6E6A66] flex items-center gap-1.5 mb-2"><Gift className="w-3.5 h-3.5" /> {c.reward}</div>
+
+                      {c.status === 'Active' ? (
+                        <span className="px-2 py-0.5 bg-[#E0F9ED] border border-[#BCE3D1] text-[#0D7A53] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#0D7A53] rounded-full"></span> {c.status}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-[#EFECE6] text-[#6E6A66] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#9E9A93] rounded-full"></span> {c.status}
+                        </span>
+                      )}
+                    </div>
+                    <div className="shrink-0 ml-3">
+                      {isExpanded ? (
+                        <ChevronDown className="w-5 h-5 text-[#8C827A]" />
+                      ) : (
+                        <ChevronRight className="w-5 h-5 text-[#8C827A]" />
+                      )}
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="p-4 bg-[#FAF8F5] border-t border-[#EFECE6] space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Type</span>
+                          <div className="text-xs font-semibold text-[#1A1615]">{c.type}</div>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Target</span>
+                          <div className="text-[10px] font-bold text-[#9E782F] uppercase tracking-wider bg-[#FDF8EB] border border-[#F3E5C8] inline-block px-1.5 py-0.5 rounded">{c.target}</div>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Start Date</span>
+                          <div className="text-xs font-semibold text-[#1A1615]">{c.startDate}</div>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">End Date</span>
+                          <div className="text-[10px] font-semibold text-[#6E6A66]">{c.endDate}</div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2 block">Performance ({c.progress}%)</span>
+                        <div className="h-1.5 w-full bg-[#EFECE6] rounded-full overflow-hidden">
+                          <div className="h-full bg-[#D4A753] rounded-full" style={{ width: `${c.progress}%` }}></div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-2 border-t border-[#EFECE6]">
+                        <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                          <Edit2 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                          <Copy className="w-3.5 h-3.5" /> Dup
+                        </button>
+                        <button className="flex-1 py-2 bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] font-semibold text-xs rounded-lg hover:bg-[#FCA5A5] transition-colors flex justify-center items-center gap-1.5">
+                          <Trash2 className="w-3.5 h-3.5" /> Del
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (viewMode === 'dashboard') {
+    return renderDashboard();
+  }
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] md:pb-24 relative">
 
@@ -1876,10 +2348,14 @@ export const CampaignBuilderPage: React.FC = () => {
       </div> */}
 
       <div className="hidden lg:flex bg-white border-b border-[#EFECE6] px-4 sm:px-6 py-6 flex-col md:flex-row md:items-center justify-between gap-6 sticky top-0 z-20 shadow-xs">
-        <div>
-
-          <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] mb-2 leading-none">Campaign Builder</h1>
-          <p className="text-[14px] text-[#6E6A66] font-medium max-w-xl">Audit parameters, preview the live guest pass token, and deploy the campaign across roastery registers.</p>
+        <div className="flex items-start gap-4">
+          <button onClick={() => setViewMode('dashboard')} className="mt-1 p-2 bg-[#FAF8F5] text-[#1A1615] hover:bg-[#EFECE6] border border-[#EFECE6] rounded-lg transition-colors cursor-pointer" title="Back to Dashboard">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] mb-2 leading-none">Campaign Builder</h1>
+            <p className="text-[14px] text-[#6E6A66] font-medium max-w-xl">Audit parameters, preview the live guest pass token, and deploy the campaign across roastery registers.</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-4 shrink-0">
@@ -1911,12 +2387,19 @@ export const CampaignBuilderPage: React.FC = () => {
       <div className="p-4 sm:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
 
         {/* Stepper Indicator */}
-        <div className="lg:hidden flex justify-between items-end mb-4 px-2">
-          <div>
-            <div className="text-[10px] font-bold text-[#9E782F] uppercase tracking-widest mb-1.5">Campaign Builder</div>
-            <div className="text-[13px] text-[#6E6A66]">Step {currentStep} of 5 · {steps.find(s => s.id === currentStep)?.name}</div>
+        <div className="lg:hidden flex justify-between items-center mb-4 px-2">
+          <div className="flex items-center gap-3">
+            {currentStep > 1 && (
+              <button onClick={() => setCurrentStep(prev => prev - 1)} className="w-8 h-8 flex items-center justify-center bg-white border border-[#EFECE6] rounded-full text-[#1A1615] shadow-sm cursor-pointer shrink-0">
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            )}
+            <div>
+              <div className="text-[10px] font-bold text-[#9E782F] uppercase tracking-widest mb-0.5">Campaign Builder</div>
+              <div className="text-[13px] text-[#6E6A66]">Step {currentStep} of 5 · {steps.find(s => s.id === currentStep)?.name}</div>
+            </div>
           </div>
-          <div className="px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[11px] font-bold text-[#1A1615] flex items-center gap-1.5 shadow-sm">
+          <div className="px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[11px] font-bold text-[#1A1615] flex items-center gap-1.5 shadow-sm shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> 20% Ready
           </div>
         </div>
@@ -1985,7 +2468,7 @@ export const CampaignBuilderPage: React.FC = () => {
             </div>
             <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
               {currentStep > 1 && (
-                <button onClick={() => setCurrentStep(prev => prev - 1)} className="px-4 py-3 md:py-2 bg-[#FAF8F5] md:bg-white border border-[#EFECE6] rounded-lg text-[13px] md:text-xs font-bold text-[#1A1615] hover:bg-[#EFECE6] md:hover:bg-[#FAF8F5] transition-colors flex items-center justify-center md:justify-start gap-1.5 cursor-pointer flex-1 md:flex-none">
+                <button onClick={() => setCurrentStep(prev => prev - 1)} className="hidden md:flex px-4 py-3 md:py-2 bg-[#FAF8F5] md:bg-white border border-[#EFECE6] rounded-lg text-[13px] md:text-xs font-bold text-[#1A1615] hover:bg-[#EFECE6] md:hover:bg-[#FAF8F5] transition-colors items-center justify-center md:justify-start gap-1.5 cursor-pointer flex-1 md:flex-none">
                   <ArrowLeft className="w-4 h-4 md:w-3.5 md:h-3.5" /> <span className="hidden md:inline">Back</span>
                 </button>
               )}

@@ -133,22 +133,22 @@ export const LoyaltyPage: React.FC = () => {
           </h1>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button className="px-4 py-2 text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+          <button className="flex-1 sm:flex-none px-4 py-2 text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
             Discard Changes
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
+          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
             <Save className="w-4 h-4" />
             Save Draft
           </button>
           <button
             onClick={handlePublish}
             disabled={publishStatus !== 'idle'}
-            className={`flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${publishStatus === 'published'
-                ? 'bg-[#0D7A53] cursor-default'
-                : publishStatus === 'publishing'
-                  ? 'bg-[#1A1615] opacity-80 cursor-wait'
-                  : 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 cursor-pointer'
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${publishStatus === 'published'
+              ? 'bg-[#0D7A53] cursor-default'
+              : publishStatus === 'publishing'
+                ? 'bg-[#1A1615] opacity-80 cursor-wait'
+                : 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 cursor-pointer'
               }`}
           >
             {publishStatus === 'idle' && <><Sparkles className="w-4 h-4" /> Publish Program Changes</>}
@@ -309,7 +309,7 @@ export const LoyaltyPage: React.FC = () => {
                 <div className="space-y-2 mt-3">
                   <label className="text-xs font-bold uppercase tracking-wider text-[#9E9A93]">Branch Availability</label>
                   <div className="space-y-2">
-                    <label 
+                    <label
                       className="flex items-center gap-2 cursor-pointer group"
                       onClick={(e) => { e.preventDefault(); setBranches({ ...branches, downtown: !branches.downtown }); }}
                     >
@@ -318,7 +318,7 @@ export const LoyaltyPage: React.FC = () => {
                       </div>
                       <span className="text-sm font-semibold text-[#1A1615]">Downtown Flagship [Roastery]</span>
                     </label>
-                    <label 
+                    <label
                       className="flex items-center gap-2 cursor-pointer group"
                       onClick={(e) => { e.preventDefault(); setBranches({ ...branches, northside: !branches.northside }); }}
                     >
@@ -327,7 +327,7 @@ export const LoyaltyPage: React.FC = () => {
                       </div>
                       <span className="text-sm font-semibold text-[#1A1615]">Northside Mall Atrium Bar</span>
                     </label>
-                    <label 
+                    <label
                       className="flex items-center gap-2 cursor-pointer group"
                       onClick={(e) => { e.preventDefault(); setBranches({ ...branches, westend: !branches.westend }); }}
                     >
@@ -480,11 +480,11 @@ export const LoyaltyPage: React.FC = () => {
             </div>
 
             <div className="ml-11 mt-4">
-              <div className="bg-[#FAF8F5] rounded-xl border border-[#EFECE6] p-4 flex items-center justify-between">
+              <div className="bg-[#FAF8F5] rounded-xl border border-[#EFECE6] p-4 flex items-start sm:items-center justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h3 className="text-sm font-bold text-[#1A1615]">Weekday Afternoon Double Stamp Hours</h3>
-                    <span className="px-2 py-0.5 rounded border border-[#EFECE6] bg-white text-[10px] font-bold text-[#6E6A66]">
+                    <span className="px-2 py-0.5 rounded border border-[#EFECE6] bg-white text-[10px] font-bold text-[#6E6A66] whitespace-nowrap">
                       Mon - Fri
                     </span>
                   </div>
@@ -496,7 +496,7 @@ export const LoyaltyPage: React.FC = () => {
                 {/* Toggle Switch */}
                 <button
                   onClick={() => setFlashActive(!flashActive)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:ring-offset-2 ${flashActive ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:ring-offset-2 ${flashActive ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'
                     }`}
                 >
                   <span
@@ -667,7 +667,7 @@ export const LoyaltyPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div className="bg-[#FAF8F5] rounded-xl p-4 border border-[#EFECE6]">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-[#9E9A93] mb-1">Est. Cost Per Stamp</div>
                 <div className="text-xl font-bold text-[#1A1615] mb-1">$0.42 <span className="text-xs text-[#6E6A66] font-semibold">/ purchase</span></div>

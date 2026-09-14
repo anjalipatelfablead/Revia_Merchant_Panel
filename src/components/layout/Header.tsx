@@ -22,11 +22,11 @@ export const Header: React.FC<HeaderProps> = ({
   const getBreadcrumbs = () => {
     switch (currentRoute) {
       case '/branches/new':
-        return { 
-          category: 'Outlets & Infrastructure', 
-          parentPage: 'Branches', 
+        return {
+          category: 'Outlets & Infrastructure',
+          parentPage: 'Branches',
           parentRoute: '/branches' as NavRoute,
-          page: 'Add New Branch' 
+          page: 'Add New Branch'
         };
       case '/branches':
         return { category: 'Outlets & Infrastructure', page: 'Branch Management' };
@@ -63,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
       {/* Left: Mobile hamburger & Clean Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button
@@ -76,31 +76,13 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Clean Breadcrumbs matching Figma design */}
         <div className="flex items-center gap-1.5 text-xs text-[#7C746C]">
-          <span 
+          <span
             className="hover:text-[#1A1615] cursor-pointer transition-colors"
             onClick={() => onNavigate('/dashboard')}
           >
             Home
           </span>
           <span className="text-[#A8A29E]">&gt;</span>
-          <span 
-            className="hover:text-[#1A1615] cursor-pointer transition-colors hidden sm:inline"
-            onClick={() => onNavigate('/branches')}
-          >
-            {breadcrumbs.category}
-          </span>
-          {breadcrumbs.parentPage && (
-            <>
-              <span className="text-[#A8A29E] hidden sm:inline">&gt;</span>
-              <span 
-                className="hover:text-[#1A1615] cursor-pointer transition-colors hidden sm:inline"
-                onClick={() => breadcrumbs.parentRoute && onNavigate(breadcrumbs.parentRoute)}
-              >
-                {breadcrumbs.parentPage}
-              </span>
-            </>
-          )}
-          <span className="text-[#A8A29E] hidden sm:inline">&gt;</span>
           <span className="text-[#1A1615] font-semibold">
             {breadcrumbs.page}
           </span>
@@ -108,8 +90,8 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Middle: Universal Search Bar Input */}
-      <div className="flex-1 max-w-md hidden md:block">
-        <div 
+      <div className="flex-1 max-w-md hidden md:block ml-2 lg:ml-6">
+        <div
           onClick={onOpenSearch}
           className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#EAE6E1] bg-[#FAF8F5] hover:bg-[#F5F2EC] text-xs text-[#7C746C] transition-colors cursor-pointer"
         >
@@ -124,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right: Scanner Status Pill, Notification Bell, Profile Info */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 ml-auto">
         {/* Mobile search button */}
         <button
           onClick={onOpenSearch}
@@ -133,13 +115,6 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Search className="w-4 h-4" />
         </button>
-
-        {/* Status Pill matching Figma: ● Scanner Online ((•)) */}
-        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[#EBF7F0] text-[#15803D] border border-[#CEEBD9]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] animate-pulse" />
-          <span>Scanner Online</span>
-          <Radio className="w-3 h-3 text-[#15803D] ml-0.5" />
-        </div>
 
         {/* Notifications Bell with Badge */}
         <div className="relative">
