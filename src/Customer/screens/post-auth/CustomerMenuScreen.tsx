@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { MOCK_CATALOG_ITEMS } from '../../../data/mockData';
 import { Plus, Search, ShoppingBag } from 'lucide-react';
-import { CustomerCartOverlay } from '../../components/shared/CustomerCartOverlay';
 import { CatalogItem } from '../../../types';
+import { MainTab } from '../../types';
 
-export const CustomerMenuScreen = () => {
+interface Props {
+  setTab: (t: MainTab) => void;
+  cartItems: (CatalogItem & { quantity: number })[];
+  addItem: (item: CatalogItem) => void;
+  updateQuantity: (id: string, delta: number) => void;
+  onProductClick?: (id: string) => void;
+}
+
+export const CustomerMenuScreen: React.FC<Props> = ({ setTab, cartItems, addItem, updateQuantity, onProductClick }) => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [cartItems, setCartItems] = useState<(CatalogItem & { quantity: number })[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   
   // Extract unique categories
   const categories = ['All', ...Array.from(new Set(MOCK_CATALOG_ITEMS.map(item => item.category)))];
@@ -16,28 +22,6 @@ export const CustomerMenuScreen = () => {
   const items = activeCategory === 'All' 
     ? MOCK_CATALOG_ITEMS 
     : MOCK_CATALOG_ITEMS.filter(item => item.category === activeCategory);
-
-  const handleAddToCart = (item: CatalogItem) => {
-    setCartItems(prev => {
-      const existing = prev.find(i => i.id === item.id);
-      if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
-      }
-      return [...prev, { ...item, quantity: 1 }];
-    });
-  };
-
-  const handleUpdateQuantity = (id: string, delta: number) => {
-    setCartItems(prev => {
-      return prev.map(i => {
-        if (i.id === id) {
-          const newQ = Math.max(0, i.quantity + delta);
-          return { ...i, quantity: newQ };
-        }
-        return i;
-      }).filter(i => i.quantity > 0);
-    });
-  };
 
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -79,7 +63,11 @@ export const CustomerMenuScreen = () => {
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {items.map(item => (
-          <div key={item.id} className="bg-white rounded-[24px] border border-[#E6E6E6] overflow-hidden group hover:shadow-lg transition-all duration-300 flex flex-col">
+          <div 
+            key={item.id} 
+            className="bg-white rounded-[24px] border border-[#E6E6E6] overflow-hidden group hover:shadow-lg transition-all duration-300 flex flex-col cursor-pointer"
+            onClick={() => onProductClick?.(item.id)}
+          >
             <div className="relative h-48 overflow-hidden">
               <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               <div className="absolute top-3 left-3">
@@ -98,7 +86,7 @@ export const CustomerMenuScreen = () => {
               <div className="flex items-center justify-between mt-4">
                 <p className="text-lg font-black text-[#C89B3C]">${item.price.toFixed(2)}</p>
                 <button 
-                  onClick={() => handleAddToCart(item)}
+                  onClick={(e) => { e.stopPropagation(); addItem(item); }}
                   className="w-8 h-8 rounded-full bg-[#F8F8F6] border border-[#E6E6E6] flex items-center justify-center hover:bg-[#C89B3C] hover:border-[#C89B3C] hover:text-white transition-colors text-[#222]"
                 >
                   <Plus className="w-4 h-4" />
@@ -113,7 +101,7 @@ export const CustomerMenuScreen = () => {
       {totalCartItems > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-8 z-50 animate-in slide-in-from-bottom-4">
           <button 
-            onClick={() => setIsCartOpen(true)}
+            onClick={() => setTab('checkout')}
             className="bg-[#222] text-white px-6 py-3.5 rounded-full shadow-2xl flex items-center gap-3 hover:bg-black transition-all"
           >
             <div className="relative">
@@ -126,14 +114,6 @@ export const CustomerMenuScreen = () => {
           </button>
         </div>
       )}
-
-      {/* Cart Overlay */}
-      <CustomerCartOverlay 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cartItems={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-      />
 
       <style dangerouslySetInnerHTML={{__html: `
         .hide-scrollbar::-webkit-scrollbar {
