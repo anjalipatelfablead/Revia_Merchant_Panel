@@ -9,7 +9,7 @@ const MobileBillingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FBF6F1] px-5 pb-7 pt-3 text-[#211C19]">
+    <div className="min-h-screen overflow-x-hidden bg-[#FBF6F1] px-4 pb-7 pt-3 text-[#211C19] sm:px-5">
       <div className="mx-auto w-full max-w-[430px]">
         <header className="flex items-center justify-between border-b border-[#EDE1D7] pb-3">
           <div className="flex items-center gap-2.5"><div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[#211C19] text-sm font-bold text-white">R</div><div className="leading-tight"><div className="flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-[0.03em]">Downtown Flagship <span className="text-[#756D65]">⌄</span></div><div className="text-[10px] font-bold uppercase text-[#B28529]">Revia Merchant</div></div></div>
@@ -38,6 +38,32 @@ const MobileBillingPage: React.FC = () => {
 };
 
 export const BillingPage: React.FC = () => {
+  const exportTaxDossier = () => {
+    const rows = [
+      ['Legal Entity', 'Revia Hospitality Atelier Group LLC'],
+      ['Tax Identification', 'US-EIN: 27-4196482'],
+      ['Registered Atelier Address', '482 Broadway, SoHo, New York, NY 10013, United States'],
+      ['Billing Recipient', 'Elena Vance'],
+      ['Dispatch Email', 'billing@revia.hospitality.com'],
+      ['Current Plan', 'Enterprise Atelier'],
+      ['Billing Cycle', '$389.00 due Dec 1'],
+      ['Download Type', 'Tax Dossier'],
+    ];
+
+    const csv = rows
+      .map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(','))
+      .join('\n');
+
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'revia-tax-dossier.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <div className="md:hidden"><MobileBillingPage /></div>
@@ -56,7 +82,7 @@ export const BillingPage: React.FC = () => {
           <p className="mt-1 max-w-[600px] text-[14px] font-normal leading-relaxed text-[#7C746C] md:max-lg:max-w-[600px] md:max-lg:text-[12px]">Manage your hospitality atelier subscription plan, connected branch licensing, POS seat quotas, and tax invoice history.</p>
         </div>
         <div className="mt-1 flex shrink-0 items-center gap-2 md:max-lg:gap-1.5">
-          <button type="button" onClick={() => window.print()} className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-3 py-2 text-xs font-semibold text-[#4F4842] shadow-2xs hover:bg-[#F5F1EA] md:max-lg:px-2 md:max-lg:text-[10px]"><ReceiptText className="h-3.5 w-3.5 text-[#9E782F]" /> Download Tax Dossier (PDF)</button>
+          <button type="button" onClick={exportTaxDossier} className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-3 py-2 text-xs font-semibold text-[#4F4842] shadow-2xs hover:bg-[#F5F1EA] md:max-lg:px-2 md:max-lg:text-[10px]"><ReceiptText className="h-3.5 w-3.5 text-[#9E782F]" /> Download Tax Dossier (PDF)</button>
           <button type="button" onClick={() => document.getElementById('subscription-allocation')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex items-center gap-1.5 rounded-lg bg-[#B7842C] px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#9E782F] md:max-lg:px-2 md:max-lg:text-[10px]"><Zap className="h-3.5 w-3.5" /> Upgrade Plan Quota</button>
         </div>
       </div>

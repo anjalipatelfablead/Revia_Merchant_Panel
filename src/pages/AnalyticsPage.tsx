@@ -48,7 +48,7 @@ const MobileAnalyticsView: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FBF6F1] px-5 pb-7 pt-3 text-[#211C19]">
       <div className="mx-auto w-full max-w-[430px]">
-        <header className="flex items-center justify-between border-b border-[#EDE1D7] pb-3">
+        <header className="flex items-center justify-between pb-3">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#211C19] text-sm font-bold text-white">R</div>
             <div className="leading-tight">
@@ -70,7 +70,7 @@ const MobileAnalyticsView: React.FC = () => {
           <p className="mt-2 text-[15px] text-[#756D65]">Longitudinal cohort curves &amp; VIP telemetry</p>
         </div>
 
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+        <div className="mt-4 flex gap-2 overflow-x-hidden whitespace-nowrap pb-1">
           {['Last 30D', 'Last 90D', 'YTD', 'All Branches'].map((period, index) => (
             <button key={period} type="button" className={`shrink-0 rounded-full px-4 py-2.5 text-[12px] font-semibold ${index === 1 ? 'bg-[#C99B42] text-white shadow-sm' : 'bg-[#F3E9DF] text-[#3D3732]'}`}>{period}</button>
           ))}
@@ -324,7 +324,7 @@ export const AnalyticsPage: React.FC = () => {
           </div>
           */}
 
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
                 <div className="max-w-[480px]">
                   <div className="flex flex-wrap items-center gap-3">
                     <h1 className="text-[24px] font-bold tracking-normal leading-[1.05] text-[#1A1615]">
@@ -337,7 +337,7 @@ export const AnalyticsPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="flex max-w-[380px] flex-wrap items-start justify-end gap-2 self-start lg:grid lg:w-[560px] lg:max-w-full lg:grid-cols-2 lg:self-auto">
+                <div className="hidden md:hidden lg:flex max-w-[380px] flex-wrap items-start justify-end gap-2 self-start lg:grid lg:w-[560px] lg:max-w-full lg:grid-cols-2 lg:self-auto">
                   <div className="relative z-50 min-w-[230px] lg:min-w-0 lg:w-full">
                     <button type="button" onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
                       <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Calendar className="h-2.5 w-2.5" /></span>
@@ -365,6 +365,38 @@ export const AnalyticsPage: React.FC = () => {
                     <Download className="h-3 w-3" />
                     {exported ? 'Dossier Ready' : 'Export CSV / PDF Dossier'}
                   </button>
+                </div>
+
+                <div className="hidden md:flex lg:hidden w-full max-w-[760px] flex-wrap items-center gap-2 self-start">
+                  <div className="flex w-full flex-wrap items-center gap-2">
+                    <div className="relative z-50 min-w-[180px] flex-1">
+                      <button type="button" onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
+                        <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Calendar className="h-2.5 w-2.5" /></span>
+                        <span className="flex min-w-0 flex-1 flex-col"><span className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8C847A]">Date horizon</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedDateRange}</span></span>
+                        <ChevronDown className={`h-3 w-3 shrink-0 text-[#8C847A] transition-transform ${openDropdown === 'date' ? 'rotate-180' : ''}`} />
+                      </button>
+                      {openDropdown === 'date' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[230px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose date horizon</div>{['Last 30 Days', 'Last 90 Days (Aug 15 - Nov 14, 2024)', 'Year to date'].map((range) => <button key={range} type="button" onClick={() => { setSelectedDateRange(range); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedDateRange === range ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{range}</button>)}</div>}
+                    </div>
+
+                    <div className="relative z-50 min-w-[150px] flex-1">
+                      <button type="button" onClick={() => setOpenDropdown(openDropdown === 'venue' ? null : 'venue')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
+                        <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Filter className="h-2.5 w-2.5" /></span>
+                        <span className="flex min-w-0 flex-1 flex-col"><span className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8C847A]">Venues</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedVenue}</span></span>
+                        <ChevronDown className={`h-3 w-3 shrink-0 text-[#8C847A] transition-transform ${openDropdown === 'venue' ? 'rotate-180' : ''}`} />
+                      </button>
+                      {openDropdown === 'venue' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[160px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose venue</div>{['All Venues (3)', 'Downtown Flagship', 'Roastery Reserve', 'Northside Pop-up'].map((venue) => <button key={venue} type="button" onClick={() => { setSelectedVenue(venue); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedVenue === venue ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{venue}</button>)}</div>}
+                    </div>
+
+                    <div className="inline-flex min-w-[160px] flex-1 items-center gap-2 rounded-[9px] border border-[#E7E1D8] bg-[#F4F0EA] px-2.5 py-1.5 shadow-[0_2px_8px_rgba(25,20,18,0.02)]">
+                      <BarChart3 className="h-3 w-3 text-[#9E782F]" />
+                      <span className="flex flex-col text-[9px] font-bold uppercase leading-3 tracking-[0.12em] text-[#1A1615]"><span className="text-[#8C847A]">Cohort benchmark</span><span className="inline-flex items-center gap-1 text-[#1A1615]"><span>VIP vs</span><span>New Guests</span></span></span>
+                    </div>
+
+                    <button type="button" onClick={exportDossier} className="inline-flex min-w-[150px] flex-1 items-center justify-center gap-1.5 rounded-[9px] bg-gradient-to-b from-[#D4A753] to-[#9E782F] px-2.5 py-3 text-[10px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95">
+                      <Download className="h-3 w-3" />
+                      {exported ? 'Dossier Ready' : 'Export CSV / PDF Dossier'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </header>
