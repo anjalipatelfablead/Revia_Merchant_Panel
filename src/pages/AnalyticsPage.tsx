@@ -1,796 +1,596 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  Download,
-  Plus,
-  Search,
-  ChevronDown,
-  Clock,
-  QrCode,
-  Edit2,
-  Trash2,
-  CheckCircle2,
-  TrendingUp,
   Award,
-  Zap,
-  CreditCard,
-  Settings,
-  Lock,
-  Wallet,
+  BarChart3,
   Calendar,
-  MoreVertical,
-  Activity,
-  ChevronRight,
-  Target,
-  Trophy
+  ChevronDown,
+  Download,
+  Filter,
+  FileText,
+  LockKeyhole,
+  SlidersHorizontal,
+  Sparkles,
+  ShieldCheck,
+  Timer,
 } from 'lucide-react';
+import { RETENTION_COHORT_DATA } from '../data/mockData';
 
-export const RewardsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('All Rewards (18)');
-  const [dynamicQR, setDynamicQR] = useState(true);
-  const [pinOverride, setPinOverride] = useState(true);
+const mobileRetentionDrivers = [
+  {
+    name: 'Panama Geisha Reserve',
+    subtitle: 'Single Origin Pour',
+    rate: '94% repeat',
+    detail: '420 stamps linked',
+    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=120&auto=format&fit=crop&q=80',
+  },
+  {
+    name: 'Cardamom Tahini Cruffin',
+    subtitle: 'Viennoiserie Batch',
+    rate: '88% repeat',
+    detail: '310 stamps linked',
+    image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120&auto=format&fit=crop&q=80',
+  },
+  {
+    name: 'Madagascar Vanilla Latte',
+    subtitle: 'House Bean Extraction',
+    rate: '81% repeat',
+    detail: '680 stamps linked',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=120&auto=format&fit=crop&q=80',
+  },
+];
 
-  const [tierFilter, setTierFilter] = useState('All Tiers');
-  const [categoryFilter, setCategoryFilter] = useState('All Categories');
-  const [statusFilter, setStatusFilter] = useState('Status: Active');
-
-  const [availabilityWindow, setAvailabilityWindow] = useState('60 Days');
-  const [selectedMatrixTier, setSelectedMatrixTier] = useState<string | null>(null);
-
-  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
-  const showToast = (msg: string) => {
-    setFeedbackToast(msg);
-    setTimeout(() => setFeedbackToast(null), 3000);
-  };
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const [deletedCards, setDeletedCards] = useState<string[]>([]);
-
-  const [newVoucherTitle, setNewVoucherTitle] = useState('');
-  const [newVoucherCost, setNewVoucherCost] = useState('4 Stamps');
-  const [newVoucherTier, setNewVoucherTier] = useState('Silver & Up');
-  const [newCards, setNewCards] = useState<any[]>([]);
-
-  const isVisible = (id: string, title: string, tier: string[], category: string, status: string, tabs: string[]) => {
-    if (deletedCards.includes(id)) return false;
-    if (activeTab !== 'All Rewards (18)' && !tabs.includes(activeTab)) return false;
-    if (tierFilter !== 'All Tiers' && !tier.includes(tierFilter)) return false;
-    if (categoryFilter !== 'All Categories' && category !== categoryFilter) return false;
-    if (statusFilter !== 'Status: Active' && `Status: ${status}` !== statusFilter) return false;
-    if (searchQuery && !title.toLowerCase().includes(searchQuery.toLowerCase()) && !id.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-    return true;
-  };
+const MobileAnalyticsView: React.FC = () => {
+  const cohorts = [
+    { name: 'W1 Oct Cohort', size: '980 patrons', change: '+4.1% MoM', values: ['100%', '84%', '76%', '68%'] },
+    { name: 'W2 Oct Cohort', size: '1,120 patrons', change: '+8.6% MoM', values: ['100%', '88%', '79%', '71%'] },
+  ];
 
   return (
-    <div className="p-4 lg:p-8 max-w-[1400px] mx-auto space-y-6">
-      {feedbackToast && (
-        <div className="fixed bottom-4 right-4 bg-[#1A1615] text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-in fade-in slide-in-from-bottom-4">
-          <div className="w-8 h-8 rounded-full bg-[#0D7A53]/20 flex items-center justify-center text-[#0D7A53]">
-            <CheckCircle2 className="w-5 h-5" />
+    <div className="min-h-screen bg-[#FBF6F1] px-5 pb-7 pt-3 text-[#211C19]">
+      <div className="mx-auto w-full max-w-[430px]">
+        <header className="flex items-center justify-between border-b border-[#EDE1D7] pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#211C19] text-sm font-bold text-white">R</div>
+            <div className="leading-tight">
+              <div className="flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-[0.04em]">Mayfair Flagship <ChevronDown className="h-3 w-3 text-[#756D65]" /></div>
+              <div className="text-[10px] font-bold uppercase text-[#B28529]">MoreAnalytics</div>
+            </div>
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-bold">{feedbackToast}</p>
-          </div>
-        </div>
-      )}
-      {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-        <div>
-          {/* <div className="flex items-center gap-2 text-xs font-bold text-[#9E9A93] mb-2 uppercase tracking-wider">
-            Home <ChevronRight className="w-3 h-3" /> CRM & Activity <ChevronRight className="w-3 h-3" /> <span className="text-[#1A1615]">Rewards Catalog & Perks</span>
-          </div> */}
-
-          {/* <div className="flex items-center gap-2 mb-1">
-            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold uppercase tracking-widest rounded">
-              ATELIER LOYALTY ARCHITECTURE
-            </span>
-            <span className="text-[#9E9A93] text-[10px] font-bold uppercase tracking-widest">• Engine v4.2</span>
-          </div> */}
-
-          <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] leading-tight">
-            Rewards Catalog & Tier Perks Manager
-          </h1>
-          <p className="text-sm text-[#6E6A66] mt-1 font-medium">
-            Configure redeemable guest vouchers, tier exclusivity thresholds, perk fulfillment rules, and digital wallet redemption limits for Revia hospitality venues.
-          </p>
-        </div>
-
-        <div className="flex flex-col items-end gap-4 shrink-0">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A1615]">
-            {/* <span className="w-2 h-2 rounded-full bg-[#0D7A53] animate-pulse"></span>
-            REALTIME WALLET SYNC: ACTIVE */}
-          </div>
-
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EFECE6] text-[#1A1615] text-xs font-bold rounded-lg shadow-sm hover:bg-[#FAF8F5] transition-colors cursor-pointer">
-              <Download className="w-4 h-4" /> Export Matrix (CSV)
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] border border-[#9E782F] text-white text-xs font-bold rounded-lg shadow-sm hover:opacity-95 transition-opacity cursor-pointer">
-              <Plus className="w-4 h-4" /> Create New Reward
-            </button>
+            <div className="relative text-[#5F5750]"><span className="absolute -right-0.5 -top-1 h-1.5 w-1.5 rounded-full bg-[#B7362F]" /><Sparkles className="h-4 w-4" /></div>
+            <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-white shadow-sm"><img src="https://i.pravatar.cc/80?img=47" alt="Account" className="h-full w-full object-cover" /></div>
           </div>
-        </div>
-      </div>
+        </header>
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1 */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">ACTIVE REWARD<br />CATALOG</h3>
-            <span className="bg-[#FDF8EB] text-[#9E782F] text-[9px] font-bold uppercase px-2 py-1 rounded">Across 4<br />Tiers</span>
+        <div className="pt-4">
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="text-[26px] font-extrabold leading-none tracking-normal">Analytics &amp; Retention</h1>
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#B9F1CF] px-2 py-1 text-[10px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Live Telemetry</span>
           </div>
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-[32px] font-bold text-[#1A1615] leading-none">18</span>
-            <span className="text-[14px] font-bold text-[#D4A753]">Live Perks</span>
-          </div>
-          <div className="text-[11px] font-bold text-[#6E6A66] flex items-center gap-1.5">
-            <Activity className="w-3.5 h-3.5 text-[#D4A753]" /> 6 auto-replenishing, 12 static
-          </div>
+          <p className="mt-2 text-[15px] text-[#756D65]">Longitudinal cohort curves &amp; VIP telemetry</p>
         </div>
 
-        {/* Card 2 */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">30-DAY REDEMPTIONS</h3>
-            <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full">+18.4%</span>
-          </div>
-          <div className="flex justify-between items-end mb-2">
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-[28px] font-bold text-[#1A1615] leading-none">1,420</span>
-              <span className="text-[13px] font-bold text-[#6E6A66]">Vouchers</span>
-            </div>
-            <span className="text-[14px] font-bold text-[#0D7A53]">$14,850</span>
-          </div>
-          <div className="flex justify-between items-center text-[11px] font-bold text-[#9E9A93]">
-            <span>Total redeemed</span>
-            <span></span>
-          </div>
+        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+          {['Last 30D', 'Last 90D', 'YTD', 'All Branches'].map((period, index) => (
+            <button key={period} type="button" className={`shrink-0 rounded-full px-4 py-2.5 text-[12px] font-semibold ${index === 1 ? 'bg-[#C99B42] text-white shadow-sm' : 'bg-[#F3E9DF] text-[#3D3732]'}`}>{period}</button>
+          ))}
         </div>
 
-        {/* Card 3 */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
-          <div className="flex justify-between items-start mb-3">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">HIGHEST VELOCITY</h3>
-            <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded">412 claimed</span>
-          </div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-[16px] font-bold text-[#1A1615]">Specialty Flight</span>
-            <span className="text-[11px] font-bold text-[#D4A753]">Gold/Obsidian</span>
-          </div>
-          <div className="text-[11px] font-bold text-[#6E6A66] flex items-center gap-1.5 mt-3">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#0D7A53]" /> 98.2% positive rating
-          </div>
-        </div>
-
-        {/* Card 4 */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
-          <div className="flex justify-between items-start mb-3">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">LIABILITY / ESCROW</h3>
-            <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full">Sealed</span>
-          </div>
-          <div className="flex justify-between items-end mb-2">
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-[28px] font-bold text-[#1A1615] leading-none">$4,120</span>
-              <span className="text-[13px] font-bold text-[#6E6A66]">Escrow</span>
-            </div>
-          </div>
-          <div className="flex justify-between items-center text-[11px] font-bold text-[#9E9A93]">
-            <span>Avg cost / unlock</span>
-            <span className="text-[#1A1615]">$2.90</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters & Navigation */}
-      <div className="flex flex-col gap-4">
-        {/* Tabs Row */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EFECE6] pb-1">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            {['All Rewards (18)', 'Vouchers & Items (10)', 'VIP & Tier Perks (5)', 'Flash & Happy Hour (3)', 'Archived'].map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 text-[13px] font-bold whitespace-nowrap rounded-t-lg transition-colors cursor-pointer ${activeTab === tab
-                  ? 'bg-[#1A1615] text-white'
-                  : 'bg-[#FAF8F5] text-[#6E6A66] hover:bg-[#EFECE6]'
-                  }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-2 text-[11px] font-bold bg-[#FAF8F5] border border-[#EFECE6] px-3 py-1.5 rounded-full">
-            <Zap className="w-3.5 h-3.5 text-[#D4A753]" />
-            <span className="text-[#1A1615]">Velocity:</span>
-            <span className="text-[#6E6A66]">47 today</span>
-            <span className="w-1 h-1 rounded-full bg-[#D1CDC7] mx-1"></span>
-            <span className="text-[#6E6A66]">Peak: 8:00 - 10:30 AM</span>
-          </div>
-        </div>
-
-        {/* Search & Select Row */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="relative flex-1 max-w-xl">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search rewards, perks, SKU..."
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#EFECE6] rounded-full text-xs font-bold text-[#1A1615] placeholder:text-[#9E9A93] focus:outline-none focus:border-[#D4A753]"
-            />
-          </div>
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            <div className="relative">
-              <select
-                value={tierFilter}
-                onChange={(e) => { setTierFilter(e.target.value); showToast(`Filter applied: ${e.target.value}`); }}
-                className="appearance-none bg-white border border-[#EFECE6] rounded-full pl-4 pr-8 py-2 text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] min-w-[240px] cursor-pointer"
-              >
-                <option value="All Tiers">All Tiers (Silver, Gold, Black, Obsidian)</option>
-                <option value="Silver Tier">Silver Tier</option>
-                <option value="Gold Tier">Gold Tier</option>
-                <option value="Black Tier">Black Tier</option>
-                <option value="Obsidian VIP">Obsidian VIP</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
-            </div>
-            <div className="relative">
-              <select
-                value={categoryFilter}
-                onChange={(e) => { setCategoryFilter(e.target.value); showToast(`Category selected: ${e.target.value}`); }}
-                className="appearance-none bg-white border border-[#EFECE6] rounded-full pl-4 pr-8 py-2 text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] min-w-[140px] cursor-pointer"
-              >
-                <option value="All Categories">All Categories</option>
-                <option value="Beverages">Beverages</option>
-                <option value="Pastries">Pastries</option>
-                <option value="Merchandise">Merchandise</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
-            </div>
-            <div className="relative">
-              <select
-                value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value); showToast(`Status filter: ${e.target.value}`); }}
-                className="appearance-none bg-white border border-[#EFECE6] rounded-full pl-4 pr-8 py-2 text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] min-w-[120px] cursor-pointer"
-              >
-                <option value="Status: Active">Status: Active</option>
-                <option value="Status: Draft">Status: Draft</option>
-                <option value="Status: Paused">Status: Paused</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Grid Content */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-
-        {/* Left Column - Reward List */}
-        <div className="xl:col-span-8 space-y-4">
-
-          {/* Dynamically created cards */}
-          {newCards.filter(c => isVisible(c.id, c.title, [c.tier], 'Beverages', 'Active', ['Vouchers & Items (10)', 'All Rewards (18)'])).map(card => (
-            <div key={card.id} className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
-                <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">{card.id}</div>
-                <div className="w-10 h-10 rounded bg-[#FDF8EB] flex items-center justify-center border border-[#F3E5C8]">
-                  <Zap className="w-5 h-5 text-[#9E782F]" />
-                </div>
-              </div>
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">{card.tier}</span>
-                    <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">{card.cost}</div>
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold text-[#1A1615] mb-1">{card.title}</h3>
-                <p className="text-xs text-[#6E6A66] mb-3 leading-relaxed">Newly created custom voucher reward.</p>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
-                  <span>Availability: <strong className="text-[#1A1615]">{card.availability}</strong></span>
-                </div>
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
-                    <Clock className="w-3.5 h-3.5" /> Just Added
-                  </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer"><QrCode className="w-3 h-3" /> QR Preview</button>
-                    <button onClick={() => { setNewVoucherTitle(card.title); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setDeletedCards([...deletedCards, card.id])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  </div>
-                </div>
-              </div>
+        <section className="mt-4 grid grid-cols-2 gap-2">
+          {[
+            { label: '30D Retention', value: '74.8%', detail: '+6.2% vs avg', icon: Timer, positive: true },
+            { label: 'Obsidian LTV', value: '$1,480', detail: '$38.90 AOV baseline', icon: Award },
+            { label: 'Stamp Velocity', value: '12.4 Days', detail: 'To 10th stamp reward', icon: Timer },
+            { label: 'Churn Risk', value: '4.2%', detail: '18 rescued this wk', icon: ShieldCheck, positive: true },
+          ].map(({ label, value, detail, icon: Icon, positive }) => (
+            <div key={label} className="min-h-[116px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+              <div className="flex items-center justify-between"><span className="text-xs font-medium text-[#7C746C]">{label}</span><span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FBF1E4] text-[#A8761C]"><Icon className="h-3.5 w-3.5" /></span></div>
+              <div className="mt-3 text-2xl font-bold leading-none tracking-tight">{value}</div>
+              <div className={`mt-1 text-[11px] font-medium ${positive ? 'text-[#078157]' : 'text-[#756D65]'}`}>{positive && <span className="mr-1">↗</span>}{detail}</div>
             </div>
           ))}
+        </section>
 
-          {/* Card 1 */}
-          {isVisible('#REV-041', 'Complimentary Specialty Flight & Pastry', ['Gold Tier', 'Black Tier'], 'Beverages', 'Active', ['VIP & Tier Perks (5)', 'All Rewards (18)']) && (
-            <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#1A1615] flex items-center justify-center">
-                <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20">#REV-041</div>
-                <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=300" alt="Specialty Flight" className="w-full h-full object-cover opacity-80" />
-              </div>
-
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#F3E5C8]">Gold & Black Tier</span>
-                    <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">10 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 500 Pts</span></div>
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-bold text-[#1A1615] mb-1">Complimentary Specialty Flight & Pastry</h3>
-                <p className="text-xs text-[#6E6A66] mb-3 leading-relaxed">
-                  Signature three-origin pour-over tasting flight paired with any morning bake from...
-                </p>
-
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
-                  <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-[#D4A753]" /> Velocity: <strong className="text-[#1A1615]">412 (Hot)</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Venues: <strong className="text-[#1A1615]">All 3 Venues</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Guest Limit: <strong className="text-[#1A1615]">1 / day</strong></span>
-                </div>
-
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
-                    <Clock className="w-3.5 h-3.5" /> 30 Days expiry
-                  </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-                      <QrCode className="w-3 h-3" /> QR Preview
-                    </button>
-                    <button onClick={() => { setNewVoucherTitle('Complimentary Specialty Flight & Pastry'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setDeletedCards([...deletedCards, '#REV-041'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Card 2 */}
-          {isVisible('#REV-108', '$10 Off Any Roasted Bean Bag (250g)', ['Silver Tier', 'Gold Tier', 'Black Tier', 'Obsidian VIP'], 'Merchandise', 'Active', ['Vouchers & Items (10)', 'All Rewards (18)']) && (
-            <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
-                <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">#REV-108</div>
-                <img src="https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=300" alt="Bean Bag" className="w-full h-full object-cover" />
-              </div>
-
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">All Tiers (Silver+)</span>
-                    <span className="bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Auto-Replenish
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">8 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 400 Pts</span></div>
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-bold text-[#1A1615] mb-1">$10 Off Any Roasted Bean Bag (250g)</h3>
-                <p className="text-xs text-[#6E6A66] mb-3 leading-relaxed">
-                  Single-Origin Micro-lots or Reserve Geisha. In-store POS barcode scan or pre-order.
-                </p>
-
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
-                  <span>Redemptions: <strong className="text-[#1A1615]">289</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Channel: <strong className="text-[#1A1615]">POS & Mobile</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Inventory: <strong className="text-[#1A1615]">Auto-Deducted</strong></span>
-                </div>
-
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
-                    <Calendar className="w-3.5 h-3.5" /> Continuous Season
-                  </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-                      <QrCode className="w-3 h-3" /> QR Preview
-                    </button>
-                    <button onClick={() => { setNewVoucherTitle('$10 Off Any Roasted Bean Bag (250g)'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setDeletedCards([...deletedCards, '#REV-108'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Card 3 - VIP */}
-          {isVisible('#VIP-001', 'Revia Obsidian Private Tasting Tour', ['Obsidian VIP'], 'Beverages', 'Active', ['VIP & Tier Perks (5)', 'All Rewards (18)']) && (
-            <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-[#1A1615]"></div>
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#1A1615] flex items-center justify-center">
-                <div className="absolute top-2 left-2 bg-[#1A1615]/90 backdrop-blur-md text-[#D4A753] text-[9px] font-bold px-1.5 py-0.5 rounded border border-[#D4A753]/30 z-10">VIP EXCLUSIVE</div>
-                <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=300" alt="VIP Tour" className="w-full h-full object-cover opacity-70" />
-              </div>
-
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#1A1615] text-[#D4A753] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#332e2d]">Obsidian VIP Exclusive</span>
-                    <span className="bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#F3E5C8]">Milestone Unlock</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">Zero Pts</div>
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-bold text-[#1A1615] mb-1">Revia Obsidian Private Tasting Tour</h3>
-                <p className="text-xs text-[#6E6A66] mb-3 leading-relaxed">
-                  Private after-hours cupping and sensory flight led by Head of Roasting.
-                </p>
-
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
-                  <span>Quota: <strong className="text-[#1A1615]">4 Guests / Session</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Days: <strong className="text-[#1A1615]">Fri & Sat Only</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Claimed: <strong className="text-[#D4A753]">18 (8 Left)</strong></span>
-                </div>
-
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#D4A753]">
-                    <Trophy className="w-3.5 h-3.5" /> Concierge RSVP Required
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => showToast('Slot Manager opened')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1615] text-[#D4A753] border border-[#332e2d] text-[11px] font-bold rounded-lg hover:bg-black transition-colors cursor-pointer">
-                      <Calendar className="w-3 h-3" /> Manage Slots
-                    </button>
-                    <button onClick={() => { setNewVoucherTitle('Revia Obsidian Private Tasting Tour'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setDeletedCards([...deletedCards, '#VIP-001'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Card 4 */}
-          {isVisible('#REV-012', 'Artisanal Single-Origin Pour-Over Upgrade', ['Silver Tier', 'Gold Tier', 'Black Tier', 'Obsidian VIP'], 'Beverages', 'Active', ['Vouchers & Items (10)', 'All Rewards (18)']) && (
-            <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
-                <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">#REV-012</div>
-                <div className="w-10 h-10 rounded bg-[#FDF8EB] flex items-center justify-center border border-[#F3E5C8]">
-                  <svg className="w-5 h-5 text-[#9E782F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1" /><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" /></svg>
-                </div>
-              </div>
-
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded-full">Silver Tier & Above</span>
-                    <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">4 Stamps <span className="text-[#9E9A93] font-medium text-xs">or 150 Pts</span></div>
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-bold text-[#1A1615] mb-1">Artisanal Single-Origin Pour-Over Upgrade</h3>
-                <p className="text-xs text-[#6E6A66] mb-3 leading-relaxed">
-                  Upgrade any standard drip brew or Americano to rotating single-origin bar brew.
-                </p>
-
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
-                  <span>Daily Velocity: <strong className="text-[#1A1615]">654</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Venues: <strong className="text-[#1A1615]">Downtown & Roastery</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Sync: <strong className="text-[#0D7A53]">Instant</strong></span>
-                </div>
-
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
-                    <Activity className="w-3.5 h-3.5" /> Recurring Weekly
-                  </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-                      <QrCode className="w-3 h-3" /> QR Preview
-                    </button>
-                    <button onClick={() => { setNewVoucherTitle('Artisanal Single-Origin Pour-Over Upgrade'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setDeletedCards([...deletedCards, '#REV-012'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Card 5 */}
-          {isVisible('#REV-077', 'Reserve Cold Brew Growler Refill (50% Off)', ['Gold Tier', 'Black Tier', 'Obsidian VIP'], 'Beverages', 'Active', ['Flash & Happy Hour (3)', 'All Rewards (18)']) && (
-            <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
-              <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
-                <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">#REV-077</div>
-                <div className="w-10 h-10 rounded bg-[#FDF8EB] flex items-center justify-center border border-[#F3E5C8]">
-                  <svg className="w-4 h-5 text-[#9E782F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="2" width="6" height="4" rx="1" /><path d="M8 6h8" /><path d="M7 6v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V6" /></svg>
-                </div>
-              </div>
-
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] text-[10px] font-bold px-2 py-0.5 rounded-full">Gold Exclusive</span>
-                    <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#BCE3D1]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Active
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#D4A753]">6 Stamps</div>
-                  </div>
-                </div>
-
-                <h3 className="text-lg font-bold text-[#1A1615] mb-1">Reserve Cold Brew Growler Refill (50% Off)</h3>
-                <p className="text-xs text-[#6E6A66] mb-3 leading-relaxed">
-                  Valid for 32oz or 64oz amber glass growler refilled with nitrogen-infused Kyoto style...
-                </p>
-
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-[#9E9A93] bg-[#FAF8F5] px-3 py-2 rounded-lg mb-3 border border-[#EFECE6]">
-                  <span>Redemptions: <strong className="text-[#1A1615]">142</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Venues: <strong className="text-[#1A1615]">All 3 Venues</strong></span>
-                  <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
-                  <span>Type: <strong className="text-[#1A1615]">Direct Discount</strong></span>
-                </div>
-
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
-                    <Clock className="w-3.5 h-3.5" /> Weekend Refresh
-                  </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-                      <QrCode className="w-3 h-3" /> QR Preview
-                    </button>
-                    <button onClick={() => { setNewVoucherTitle('Reserve Cold Brew Growler Refill (50% Off)'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setDeletedCards([...deletedCards, '#REV-077'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column - Side Panels */}
-        <div className="xl:col-span-4 space-y-6">
-
-          {/* Tier Privilege Matrix */}
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 relative overflow-hidden shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-bold text-[#1A1615] flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-[#D4A753]" /> Tier Privilege Matrix
-              </h3>
-              <button className="text-[10px] font-bold text-[#D4A753] uppercase tracking-wider hover:text-[#9E782F] transition-colors cursor-pointer">
-                Reconfigure
-              </button>
-            </div>
-            <p className="text-[11px] text-[#6E6A66] mb-5 font-medium">
-              Autonomous milestones unlocked on digital wallet passes.
-            </p>
-
-            <div className="space-y-4">
-              {/* Silver */}
-              <div onClick={() => setSelectedMatrixTier('Silver')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Silver' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#D1CDC7]"></span>
-                    <span className="text-xs font-bold text-[#1A1615]">Silver Tier</span>
-                  </div>
-                  <span className="text-[9px] font-bold text-[#9E9A93] uppercase tracking-widest">Entry Level</span>
-                </div>
-                <ul className="space-y-1.5 text-[11px] text-[#6E6A66] font-medium ml-4">
-                  <li>Free welcome espresso or batch brew</li>
-                  <li>Birthday double stamps celebration</li>
-                </ul>
-              </div>
-
-              {/* Gold */}
-              <div onClick={() => setSelectedMatrixTier('Gold')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Gold' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span>
-                    <span className="text-xs font-bold text-[#1A1615]">Gold Tier</span>
-                  </div>
-                  <span className="text-[9px] font-bold text-[#9E782F] uppercase tracking-widest">5+ Visits / mo</span>
-                </div>
-                <ul className="space-y-1.5 text-[11px] text-[#9E782F] font-medium ml-4">
-                  <li>10% off bagged beans & merch</li>
-                  <li>Priority mobile pickup lane routing</li>
-                </ul>
-              </div>
-
-              {/* Black */}
-              <div onClick={() => setSelectedMatrixTier('Black')} className={`border rounded-lg p-3 shadow-sm cursor-pointer transition-all ${selectedMatrixTier === 'Black' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-white border-[#EFECE6] hover:border-[#D1CDC7]'}`}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#1A1615]"></span>
-                    <span className="text-xs font-bold text-[#1A1615]">Black Tier</span>
-                  </div>
-                  <span className="text-[9px] font-bold text-[#1A1615] uppercase tracking-widest">15+ Visits / mo</span>
-                </div>
-                <ul className="space-y-1.5 text-[11px] text-[#6E6A66] font-medium ml-4">
-                  <li>Complimentary monthly tasting flight</li>
-                  <li>Downtown Flagship table reservations</li>
-                </ul>
-              </div>
-
-              {/* Obsidian */}
-              <div onClick={() => setSelectedMatrixTier('Obsidian')} className={`border rounded-lg p-3 shadow-sm relative overflow-hidden cursor-pointer transition-all ${selectedMatrixTier === 'Obsidian' ? 'bg-[#1A1615] border-[#D4A753]' : 'bg-[#1A1615] border-[#332e2d] hover:border-[#4a4342]'}`}>
-                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-[#D4A753]/20 to-transparent rounded-bl-full pointer-events-none"></div>
-                <div className="flex items-center justify-between mb-2 relative z-10">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span>
-                    <span className="text-xs font-bold text-[#D4A753]">Obsidian VIP</span>
-                  </div>
-                  <span className="text-[9px] font-bold text-[#D4A753] uppercase tracking-widest">$2.5K / Invite</span>
-                </div>
-                <ul className="space-y-1.5 text-[11px] text-[#D1CDC7] font-medium ml-4 relative z-10">
-                  <li>Private cupping with Master Roaster</li>
-                  <li>Bespoke digital concierge VIP pass</li>
-                </ul>
-              </div>
-            </div>
+        <section className="mt-8 rounded-[13px] bg-white p-4 shadow-[0_5px_18px_rgba(60,38,20,0.05)]">
+          <div className="flex items-start justify-between"><div><h2 className="text-[19px] font-bold tracking-[-0.04em]">Cohort Decay Curves</h2><p className="text-[12px] text-[#756D65]">Weekly active return telemetry</p></div><SlidersHorizontal className="mt-1 h-4 w-4 text-[#756D65]" /></div>
+          <div className="mt-2 flex items-center justify-between rounded-[8px] bg-[#FCF2E7] px-3 py-2 text-[10px] text-[#756D65]"><span className="font-bold">Cohort Origin</span><span className="flex gap-2"><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#E6D5BA]" />&lt;50%</span><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#B69A5B]" />70%</span><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#806014]" />90%+</span></span></div>
+          <div className="mt-3 space-y-3">
+            {cohorts.map((cohort) => (
+              <div key={cohort.name} className="rounded-[8px] bg-[#FCF5EE] p-3"><div className="flex items-center justify-between text-[12px]"><span><b>{cohort.name}</b> <span className="text-[#756D65]">({cohort.size})</span></span><b className="text-[#087B55]">{cohort.change}</b></div><div className="mt-2 grid grid-cols-4 gap-1.5">{cohort.values.map((value, index) => <div key={value} className={`rounded-[4px] px-1 py-1.5 text-center text-white ${['bg-[#8A6200]', 'bg-[#9F7E2D]', 'bg-[#B29A5F]', 'bg-[#BDAA7C]'][index]}`}><div className="text-[9px] opacity-80">W{index === 3 ? 4 : index}</div><b className="text-[14px]">{value}</b></div>)}</div></div>
+            ))}
           </div>
+          <div className="mt-4 flex gap-2 rounded-[8px] bg-[#FFF0D7] p-3 text-[11px] leading-[1.25] text-[#513C18]"><Award className="h-4 w-4 shrink-0 text-[#9A741E]" /><span><b>Obsidian cohort retention outperforms</b> roastery benchmark by <b className="text-[#087B55]">+22%</b> over a 90-day trajectory.</span></div>
+        </section>
 
-          {/* Redemption Security */}
-          <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
-            <h3 className="text-sm font-bold text-[#1A1615] flex items-center gap-2 mb-2">
-              <Lock className="w-4 h-4 text-[#0D7A53]" /> Redemption Security
-            </h3>
-            <p className="text-[11px] text-[#6E6A66] mb-5 font-medium">
-              Active fraud mitigation across terminal endpoints.
-            </p>
+        <section className="mt-8 rounded-[13px] bg-white p-4 shadow-[0_5px_18px_rgba(60,38,20,0.05)]"><div className="flex items-start justify-between"><div><h2 className="text-[19px] font-bold tracking-[-0.04em]">VIP Tier Progression</h2><p className="text-[12px] text-[#756D65]">Conversion funnel &amp; velocity</p></div><span className="rounded-[4px] bg-[#F4EEE8] px-2 py-1 text-[10px] font-bold text-[#756D65]">3,420 Enrolled</span></div><div className="mt-3 space-y-2.5">{[['Guest Scan', '100%', '3,420 guests', 'bg-[#6E6862]'], ['Prive Member', '82%', '2,804 members', 'bg-[#D4A753]'], ['Black Tier', '34%', '1,162 members', 'bg-[#C39A3D]'], ['Obsidian VIP', '11.8%', '404 members', 'bg-[#8A6200]']].map(([name, value, detail, color], index) => <div key={name}><div className="flex justify-between text-[12px]"><span className="font-medium"><i className={`mr-1.5 inline-block h-2 w-2 rounded-full ${color}`} />{name}</span><b>{value} <span className="font-normal">• {detail}</span></b></div><div className="mt-1 h-2.5 rounded-full bg-[#EFE5DA]"><div className={`h-full rounded-full ${color}`} style={{ width: value }} /></div>{index > 0 && <div className="ml-3 mt-1 text-[10px] text-[#756D65]">Avg velocity: {index === 1 ? '14 days from guest activation' : index === 2 ? '42 days (3.8 visits/wk)' : 'Generates top 48.6% of gross margin'}</div>}</div>)}</div></section>
 
-            <div className="space-y-4 mb-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold text-[#1A1615]">Dynamic QR Rotation</div>
-                  <div className="text-[10px] text-[#9E9A93]">Rotates hash every 45s to block screenshots.</div>
-                </div>
-                <button
-                  onClick={() => setDynamicQR(!dynamicQR)}
-                  className={`w-9 h-5 rounded-full relative transition-colors cursor-pointer ${dynamicQR ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'}`}
-                >
-                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${dynamicQR ? 'left-4.5' : 'left-0.5'}`}></span>
-                </button>
-              </div>
+        <section className="mt-8"><div className="flex items-end justify-between"><div><h2 className="text-[19px] font-bold tracking-[-0.04em]">High LTV Drivers</h2><p className="text-[12px] text-[#756D65]">Menu items prompting repeat visits</p></div><span className="text-[11px] font-bold text-[#A8761C]">TOP 3</span></div><div className="mt-3 space-y-2">{mobileRetentionDrivers.map((item) => <div key={item.name} className="flex items-center gap-3 rounded-[12px] bg-white p-3 shadow-[0_4px_14px_rgba(60,38,20,0.04)]"><img src={item.image} alt="" className="h-12 w-12 rounded-[7px] object-cover" /><div className="min-w-0 flex-1"><div className="truncate text-[13px] font-bold">{item.name}</div><div className="text-[11px] text-[#756D65]">{item.subtitle}</div></div><div className="text-right text-[11px]"><b className="block text-[#087B55]">{item.rate}</b><span>{item.detail}</span></div></div>)}</div></section>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold text-[#1A1615]">PIN Override ({'>'}$25)</div>
-                  <div className="text-[10px] text-[#9E9A93]">Supervisor PIN required for rare lots.</div>
-                </div>
-                <button
-                  onClick={() => setPinOverride(!pinOverride)}
-                  className={`w-9 h-5 rounded-full relative transition-colors cursor-pointer ${pinOverride ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'}`}
-                >
-                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${pinOverride ? 'left-4.5' : 'left-0.5'}`}></span>
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Wallet className="w-4 h-4 text-[#D4A753]" />
-                <div>
-                  <div className="text-[11px] font-bold text-[#1A1615]">Apple & Google Wallet</div>
-                  <div className="text-[10px] text-[#9E9A93]">Sync badge instant</div>
-                </div>
-              </div>
-              <span className="text-[11px] font-bold text-[#0D7A53]">99.98% Live</span>
-            </div>
-          </div>
-
-          {/* Quick Create Voucher */}
-          <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-[#1A1615] flex items-center gap-2">
-                <Zap className="w-4 h-4 text-[#D4A753]" /> Quick Create Voucher
-              </h3>
-              <span className="text-[10px] font-bold text-[#9E782F] bg-[#FDF8EB] px-2 py-0.5 rounded border border-[#F3E5C8]">Fast Wizard</span>
-            </div>
-
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1.5">Perk Title</label>
-                <input
-                  type="text"
-                  value={newVoucherTitle}
-                  onChange={(e) => setNewVoucherTitle(e.target.value)}
-                  placeholder="e.g. Cascara Fizz Voucher"
-                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1.5">Cost</label>
-                  <div className="relative">
-                    <select value={newVoucherCost} onChange={(e) => setNewVoucherCost(e.target.value)} className="w-full appearance-none px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer">
-                      <option>4 Stamps</option>
-                      <option>10 Stamps</option>
-                      <option>Zero Pts</option>
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#9E9A93] pointer-events-none" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1.5">Tier</label>
-                  <div className="relative">
-                    <select value={newVoucherTier} onChange={(e) => setNewVoucherTier(e.target.value)} className="w-full appearance-none px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer">
-                      <option>Silver Tier</option>
-                      <option>Gold Tier</option>
-                      <option>Black Tier</option>
-                      <option>Obsidian VIP</option>
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#9E9A93] pointer-events-none" />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2">Availability Window</label>
-                <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1">
-                  <button onClick={() => setAvailabilityWindow('30 Days')} className={`flex-1 py-1.5 text-[11px] font-bold rounded transition-colors cursor-pointer ${availabilityWindow === '30 Days' ? 'text-[#1A1615] bg-white shadow-sm border border-[#EFECE6]' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>30 Days</button>
-                  <button onClick={() => setAvailabilityWindow('60 Days')} className={`flex-1 py-1.5 text-[11px] font-bold rounded transition-colors cursor-pointer ${availabilityWindow === '60 Days' ? 'text-[#1A1615] bg-white shadow-sm border border-[#EFECE6]' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>60 Days</button>
-                  <button onClick={() => setAvailabilityWindow('Permanent')} className={`flex-1 py-1.5 text-[11px] font-bold rounded transition-colors cursor-pointer ${availabilityWindow === 'Permanent' ? 'text-[#1A1615] bg-white shadow-sm border border-[#EFECE6]' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Permanent</button>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                if (!newVoucherTitle) { showToast('Please enter a Perk Title'); return; }
-                const newId = `#REV-${Date.now().toString().slice(-3)}`;
-                setNewCards([{ id: newId, title: newVoucherTitle, cost: newVoucherCost, tier: newVoucherTier, availability: availabilityWindow }, ...newCards]);
-                setNewVoucherTitle('');
-                showToast('Voucher created and deployed to wallet!');
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white rounded-lg text-xs font-bold shadow-md hover:opacity-95 transition-opacity border border-[#9E782F] cursor-pointer"
-            >
-              <ArrowUpFromWalletIcon className="w-4 h-4" /> Save & Deploy to Wallet
-            </button>
-          </div>
-        </div>
-
+        <button type="button" className="mt-8 flex w-full items-center justify-center gap-2 rounded-[11px] bg-gradient-to-r from-[#D4A753] to-[#9E782F] py-3.5 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><FileText className="h-4 w-4" />Download Executive PDF Report</button>
+        <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-[#756D65]"><LockKeyhole className="h-3 w-3" />Encrypted TLS 1.3 telemetry • Revia Merchant Audit v4.2</div>
       </div>
-
     </div>
   );
 };
 
-function ArrowUpFromWalletIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7.5" />
-      <path d="M7 15h0" />
-      <path d="M7 11h0" />
-      <path d="M16 22v-6" />
-      <path d="m13 19 3-3 3 3" />
-    </svg>
+export const AnalyticsPage: React.FC = () => {
+  const [selectedDateRange, setSelectedDateRange] = useState('Last 90 Days (Aug 15 - Nov 14, 2024)');
+  const [selectedVenue, setSelectedVenue] = useState('All Venues (3)');
+  const [openDropdown, setOpenDropdown] = useState<'date' | 'venue' | null>(null);
+  const [exported, setExported] = useState(false);
+
+  const kpiCards = useMemo(
+    () => [
+      {
+        label: '30-Day Customer Retention',
+        value: '74.8%',
+        detail: 'Vs Prev. Quarter',
+        note: 'Benchmark: 58.4%',
+        accent: 'bg-[#9E782F]',
+        tone: 'emerald',
+      },
+      {
+        label: 'Obsidian VIP LTV',
+        value: '$1,480.00',
+        detail: 'Avg 3.8 visits/week',
+        note: '$38.90 AVG',
+        accent: 'bg-[#C9A24F]',
+        tone: 'gold',
+      },
+      {
+        label: 'Stamp Velocity',
+        value: '12.4 Days',
+        detail: 'Target: 10 Stamps',
+        note: '8.7 Stamps Avg',
+        accent: 'bg-[#0D7A53]',
+        tone: 'stone',
+      },
+      {
+        label: 'Guest Churn Risk',
+        value: '4.2%',
+        detail: '18 dormant guests re-engaged via Flash Perk',
+        note: '',
+        accent: 'bg-[#D9A14A]',
+        tone: 'amber',
+      },
+    ],
+    []
   );
-}
+
+  const exportDossier = () => {
+    const rows = [
+      ['Analytics Dossier', 'Value'],
+      ['Date Horizon', selectedDateRange],
+      ['Venue', selectedVenue],
+      [],
+      ['Metric', 'Value', 'Detail', 'Note'],
+      ...kpiCards.map(({ label, value, detail, note }) => [label, value, detail, note]),
+    ];
+    const csv = rows.map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'revia-analytics-dossier.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    setExported(true);
+    window.setTimeout(() => setExported(false), 2200);
+  };
+
+  const funnelStages = [
+    { label: '1st QR Counter Scan', value: '100% (2,840)', detail: 'Avg 1.2 items per order', percent: 100, accent: 'bg-[#6E6862]' },
+    { label: 'Privé Member', value: '82.0% Conversion', detail: 'Achieved within 9.4 days of scan', percent: 82, accent: 'bg-[#D4A753]' },
+    { label: 'Black Tier', value: '34.0% Conversion', detail: 'Avg 28 days · 15 roasts logged', percent: 34, accent: 'bg-[#C39A3D]' },
+    { label: 'Obsidian VIP', value: '11.8% Velocity', detail: 'Apex spending tier · 335 total guests', percent: 12, accent: 'bg-[#9E782F]' },
+  ];
+
+  const menuItems = [
+    { name: 'Panama Geisha Reserve', rate: '94%', lift: '+42.8% LTV Lift', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=120&auto=format&fit=crop&q=80' },
+    { name: 'Cardamom Tahini Cruffin', rate: '88%', lift: '+31.2% LTV Lift', image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120&auto=format&fit=crop&q=80' },
+    { name: 'Madagascan Vanilla Oat', rate: '81%', lift: '+26.5% LTV Lift', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=120&auto=format&fit=crop&q=80' },
+    { name: 'Single-Origin Roastery Flight', rate: '79%', lift: '+22.4% LTV Lift', image: 'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=120&auto=format&fit=crop&q=80' },
+  ];
+
+  const revenueSeries = [
+    { label: 'M1', value: 1240 },
+    { label: 'M2', value: 1320 },
+    { label: 'M3', value: 1460 },
+    { label: 'M4', value: 1620 },
+    { label: 'M5', value: 1740 },
+    { label: 'M6', value: 1880 },
+    { label: 'M7', value: 1960 },
+    { label: 'M8', value: 2160 },
+    { label: 'M9', value: 2310 },
+    { label: 'M10', value: 2435 },
+    { label: 'M11', value: 2500 },
+    { label: 'M12', value: 2600 },
+  ];
+
+  const getHeatmapColor = (pct: number) => {
+    if (pct === 0) return 'bg-[#F7F5F2] text-[#8F8A84] border border-[#EEE7DD]';
+    if (pct >= 85) return 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-[0_6px_16px_rgba(158,120,47,0.25)]';
+    if (pct >= 75) return 'bg-[#D8B562]/45 text-[#1A1615] font-semibold';
+    if (pct >= 65) return 'bg-[#E8D9B4]/60 text-[#1A1615] font-medium';
+    return 'bg-[#F7F5F2] text-[#6E6A66]';
+  };
+
+  const renderLine = (data: { label: string; value: number }[], stroke: string, fill: string) => {
+    const width = 620;
+    const height = 180;
+    const min = 0;
+    const max = 1600;
+    const range = max - min || 1;
+
+    const toPoints = (values: number[]) => values
+      .map((value, index) => {
+        const x = (index / (data.length - 1)) * (width - 30) + 15;
+        const y = height - ((value - min) / range) * (height - 30) - 15;
+        return `${x},${y}`;
+      })
+      .join(' ');
+
+    const obsidianValues = [0, 300, 500, 710, 900, 1060, 1190, 1300, 1380, 1440, 1480, 1500];
+    const blackTierValues = [0, 180, 300, 430, 550, 660, 750, 830, 900, 950, 985, 1000];
+    const primeMemberValues = [0, 95, 155, 220, 285, 335, 375, 410, 440, 465, 485, 500];
+    const guestScanValues = [0, 34, 40, 48, 55, 61, 67, 72, 78, 83, 88, 95];
+    const points = toPoints(obsidianValues);
+    const blackTier = toPoints(blackTierValues);
+    const primeMember = toPoints(primeMemberValues);
+    const guestScan = toPoints(guestScanValues);
+
+    return (
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-36 w-full">
+        <defs>
+          <linearGradient id={`fill-${stroke.replace('#', '')}`} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor={fill} stopOpacity={0.25} />
+            <stop offset="100%" stopColor={fill} stopOpacity={0.04} />
+          </linearGradient>
+        </defs>
+
+        {[0, 1, 2, 3].map((line) => (
+          <line
+            key={line}
+            x1="15"
+            x2={width - 15}
+            y1={18 + line * 38}
+            y2={18 + line * 38}
+            stroke="#EEE9E2"
+            strokeDasharray="2 6"
+            strokeWidth="1"
+          />
+        ))}
+
+        <polyline
+          fill="none"
+          stroke={stroke}
+          strokeWidth="2.2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          points={points}
+        />
+
+        <polyline fill="none" stroke="#B78625" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round" points={blackTier} />
+        <polyline fill="none" stroke="#D4A753" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" points={primeMember} />
+        <polyline fill="none" stroke="#8C847A" strokeWidth="1.1" strokeDasharray="2 4" points={guestScan} />
+
+        <circle cx={width - 15} cy={height - ((1500 - min) / range) * (height - 30) - 15} r="3" fill="#9E782F" />
+        <circle cx={width - 15} cy={height - ((1000 - min) / range) * (height - 30) - 15} r="2.5" fill="#B78625" />
+        <circle cx={width - 15} cy={height - ((500 - min) / range) * (height - 30) - 15} r="2.5" fill="#D4A753" />
+        <circle cx={width - 15} cy={height - ((95 - min) / range) * (height - 30) - 15} r="2.5" fill="#8C847A" />
+
+        {data.map((point, index) => (
+          <text key={`month-${point.label}`} x={(index / (data.length - 1)) * (width - 30) + 15} y={height - 1} textAnchor="middle" fill="#8C847A" fontSize="8">{point.label}</text>
+        ))}
+
+        <text x={width - 16} y="20" textAnchor="end" fill="#B5ADA3" fontSize="8">$1,500</text>
+        <text x={width - 16} y="65" textAnchor="end" fill="#B5ADA3" fontSize="8">$1,000</text>
+        <text x={width - 16} y="110" textAnchor="end" fill="#B5ADA3" fontSize="8">$500</text>
+
+        {data.map((point, index) => {
+          const x = (index / (data.length - 1)) * (width - 30) + 15;
+          const y = height - ((point.value - min) / range) * (height - 30) - 15;
+          return (
+            <g key={point.label}>
+              {index === data.length - 1 && <circle cx={x} cy={y} r="3" fill={stroke} />}
+            </g>
+          );
+        })}
+      </svg>
+    );
+  };
+
+  return (
+    <>
+      <div className="md:hidden">
+        <MobileAnalyticsView />
+      </div>
+      <div className="hidden md:block">
+    <div className="min-h-0 bg-[#F6F3EE] px-3 pb-2 pt-4 sm:px-5 lg:px-6">
+      <div className="mx-auto w-full max-w-[1400px]">
+        <header className="relative z-30 bg-[#F6F3EE] pb-2 pt-1">
+          {/*
+          <div className="mb-4 flex items-center justify-between pb-2 text-[9px] font-bold uppercase tracking-[0.12em] text-[#8C847A]">
+            <div className="flex items-center gap-2">
+              <span>Home</span>
+              <span className="text-[#C8BFB4]">/</span>
+              <span>Insights &amp; Config</span>
+              <span className="text-[#C8BFB4]">/</span>
+              <span className="text-[#9E782F]">Analytics &amp; Retention</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-[#CDE9DB] bg-[#F0FAF4] px-2.5 py-1.5 text-[8px] tracking-[0.1em] text-[#0D7A53]">
+              <span className="h-2 w-2 rounded-full bg-[#16A36D]" />
+              Live telemetry · 4m latency
+            </div>
+          </div>
+          */}
+
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+            <div className="max-w-[480px]">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-[24px] font-bold tracking-normal leading-[1.05] text-[#1A1615]">
+                  Analytics &amp; Cohort Retention
+                </h1>
+              </div>
+
+              <p className="mt-2 max-w-[540px] text-[14px] font-normal leading-[1.45] text-[#6E6862]">
+                Longitudinal guest retention curves, VIP tier velocity, stamp redemption turnover, and lifetime value across all artisanal venues.
+              </p>
+            </div>
+
+            <div className="flex max-w-[380px] flex-wrap items-start justify-end gap-2 self-start lg:grid lg:w-[560px] lg:max-w-full lg:grid-cols-2 lg:self-auto">
+              <div className="relative z-50 min-w-[230px] lg:min-w-0 lg:w-full">
+                <button type="button" onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Calendar className="h-2.5 w-2.5" /></span>
+                  <span className="flex min-w-0 flex-1 flex-col"><span className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8C847A]">Date horizon</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedDateRange}</span></span>
+                  <ChevronDown className={`h-3 w-3 shrink-0 text-[#8C847A] transition-transform ${openDropdown === 'date' ? 'rotate-180' : ''}`} />
+                </button>
+                {openDropdown === 'date' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[230px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose date horizon</div>{['Last 30 Days', 'Last 90 Days (Aug 15 - Nov 14, 2024)', 'Year to date'].map((range) => <button key={range} type="button" onClick={() => { setSelectedDateRange(range); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedDateRange === range ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{range}</button>)}</div>}
+              </div>
+
+              <div className="relative z-50 min-w-[120px] lg:min-w-0 lg:w-full">
+                <button type="button" onClick={() => setOpenDropdown(openDropdown === 'venue' ? null : 'venue')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Filter className="h-2.5 w-2.5" /></span>
+                  <span className="flex min-w-0 flex-1 flex-col"><span className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8C847A]">Venues</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedVenue}</span></span>
+                  <ChevronDown className={`h-3 w-3 shrink-0 text-[#8C847A] transition-transform ${openDropdown === 'venue' ? 'rotate-180' : ''}`} />
+                </button>
+                {openDropdown === 'venue' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[160px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose venue</div>{['All Venues (3)', 'Downtown Flagship', 'Roastery Reserve', 'Northside Pop-up'].map((venue) => <button key={venue} type="button" onClick={() => { setSelectedVenue(venue); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedVenue === venue ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{venue}</button>)}</div>}
+              </div>
+
+              <div className="inline-flex items-center gap-2 rounded-[9px] border border-[#E7E1D8] bg-[#F4F0EA] px-2.5 py-1.5 shadow-[0_2px_8px_rgba(25,20,18,0.02)] lg:w-full">
+                <BarChart3 className="h-3 w-3 text-[#9E782F]" />
+                <span className="flex flex-col text-[9px] font-bold uppercase leading-3 tracking-[0.12em] text-[#1A1615]"><span className="text-[#8C847A]">Cohort benchmark</span><span>VIP vs New Guests</span></span>
+              </div>
+
+              <button type="button" onClick={exportDossier} className="inline-flex items-center justify-center gap-1.5 rounded-[9px] bg-gradient-to-b from-[#D4A753] to-[#9E782F] px-2.5 py-3 text-[10px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95 lg:w-full">
+                <Download className="h-3 w-3" />
+                {exported ? 'Dossier Ready' : 'Export CSV / PDF Dossier'}
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <section className="mt-5 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
+              {kpiCards.map(({ label, value, detail, note, accent, tone }) => (
+                <div
+                  key={label}
+                  className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="max-w-[150px] text-xs font-medium leading-[1.35] text-[#7C746C]">{label}</span>
+                    {label.includes('Retention') && <span className="rounded-full border border-[#BDE8D4] bg-[#F0FBF5] px-2 py-1 text-[10px] font-bold uppercase leading-none text-[#0D7A53]">Top<br />Decile</span>}
+                    {label.includes('VIP') && <span className="rounded-full border border-[#F0D98A] bg-[#FFF9E7] px-2 py-1 text-[10px] font-bold uppercase leading-none text-[#A16D1F]">+14.5%<br />MOM</span>}
+                    {label.includes('Velocity') && <span className="rounded-full border border-[#BDE8D4] bg-[#F0FBF5] px-2 py-1 text-[10px] font-bold uppercase text-[#0D7A53]">-2.1 DAYS</span>}
+                    {label.includes('Churn') && <span className="rounded-full border border-[#BDE8D4] bg-[#F0FBF5] px-2 py-1 text-[10px] font-bold uppercase text-[#0D7A53]">LOW RISK</span>}
+                  </div>
+
+                  <div className="mt-2 flex items-end justify-between gap-2">
+                    <div className="flex items-end gap-1 text-3xl font-bold leading-none tracking-tight text-[#1A1615]">
+                      {value}
+                      {label.includes('VIP') && <span className="mb-0.5 text-[10px] font-medium tracking-normal text-[#6E6A66]">/ member</span>}
+                    </div>
+                    {label.includes('Retention') && <span className="text-[11px] font-bold text-[#0D7A53]">+6.2%</span>}
+                    {label.includes('Velocity') && <span className="text-[11px] font-bold leading-4 text-[#0D7A53]">Faster<br />Turn</span>}
+                    {label.includes('Churn') && <span className="text-[11px] font-bold text-[#0D7A53]">-1.8%</span>}
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between gap-2 border-t border-[#EAE3D9] pt-3 text-[11px] text-[#6E6A66]">
+                    {label.includes('Churn') ? (
+                      <span className="flex items-start gap-1.5 leading-3 text-[9px] text-[#6E6A66]"><span className="text-[12px] text-[#D4A753]">⚡</span><span>18 dormant guests re-engaged<br />via Flash Perk</span></span>
+                    ) : (
+                      <span>{detail}</span>
+                    )}
+                    {!label.includes('Churn') && <span className="shrink-0 font-bold text-[11px] text-[#9E782F]">{note}</span>}
+                  </div>
+                  {label.includes('Retention') && (
+                    <div className="mt-1 flex items-end justify-between gap-2">
+                      <div className="text-[10px] font-semibold text-[#1A1615]">58.4%</div>
+                      <svg viewBox="0 0 90 20" className="h-5 w-24" aria-hidden="true">
+                        <polyline points="1,17 15,14 29,14 43,9 56,11 71,5 89,1" fill="none" stroke="#9E782F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="89" cy="1" r="2.2" fill="#9E782F" />
+                      </svg>
+                    </div>
+                  )}
+                  {!label.includes('Churn') && !label.includes('Retention') && <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className={`h-full rounded-full ${accent}`} style={{ width: label.includes('VIP') ? '88%' : '82%' }} /></div>}
+                </div>
+              ))}
+        </section>
+
+        <div className="mt-4 grid gap-3 xl:grid-cols-[1.75fr_0.9fr]">
+          <main className="space-y-3">
+            <section className="overflow-hidden rounded-[9px] border border-[#E9E2D8] bg-white p-2.5 shadow-[0_5px_16px_rgba(29,24,18,0.02)] sm:p-3">
+              <div className="mb-2 flex flex-col gap-2 border-b border-[#EAE3D9] pb-2 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <h2 className="text-[1.075rem] font-bold tracking-[-0.04em] text-[#1A1615]">Weekly Retention Cohort Heatmap <span className="text-[10px] text-[#8C847A]">(i)</span></h2>
+                  <p className="mt-0.5 max-w-[230px] text-[9px] leading-3 text-[#8C847A]">Observed customer return scans over a 12-week longitudinal duration.</p>
+                </div>
+
+                <div className="flex shrink-0 items-center gap-1.5 rounded-[5px] bg-[#FAF8F5] px-1.5 py-1 text-[6px] font-semibold text-[#6E6A66]">
+                  <span className="text-[6px] uppercase text-[#8C847A]">Retention:</span>
+                  <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-gradient-to-r from-[#D4A753] to-[#9E782F]" /> &gt;70%</span>
+                  <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-[#D4A753]/55" /> 50-70%</span>
+                  <span className="inline-flex items-center gap-1 text-[#A39B91]"><span className="h-2 w-2 rounded-sm bg-[#EEEAE4]" /> &lt;50%</span>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full table-fixed border-separate border-spacing-y-0.5 text-left text-[11px]">
+                  <thead>
+                    <tr className="text-[9px] font-bold uppercase tracking-[0.1em] text-[#8C847A]">
+                      <th className="w-[24%] px-2 py-1 font-bold">Cohort</th>
+                      <th className="w-[10%] px-1 py-1 font-bold">Size</th>
+                      <th className="px-1 py-1 text-center">W0</th>
+                      <th className="px-1 py-1 text-center">W1</th>
+                      <th className="px-1 py-1 text-center">W2</th>
+                      <th className="px-1 py-1 text-center">W3</th>
+                      <th className="px-1 py-1 text-center">W4</th>
+                      <th className="px-1 py-1 text-center">W5</th>
+                      <th className="px-1 py-1 text-center">W6</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {RETENTION_COHORT_DATA.map((row) => (
+                      <tr key={row.cohort} className="rounded-xl bg-[#FAF8F5]">
+                        <td className="rounded-l-xl px-2 py-1 font-semibold text-[#1A1615]">{row.cohort}</td>
+                        <td className="px-1 py-1 font-mono text-[#6E6A66]">{row.members.toLocaleString()}</td>
+                        {[100, row.m1, row.m2, row.m3, row.m4, row.m5, row.m6].map((value, index) => (
+                          <td key={`${row.cohort}-${index}`} className="px-0.5 py-0.5">
+                            <div className={`flex h-6 items-center justify-center rounded-[3px] px-0.5 font-mono text-[10px] ${getHeatmapColor(value)}`}>
+                              {value ? `${value}%` : '—'}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-2 flex min-h-[34px] items-start gap-2 rounded-[6px] border border-[#EAE3D9] bg-[#FAF8F5] px-2.5 py-2 text-[12px] leading-4 text-[#6E6A66]">
+                <span className="mt-0.5 shrink-0 text-[12px] font-bold text-[#B78A2B]">*</span>
+                <p className="min-w-0 font-bold"><strong className="text-[#1A1615]">Cohort Health Insight:</strong> The introduction of the <strong className="font-bold text-[#9E782F]">Tahini Cruffin pairing perk</strong> on Oct 7 accelerated Week-1 return velocity by <strong className="font-bold text-[#9E782F]">+4.8%</strong> over the autumn baseline.</p>
+              </div>
+            </section>
+
+            <section className="rounded-[12px] border border-[#E9E2D8] bg-white p-3 shadow-[0_5px_16px_rgba(29,24,18,0.02)] sm:p-4">
+              <div className="mb-3 flex flex-col gap-2 border-b border-[#EAE3D9] pb-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-[1rem] font-extrabold tracking-[-0.04em] text-[#1A1615]">Cumulative Revenue &amp; LTV Trajectory by Member Tier</h2>
+                  <p className="mt-0.5 text-[9px] text-[#8C847A]">12-Month Longitudinal Value Growth across guest classifications.</p>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="flex h-[48px] w-[82px] flex-col items-center justify-center rounded-[9px] border border-[#EAE3D9] bg-[#FAF8F5] text-center text-[8px] font-bold uppercase leading-3 text-[#8C847A]">Payback<br />Period<b className="mt-0.5 text-[12px] leading-3 text-[#1A1615]">18 Days</b></span>
+                  <span className="flex h-[48px] w-[82px] flex-col items-center justify-center rounded-[9px] border border-[#BDE8D4] bg-[#F0FBF5] text-center text-[8px] font-bold uppercase leading-3 text-[#8C847A]">Tier<br />Conversion<b className="mt-0.5 text-[12px] leading-3 text-[#0D7A53]">28.4%</b></span>
+                </div>
+              </div>
+
+              <div className="overflow-hidden rounded-[10px] border border-[#F0E9E2] bg-[#FCFAF8] p-1">
+                {renderLine(revenueSeries, '#9E782F', '#D4A753')}
+              </div>
+
+              <div className="mt-2 grid gap-2 sm:grid-cols-4">
+                {[
+                  { name: 'Obsidian VIP', value: '$1,480.00', color: 'bg-[#9E782F]' },
+                  { name: 'Black Tier', value: '$820.00', color: 'bg-[#B29E8F]' },
+                  { name: 'Prime Member', value: '$410.00', color: 'bg-[#1A1615]' },
+                  { name: 'Guest Scan', value: '$95.00', color: 'bg-[#D8C7A2]' },
+                ].map((item) => (
+                  <div key={item.name} className="rounded-[7px] border border-[#EAE3D9] bg-[#FAF8F5] p-2">
+                    <div className="mb-1 flex items-center gap-1.5">
+                      <span className={`h-2 w-2 rounded-full ${item.color}`} />
+                      <span className="text-[11px] font-semibold text-[#1A1615]">{item.name}</span>
+                    </div>
+                    <div className="font-bold tracking-[-0.04em] text-[#1A1615]">{item.value}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </main>
+
+          <aside className="flex flex-col gap-3">
+            <section className="order-3 rounded-[12px] border border-[#EAE1D6] bg-white p-3 shadow-[0_4px_10px_rgba(29,24,18,0.02)] sm:p-4">
+              <div className="mb-3 flex items-center justify-between border-b border-[#EAE3D9] pb-2">
+                <div>
+                  <h3 className="text-[0.9rem] font-bold uppercase tracking-[-0.02em] text-[#1A1615]">Footfall Experience Heatmap</h3>
+                </div>
+                <span className="rounded-[5px] border border-[#EAE3D9] bg-[#FAF8F5] px-1.5 py-1 text-center text-[6px] font-bold uppercase text-[#6E6A66]">Live<br />Flow</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-[10px]">
+                <div className="rounded-[7px] border border-[#EAE3D9] bg-[#FBF9F6] p-2">
+                  <div className="text-[8px] font-bold uppercase text-[#8C847A]">Morning Rush</div>
+                  <div className="mt-1 font-bold text-[#1A1615]">7:30 - 10:00 AM</div>
+                  <div className="mt-1 text-[9px] text-[#9E782F]">⚡ Espresso Batch</div>
+                </div>
+                <div className="rounded-[7px] border border-[#EAE3D9] bg-[#FBF9F6] p-2">
+                  <div className="text-[8px] font-bold uppercase text-[#8C847A]">Salon Tasting</div>
+                  <div className="mt-1 font-bold text-[#1A1615]">2:00 - 4:30 PM</div>
+                  <div className="mt-1 text-[9px] text-[#9E782F]">♥ VIP Pour-Overs</div>
+                </div>
+              </div>
+            </section>
+
+            <section className="order-1 rounded-[12px] border border-[#EAE1D6] bg-white p-3 font-bold shadow-[0_4px_10px_rgba(29,24,18,0.02)] sm:p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <div>
+                  <h3 className="text-[0.95rem] font-bold uppercase tracking-[-0.02em] text-[#1A1615]">Tier Velocity Funnel</h3>
+                </div>
+                <span className="text-[7px] font-bold uppercase tracking-[0.08em] text-[#8C847A]">Full lifecycle</span>
+              </div>
+
+              <div className="space-y-2">
+                {funnelStages.map((stage, index) => (
+                  <div key={stage.label} className={`rounded-[8px] border px-2.5 py-2 ${index === 1 ? 'ml-1.5' : index === 2 ? 'ml-3' : index === 3 ? 'ml-5' : ''} ${stage.label === 'Obsidian VIP' ? 'border-[#E4D3A5] bg-[#FBF5E8]' : 'border-[#EAE3D9] bg-[#FBF9F6]'}`}>
+                    <div className="flex items-center justify-between gap-2 text-[11px] text-[#1A1615]">
+                      <span className="font-semibold">{stage.label === 'Obsidian VIP' && <span className="mr-1 text-[#9E782F]">✿</span>}{stage.label}</span>
+                      <span className="font-bold text-[#9E782F]">{stage.value}</span>
+                    </div>
+                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#E9E3DC]">
+                      <div className={`h-full rounded-full ${stage.accent}`} style={{ width: `${stage.percent}%` }} />
+                    </div>
+                    <div className="mt-1 text-[10px] text-[#8C847A]">{stage.detail}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mx-0.5 mt-3 min-h-[50px] rounded-[8px] border border-[#EAE3D9] bg-[#FAF8F5] px-2.5 py-2 text-[12px] leading-[1.25] text-[#6E6A66]">
+                <span className="mr-1 align-top text-[13px] text-[#D4A753]">⚡</span><strong className="text-[#1A1615]">Velocity Lever:</strong> Double-stamp happy hours on Thursdays accelerate <strong className="text-[#9E782F]">Black -&gt; Obsidian</strong> migration by 2.3x.
+              </div>
+            </section>
+
+            <section className="order-2 rounded-[12px] border border-[#EAE1D6] bg-white p-3 shadow-[0_4px_10px_rgba(29,24,18,0.02)] sm:p-4">
+              <div className="mb-3 flex items-center justify-between border-b border-[#EAE3D9] pb-2">
+                <h3 className="text-[1rem] font-extrabold uppercase tracking-[-0.02em] text-[#1A1615]">Menu Items Driving Retention</h3>
+                <span className="text-[9px] font-bold text-[#8C847A]">↗</span>
+              </div>
+
+              <div className="space-y-1.5">
+                {menuItems.map((item, index) => (
+                  <div key={item.name} className="flex items-center gap-2 rounded-[7px] border border-[#EAE3D9] bg-[#FBF9F6] p-1.5 shadow-[0_2px_7px_rgba(29,24,18,0.03)]">
+                    <img src={item.image} alt="" className="h-8 w-8 shrink-0 rounded-[5px] object-cover" />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-[11px] font-extrabold text-[#1A1615]">{item.name}</div>
+                      <div className="mt-0.5 text-[10px] text-[#8C847A]">Signature bakery · {index + 2} stamps logged</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[11px] font-bold text-[#0D7A53]">{item.rate}</div>
+                      <div className="text-[9px] font-bold text-[#0D7A53]">Return</div>
+                      </div>
+                    </div>
+                ))}
+              </div>
+            </section>
+
+          </aside>
+        </div>
+
+        <footer className="mt-3 flex flex-col gap-2 border-t border-[#E8E1D8] py-2 text-[8px] text-[#8C847A] sm:flex-row sm:items-center sm:justify-between">
+          <span>Revia Merchant Intelligence Engine • Confidential Roastery Telemetry</span>
+          <span>Retention Model Methodology <span className="px-1 text-[#C8BFB4]">•</span> Privacy &amp; Pseudonymization Log</span>
+        </footer>
+      </div>
+    </div>
+      </div>
+    </>
+  );
+};
