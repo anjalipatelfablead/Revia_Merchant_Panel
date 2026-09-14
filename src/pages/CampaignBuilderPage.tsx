@@ -45,13 +45,732 @@ import {
   Hourglass,
   BellRing,
   Bookmark,
-  ChevronRight
+  ChevronRight,
+  Wallet
 } from 'lucide-react';
+
+interface CampaignRulesStepProps {
+  campaignType: string;
+  onContinue: (config: any) => void;
+  onBack: () => void;
+}
+
+const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, onContinue, onBack }) => {
+  const [visitCount, setVisitCount] = useState(5);
+  const [visitMinBill, setVisitMinBill] = useState(1000);
+
+  const [billingPeriod, setBillingPeriod] = useState<'One-Time' | 'Monthly' | 'Quarterly'>('One-Time');
+  const [billingTarget, setBillingTarget] = useState(10000);
+
+  const [stampItem, setStampItem] = useState('');
+  const [stampCount, setStampCount] = useState(10);
+
+  const [happyStart, setHappyStart] = useState('14:00');
+  const [happyEnd, setHappyEnd] = useState('16:00');
+  const [happyDays, setHappyDays] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
+  const [happyExcludeHolidays, setHappyExcludeHolidays] = useState(true);
+  const [happyItem, setHappyItem] = useState('');
+  const [happyQty, setHappyQty] = useState(2);
+
+  const handleContinue = () => {
+    let config = {};
+    if (campaignType === 'existing_visit') config = { visitCount, visitMinBill };
+    else if (campaignType === 'existing_billing') config = { billingPeriod, billingTarget };
+    else if (campaignType === 'existing_stamp') config = { stampItem, stampCount };
+    else if (campaignType === 'happy_hours') config = { happyStart, happyEnd, happyDays, happyExcludeHolidays, happyItem, happyQty };
+    onContinue(config);
+  };
+
+  const toggleHappyDay = (day: string) => {
+    setHappyDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
+  };
+
+  const formatTime = (time: string) => {
+    const [h, m] = time.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const hour = h % 12 || 12;
+    return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
+  };
+
+  let isValid = false;
+  if (campaignType === 'new_customer') isValid = true;
+  if (campaignType === 'existing_visit') isValid = visitCount > 0 && visitMinBill >= 0;
+  if (campaignType === 'existing_billing') isValid = billingTarget > 0;
+  if (campaignType === 'existing_stamp') isValid = stampItem.trim().length > 0 && stampCount > 0;
+  if (campaignType === 'happy_hours') isValid = happyStart < happyEnd && happyDays.length > 0 && happyItem.trim().length > 0 && happyQty > 0;
+
+  const renderContent = () => {
+    switch (campaignType) {
+      case 'new_customer':
+        return (
+          <div className="bg-[#FFFBF0] border border-[#F3E5C8] rounded-2xl p-6 shadow-sm flex gap-4">
+            <div className="w-10 h-10 shrink-0 bg-[#D4A753]/20 rounded-xl flex items-center justify-center mt-0.5">
+              <Sparkles className="w-5 h-5 text-[#9E782F]" />
+            </div>
+            <div>
+              <h4 className="text-[15px] font-bold text-[#1A1615] mb-2">Auto-Trigger on First Transaction</h4>
+              <p className="text-[13px] text-[#6E6A66] leading-relaxed">
+                This campaign automatically triggers on a customer's first qualifying transaction
+                with your business. <strong className="text-[#1A1615]">No conditions needed.</strong> Once redeemed,
+                this reward locks — it cannot be issued again to the same customer.
+              </p>
+            </div>
+          </div>
+        );
+      case 'existing_visit':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
+              <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#D4A753]" /> Visit Type Configuration
+              </h4>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Number of Qualifying Visits</label>
+                <input
+                  type="number"
+                  value={visitCount}
+                  onChange={e => setVisitCount(Number(e.target.value))}
+                  className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Minimum Billing Per Visit</label>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">₹</span>
+                  <input
+                    type="number"
+                    value={visitMinBill}
+                    onChange={e => setVisitMinBill(Number(e.target.value))}
+                    className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+                  />
+                </div>
+                <p className="mt-1.5 text-[11px] text-[#9E9A93] font-medium">A visit only counts toward the target if its bill meets or exceeds this minimum.</p>
+              </div>
+            </div>
+            <div className="bg-[#F5F4F2] border border-[#E2DED9] rounded-xl px-5 py-4">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] block mb-1">LIVE PREVIEW</span>
+              <p className="text-[14px] font-semibold text-[#3D3730] leading-relaxed">
+                Visit the business <strong className="text-[#9E782F]">{visitCount}</strong> time{visitCount !== 1 ? 's' : ''} with a minimum bill of <strong className="text-[#9E782F]">₹{visitMinBill.toLocaleString('en-IN')}</strong> on each visit to receive a reward.
+              </p>
+            </div>
+          </div>
+        );
+      case 'existing_billing':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
+              <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-[#D4A753]" /> Billing Type Configuration
+              </h4>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Billing Period</label>
+                <div className="inline-flex bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-1 gap-1">
+                  {(['One-Time', 'Monthly', 'Quarterly'] as const).map(p => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => { setBillingPeriod(p); setBillingTarget(p === 'One-Time' ? 10000 : p === 'Monthly' ? 100000 : 1000000); }}
+                      className={`px-5 py-2 rounded-lg text-[13px] font-bold transition-all cursor-pointer ${billingPeriod === p
+                        ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-sm'
+                        : 'text-[#6E6A66] hover:text-[#1A1615]'
+                        }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Target Cumulative Amount</label>
+                <div className="relative max-w-[260px]">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">₹</span>
+                  <input
+                    type="number"
+                    value={billingTarget}
+                    min={0}
+                    placeholder={billingPeriod === 'One-Time' ? '10000' : billingPeriod === 'Monthly' ? '100000' : '1000000'}
+                    onChange={e => setBillingTarget(Math.max(0, Number(e.target.value)))}
+                    className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+                  />
+                </div>
+                <p className="mt-1.5 text-[11px] text-[#9E9A93] font-medium">The system totals all qualifying transactions within the selected period and compares against this target.</p>
+              </div>
+            </div>
+            <div className="bg-[#F5F4F2] border border-[#E2DED9] rounded-xl px-5 py-4">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] block mb-1">LIVE PREVIEW</span>
+              <p className="text-[14px] font-semibold text-[#3D3730] leading-relaxed">
+                Spend a total of <strong className="text-[#9E782F]">₹{billingTarget.toLocaleString('en-IN')}</strong> {billingPeriod === 'One-Time' ? 'during the campaign period' : billingPeriod === 'Monthly' ? 'in a calendar month' : 'in a calendar quarter'} to receive a reward.
+              </p>
+            </div>
+          </div>
+        );
+      case 'existing_stamp':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
+              <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#D4A753]" /> Stamp Type Configuration
+              </h4>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Qualifying Item</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={stampItem}
+                    onChange={e => setStampItem(e.target.value)}
+                    placeholder="e.g. Coffee"
+                    className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] placeholder:text-[#B0ABA5] focus:outline-none focus:border-[#D4A753] transition-colors"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Target Stamp Count</label>
+                <input
+                  type="number"
+                  value={stampCount}
+                  onChange={e => setStampCount(Number(e.target.value))}
+                  className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+                />
+              </div>
+              <div className="flex items-start gap-3 bg-[#FFFBF0] border border-[#F3E5C8] rounded-xl p-4">
+                <AlertCircle className="w-5 h-5 text-[#D4A753] shrink-0 mt-0.5" />
+                <p className="text-[12px] font-semibold text-[#7A5C1E] leading-relaxed">
+                  Only purchases of the selected item count toward this campaign. All other items are ignored, even in the same transaction.
+                </p>
+              </div>
+            </div>
+            <div className="bg-[#F5F4F2] border border-[#E2DED9] rounded-xl px-5 py-4">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] block mb-1">LIVE PREVIEW</span>
+              <p className="text-[14px] font-semibold text-[#3D3730] leading-relaxed">
+                Purchase <strong className="text-[#9E782F]">{stampItem || '(item)'}</strong> <strong className="text-[#9E782F]">{stampCount}</strong> time{stampCount !== 1 ? 's' : ''} to receive the {stampCount + 1}{stampCount === 10 ? 'th' : stampCount % 10 === 1 && stampCount !== 11 ? 'st' : stampCount % 10 === 2 && stampCount !== 12 ? 'nd' : stampCount % 10 === 3 && stampCount !== 13 ? 'rd' : 'th'} {stampItem || '(item)'} free.
+              </p>
+            </div>
+          </div>
+        );
+      case 'happy_hours':
+        return (
+          <div className="space-y-6">
+            <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
+              <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#D4A753]" /> Happy Hours Configuration
+              </h4>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Time Range</label>
+                <div className="grid grid-cols-2 gap-4 max-w-sm">
+                  <div>
+                    <span className="text-[10px] font-bold text-[#9E9A93] block mb-1">Start Time</span>
+                    <input
+                      type="time"
+                      value={happyStart}
+                      onChange={e => setHappyStart(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-[#9E9A93] block mb-1">End Time</span>
+                    <input
+                      type="time"
+                      value={happyEnd}
+                      onChange={e => setHappyEnd(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Applicable Days</label>
+                <div className="flex flex-wrap gap-2">
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => toggleHappyDay(day)}
+                      className={`w-12 h-10 rounded-xl text-[12px] font-bold border-2 transition-all cursor-pointer ${happyDays.includes(day)
+                        ? 'bg-[#1A1615] border-[#1A1615] text-white'
+                        : 'bg-white border-[#EFECE6] text-[#6E6A66] hover:border-[#D4A753]/60'
+                        }`}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between py-3 border-t border-[#EFECE6]">
+                <div>
+                  <div className="text-[13px] font-bold text-[#1A1615]">Exclude Holidays</div>
+                  <div className="text-[11px] text-[#9E9A93] font-medium mt-0.5">Campaign will not apply on configured holiday dates</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setHappyExcludeHolidays(v => !v)}
+                  className={`relative w-11 h-6 rounded-full border-2 transition-all cursor-pointer ${happyExcludeHolidays ? 'bg-[#D4A753] border-[#9E782F]' : 'bg-[#EFECE6] border-[#D1CDC7]'
+                    }`}
+                >
+                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${happyExcludeHolidays ? 'left-[22px]' : 'left-0.5'
+                    }`} />
+                </button>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Qualifying Item & Quantity</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    value={happyItem}
+                    onChange={e => setHappyItem(e.target.value)}
+                    placeholder="e.g. Coffee"
+                    className="flex-1 px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-semibold text-[#1A1615] placeholder:text-[#B0ABA5] focus:outline-none focus:border-[#D4A753] transition-colors"
+                  />
+                  <span className="text-[#9E9A93] font-bold text-sm">×</span>
+                  <input
+                    type="number"
+                    value={happyQty}
+                    onChange={e => setHappyQty(Number(e.target.value))}
+                    className="w-20 px-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-center text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="bg-[#F5F4F2] border border-[#E2DED9] rounded-xl px-5 py-4">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] block mb-1">LIVE PREVIEW</span>
+              <p className="text-[14px] font-semibold text-[#3D3730] leading-relaxed">
+                Between <strong className="text-[#9E782F]">{formatTime(happyStart)}</strong> and <strong className="text-[#9E782F]">{formatTime(happyEnd)}</strong> on <strong className="text-[#9E782F]">{happyDays.length > 0 ? happyDays.join(', ') : '(no days selected)'}</strong>, buy <strong className="text-[#9E782F]">{happyQty}</strong> <strong className="text-[#9E782F]">{happyItem || '(item)'}(s)</strong> to receive the configured reward.
+              </p>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm flex items-center justify-center py-12">
+            <p className="text-[14px] font-medium text-[#6E6A66]">Please select a valid campaign type in Step 1.</p>
+          </div>
+        );
+    }
+  };
+
+  const typeLabels: Record<string, string> = {
+    new_customer: 'New Customer',
+    existing_visit: 'Visit Type',
+    existing_billing: 'Billing Type',
+    existing_stamp: 'Stamp Type',
+    happy_hours: 'Happy Hours',
+  };
+
+  return (
+    <div className="max-w-[700px] mx-auto w-full">
+      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm mb-6">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-10 h-10 bg-[#FDF8EB] rounded-xl flex items-center justify-center border border-[#F3E5C8]">
+            <SlidersHorizontal className="w-5 h-5 text-[#D4A753]" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">CONFIG 3/5</span>
+            <h3 className="text-[20px] font-bold text-[#1A1615] leading-tight">Conditions & Rules</h3>
+          </div>
+          {campaignType && (
+            <span className="ml-auto px-2.5 py-1 bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] text-[10px] font-bold rounded uppercase tracking-wider">
+              {typeLabels[campaignType] || 'Campaign'}
+            </span>
+          )}
+        </div>
+        <p className="text-[13px] text-[#6E6A66] mt-2 font-medium">
+          Define exactly what a customer must do to qualify for this campaign's reward.
+        </p>
+      </div>
+
+      {renderContent()}
+
+      <div className="flex items-center gap-3 pt-6 mt-4">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#EFECE6] text-[#1A1615] text-sm font-bold rounded-full hover:border-[#D4A753]/60 hover:bg-[#FAF8F5] transition-all cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
+        <button
+          type="button"
+          disabled={!isValid}
+          onClick={() => isValid && handleContinue()}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold transition-all ${isValid
+            ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
+            : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
+            }`}
+        >
+          Continue to Reward Definition <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+interface CampaignRewardStepProps {
+  campaignType: string;
+  ruleConfig: any;
+  onContinue: (config: any) => void;
+  onBack: () => void;
+}
+
+const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, ruleConfig, onContinue, onBack }) => {
+  const [rewardType, setRewardType] = useState<string>('');
+  const [cashbackAmount, setCashbackAmount] = useState<number>(0);
+
+  const [discountType, setDiscountType] = useState<'Fixed' | 'Percentage'>('Fixed');
+  const [discountValue, setDiscountValue] = useState<number>(0);
+
+  const [rewardPoints, setRewardPoints] = useState<number>(0);
+
+  const [freeItem, setFreeItem] = useState<string>('');
+
+  const [maxRedemptions, setMaxRedemptions] = useState<number>(1);
+  const [stackable, setStackable] = useState<boolean>(false);
+
+  const [expiryType, setExpiryType] = useState<'Days' | 'Date'>('Days');
+  const [expiryDays, setExpiryDays] = useState<number>(30);
+  const [expiryDate, setExpiryDate] = useState<string>('');
+
+  // Auto-prefill for existing_stamp
+  React.useEffect(() => {
+    if (campaignType === 'existing_stamp' && ruleConfig?.stampItem) {
+      if (rewardType === 'free_item') {
+        setFreeItem(ruleConfig.stampItem);
+      }
+    }
+  }, [campaignType, ruleConfig, rewardType]);
+
+  const isValid = () => {
+    if (!rewardType) return false;
+    if (rewardType === 'cashback' && cashbackAmount <= 0) return false;
+    if (rewardType === 'discount' && discountValue <= 0) return false;
+    if (rewardType === 'points' && rewardPoints <= 0) return false;
+    if (rewardType === 'free_item' && !freeItem.trim()) return false;
+
+    if (maxRedemptions <= 0) return false;
+
+    if (expiryType === 'Days' && expiryDays <= 0) return false;
+    if (expiryType === 'Date' && !expiryDate) return false;
+
+    return true;
+  };
+
+  const handleContinue = () => {
+    const config = {
+      rewardType,
+      cashbackAmount,
+      discountType,
+      discountValue,
+      rewardPoints,
+      freeItem,
+      maxRedemptions,
+      stackable,
+      expiryType,
+      expiryDays,
+      expiryDate
+    };
+    onContinue(config);
+  };
+
+  return (
+    <div className="max-w-[700px] mx-auto w-full space-y-6">
+      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-10 h-10 bg-[#FDF8EB] rounded-xl flex items-center justify-center border border-[#F3E5C8]">
+            <Gift className="w-5 h-5 text-[#D4A753]" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">CONFIG 4/5</span>
+            <h3 className="text-[20px] font-bold text-[#1A1615] leading-tight">Reward Definition</h3>
+          </div>
+        </div>
+        <p className="text-[13px] text-[#6E6A66] mt-2 font-medium">
+          Define what the customer receives when they meet the campaign conditions.
+        </p>
+      </div>
+
+      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
+        <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider">What does the customer get?</h4>
+
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            type="button"
+            onClick={() => setRewardType('cashback')}
+            className={`relative text-left p-4 rounded-xl border-2 transition-all cursor-pointer ${rewardType === 'cashback'
+              ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+              : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+              }`}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${rewardType === 'cashback' ? 'bg-[#D4A753] text-white' : 'bg-white text-[#9E9A93]'}`}>
+                <Wallet className="w-4 h-4" />
+              </div>
+              <div className="font-bold text-[14px] text-[#1A1615]">Cashback</div>
+              <div className={`ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center ${rewardType === 'cashback' ? 'border-[#D4A753]' : 'border-[#D1CDC7]'}`}>
+                {rewardType === 'cashback' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+              </div>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setRewardType('discount')}
+            className={`relative text-left p-4 rounded-xl border-2 transition-all cursor-pointer ${rewardType === 'discount'
+              ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+              : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+              }`}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${rewardType === 'discount' ? 'bg-[#D4A753] text-white' : 'bg-white text-[#9E9A93]'}`}>
+                <Percent className="w-4 h-4" />
+              </div>
+              <div className="font-bold text-[14px] text-[#1A1615]">Discount</div>
+              <div className={`ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center ${rewardType === 'discount' ? 'border-[#D4A753]' : 'border-[#D1CDC7]'}`}>
+                {rewardType === 'discount' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+              </div>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setRewardType('points')}
+            className={`relative text-left p-4 rounded-xl border-2 transition-all cursor-pointer ${rewardType === 'points'
+              ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+              : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+              }`}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${rewardType === 'points' ? 'bg-[#D4A753] text-white' : 'bg-white text-[#9E9A93]'}`}>
+                <Star className="w-4 h-4" />
+              </div>
+              <div className="font-bold text-[14px] text-[#1A1615]">Reward Points</div>
+              <div className={`ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center ${rewardType === 'points' ? 'border-[#D4A753]' : 'border-[#D1CDC7]'}`}>
+                {rewardType === 'points' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+              </div>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setRewardType('free_item')}
+            className={`relative text-left p-4 rounded-xl border-2 transition-all cursor-pointer ${rewardType === 'free_item'
+              ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+              : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+              }`}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${rewardType === 'free_item' ? 'bg-[#D4A753] text-white' : 'bg-white text-[#9E9A93]'}`}>
+                <Gift className="w-4 h-4" />
+              </div>
+              <div className="font-bold text-[14px] text-[#1A1615]">Free Item</div>
+              <div className={`ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center ${rewardType === 'free_item' ? 'border-[#D4A753]' : 'border-[#D1CDC7]'}`}>
+                {rewardType === 'free_item' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {rewardType === 'cashback' && (
+          <div className="mt-4 pt-4 border-t border-[#EFECE6]">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Cashback Amount</label>
+            <div className="relative max-w-[260px]">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">₹</span>
+              <input
+                type="number"
+                value={cashbackAmount || ''}
+                onChange={e => setCashbackAmount(Number(e.target.value))}
+                className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+                placeholder="0"
+              />
+            </div>
+          </div>
+        )}
+
+        {rewardType === 'discount' && (
+          <div className="mt-4 pt-4 border-t border-[#EFECE6] space-y-4">
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Discount Type</label>
+              <div className="inline-flex bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-1 gap-1">
+                {(['Fixed', 'Percentage'] as const).map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setDiscountType(t)}
+                    className={`px-5 py-2 rounded-lg text-[13px] font-bold transition-all cursor-pointer ${discountType === t
+                      ? 'bg-[#1A1615] text-white shadow-sm'
+                      : 'text-[#6E6A66] hover:text-[#1A1615]'
+                      }`}
+                  >
+                    {t} Amount
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Discount Value</label>
+              <div className="relative max-w-[260px]">
+                {discountType === 'Fixed' && <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">₹</span>}
+                <input
+                  type="number"
+                  value={discountValue || ''}
+                  onChange={e => setDiscountValue(Number(e.target.value))}
+                  className={`w-full ${discountType === 'Fixed' ? 'pl-8' : 'pl-4'} pr-8 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors`}
+                  placeholder="0"
+                />
+                {discountType === 'Percentage' && <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">%</span>}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {rewardType === 'points' && (
+          <div className="mt-4 pt-4 border-t border-[#EFECE6]">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Points Awarded</label>
+            <input
+              type="number"
+              value={rewardPoints || ''}
+              onChange={e => setRewardPoints(Number(e.target.value))}
+              className="w-full max-w-[260px] px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+              placeholder="0"
+            />
+          </div>
+        )}
+
+        {rewardType === 'free_item' && (
+          <div className="mt-4 pt-4 border-t border-[#EFECE6]">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Free Item</label>
+            <input
+              type="text"
+              value={freeItem}
+              onChange={e => setFreeItem(e.target.value)}
+              disabled={campaignType === 'existing_stamp' && !!ruleConfig?.stampItem}
+              className={`w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors ${campaignType === 'existing_stamp' && !!ruleConfig?.stampItem ? 'opacity-70 cursor-not-allowed' : ''}`}
+              placeholder="e.g. Coffee"
+            />
+            {campaignType === 'existing_stamp' && !!ruleConfig?.stampItem && (
+              <p className="mt-2 text-[11px] text-[#D4A753] font-bold flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5" /> Auto-set from Stamp Type configuration
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
+        <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider">Usage Limits</h4>
+
+        <div>
+          <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Max Redemptions Per Customer</label>
+          <input
+            type="number"
+            value={maxRedemptions || ''}
+            onChange={e => setMaxRedemptions(Number(e.target.value))}
+            className="w-full max-w-[260px] px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
+            placeholder="1"
+          />
+        </div>
+
+        <div className="flex items-center justify-between py-3 border-t border-[#EFECE6]">
+          <div>
+            <div className="text-[13px] font-bold text-[#1A1615]">Stackable with other campaigns</div>
+            <div className="text-[11px] text-[#9E9A93] font-medium mt-0.5">Allow customer to use this reward alongside other offers</div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setStackable(v => !v)}
+            className={`relative w-11 h-6 rounded-full border-2 transition-all cursor-pointer ${stackable ? 'bg-[#D4A753] border-[#9E782F]' : 'bg-[#EFECE6] border-[#D1CDC7]'
+              }`}
+          >
+            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${stackable ? 'left-[22px]' : 'left-0.5'
+              }`} />
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
+        <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider">Reward Validity</h4>
+
+        <div>
+          <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Expires</label>
+          <div className="space-y-3">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${expiryType === 'Days' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]/50'}`}>
+                {expiryType === 'Days' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+              </div>
+              <input
+                type="radio"
+                className="hidden"
+                checked={expiryType === 'Days'}
+                onChange={() => setExpiryType('Days')}
+              />
+              <span className="text-[13px] font-semibold text-[#1A1615]">Days after issuance</span>
+            </label>
+            {expiryType === 'Days' && (
+              <div className="ml-7 flex items-center gap-2">
+                <input
+                  type="number"
+                  value={expiryDays || ''}
+                  onChange={e => setExpiryDays(Number(e.target.value))}
+                  className="w-24 px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  placeholder="30"
+                />
+                <span className="text-[13px] text-[#6E6A66] font-medium">days</span>
+              </div>
+            )}
+
+            <label className="flex items-center gap-3 cursor-pointer group pt-2">
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${expiryType === 'Date' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]/50'}`}>
+                {expiryType === 'Date' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+              </div>
+              <input
+                type="radio"
+                className="hidden"
+                checked={expiryType === 'Date'}
+                onChange={() => setExpiryType('Date')}
+              />
+              <span className="text-[13px] font-semibold text-[#1A1615]">Fixed date</span>
+            </label>
+            {expiryType === 'Date' && (
+              <div className="ml-7">
+                <input
+                  type="date"
+                  value={expiryDate}
+                  onChange={e => setExpiryDate(e.target.value)}
+                  className="px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 pt-6 mt-4">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#EFECE6] text-[#1A1615] text-sm font-bold rounded-full hover:border-[#D4A753]/60 hover:bg-[#FAF8F5] transition-all cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back
+        </button>
+        <button
+          type="button"
+          disabled={!isValid()}
+          onClick={() => isValid() && handleContinue()}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold transition-all ${isValid()
+            ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
+            : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
+            }`}
+        >
+          Continue to Review & Launch <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export const CampaignBuilderPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
   const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
+  const [ruleConfig, setRuleConfig] = useState<any>({});
+  const [rewardConfig, setRewardConfig] = useState<any>({});
 
   // Step 1 – Basics state
   const [campaignName, setCampaignName] = useState('');
@@ -253,8 +972,8 @@ export const CampaignBuilderPage: React.FC = () => {
                 type="button"
                 onClick={() => { setTopLevelType('new_customer'); setExistingSubType(''); }}
                 className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'new_customer'
-                    ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
-                    : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                  : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
                   }`}
               >
                 {topLevelType === 'new_customer' && (
@@ -277,8 +996,8 @@ export const CampaignBuilderPage: React.FC = () => {
                 type="button"
                 onClick={() => setTopLevelType('existing_customer')}
                 className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'existing_customer'
-                    ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
-                    : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                  : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
                   }`}
               >
                 {topLevelType === 'existing_customer' && (
@@ -301,8 +1020,8 @@ export const CampaignBuilderPage: React.FC = () => {
                 type="button"
                 onClick={() => { setTopLevelType('happy_hours'); setExistingSubType(''); }}
                 className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'happy_hours'
-                    ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
-                    : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                  : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
                   }`}
               >
                 {topLevelType === 'happy_hours' && (
@@ -331,8 +1050,8 @@ export const CampaignBuilderPage: React.FC = () => {
                     type="button"
                     onClick={() => setExistingSubType('existing_visit')}
                     className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_visit'
-                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                        : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
                       }`}
                   >
                     {existingSubType === 'existing_visit' && (
@@ -355,8 +1074,8 @@ export const CampaignBuilderPage: React.FC = () => {
                     type="button"
                     onClick={() => setExistingSubType('existing_billing')}
                     className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_billing'
-                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                        : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
                       }`}
                   >
                     {existingSubType === 'existing_billing' && (
@@ -379,8 +1098,8 @@ export const CampaignBuilderPage: React.FC = () => {
                     type="button"
                     onClick={() => setExistingSubType('existing_stamp')}
                     className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_stamp'
-                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                        : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
                       }`}
                   >
                     {existingSubType === 'existing_stamp' && (
@@ -451,8 +1170,8 @@ export const CampaignBuilderPage: React.FC = () => {
                 type="button"
                 onClick={() => setStatusDraft(true)}
                 className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusDraft
-                    ? 'bg-[#1A1615] text-white shadow'
-                    : 'text-[#6E6A66] hover:text-[#1A1615]'
+                  ? 'bg-[#1A1615] text-white shadow'
+                  : 'text-[#6E6A66] hover:text-[#1A1615]'
                   }`}
               >
                 Draft
@@ -462,8 +1181,8 @@ export const CampaignBuilderPage: React.FC = () => {
                 type="button"
                 onClick={() => setStatusDraft(false)}
                 className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${!statusDraft
-                    ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow'
-                    : 'text-[#6E6A66] hover:text-[#1A1615]'
+                  ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow'
+                  : 'text-[#6E6A66] hover:text-[#1A1615]'
                   }`}
               >
                 Active
@@ -504,8 +1223,8 @@ export const CampaignBuilderPage: React.FC = () => {
                   id={`branch-${branch.replace(/\s+/g, '-').toLowerCase()}`}
                   onClick={() => toggleBranch(branch)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${selected
-                      ? 'bg-[#E6F4ED] border-[#BCE3D1] text-[#0D7A53]'
-                      : 'bg-[#FAF8F5] border-[#EFECE6] text-[#6E6A66] hover:border-[#D4A753]/50'
+                    ? 'bg-[#E6F4ED] border-[#BCE3D1] text-[#0D7A53]'
+                    : 'bg-[#FAF8F5] border-[#EFECE6] text-[#6E6A66] hover:border-[#D4A753]/50'
                     }`}
                 >
                   {selected ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
@@ -572,8 +1291,8 @@ export const CampaignBuilderPage: React.FC = () => {
           disabled={!step1Valid}
           onClick={() => step1Valid && setCurrentStep(2)}
           className={`w-full py-3.5 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-all ${step1Valid
-              ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
-              : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
+            ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
+            : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
             }`}
         >
           Continue to Audience <ArrowRight className="w-4 h-4" />
@@ -974,781 +1693,28 @@ export const CampaignBuilderPage: React.FC = () => {
   );
 
   const renderStep3 = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      <div className="lg:col-span-8 space-y-6">
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm space-y-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#EFECE6] pb-5 gap-4 md:gap-0">
-            <div className="flex items-start md:items-center gap-4">
-              <div className="w-12 h-12 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6]">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#D4A753]"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
-              </div>
-              <div>
-                <h3 className="text-[20px] font-bold text-[#1A1615]">Trigger &amp; Qualification Rules</h3>
-                <p className="text-[13px] text-[#6E6A66] font-medium mt-0.5">Define logic trees, order purchase thresholds, and nested item entitlements.</p>
-              </div>
-            </div>
-            <div className="flex flex-col items-end gap-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">EVALUATION ENGINE:</span>
-              <span className="px-3 py-1.5 bg-[#E0F9ED] text-[#0D7A53] rounded-full text-[12px] font-bold tracking-wide flex items-center gap-1.5 border border-[#BCE3D1]">
-                <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Real-time
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-[12px] font-bold text-[#6E6A66] tracking-wider">MATCH</span>
-              <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1">
-                <button onClick={() => setMatchType('ALL')} className={`px-4 py-1.5 text-[12px] font-bold rounded-md transition-colors cursor-pointer ${matchType === 'ALL' ? 'bg-[#1A1615] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>ALL (AND)</button>
-                <button onClick={() => setMatchType('ANY')} className={`px-4 py-1.5 text-[12px] font-bold rounded-md transition-colors cursor-pointer ${matchType === 'ANY' ? 'bg-[#1A1615] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>ANY (OR)</button>
-              </div>
-              <span className="text-[12px] font-medium text-[#6E6A66]">of the following condition criteria:</span>
-            </div>
-
-            <div className="space-y-4">
-              {rulesList.map(rule => (
-                <div
-                  key={rule.id}
-                  draggable
-                  onDragStart={() => handleDragStart(rule.id)}
-                  onDragOver={(e) => handleDragOver(e, rule.id)}
-                  onDragEnd={handleDragEnd}
-                  className={`transition-all ${draggedRuleId === rule.id ? 'opacity-50 scale-[0.98]' : 'opacity-100'}`}
-                >
-                  {rule.type === 'standard1' && (
-                    <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 pr-4 shadow-sm">
-                      <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E9A93]" /></div>
-                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>Customer Lifetime $</option></select>
-                        <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-medium text-[#6E6A66] focus:outline-none"><option>is greater than or equal to</option></select>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1A1615] font-bold text-[13px]">$</span>
-                          <input type="text" defaultValue="250.00" className="w-full bg-white border border-[#EFECE6] rounded-lg pl-7 pr-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none" />
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 pl-2 border-l border-[#EFECE6]">
-                        <button onClick={() => duplicateRule(rule.id)} className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer"><Copy className="w-4 h-4" /></button>
-                        <button onClick={() => removeRule(rule.id)} className="p-1.5 text-[#9E9A93] hover:text-[#EF4444] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
-                      </div>
-                    </div>
-                  )}
-
-                  {rule.type === 'standard2' && (
-                    <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 pr-4 shadow-sm">
-                      <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E9A93]" /></div>
-                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>Last Visit Date</option></select>
-                        <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-medium text-[#6E6A66] focus:outline-none"><option>is within the last</option></select>
-                        <div className="flex bg-white border border-[#EFECE6] rounded-lg overflow-hidden">
-                          <input type="text" defaultValue="14" className="w-12 text-center text-[13px] font-bold text-[#1A1615] focus:outline-none border-r border-[#EFECE6]" />
-                          <span className="flex-1 px-3 py-2 text-[13px] font-medium text-[#6E6A66] bg-[#FAF8F5] flex items-center">days</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 pl-2 border-l border-[#EFECE6]">
-                        <button onClick={() => duplicateRule(rule.id)} className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer"><Copy className="w-4 h-4" /></button>
-                        <button onClick={() => removeRule(rule.id)} className="p-1.5 text-[#9E9A93] hover:text-[#EF4444] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
-                      </div>
-                    </div>
-                  )}
-
-                  {rule.type === 'bogo' && (
-                    <div className="bg-[#FDF8EB] border-2 border-[#F3E5C8] rounded-xl p-5 shadow-sm relative">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3 md:gap-0">
-                        <div className="flex items-start md:items-center gap-3">
-                          <div className="cursor-grab opacity-50 hover:opacity-100"><GripVertical className="w-5 h-5 text-[#9E782F]" /></div>
-                          <span className="px-2.5 py-1 bg-[#D4A753]/20 text-[#9E782F] font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5 border border-[#D4A753]/30">
-                            <Gift className="w-3 h-3" /> BOGO
-                          </span>
-                          <span className="text-[13px] font-bold text-[#1A1615]">Item Quantity in Order (Buy X Get Y)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button onClick={() => duplicateRule(rule.id)} className="p-1.5 text-[#9E782F]/70 hover:text-[#9E782F] transition-colors cursor-pointer"><Copy className="w-4 h-4" /></button>
-                          <button onClick={() => removeRule(rule.id)} className="p-1.5 text-[#9E782F]/70 hover:text-[#EF4444] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
-                        </div>
-                      </div>
-
-                      <div className="ml-8 space-y-4">
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-2 sm:pr-3 shadow-sm">
-                          <select className="w-full sm:flex-1 bg-transparent text-[13px] font-bold text-[#1A1615] px-2 focus:outline-none"><option>Espresso</option></select>
-                          <div className="flex items-center gap-2 px-2 sm:px-0 pb-1 sm:pb-0">
-                            <span className="text-[13px] font-medium text-[#6E6A66] whitespace-nowrap">buy quantity of</span>
-                            <input type="text" defaultValue="3" className="w-12 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[14px] font-bold text-[#1A1615] focus:outline-none" />
-                          </div>
-                        </div>
-
-                        <div className="pl-6 border-l-2 border-[#D4A753]/30 relative pt-2">
-                          <div className="absolute top-1/2 -left-[2px] w-4 h-[2px] bg-[#D4A753]/30"></div>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg p-3 shadow-sm relative z-10">
-                            <div className="flex items-center gap-2">
-                              <span className="text-[13px] font-bold text-[#1A1615] whitespace-nowrap">Customer gets</span>
-                              <input type="text" defaultValue="1" className="w-10 bg-[#FAF8F5] border border-[#EFECE6] rounded-md text-center py-1.5 text-[13px] font-bold text-[#1A1615] focus:outline-none" />
-                            </div>
-
-                            <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-3 w-full">
-                              <select className="w-full sm:flex-1 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none"><option>same item (Espresso)</option></select>
-                              <span className="text-[13px] font-bold text-[#1A1615] self-end sm:self-auto">free</span>
-                            </div>
-
-                            <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1 shrink-0">
-                              <button onClick={() => setRewardType('Same')} className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${rewardType === 'Same' ? 'bg-white text-[#9E782F] border border-[#F3E5C8] shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Same<br />Item</button>
-                              <button onClick={() => setRewardType('Different')} className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors cursor-pointer text-center ${rewardType === 'Different' ? 'bg-white text-[#9E782F] border border-[#F3E5C8] shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Different<br />Item</button>
-                            </div>
-                          </div>
-                          <div className="mt-3 ml-4">
-                            <span className="px-2.5 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded text-[10px] font-bold uppercase tracking-widest border border-[#BCE3D1]">100% item waiver</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-5 pt-4 border-t border-[#F3E5C8] flex items-center gap-2 text-[12px] font-medium text-[#9E782F]">
-                        <Info className="w-4 h-4 shrink-0" /> Preview: Buy 3 Espresso, get 1 Espresso free (100% item waiver)
-                      </div>
-                    </div>
-                  )}
-
-                  {rule.type === 'orGroup' && (
-                    <div className="bg-white border-2 border-[#EFECE6] rounded-xl p-5 shadow-sm">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3 md:gap-0">
-                        <div className="flex items-start md:items-center gap-3 flex-wrap md:flex-nowrap">
-                          <span className="px-2.5 py-1 bg-[#9E782F] text-white font-bold text-[10px] uppercase tracking-widest rounded flex items-center gap-1.5 shrink-0">
-                            <Network className="w-3 h-3" /> OR GROUP
-                          </span>
-                          <span className="text-[13px] font-bold text-[#1A1615]">Customer satisfies AT LEAST ONE criteria below:</span>
-                        </div>
-                        <button onClick={() => removeRule(rule.id)} className="text-[12px] font-bold text-[#EF4444] hover:underline flex items-center gap-1.5 cursor-pointer">
-                          <X className="w-3.5 h-3.5" /> Remove Group
-                        </button>
-                      </div>
-
-                      <div className="space-y-3">
-                        {orGroupItems.map((item) => (
-                          <div key={item.id}>
-                            {item.type === 'tier' ? (
-                              <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-3 shadow-sm">
-                                <CornerDownRight className="w-4 h-4 text-[#9E9A93] shrink-0" />
-                                <div className="flex-1 flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
-                                  <div className="flex flex-wrap items-center gap-2">
-                                    <div className="flex items-center gap-2 bg-white border border-[#EFECE6] rounded-lg px-3 py-1.5 shadow-sm">
-                                      <span className="text-[13px] font-medium text-[#1A1615]">Current Tier</span>
-                                      <Lock className="w-3 h-3 text-[#9E9A93]" />
-                                    </div>
-                                    <span className="text-[13px] font-medium text-[#6E6A66]">is one of</span>
-                                  </div>
-                                  <div className="flex flex-wrap items-center gap-2">
-                                    <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#1A1615] text-white rounded-full text-[11px] font-bold shadow-sm">
-                                      <Star className="w-3 h-3 text-[#D4A753]" /> Obsidian VIP
-                                    </span>
-                                    <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] rounded-full text-[11px] font-bold shadow-sm">
-                                      <Trophy className="w-3 h-3 text-[#D4A753]" /> Gold Reserve
-                                    </span>
-                                    <button className="w-7 h-7 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center text-[#9E9A93] hover:text-[#1A1615] hover:border-[#D1CDC7] transition-all shadow-sm cursor-pointer">
-                                      <Plus className="w-4 h-4" />
-                                    </button>
-                                  </div>
-                                </div>
-                                <button onClick={() => removeOrGroupItem(item.id)} className="p-2 text-[#9E9A93] hover:text-[#EF4444] transition-colors shrink-0 cursor-pointer"><X className="w-4 h-4" /></button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-3 shadow-sm">
-                                <CornerDownRight className="w-4 h-4 text-[#9E9A93] shrink-0" />
-                                <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
-                                  <select className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] focus:outline-none shadow-sm"><option>Total Stamp Cycle</option></select>
-                                  <div className="flex items-center">
-                                    <span className="text-[13px] font-medium text-[#6E6A66] px-3">is greater than</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <div className="flex bg-white border border-[#EFECE6] rounded-lg overflow-hidden flex-1 shadow-sm">
-                                      <input type="text" defaultValue="8" className="w-12 text-center text-[13px] font-bold text-[#1A1615] focus:outline-none border-r border-[#EFECE6]" />
-                                      <span className="px-3 py-2 text-[13px] font-medium text-[#1A1615] bg-[#FAF8F5] flex items-center">stamps</span>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="text-[10px] font-medium text-[#9E9A93] text-right w-16 leading-tight shrink-0 mr-2">(out of 10 stamps ledger pass)</div>
-                                <button onClick={() => removeOrGroupItem(item.id)} className="p-2 text-[#9E9A93] hover:text-[#EF4444] transition-colors shrink-0 cursor-pointer"><X className="w-4 h-4" /></button>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-
-                        <div className="pl-9 mt-3 pt-1">
-                          <button onClick={() => addOrGroupItem()} className="px-3 py-1.5 bg-white border border-[#EFECE6] rounded-full text-[11px] font-bold text-[#9E782F] hover:bg-[#FDF8EB] transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer">
-                            <Plus className="w-3 h-3" /> Add condition inside this OR block
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
-              <button onClick={() => addRule('standard1')} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EFECE6] rounded-xl text-[13px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors shadow-sm cursor-pointer">
-                <Plus className="w-4 h-4" /> Add Condition Rule
-              </button>
-              <button onClick={() => addRule('orGroup')} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EFECE6] rounded-xl text-[13px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors shadow-sm cursor-pointer">
-                <Network className="w-4 h-4 text-[#9E782F]" /> Add Nested Condition Group (AND/OR)
-              </button>
-            </div>
-
-            <div className="bg-[#E0F9ED] border border-[#BCE3D1] rounded-lg px-4 py-2.5 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#0D7A53]" />
-              <span className="text-[12px] font-bold text-[#0D7A53]">Syntax Valid · Complete all condition rows before continuing</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm">
-          <div className="flex flex-col md:flex-row items-start justify-between mb-6 gap-4 md:gap-0">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6]">
-                <Store className="w-6 h-6 text-[#D4A753]" />
-              </div>
-              <div>
-                <h3 className="text-[20px] font-bold text-[#1A1615]">Delivery Timing &amp; Branch Eligibility</h3>
-                <p className="text-[13px] text-[#6E6A66] font-medium mt-0.5">Operational dispatch scope synchronized across all physical POS registers.</p>
-              </div>
-            </div>
-            <span className="px-3 py-1 bg-[#FAF8F5] text-[#6E6A66] border border-[#EFECE6] rounded text-[10px] font-bold uppercase tracking-widest">SYNCED FROM STEP 1</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">TRIGGER EVENT</label>
-                <Zap className="w-4 h-4 text-[#D4A753]" />
-              </div>
-              <select className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none mb-3 shadow-sm">
-                <option>On QR Stand Scan at POS</option>
-              </select>
-              <p className="text-[12px] font-medium text-[#6E6A66]">Triggers automatically when a qualified transaction is submitted at POS.</p>
-            </div>
-
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">CAMPAIGN RUNTIME WINDOW</label>
-                <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase">30 Days</span>
-              </div>
-              <div className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg flex items-center justify-between shadow-sm mb-3">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-[#D4A753]" />
-                  <span className="text-[13px] font-bold text-[#1A1615]">Nov 1, 2024 – Nov 30, 2024</span>
-                </div>
-                <span className="text-[10px] font-bold text-[#6E6A66] uppercase">Active</span>
-              </div>
-              <p className="text-[12px] font-medium text-[#6E6A66]">Configured in merchant home timezone (PST - Pacific Standard).</p>
-            </div>
-          </div>
-
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-[#6E6A66]">ACTIVE BRANCHES ({activeBranches.length} SELECTED)</label>
-              <button onClick={() => showToast('Location manager opened')} className="text-[12px] font-bold text-[#0D7A53] hover:underline cursor-pointer">All retail locations active</button>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {activeBranches.map(branch => (
-                <span key={branch} className="px-3 py-2 bg-white border border-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold flex items-center gap-2 shadow-sm">
-                  <Check className="w-4 h-4 text-[#0D7A53]" /> {branch}
-                  <X className="w-3.5 h-3.5 text-[#9E9A93] hover:text-[#EF4444] cursor-pointer ml-1" onClick={() => handleRemoveLocation(branch)} />
-                </span>
-              ))}
-              <button onClick={handleAddLocation} className="px-3 py-2 bg-transparent border border-dashed border-[#D4A753] text-[#9E782F] rounded-lg text-[13px] font-bold flex items-center gap-2 hover:bg-[#FDF8EB] transition-colors cursor-pointer">
-                <Plus className="w-4 h-4" /> Add Location
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="lg:col-span-4 space-y-6">
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[16px] font-bold text-[#1A1615] flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-[#D4A753]" /> Audience Impact
-            </h3>
-            <span className="px-3 py-1 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded-full uppercase tracking-widest flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> Dynamic Cohort
-            </span>
-          </div>
-
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 mb-4">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">QUALIFYING CUSTOMERS</div>
-                <div className="text-[32px] leading-none font-bold text-[#1A1615] tracking-tight">4,120 <span className="text-[12px] font-medium text-[#6E6A66] tracking-normal">of 24,850 members</span></div>
-              </div>
-              <div className="text-right bg-white border border-[#EFECE6] rounded-lg px-3 py-1.5 shadow-sm">
-                <div className="text-[13px] font-bold text-[#D4A753]">16.6%</div>
-                <div className="text-[10px] font-bold text-[#6E6A66] uppercase">Reach</div>
-              </div>
-            </div>
-
-            <p className="text-[10px] text-[#9E9A93] font-medium mt-4">
-              Includes Step 2 audience filters &amp; Step 3 item conditions.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">EXPECTED VISITS</div>
-              <div className="text-[16px] font-bold text-[#1A1615] mb-1">680 – 820</div>
-              <div className="text-[10px] font-bold text-[#0D7A53]">~18% claim rate</div>
-            </div>
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">PROJECTED GMV</div>
-              <div className="text-[16px] font-bold text-[#0D7A53] mb-1">+$16,400</div>
-              <div className="text-[10px] font-medium text-[#6E6A66]">+$3,250 Estimated lift</div>
-            </div>
-          </div>
-
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 mb-4">
-            <div className="flex justify-between items-center mb-3">
-              <h4 className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">TIER DISTRIBUTION</h4>
-              <span className="text-[10px] font-bold text-[#1A1615]">100% Total</span>
-            </div>
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between text-[12px] font-bold">
-                <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#1A1615]"></span> Obsidian VIP</span>
-                <div><span className="text-[#1A1615] mr-2">1,420</span> <span className="text-[#6E6A66]">• 34.5%</span></div>
-              </div>
-              <div className="flex items-center justify-between text-[12px] font-bold">
-                <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#D4A753]"></span> Gold Reserve</span>
-                <div><span className="text-[#1A1615] mr-2">2,100</span> <span className="text-[#6E6A66]">• 51.0%</span></div>
-              </div>
-              <div className="flex items-center justify-between text-[12px] font-bold">
-                <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#D1CDC7]"></span> Silver Tier</span>
-                <div><span className="text-[#1A1615] mr-2">600</span> <span className="text-[#6E6A66]">• 14.5%</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
-            <div className="flex justify-between items-start mb-4">
-              <h4 className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] w-24 leading-tight">QUALIFICATION VELOCITY (LAST 14 DAYS)</h4>
-              <span className="text-[12px] font-bold text-[#0D7A53] flex items-center gap-1"><TrendingUp className="w-3.5 h-3.5" /> +24%</span>
-            </div>
-            <div className="h-12 w-full flex items-end">
-              {/* Very basic SVG path approximation of the graph */}
-              <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible" preserveAspectRatio="none">
-                <path d="M0,25 C20,22 40,15 60,12 C80,9 90,5 100,2" fill="none" stroke="#D4A753" strokeWidth="2" strokeLinecap="round" />
-                <path d="M0,25 C20,22 40,15 60,12 C80,9 90,5 100,2 L100,30 L0,30 Z" fill="url(#gradient-gold)" opacity="0.15" />
-                <defs>
-                  <linearGradient id="gradient-gold" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#D4A753" stopOpacity="1" />
-                    <stop offset="100%" stopColor="#D4A753" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <p className="text-[9px] text-center text-[#9E9A93] font-medium mt-3 leading-relaxed">
-              Daily newly qualifying member volume trending upward across participating roasteries.
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[14px] font-bold text-[#1A1615] flex items-center gap-2">
-              <Smartphone className="w-4 h-4 text-[#D4A753]" /> Guest Experience Preview
-            </h3>
-            <span className="px-2 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded text-[10px] font-bold uppercase tracking-widest">IOS / Android</span>
-          </div>
-
-          <p className="text-[11px] text-[#6E6A66] mb-5 font-medium leading-relaxed">
-            Live simulation of the privileged push card rendered on the member's passbook wallet when conditions match.
-          </p>
-
-          <div className="bg-[#1A1615] rounded-xl p-5 shadow-xl text-white relative overflow-hidden mb-5">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
-
-            <div className="flex items-center justify-between mb-5 relative z-10">
-              <div className="flex items-center gap-1.5">
-                <div className="w-5 h-5 bg-[#D4A753] rounded-full flex items-center justify-center border border-white/20">
-                  <div className="w-2.5 h-2.5 border border-white/60 rounded-sm"></div>
-                </div>
-                <span className="text-[11px] font-bold tracking-widest uppercase text-white/90">REVIA PRIVÉ</span>
-              </div>
-              <span className="text-[10px] font-semibold text-white/50 tracking-widest uppercase">#REV-8824</span>
-            </div>
-
-            <div className="relative z-10">
-              <span className="inline-block px-2 py-0.5 bg-[#D4A753]/20 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase mb-3">FLASH PRIVILEGE</span>
-              <h4 className="text-[18px] font-black leading-snug mb-2">BUY 3 GET 1 FREE — Single Origin Geisha</h4>
-              <p className="text-[11px] font-medium text-white/60 leading-relaxed mb-6 w-11/12">Auto-entitlement activated on 250g whole bean roast. Valid today across downtown flagship &amp; partners.</p>
-
-              <div className="flex gap-2">
-                <button className="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-lg border border-white/10 text-[11px] font-bold text-white transition-colors flex flex-col items-center justify-center gap-1">
-                  <Wifi className="w-4 h-4 rotate-90 opacity-70" />
-                  Hold near Counter NFC
-                </button>
-                <button className="w-20 py-3 bg-[#D4A753] text-[#1A1615] hover:bg-[#C59B46] rounded-lg text-[11px] font-bold transition-colors flex flex-col items-center justify-center leading-tight">
-                  Redeem<br />at POS
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <button className="flex-1 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] flex flex-col items-center justify-center gap-1 shadow-sm">
-              <RefreshCw className="w-4 h-4 text-[#9E782F]" />
-              <span className="text-center leading-tight">Regenerate Sample<br />Member</span>
-            </button>
-            <button className="flex-1 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#FAF8F5] flex flex-col items-center justify-center gap-1 shadow-sm">
-              <Smartphone className="w-4 h-4 text-[#6E6A66]" />
-              <span className="text-center leading-tight mt-1">Test Push to<br />Device</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <CampaignRulesStep
+      campaignType={fullCampaignType}
+      onContinue={(config) => {
+        setRuleConfig(config);
+        console.log('Step 3 Config:', config);
+        setCurrentStep(4);
+      }}
+      onBack={() => setCurrentStep(2)}
+    />
   );
 
   const renderStep4 = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      <div className="lg:col-span-8 space-y-6">
-        {/* Box 1: Reward Selection */}
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm space-y-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1 block">REWARD SELECTION</span>
-              <h3 className="text-[20px] font-bold text-[#1A1615]">What does the customer get?</h3>
-              <p className="text-[13px] text-[#6E6A66] font-medium mt-1">Choose the commercial incentive awarded once condition triggers are satisfied.</p>
-            </div>
-            <div className="w-12 h-12 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6] shrink-0">
-              <Gift className="w-6 h-6 text-[#D4A753]" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {[
-              { id: 'Discount %', label: '% off order', icon: Percent },
-              { id: 'Fixed $', label: 'Direct bill credit', icon: DollarSign },
-              { id: 'Cashback', label: 'Wallet credit', icon: Activity },
-              { id: 'Points', label: 'Multipliers', icon: Star },
-              { id: 'Free item / BOG', label: 'Complimentary bean', icon: Zap }
-            ].map(option => {
-              const isActive = rewardSelection === option.id;
-              const Icon = option.icon;
-              return (
-                <button
-                  key={option.id}
-                  onClick={() => setRewardSelection(option.id)}
-                  className={`pt-5 pb-4 px-3 rounded-xl text-center transition-colors flex flex-col items-center gap-3 cursor-pointer ${isActive ? 'bg-[#FDF8EB] border-2 border-[#D4A753] shadow-sm relative' : 'bg-[#FAF8F5] border border-[#EFECE6] hover:bg-[#EFECE6]'}`}
-                >
-                  {isActive && <div className="absolute -top-2.5 right-1/2 translate-x-1/2 bg-[#D4A753] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-sm">ACTIVE</div>}
-                  <div className={`w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm ${isActive ? 'border border-[#F3E5C8]' : ''}`}>
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#D4A753]' : 'text-[#9E9A93]'}`} />
-                  </div>
-                  <div>
-                    <div className="text-[12px] font-bold text-[#1A1615]">{option.id}</div>
-                    <div className={`text-[10px] font-medium mt-0.5 ${isActive ? 'text-[#9E782F]' : 'text-[#6E6A66]'}`}>{option.label}</div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#EFECE6]">
-              <div className="flex items-center gap-2 text-[#9E782F]">
-                <Link2 className="w-4 h-4" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">LINKED RULE: ITEM QUANTITY IN ORDER (SINGLE ORIGIN GEISHA WHOLE BEAN &gt; 2)</span>
-              </div>
-              <span className="text-[10px] font-medium text-[#9E9A93]">Step 3 Rule # R-04</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <span className="text-[11px] font-bold text-[#6E6A66] block mb-2">Entitlement Item</span>
-                <div className="bg-white border border-[#EFECE6] rounded-lg px-3 py-2 flex items-center justify-between shadow-sm">
-                  <span className="text-[13px] font-bold text-[#1A1615]">Geisha (250g Whole...</span>
-                  <Lock className="w-3.5 h-3.5 text-[#9E9A93]" />
-                </div>
-                <p className="text-[10px] font-medium text-[#9E9A93] mt-2 leading-tight">Auto-mirrored from cart qualifying SKU</p>
-              </div>
-
-              <div>
-                <span className="text-[11px] font-bold text-[#6E6A66] block mb-2">Discount Magnitude</span>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-[18px] font-bold text-[#0D7A53] leading-none">100%</div>
-                    <div className="text-[11px] font-bold text-[#0D7A53] mt-1">Complimentary</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[14px] font-bold text-[#1A1615] leading-none">$0</div>
-                    <div className="text-[10px] font-medium text-[#6E6A66] mt-1 leading-tight">Patron<br />co-pay</div>
-                  </div>
-                </div>
-                <p className="text-[10px] font-medium text-[#9E9A93] mt-2">Full retail waiver [$38 value]</p>
-              </div>
-
-              <div>
-                <span className="text-[11px] font-bold text-[#6E6A66] block mb-2">Transaction Cap</span>
-                <select className="w-full bg-white border border-[#EFECE6] rounded-lg px-3 py-2 text-[13px] font-bold text-[#1A1615] shadow-sm focus:outline-none">
-                  <option>Max 1 Free Item / Order</option>
-                </select>
-                <p className="text-[10px] font-medium text-[#9E9A93] mt-2">Strict limit per checkout event.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Box 2: Velocity Guardrails */}
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm space-y-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1 block">VELOCITY GUARDRAILS</span>
-              <h3 className="text-[20px] font-bold text-[#1A1615]">Usage &amp; Velocity Limits</h3>
-              <p className="text-[13px] text-[#6E6A66] font-medium mt-1 w-5/6">Prevent promotional arbitrage and protect promotional gross margins across customer lifecycles.</p>
-            </div>
-            <button className="text-[#9E9A93] hover:text-[#1A1615] transition-colors"><Edit2 className="w-4 h-4" /></button>
-          </div>
-
-          <div>
-            <span className="text-[11px] font-bold text-[#1A1615] block mb-2">Redemptions per Qualifying Guest</span>
-            <div className="flex bg-[#FAF8F5] border border-[#EFECE6] rounded-lg p-1.5 mb-2">
-              <button onClick={() => setRedemptionLimit('1 Time Only')} className={`flex-1 py-2 rounded-md text-[12px] font-bold transition-colors cursor-pointer ${redemptionLimit === '1 Time Only' ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>1 Time Only</button>
-              <button onClick={() => setRedemptionLimit('Once per Week')} className={`flex-1 py-2 rounded-md text-[12px] font-bold transition-colors cursor-pointer ${redemptionLimit === 'Once per Week' ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Once per Week</button>
-              <button onClick={() => setRedemptionLimit('Unlimited Window')} className={`flex-1 py-2 rounded-md text-[12px] font-bold transition-colors cursor-pointer ${redemptionLimit === 'Unlimited Window' ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#EFECE6]'}`}>Unlimited Window</button>
-            </div>
-            <p className="text-[10px] font-medium text-[#6E6A66]">Once redeemed, the coupon barcode will automatically burn in patron mobile wallet.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-[11px] font-bold text-[#1A1615]">Max Total Redemptions</span>
-                <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[9px] font-bold uppercase tracking-widest rounded border border-[#F3E5C8]">Cap: 500</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white border border-[#EFECE6] rounded-lg px-3 py-2 shadow-sm mb-3">
-                <span className="text-[18px] font-bold text-[#1A1615]">500</span>
-                <span className="text-[13px] font-medium text-[#6E6A66]">Total Patron Claims</span>
-              </div>
-              <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-[#9E9A93]">0 Claimed</span>
-                <span className="text-[#1A1615]">500 Remaining Available</span>
-              </div>
-            </div>
-
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-[11px] font-bold text-[#1A1615]">Campaign Incentive Budget</span>
-                <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] text-[9px] font-bold uppercase tracking-widest rounded border border-[#BCE3D1]">Guarded</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white border border-[#EFECE6] rounded-lg px-3 py-2 shadow-sm mb-3">
-                <span className="text-[18px] font-bold text-[#1A1615]">$3,500</span>
-                <span className="text-[13px] font-medium text-[#6E6A66]">USD Hard Ceiling</span>
-              </div>
-              <div className="flex gap-2 text-[10px] font-medium text-[#9E9A93] leading-tight">
-                <AlertCircle className="w-3.5 h-3.5 shrink-0 text-[#D4A753]" />
-                Auto-pauses campaign when claims hit $3,325 (95%)
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[12px] font-bold text-[#1A1615]">Promotional Stacking Control</span>
-                <span className="px-2 py-0.5 bg-white border border-[#EFECE6] text-[#6E6A66] rounded text-[9px] font-bold tracking-widest uppercase">EXCLUSIVE</span>
-              </div>
-              <p className="text-[10px] font-medium text-[#6E6A66]">Prevent stacking with Member Loyalty punch cards, Happy Hour discounts, and general voucher redemptions.</p>
-            </div>
-            <div onClick={() => setStackingControl(!stackingControl)} className={`w-10 h-6 rounded-full relative cursor-pointer shrink-0 transition-colors ${stackingControl ? 'bg-[#0D7A53]' : 'bg-[#EFECE6]'}`}>
-              <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-all ${stackingControl ? 'translate-x-4' : 'left-0.5'}`}></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Box 3: Time Horizons */}
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm space-y-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1 block">TIME HORIZONS</span>
-              <h3 className="text-[20px] font-bold text-[#1A1615]">Reward Validity &amp; Expiration Window</h3>
-              <p className="text-[13px] text-[#6E6A66] font-medium mt-1">Set activation latency and lifespan after patron unlocks the perk.</p>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6] text-[#9E782F] shrink-0">
-              <Hourglass className="w-4 h-4" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div onClick={() => setExpirationWindow('Dynamic Qualification Window')} className={`border-2 rounded-xl p-5 relative shadow-sm cursor-pointer transition-all ${expirationWindow === 'Dynamic Qualification Window' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-[#FAF8F5] border-[#EFECE6] opacity-60 grayscale hover:grayscale-0 hover:opacity-100'}`}>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className={`w-4 h-4 rounded-full bg-white border ${expirationWindow === 'Dynamic Qualification Window' ? 'border-4 border-[#D4A753]' : 'border-[#D1CDC7]'}`}></div>
-                  <span className="text-[12px] font-bold text-[#1A1615]">Dynamic Qualification Window</span>
-                </div>
-                {expirationWindow === 'Dynamic Qualification Window' && <span className="text-[9px] font-bold tracking-widest text-[#9E782F] uppercase">STANDARD</span>}
-              </div>
-              <p className="text-[10px] font-medium text-[#6E6A66] mb-4 h-8 leading-relaxed">Patron gets an individual rolling timer starting the moment qualification condition is met.</p>
-              <div className="flex items-center gap-3 bg-white border border-[#F3E5C8] rounded-lg px-3 py-2 shadow-sm mb-3">
-                <span className="text-[16px] font-bold text-[#1A1615]">14</span>
-                <span className="text-[12px] font-medium text-[#6E6A66]">Days from purchase trigger</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#9E782F]">
-                <Calendar className="w-3.5 h-3.5" /> Auto-expires at 23:59:59 on Day 14
-              </div>
-            </div>
-
-            <div onClick={() => setExpirationWindow('Fixed Calendar Deadline')} className={`border-2 rounded-xl p-5 relative shadow-sm cursor-pointer transition-all ${expirationWindow === 'Fixed Calendar Deadline' ? 'bg-[#FDF8EB] border-[#D4A753]' : 'bg-[#FAF8F5] border-[#EFECE6] opacity-60 grayscale hover:grayscale-0 hover:opacity-100'}`}>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className={`w-4 h-4 rounded-full bg-white border ${expirationWindow === 'Fixed Calendar Deadline' ? 'border-4 border-[#D4A753]' : 'border-[#D1CDC7]'}`}></div>
-                  <span className="text-[12px] font-bold text-[#1A1615]">Fixed Calendar Deadline</span>
-                </div>
-              </div>
-              <p className="text-[10px] font-medium text-[#6E6A66] mb-4 h-8 leading-relaxed">All unredeemed passes expire uniformly on a set calendar date regardless of unlock date.</p>
-              <div className="flex items-center justify-between bg-white border border-[#EFECE6] rounded-lg px-3 py-2 shadow-sm mb-3">
-                <span className="text-[13px] font-medium text-[#9E9A93]">November 30, 2024</span>
-                <Calendar className="w-4 h-4 text-[#9E9A93]" />
-              </div>
-              <div className="flex items-center gap-1.5 text-[10px] font-medium text-[#9E9A93]">
-                <Lock className="w-3.5 h-3.5" /> Campaign ends simultaneously for all
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between">
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5"><BellRing className="w-4 h-4 text-[#D4A753]" /></div>
-              <div>
-                <span className="text-[12px] font-bold text-[#1A1615] block mb-0.5">Automated Expiration Alert</span>
-                <p className="text-[10px] font-medium text-[#6E6A66]">Send push notification via Apple Wallet &amp; WhatsApp 48 hours prior to lapse</p>
-              </div>
-            </div>
-            <span className="px-3 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded-full text-[10px] font-bold tracking-widest uppercase shrink-0 border border-[#BCE3D1]">Active Automation</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="lg:col-span-4 space-y-6">
-        {/* Right Sidebar 1: Reward Cost & Margin Impact */}
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <span className="px-2.5 py-0.5 bg-[#E0F9ED] text-[#0D7A53] border border-[#BCE3D1] rounded text-[9px] font-bold tracking-widest uppercase flex items-center gap-1">
-              <div className="w-1.5 h-1.5 bg-[#0D7A53] rounded-full animate-pulse"></div> Live Simulation
-            </span>
-            <span className="text-[10px] font-bold text-[#9E9A93]">Step 4 Unit Econ</span>
-          </div>
-
-          <h3 className="text-[16px] font-bold text-[#1A1615] mb-2">Reward Cost &amp; Margin Impact</h3>
-          <p className="text-[10px] font-medium text-[#6E6A66] mb-6 leading-relaxed">
-            Modeled on 1,840 qualifying patrons from Step 2 at an estimated 25% BOGO velocity.
-          </p>
-
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">EST. REDEMPTIONS</div>
-              <div className="text-[18px] font-bold text-[#1A1615] mb-1">420 – 510</div>
-              <div className="text-[10px] font-bold text-[#0D7A53]">23.4% Velocity</div>
-            </div>
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">PROMOTION COST</div>
-              <div className="text-[18px] font-bold text-[#1A1615] mb-1">$1.95k</div>
-              <div className="text-[10px] font-medium text-[#6E6A66]">Under $3.5k Cap</div>
-            </div>
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">PROJECTED GMV</div>
-              <div className="text-[18px] font-bold text-[#D4A753] mb-1">+$16,400</div>
-              <div className="text-[10px] font-medium text-[#6E6A66]">8.4x Incentive ROI</div>
-            </div>
-            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4">
-              <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">NET CAMPAIGN MARGIN</div>
-              <div className="text-[18px] font-bold text-[#0D7A53] mb-1">71.8%</div>
-              <div className="text-[10px] font-bold text-[#0D7A53]">&gt;65% Target</div>
-            </div>
-          </div>
-
-          <div>
-            <div className="flex justify-between text-[10px] font-bold mb-2">
-              <span className="text-[#1A1615]">Promotion Economics Breakdown</span>
-              <span className="text-[#1A1615]">100% Total Value</span>
-            </div>
-            <div className="flex h-3 rounded-full overflow-hidden mb-3">
-              <div className="bg-[#0D7A53] w-[71.8%]"></div>
-              <div className="bg-[#D1CDC7] w-[18%] border-l border-white/50"></div>
-              <div className="bg-[#D4A753] w-[10.2%] border-l border-white/50"></div>
-            </div>
-            <div className="flex gap-4 text-[9px] font-bold">
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span><span className="text-[#6E6A66]">Gross:</span><span className="text-[#1A1615]">71.8%</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#D1CDC7]"></span><span className="text-[#6E6A66]">COGS:</span><span className="text-[#1A1615]">18%</span></div>
-              <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#D4A753]"></span><span className="text-[#6E6A66]">Perk:</span><span className="text-[#1A1615]">10.2%</span></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Sidebar 2: Patron Experience */}
-        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-5">
-            <div>
-              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-1">WALLET PREVIEW</div>
-              <h3 className="text-[16px] font-bold text-[#1A1615]">Patron Experience</h3>
-            </div>
-            <span className="px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-full text-[10px] font-bold tracking-widest">Apple &amp; Google Pass</span>
-          </div>
-
-          <div className="bg-[#1A1615] rounded-[24px] p-1 shadow-2xl relative mx-auto w-[280px]">
-            {/* Phone Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-b-xl z-20"></div>
-
-            {/* Pass Container */}
-            <div className="bg-[#1A1615] border border-white/10 rounded-[20px] overflow-hidden relative pt-8 pb-6 px-5 h-[480px] flex flex-col">
-              {/* Pass Header */}
-              <div className="flex items-center justify-between mb-4 relative z-10">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-[#D4A753] rounded-full flex items-center justify-center text-white font-bold text-[10px]">R</div>
-                  <span className="text-[11px] font-bold tracking-widest uppercase text-white/90">REVIA PRIVÉ</span>
-                </div>
-                <span className="text-[10px] font-semibold text-white/50 tracking-widest uppercase">RESERVE PASS</span>
-              </div>
-
-              {/* Hero Image */}
-              <div className="relative h-32 rounded-xl overflow-hidden mb-5 shrink-0 shadow-lg border border-white/10">
-                <img src="https://images.unsplash.com/photo-1559525839-b184a4d698c7?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-80" alt="Coffee beans" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                <div className="absolute bottom-3 left-3">
-                  <span className="px-2 py-0.5 bg-[#D4A753] text-[#1A1615] rounded text-[9px] font-bold tracking-widest uppercase shadow-sm">COMPLIMENTARY ENTITLEMENT</span>
-                </div>
-              </div>
-
-              {/* Pass Details */}
-              <div className="relative z-10 flex-1">
-                <h4 className="text-[18px] font-black text-white leading-snug mb-1">BUY 2, GET 1 FREE</h4>
-                <p className="text-[13px] font-semibold text-white/90 mb-1">Single Origin Geisha (Whole Bean 250g)</p>
-                <p className="text-[10px] font-medium text-white/50 mb-4">Downtown Flagship • Roastery &amp; Tasting Room</p>
-
-                <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-lg p-2.5 mb-5">
-                  <div className="w-8 h-8 rounded-full bg-[#D4A753]/20 flex items-center justify-center shrink-0">
-                    <Clock className="w-4 h-4 text-[#D4A753]" />
-                  </div>
-                  <div className="flex-1 border-r border-white/10">
-                    <div className="text-[10px] font-medium text-[#D4A753]">14 Days from</div>
-                    <div className="text-[11px] font-bold text-white leading-none mt-0.5">Unlock</div>
-                  </div>
-                  <div className="flex-1 pl-2">
-                    <div className="text-[10px] font-medium text-white/50">Single</div>
-                    <div className="text-[11px] font-bold text-white leading-none mt-0.5">Redemption</div>
-                  </div>
-                </div>
-
-                {/* Barcode Area */}
-                <div className="bg-white rounded-xl p-4 flex flex-col items-center justify-center mt-auto">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/UPC-A-036000291452.svg" alt="barcode" className="w-full h-12 opacity-90 object-cover mb-2" style={{ filter: 'grayscale(100%) contrast(200%)' }} />
-                  <div className="text-[8px] font-bold tracking-widest text-[#1A1615] uppercase mt-2">• TAP BARCODE OR HOLD NEAR COUNTER NFC •</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 mt-4 text-[#6E6A66] bg-[#FAF8F5] p-3 rounded-xl border border-[#EFECE6]">
-            <RefreshCw className="w-4 h-4 shrink-0 text-[#0D7A53]" />
-            <span className="text-[10px] font-medium leading-relaxed">Dynamically synced with patron Revia Web App upon qualification.</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <CampaignRewardStep
+      campaignType={fullCampaignType}
+      ruleConfig={ruleConfig}
+      onContinue={(config) => {
+        setRewardConfig(config);
+        console.log('Step 4 Config:', config);
+        setCurrentStep(5);
+      }}
+      onBack={() => setCurrentStep(3)}
+    />
   );
 
   const renderStep5 = () => (

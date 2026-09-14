@@ -75,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
 
         {/* Clean Breadcrumbs matching Figma design */}
-        <div className="flex items-center gap-1.5 text-xs text-[#7C746C]">
+        <div className="hidden md:flex items-center gap-1.5 text-xs text-[#7C746C]">
           <span
             className="hover:text-[#1A1615] cursor-pointer transition-colors"
             onClick={() => onNavigate('/dashboard')}
