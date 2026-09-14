@@ -209,7 +209,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* 2. Top 4 Metric KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {/* Metric 1: Active Loyalty Members */}
         <div className="bg-white border border-[#EAE6E1] rounded-xl p-4 shadow-2xs flex flex-col justify-between">
           <div>
@@ -660,7 +660,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             <div className="text-[10px] uppercase font-bold text-[#8C827A] tracking-wider mb-2">
               QUICK OPERATIONAL ACTIONS
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Action 1 */}
               <button
                 onClick={() => onNavigate('/qr-codes')}

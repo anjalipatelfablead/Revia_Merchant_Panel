@@ -8,6 +8,9 @@ import { CustomerLayout } from './components/shared/CustomerLayout';
 import { CustomerHeader } from './components/shared/CustomerHeader';
 import { CustomerFooter } from './components/shared/CustomerFooter';
 import { ErrorState } from './components/ui/States';
+// Additional imports for cart functionality
+import { useCart } from './hooks/useCart';
+import { CustomerCartOverlay } from './components/shared/CustomerCartOverlay';
 
 // Pre-auth Screens
 import { QRScreen } from './screens/pre-auth/QRScreen';
@@ -31,7 +34,7 @@ import { RedemptionScreen } from './screens/post-auth/RedemptionScreen';
 import { RedemptionSuccessScreen } from './screens/post-auth/RedemptionSuccessScreen';
 import { MembershipScreen } from './screens/post-auth/MembershipScreen';
 import { HistoryScreen } from './screens/post-auth/HistoryScreen';
-import { ProfileScreen } from './screens/post-auth/ProfileScreen';
+import { CheckoutScreen } from './screens/post-auth/CheckoutScreen';
 import { PrivacyScreen } from './screens/post-auth/PrivacyScreen';
 
 interface Props {
@@ -51,9 +54,11 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
   const [isAuthenticated, setIsAuthenticated] = useState(isPostAuthRoute);
   const [isExistingMember] = useState(true);
   const [mobile, setMobile] = useState('');
+  // Active tab for post-auth navigation
+  const [activeTab, setActiveTab] = useState<MainTab>((subRoute as MainTab) || 'dashboard');
 
   // Post-auth state
-  const [activeTab, setActiveTab] = useState<MainTab>((subRoute as MainTab) || 'dashboard');
+  const { cartItems, addItem, updateQuantity, subtotal, tax, total } = useCart();
   const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
   const [selectedReward, setSelectedReward] = useState<string | null>(null);
   const [showRedemption, setShowRedemption] = useState(false);
@@ -167,6 +172,14 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
         <HistoryScreen />
       ) : activeTab === 'profile' ? (
         <ProfileScreen onPrivacy={() => setShowPrivacy(true)} onNavigateApp={onNavigate} />
+      ) : activeTab === 'checkout' ? (
+        <CheckoutScreen 
+          cartItems={cartItems} 
+          updateQuantity={updateQuantity} 
+          subtotal={subtotal} 
+          tax={tax} 
+          total={total} 
+        />
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-16 h-16 bg-[#F8F8F6] rounded-2xl flex items-center justify-center mb-4 border border-[#E6E6E6]">

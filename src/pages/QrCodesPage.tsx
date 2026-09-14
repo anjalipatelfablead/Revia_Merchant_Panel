@@ -497,7 +497,7 @@ export const QrCodesPage: React.FC = () => {
                   </div>
 
                   {/* 3. Pattern Density & Error Correction */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Pattern Density</label>
                       <div className="relative">

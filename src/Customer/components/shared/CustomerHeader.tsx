@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Bell, User } from 'lucide-react';
+import { Menu, X, Bell, User, ShoppingBag } from 'lucide-react';
 
 interface Props {
   onNavigate?: (route: string) => void;
+  onCartOpen?: () => void;
   mode?: 'light' | 'dark';
   bgColor?: string;
   position?: 'fixed' | 'absolute' | 'sticky' | 'relative';
@@ -13,6 +14,7 @@ interface Props {
 
 export const CustomerHeader: React.FC<Props> = ({
   onNavigate,
+  onCartOpen,
   mode = 'dark',
   bgColor = 'bg-white/95',
   position = 'fixed',
@@ -61,6 +63,9 @@ export const CustomerHeader: React.FC<Props> = ({
           <div className="hidden lg:flex items-center gap-4">
             <button className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${isLightMode ? 'hover:bg-gray-100 text-gray-600' : 'hover:bg-white/10 text-white'}`}>
               <Bell className="w-5 h-5" />
+            </button>
+            <button onClick={onCartOpen ? onCartOpen : () => onNavigate?.('/checkout')} className="w-10 h-10 flex items-center justify-center rounded-full bg-[#F3EFE7] border-2 border-white shadow-sm transition-transform hover:scale-105">
+              <ShoppingBag className="w-5 h-5 text-[#9A7436]" />
             </button>
             <button onClick={() => onNavigate?.('/customer/profile')} className="w-10 h-10 rounded-full bg-[#F3EFE7] border-2 border-white shadow-sm flex items-center justify-center overflow-hidden transition-transform hover:scale-105">
               <User className="w-5 h-5 text-[#9A7436]" />
