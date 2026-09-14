@@ -24,7 +24,7 @@ import {
   Trophy
 } from 'lucide-react';
 
-export const RewardsPage: React.FC = () => {
+export const AnalyticsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('All Rewards (18)');
   const [dynamicQR, setDynamicQR] = useState(true);
   const [pinOverride, setPinOverride] = useState(true);
