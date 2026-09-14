@@ -36,6 +36,8 @@ import { MembershipScreen } from './screens/post-auth/MembershipScreen';
 import { HistoryScreen } from './screens/post-auth/HistoryScreen';
 import { CheckoutScreen } from './screens/post-auth/CheckoutScreen';
 import { PrivacyScreen } from './screens/post-auth/PrivacyScreen';
+import { ProfileScreen } from './screens/post-auth/ProfileScreen';
+import { ProductDetailScreen } from './screens/post-auth/ProductDetailScreen';
 
 interface Props {
   currentRoute?: string;
@@ -50,7 +52,7 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
 
   // Pre-auth state
   const [preScreen, setPreScreen] = useState<PreScreen>(subRoute as PreScreen);
-  const isPostAuthRoute = ['dashboard', 'scan', 'menu', 'orders', 'coupons', 'membership', 'offers', 'rewards', 'history', 'profile'].includes(subRoute);
+  const isPostAuthRoute = ['dashboard', 'scan', 'menu', 'orders', 'coupons', 'membership', 'offers', 'rewards', 'history', 'profile', 'checkout'].includes(subRoute);
   const [isAuthenticated, setIsAuthenticated] = useState(isPostAuthRoute);
   const [isExistingMember] = useState(true);
   const [mobile, setMobile] = useState('');
@@ -61,6 +63,7 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
   const { cartItems, addItem, updateQuantity, subtotal, tax, total } = useCart();
   const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
   const [selectedReward, setSelectedReward] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [showRedemption, setShowRedemption] = useState(false);
   const [showRedemptionSuccess, setShowRedemptionSuccess] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
@@ -141,7 +144,8 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
   const getTitle = () => {
     if (showPrivacy) return 'Privacy & Data';
     if (activeTab === 'offers' && selectedOffer) return 'Offer Detail';
-    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'Coupons', membership: 'Membership Cards', offers: 'Offers', rewards: 'Rewards Wallet', history: 'Activity', profile: 'My Profile' };
+    if ((activeTab as string) === 'product' && selectedProduct) return 'Item Details';
+    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'Coupons', membership: 'Membership Cards', offers: 'Offers', rewards: 'Rewards Wallet', history: 'Activity', profile: 'My Profile', checkout: 'Checkout' };
     return titles[activeTab] || 'Revia';
   };
 
@@ -153,6 +157,7 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
       showBack={showPrivacy || (activeTab === 'offers' && !!selectedOffer)}
       onBack={() => { if (showPrivacy) setShowPrivacy(false); else setSelectedOffer(null); }}
       onNavigateApp={onNavigate}
+      cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
     >
       {showPrivacy ? (
         <PrivacyScreen onBack={() => setShowPrivacy(false)} />
@@ -161,7 +166,19 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
       ) : activeTab === 'scan' ? (
         <CustomerScanScreen />
       ) : activeTab === 'menu' ? (
-        <CustomerMenuScreen />
+        <CustomerMenuScreen 
+          setTab={handleSetActiveTab}
+          cartItems={cartItems}
+          addItem={addItem}
+          updateQuantity={updateQuantity}
+          onProductClick={(id) => { setSelectedProduct(id); handleSetActiveTab('product' as MainTab); }}
+        />
+      ) : (activeTab as string) === 'product' && selectedProduct ? (
+        <ProductDetailScreen 
+          productId={selectedProduct}
+          onBack={() => { setSelectedProduct(null); handleSetActiveTab('menu'); }}
+          addItem={addItem}
+        />
       ) : activeTab === 'offers' || activeTab === 'coupons' ? (
         <OffersScreen type={activeTab} selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
       ) : activeTab === 'membership' ? (
@@ -179,6 +196,10 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
           subtotal={subtotal} 
           tax={tax} 
           total={total} 
+          onSuccess={() => {
+            cartItems.forEach(item => updateQuantity(item.id, -item.quantity));
+            handleSetActiveTab('orders');
+          }}
         />
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">

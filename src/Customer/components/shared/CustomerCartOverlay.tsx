@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { CatalogItem } from '../../../types';
+import { MOCK_ADDONS } from '../../data/mockData';
 
 interface CartItem extends CatalogItem {
   quantity: number;
@@ -86,9 +87,33 @@ export const CustomerCartOverlay: React.FC<Props> = ({ isOpen, onClose, cartItem
           )}
         </div>
 
+        {/* Add-ons Section */}
+        {cartItems.length > 0 && (
+          <div className="p-6 border-t border-[#E6E6E6] bg-white shrink-0">
+            <h3 className="text-xs font-black text-[#222] uppercase tracking-wider mb-3">Frequently Added</h3>
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
+              {MOCK_ADDONS.map(addon => (
+                <button 
+                  key={addon.id} 
+                  className="flex-shrink-0 flex items-center gap-3 bg-white border border-[#E6E6E6] rounded-xl p-2 pr-4 hover:border-[#C89B3C] hover:bg-[#FFF8ED] transition-colors text-left"
+                  onClick={() => alert(`Added ${addon.name} to cart!`)}
+                >
+                  <div className="w-8 h-8 bg-[#F8F8F6] rounded-full flex items-center justify-center shrink-0">
+                    <Plus className="w-4 h-4 text-[#C89B3C]" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#222] leading-tight">{addon.name}</p>
+                    <p className="text-[10px] font-bold text-[#999]">+${addon.price.toFixed(2)}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Footer / Summary */}
         {cartItems.length > 0 && (
-          <div className="border-t border-[#E6E6E6] p-6 bg-[#F8F8F6]">
+          <div className="border-t border-[#E6E6E6] p-6 bg-[#F8F8F6] shrink-0">
             <div className="space-y-3 mb-6 text-sm">
               <div className="flex justify-between text-[#666]">
                 <span>Subtotal</span>

@@ -6,9 +6,10 @@ import { BottomNav } from './BottomNav';
 import { CustomerDashboardHeader } from './CustomerDashboardHeader';
 import { DesktopSidebar } from './DesktopSidebar';
 
-export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children, onNavigateApp }: {
+export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children, onNavigateApp, cartCount }: {
   tab: MainTab; setTab: (t: MainTab) => void; title?: string; showBack?: boolean;
   onBack?: () => void; children: React.ReactNode; onNavigateApp?: (route: string) => void;
+  cartCount?: number;
 }) => {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
@@ -42,6 +43,7 @@ export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children,
           tabs={tabs}
           activeTab={tab}
           setTab={setTab}
+          cartCount={cartCount}
         />
 
       {/* Mobile Drawer Overlay */}
