@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CreditCard, CheckCircle2, Zap, ShieldCheck, ArrowRight, ReceiptText, Search, Download, ChevronRight, LockKeyhole, WalletCards, Users, Server, FileText, Bell, CalendarDays, Building2, MoreVertical } from 'lucide-react';
 
 const MobileBillingPage: React.FC = () => {
@@ -38,6 +38,28 @@ const MobileBillingPage: React.FC = () => {
 };
 
 export const BillingPage: React.FC = () => {
+  const [activeInvoiceTab, setActiveInvoiceTab] = useState<'All Invoices' | 'Paid' | 'Upcoming'>('All Invoices');
+  const [searchInvoice, setSearchInvoice] = useState('');
+  const [paymentMethods, setPaymentMethods] = useState([
+    { label: 'Mastercard', digits: '•••• 8814', meta: 'Expires 08/27 • Elena Vance', default: true, kind: 'MC', detail: 'Revia Hospitality LLC', className: 'bg-[#FAF0E3]' },
+    { label: 'Chase Commercial', digits: '•••• 4109', meta: 'Business Checking • Direct Debit', default: false, kind: 'ACH', detail: 'Auto-follower backup', className: 'bg-[#FAF8F5]' },
+  ]);
+
+  const invoiceRows = [
+    { invoiceId: '#REV-INV-2024', date: 'Nov 1, 2024', plan: 'Enterprise Atelier +2 POS add-ons', amount: '$429.00', status: 'Paid' as const },
+    { invoiceId: '#REV-INV-2023', date: 'Oct 1, 2024', plan: 'Enterprise Atelier +2 POS add-ons', amount: '$429.00', status: 'Paid' as const },
+    { invoiceId: '#REV-INV-2022', date: 'Sep 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '$389.00', status: 'Paid' as const },
+    { invoiceId: '#REV-INV-2021', date: 'Aug 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '$389.00', status: 'Paid' as const },
+    { invoiceId: '#REV-INV-2020', date: 'Jul 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '$389.00', status: 'Upcoming' as const },
+  ];
+
+  const filteredInvoiceRows = invoiceRows.filter((row) => activeInvoiceTab === 'All Invoices' || row.status === activeInvoiceTab);
+  const invoiceTabCounts = {
+    'All Invoices': invoiceRows.length,
+    'Paid': invoiceRows.filter((row) => row.status === 'Paid').length,
+    'Upcoming': invoiceRows.filter((row) => row.status === 'Upcoming').length,
+  };
+
   const exportTaxDossier = () => {
     const rows = [
       ['Legal Entity', 'Revia Hospitality Atelier Group LLC'],
@@ -58,6 +80,58 @@ export const BillingPage: React.FC = () => {
     const link = document.createElement('a');
     link.href = url;
     link.download = 'revia-tax-dossier.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadInvoiceLedger = () => {
+    const rows = invoiceRows.map((row) => [
+      row.invoiceId,
+      row.date,
+      row.plan,
+      row.amount,
+      row.status,
+    ]);
+
+    const csv = [
+      ['Invoice ID', 'Date', 'Plan & Add-ons', 'Amount', 'Status'],
+      ...rows,
+    ]
+      .map((entry) => entry.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(','))
+      .join('\n');
+
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'revia-invoice-ledger.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadInvoiceReceipt = (row: { invoiceId: string; date: string; plan: string; amount: string; status: string }) => {
+    const rows = [
+      ['Invoice ID', row.invoiceId],
+      ['Date', row.date],
+      ['Plan & Add-ons', row.plan],
+      ['Amount', row.amount],
+      ['Status', row.status],
+      ['Download Type', 'Invoice Receipt'],
+      ['Receipt File', 'revia-invoice-receipt.csv'],
+    ];
+
+    const csv = rows
+      .map((entry) => entry.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(','))
+      .join('\n');
+
+    const filename = `${row.invoiceId.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-receipt.csv`;
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -140,9 +214,13 @@ export const BillingPage: React.FC = () => {
           </section>
 
           <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-            <div className="flex flex-wrap items-end justify-between gap-2"><div><span className="text-[9px] font-bold uppercase tracking-wider text-[#B7842C]">Accounting &amp; Tax Audits</span><h2 className="text-[16px] font-bold text-[#1A1615]">Invoice History &amp; Receipts Ledger</h2></div><div className="flex items-center gap-1"><div className="flex w-[190px] items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] text-[#81776E]"><Search className="h-3 w-3" /> Search by invoice #...</div><button type="button" aria-label="Download invoice ledger" className="rounded-md border border-[#E5E0D8] bg-white p-1.5 text-[#81776E] hover:bg-[#F5F1EA]"><Download className="h-3 w-3" /></button></div></div>
-            <div className="mt-3 inline-flex rounded-md bg-[#F1EDE7] p-0.5 text-[9px] font-semibold text-[#81776E]"><button type="button" className="rounded bg-white px-2.5 py-1 text-[#4F4842] shadow-2xs">All Invoices (12)</button><button type="button" className="px-2.5 py-1 hover:text-[#4F4842]">Paid (12)</button><button type="button" className="px-2.5 py-1 hover:text-[#4F4842]">Upcoming (1)</button></div>
-            <div className="mt-3 overflow-x-auto"><table className="w-full min-w-[600px] text-left text-[9px]"><thead className="border-b border-[#E8E1D9] text-[8px] uppercase tracking-wider text-[#81776E]"><tr><th className="pb-2">Invoice ID</th><th className="pb-2">Date</th><th className="pb-2">Plan &amp; Add-ons</th><th className="pb-2">Amount</th><th className="pb-2">Status</th><th className="pb-2">Actions</th></tr></thead><tbody className="divide-y divide-[#F0EBE4]">{['Nov 1, 2024','Oct 1, 2024','Sep 1, 2024','Aug 1, 2024','Jul 1, 2024'].map((date,index) => <tr key={date}><td className="py-2 font-semibold text-[#1A1615]">#REV-INV-{String(2024-index).padStart(4,'0')}</td><td className="py-2 text-[#81776E]">{date}</td><td className="py-2 text-[#4F4842]">Enterprise Atelier {index < 2 ? '+2 POS add-ons' : 'Base Plan'}</td><td className="py-2 font-semibold text-[#1A1615]">${index < 2 ? '429.00' : '389.00'}</td><td className="py-2"><span className="rounded-full bg-[#CFF6DF] px-2 py-1 font-bold text-[#16804A]">Paid</span></td><td className="py-2"><button type="button" className="inline-flex items-center gap-1 rounded border border-[#E5E0D8] px-1.5 py-1 text-[8px] text-[#4F4842]"><Download className="h-3 w-3" /> Receipt</button></td></tr>)}</tbody></table></div>
+            <div className="flex flex-wrap items-end justify-between gap-2"><div><span className="text-[9px] font-bold uppercase tracking-wider text-[#B7842C]">Accounting &amp; Tax Audits</span><h2 className="text-[16px] font-bold text-[#1A1615]">Invoice History &amp; Receipts Ledger</h2></div><div className="flex items-center gap-1"><div className="flex w-[190px] items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] text-[#81776E]"><Search className="h-3 w-3" /><input aria-label="Search by invoice number" value={searchInvoice} onChange={(event) => setSearchInvoice(event.target.value)} placeholder="Search by invoice #..." className="w-full border-0 bg-transparent text-[9px] text-[#81776E] outline-none placeholder:text-[#81776E]" /></div><button type="button" aria-label="Download invoice ledger" onClick={downloadInvoiceLedger} className="rounded-md border border-[#E5E0D8] bg-white p-1.5 text-[#81776E] hover:bg-[#F5F1EA]"><Download className="h-3 w-3" /></button></div></div>
+            <div className="mt-3 inline-flex rounded-md bg-[#F1EDE7] p-0.5 text-[9px] font-semibold text-[#81776E]">
+              {(['All Invoices', 'Paid', 'Upcoming'] as Array<'All Invoices' | 'Paid' | 'Upcoming'>).map((tab) => (
+                <button key={tab} type="button" onClick={() => setActiveInvoiceTab(tab)} className={`rounded px-2.5 py-1 ${activeInvoiceTab === tab ? 'bg-white text-[#4F4842] shadow-2xs' : 'text-[#81776E] hover:text-[#4F4842]'}`}>{tab} ({invoiceTabCounts[tab]})</button>
+              ))}
+            </div>
+            <div className="mt-3 overflow-x-auto"><table className="w-full min-w-[600px] text-left text-[9px]"><thead className="border-b border-[#E8E1D9] text-[8px] uppercase tracking-wider text-[#81776E]"><tr><th className="pb-2">Invoice ID</th><th className="pb-2">Date</th><th className="pb-2">Plan &amp; Add-ons</th><th className="pb-2">Amount</th><th className="pb-2">Status</th><th className="pb-2">Actions</th></tr></thead><tbody className="divide-y divide-[#F0EBE4]">{filteredInvoiceRows.filter((row) => row.invoiceId.toLowerCase().includes(searchInvoice.toLowerCase())).map((row) => <tr key={row.invoiceId}><td className="py-2 font-semibold text-[#1A1615]">{row.invoiceId}</td><td className="py-2 text-[#81776E]">{row.date}</td><td className="py-2 text-[#4F4842]">{row.plan}</td><td className="py-2 font-semibold text-[#1A1615]">{row.amount}</td><td className="py-2"><span className="rounded-full bg-[#CFF6DF] px-2 py-1 font-bold text-[#16804A]">{row.status}</span></td><td className="py-2"><button type="button" onClick={() => downloadInvoiceReceipt(row)} className="inline-flex items-center gap-1 rounded border border-[#E5E0D8] px-1.5 py-1 text-[8px] text-[#4F4842]"><Download className="h-3 w-3" /> Receipt</button></td></tr>)}</tbody></table></div>
             <div className="mt-3 flex items-center gap-2 rounded-md bg-[#FAF8F5] p-2 text-[9px] text-[#81776E]"><LockKeyhole className="h-3.5 w-3.5 text-[#B7842C]" /> Cryptographic Ledger Seal: <span className="font-mono text-[#4F4842]">sha256:7f4a...912e8b</span><span className="ml-auto hidden sm:inline">Compliant with US GAAP &amp; EU VAT cross-border directive</span></div>
           </section>
         </div>
@@ -151,16 +229,32 @@ export const BillingPage: React.FC = () => {
           <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
             <div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Payment Methods</h2><CreditCard className="h-4 w-4 text-[#B7842C]" /></div>
             <div className="mt-3 space-y-2">
-              <div className="rounded-lg bg-[#FAF0E3] p-2.5">
-                <div className="flex items-start gap-2"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#1A1615] text-[8px] font-bold text-white">MC</span><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-1 text-[10px] font-bold"><span>Mastercard •••• 8814</span><span className="rounded-full bg-[#FFE0A2] px-1.5 py-0.5 text-[8px]">Default</span></div><div className="text-[9px] leading-tight text-[#81776E]">Expires 08/27 • Elena Vance</div></div></div>
-                <div className="mt-2 flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>Revia Hospitality LLC</span><button type="button">Edit</button></div>
-              </div>
-              <div className="rounded-lg bg-[#FAF8F5] p-2.5">
-                <div className="flex items-start gap-2"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-white text-[8px] font-bold text-[#81776E]">ACH</span><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-1 text-[10px] font-bold"><span>Chase Commercial<br />•••• 4109</span><span className="rounded-full bg-[#CFF6DF] px-1.5 py-0.5 text-[8px] text-[#16804A]">Verified</span></div><div className="text-[9px] leading-tight text-[#81776E]">Business Checking<br />Direct Debit</div></div></div>
-                <div className="mt-2 flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>Auto-follower backup</span><button type="button">Set Default</button></div>
-              </div>
+              {paymentMethods.map((method, index) => (
+                <div key={`${method.label}-${method.digits}`} className={`rounded-lg p-2.5 ${method.className}`}>
+                  <div className="flex items-start gap-2"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#1A1615] text-[8px] font-bold text-white">{method.kind}</span><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-1 text-[10px] font-bold"><span>{method.label} {method.digits}</span>{method.default ? <span className="rounded-full bg-[#FFE0A2] px-1.5 py-0.5 text-[8px]">Default</span> : <span className="rounded-full bg-[#CFF6DF] px-1.5 py-0.5 text-[8px] text-[#16804A]">Verified</span>}</div><div className="text-[9px] leading-tight text-[#81776E]">{method.meta}</div></div></div>
+                  <div className="mt-2 flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>{method.detail}</span><button type="button">{method.default ? 'Edit' : 'Set Default'}</button></div>
+                </div>
+              ))}
             </div>
-            <button type="button" className="mt-3 w-full rounded-lg bg-[#F1EDE7] py-2 text-[9px] font-semibold text-[#4F4842]"><CreditCard className="mr-1 inline h-3 w-3" /> + Add Payment Method</button>
+            <button type="button" onClick={() => {
+              const addedMethod = { label: 'Chase Commercial', digits: '•••• 4109', meta: 'Business Checking • Direct Debit', default: false, kind: 'ACH', detail: 'Auto-follower backup', className: 'bg-[#FAF8F5]' };
+              setPaymentMethods((current) => {
+                const next = current.some((method) => method.label === addedMethod.label && method.digits === addedMethod.digits)
+                  ? current
+                  : [...current, addedMethod];
+                return next;
+              });
+              const link = document.createElement('a');
+              const rows = [['Payment Method', 'Chase Commercial •••• 4109'], ['Status', 'Added'], ['Download Type', 'Payment Method']];
+              const csv = rows.map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+              const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+              link.href = url;
+              link.download = 'revia-payment-method-added.csv';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+            }} className="mt-3 w-full rounded-lg bg-[#F1EDE7] py-2 text-[9px] font-semibold text-[#4F4842]"><CreditCard className="mr-1 inline h-3 w-3" /> + Add Payment Method</button>
           </section>
           <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Plan Quota Add-ons</h2><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[8px] text-[#81776E]">Self-Serve</span></div><p className="mt-2 text-[9px] leading-relaxed text-[#81776E]">Expand capacity on demand. Add-ons are prorated automatically to your current monthly cycle.</p>{[['POS Hardware Node','+$20.00 / mo per terminal','2'],['SMS VIP Trunk (10k)','+$45.00 / mo per block','0'],['Branch Venue Slot','+$95.00 / mo per branch','0']].map(([title,detail,count]) => <div key={title} className="mt-2 flex items-center justify-between border-b border-[#F0EBE4] pb-2"><div><div className="text-[10px] font-semibold text-[#1A1615]">{title}</div><div className="text-[9px] text-[#81776E]">{detail}</div></div><button type="button" className="rounded border border-[#E5E0D8] px-2 py-1 text-[9px] text-[#4F4842]">− {count} &nbsp; +</button></div>)}</section>
           <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Tax &amp; Legal Entity</h2><button type="button" className="text-[9px] font-semibold text-[#B7842C]">Edit Details</button></div><div className="mt-3 space-y-2 text-[9px] text-[#81776E]"><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Legal Entity</b><span className="text-[#4F4842]">Revia Hospitality Atelier Group LLC</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Tax Identification</b><span className="text-[#4F4842]">US-EIN: 27-4196482</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Registered Atelier Address</b><span className="text-[#4F4842]">482 Broadway, SoHo<br />New York, NY 10013, United States</span></div></div><div className="mt-3 rounded-md bg-[#FAF8F5] p-2 text-[9px] text-[#81776E]"><FileText className="mr-1 inline h-3 w-3 text-[#B7842C]" /> W-9 &amp; Tax Residency forms on file (Verified 2024).</div></section>
