@@ -310,7 +310,7 @@ export const AnalyticsPage: React.FC = () => {
           </div>
           */}
 
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
                 <div className="max-w-[480px]">
                   <div className="flex flex-wrap items-center gap-3">
                     <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-[1.05] text-[#1A1615]">
