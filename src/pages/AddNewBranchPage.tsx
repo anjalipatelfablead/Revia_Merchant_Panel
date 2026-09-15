@@ -105,10 +105,10 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
       managerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       terminalsActive: posCount,
       membersLinked: '1,420 Linked',
-      volume30d: '$34,800',
+      volume30d: '₹34,800',
       hours: `${selectedDays[0]}–${selectedDays[selectedDays.length - 1]} ${openTime} – ${closeTime}`,
       timezone: 'EDT (America/New_York)',
-      currency: 'USD ($)',
+      currency: 'INR ($)',
       taxProfile: 'NY State + NYC Sales Tax (8.875%)',
       hardware: [
         {

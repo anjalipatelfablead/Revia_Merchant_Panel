@@ -16,7 +16,8 @@ import {
   Plus,
   Package,
   ClipboardList,
-  ScanLine
+  ScanLine,
+  X
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -74,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         { name: 'Customers', route: '/customerlist', icon: Users },
         { name: 'Transactions', route: '/transactions', icon: Receipt },
-        { name: 'Campaigns', route: '/campaigns/new', icon: Megaphone },
+        { name: 'Campaigns', route: '/campaigns', icon: Megaphone },
         { name: 'Redemption Terminal', route: '/terminal', icon: ScanLine },
         { name: 'Rewards', route: '/rewards', icon: Award },
       ],
@@ -98,29 +99,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
         lg:static lg:w-[240px] lg:translate-x-0
         ${isMobileOpen
           ? 'fixed inset-y-0 left-0 w-[260px] translate-x-0 shadow-2xl'
-          : 'fixed inset-y-0 left-0 w-[260px] -translate-x-full lg:translate-x-0'}
+          : 'hidden lg:flex'
+        }
       `}
     >
-      {/* Brand Header */}
-      <div className="p-4 pb-3 border-b border-[#EAE6E1]/70">
-        <div
-          className="flex items-center gap-2.5 cursor-pointer select-none"
-          onClick={() => onRouteChange('/dashboard')}
-        >
-          {/* Gold squircle emblem matching screenshot */}
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white shadow-xs">
-            <Award className="w-4 h-4 text-white" />
+      {/* Brand Header matching Figma exactly: REVIA MERCHANT SUITE */}
+      <div className="p-4 border-b border-[#EAE6E1] flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-black text-lg flex items-center justify-center shadow-xs">
+            R
           </div>
-          <div className="leading-tight">
-            <div className="text-sm font-extrabold tracking-wider text-[#1A1615] font-sans">
-              REVIA
-            </div>
-            <div className="text-[9px] uppercase tracking-widest text-[#8C827A] font-bold font-sans">
-              MERCHANT SUITE
-            </div>
+          <div>
+            <div className="font-extrabold text-[15px] text-[#1A1615] tracking-tight leading-none uppercase">REVIA</div>
+            <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mt-0.5">MERCHANT SUITE</div>
           </div>
         </div>
+        {isMobileOpen && (
+          <button onClick={onMobileClose} className="lg:hidden p-1 text-[#6E6A66] hover:text-[#1A1615] cursor-pointer">
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
+
 
       {/* Navigation Links Area */}
       <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5">
@@ -131,7 +131,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               const isActive =
                 currentRoute === item.route ||
                 (item.route === '/branches' && currentRoute === '/branches/new') ||
-                (item.route === '/campaigns/new' && currentRoute === '/campaigns');
+                (item.route === '/campaigns' && currentRoute === '/campaigns/new');
 
               return (
                 <button

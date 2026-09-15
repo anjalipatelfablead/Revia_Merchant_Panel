@@ -58,8 +58,14 @@ export const Header: React.FC<HeaderProps> = ({
       case '/transactions':
         return { category: 'POS Ledger', page: 'Transactions' };
       case '/campaigns':
+        return { category: 'Growth & Automation', page: 'Campaign & Loyalty Management' };
       case '/campaigns/new':
-        return { category: 'Growth & Automation', page: 'Campaign Builder' };
+        return {
+          category: 'Growth & Automation',
+          parentPage: 'Campaigns',
+          parentRoute: '/campaigns' as NavRoute,
+          page: 'Campaign Builder'
+        };
       case '/rewards':
         return { category: 'Rewards Engine', page: 'Perks Catalog' };
       case '/rewards/new':
