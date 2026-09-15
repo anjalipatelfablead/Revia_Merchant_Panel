@@ -533,15 +533,15 @@ interface CampaignRewardStepProps {
 
 const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, ruleConfig, currency, onContinue, onBack }) => {
   const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
-  const [rewardType, setRewardType] = useState<string>('');
-  const [cashbackAmount, setCashbackAmount] = useState<number>(0);
+  const [rewardType, setRewardType] = useState<string>('free_item');
+  const [cashbackAmount, setCashbackAmount] = useState<number>(10);
 
-  const [discountType, setDiscountType] = useState<'Fixed' | 'Percentage'>('Fixed');
-  const [discountValue, setDiscountValue] = useState<number>(0);
+  const [discountType, setDiscountType] = useState<'Fixed' | 'Percentage'>('Percentage');
+  const [discountValue, setDiscountValue] = useState<number>(15);
 
-  const [rewardPoints, setRewardPoints] = useState<number>(0);
+  const [rewardPoints, setRewardPoints] = useState<number>(500);
 
-  const [freeItem, setFreeItem] = useState<string>('');
+  const [freeItem, setFreeItem] = useState<string>('Single Origin Geisha (250g Whole Bean)');
 
   const [maxRedemptions, setMaxRedemptions] = useState<number>(1);
   const [stackable, setStackable] = useState<boolean>(false);
@@ -559,261 +559,233 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
     }
   }, [campaignType, ruleConfig, rewardType]);
 
-  const isValid = () => {
-    if (!rewardType) return false;
-    if (rewardType === 'cashback' && cashbackAmount <= 0) return false;
-    if (rewardType === 'discount' && discountValue <= 0) return false;
-    if (rewardType === 'points' && rewardPoints <= 0) return false;
-    if (rewardType === 'free_item' && !freeItem.trim()) return false;
-
-    if (maxRedemptions <= 0) return false;
-
-    if (expiryType === 'Days' && expiryDays <= 0) return false;
-    if (expiryType === 'Date' && !expiryDate) return false;
-
-    return true;
-  };
-
-  const handleContinue = () => {
-    const config = {
-      rewardType,
-      cashbackAmount,
-      discountType,
-      discountValue,
-      rewardPoints,
-      freeItem,
-      maxRedemptions,
-      stackable,
-      expiryType,
-      expiryDays,
-      expiryDate
-    };
-    onContinue(config);
-  };
+  const rewardOptions = [
+    {
+      id: 'cashback',
+      title: 'Cashback',
+      desc: 'Credit fixed wallet amount back to customer balance',
+      icon: Wallet,
+    },
+    {
+      id: 'discount',
+      title: 'Discount',
+      desc: 'Apply % percentage or fixed value price deduction',
+      icon: Percent,
+    },
+    {
+      id: 'points',
+      title: 'Reward Points',
+      desc: 'Grant loyalty program bonus point boost',
+      icon: Star,
+    },
+    {
+      id: 'free_item',
+      title: 'Free Item',
+      desc: 'Give 100% complimentary product or Perk BOGO',
+      icon: Gift,
+    },
+  ];
 
   return (
-    <div className="max-w-[700px] mx-auto w-full space-y-6">
-      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 bg-[#FDF8EB] rounded-xl flex items-center justify-center border border-[#F3E5C8]">
-            <Gift className="w-5 h-5 text-[#D4A753]" />
-          </div>
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">CONFIG 4/5</span>
-            <h3 className="text-[20px] font-bold text-[#1A1615] leading-tight">Reward Definition</h3>
-          </div>
-        </div>
-        <p className="text-[13px] text-[#6E6A66] mt-2 font-medium">
-          Define what the customer receives when they meet the campaign conditions.
-        </p>
-      </div>
-
-      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
-        <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider">What does the customer get?</h4>
-
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={() => setRewardType('cashback')}
-            className={`relative text-left p-4 rounded-xl border-2 transition-all cursor-pointer ${rewardType === 'cashback'
-              ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-              : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
-              }`}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${rewardType === 'cashback' ? 'bg-[#D4A753] text-white' : 'bg-white text-[#9E9A93]'}`}>
-                <Wallet className="w-4 h-4" />
-              </div>
-              <div className="font-bold text-[14px] text-[#1A1615]">Cashback</div>
-              <div className={`ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center ${rewardType === 'cashback' ? 'border-[#D4A753]' : 'border-[#D1CDC7]'}`}>
-                {rewardType === 'cashback' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
-              </div>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setRewardType('discount')}
-            className={`relative text-left p-4 rounded-xl border-2 transition-all cursor-pointer ${rewardType === 'discount'
-              ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-              : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
-              }`}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${rewardType === 'discount' ? 'bg-[#D4A753] text-white' : 'bg-white text-[#9E9A93]'}`}>
-                <Percent className="w-4 h-4" />
-              </div>
-              <div className="font-bold text-[14px] text-[#1A1615]">Discount</div>
-              <div className={`ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center ${rewardType === 'discount' ? 'border-[#D4A753]' : 'border-[#D1CDC7]'}`}>
-                {rewardType === 'discount' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
-              </div>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setRewardType('points')}
-            className={`relative text-left p-4 rounded-xl border-2 transition-all cursor-pointer ${rewardType === 'points'
-              ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-              : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
-              }`}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${rewardType === 'points' ? 'bg-[#D4A753] text-white' : 'bg-white text-[#9E9A93]'}`}>
-                <Star className="w-4 h-4" />
-              </div>
-              <div className="font-bold text-[14px] text-[#1A1615]">Reward Points</div>
-              <div className={`ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center ${rewardType === 'points' ? 'border-[#D4A753]' : 'border-[#D1CDC7]'}`}>
-                {rewardType === 'points' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
-              </div>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setRewardType('free_item')}
-            className={`relative text-left p-4 rounded-xl border-2 transition-all cursor-pointer ${rewardType === 'free_item'
-              ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-              : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
-              }`}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${rewardType === 'free_item' ? 'bg-[#D4A753] text-white' : 'bg-white text-[#9E9A93]'}`}>
-                <Gift className="w-4 h-4" />
-              </div>
-              <div className="font-bold text-[14px] text-[#1A1615]">Free Item</div>
-              <div className={`ml-auto w-4 h-4 rounded-full border-2 flex items-center justify-center ${rewardType === 'free_item' ? 'border-[#D4A753]' : 'border-[#D1CDC7]'}`}>
-                {rewardType === 'free_item' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
-              </div>
-            </div>
-          </button>
-        </div>
-
-        {rewardType === 'cashback' && (
-          <div className="mt-4 pt-4 border-t border-[#EFECE6]">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Cashback Amount</label>
-            <div className="relative max-w-[260px]">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">{currSymbol}</span>
-              <input
-                type="number"
-                value={cashbackAmount || ''}
-                onChange={e => setCashbackAmount(Number(e.target.value))}
-                className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-                placeholder="0"
-              />
-            </div>
-          </div>
-        )}
-
-        {rewardType === 'discount' && (
-          <div className="mt-4 pt-4 border-t border-[#EFECE6] space-y-4">
-            <div>
-              <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Discount Type</label>
-              <div className="inline-flex bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-1 gap-1">
-                {(['Fixed', 'Percentage'] as const).map(t => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setDiscountType(t)}
-                    className={`px-5 py-2 rounded-lg text-[13px] font-bold transition-all cursor-pointer ${discountType === t
-                      ? 'bg-[#1A1615] text-white shadow-sm'
-                      : 'text-[#6E6A66] hover:text-[#1A1615]'
-                      }`}
-                  >
-                    {t} Amount
-                  </button>
-                ))}
-              </div>
+    <div className="max-w-[1024px] mx-auto w-full flex flex-col lg:flex-row gap-6 items-start">
+      {/* Left Main Config Column */}
+      <div className="flex-1 w-full space-y-6">
+        
+        {/* Header Banner */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6]">
+              <Gift className="w-5 h-5 text-[#D4A753]" />
             </div>
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Discount Value</label>
-              <div className="relative max-w-[260px]">
-                {discountType === 'Fixed' && <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">{currSymbol}</span>}
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E782F]">STEP 4 OF 5</span>
+              <h3 className="text-[20px] font-bold text-[#1A1615] leading-tight">Reward Definition</h3>
+            </div>
+          </div>
+          <p className="text-[13px] text-[#7C746C] font-medium leading-relaxed">
+            Specify the precise perk, item, discount, or points granted to qualifying guests upon meeting campaign conditions.
+          </p>
+        </div>
+
+        {/* 1. Reward Type Selection */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
+          <div className="flex items-center justify-between">
+            <h4 className="text-[11px] font-bold text-[#9E782F] uppercase tracking-widest">WHAT DOES THE CUSTOMER GET?</h4>
+            <span className="text-[11px] font-bold text-[#15803D] bg-[#EBF7F0] px-2.5 py-0.5 rounded-full border border-[#15803D]/20">Active Reward Selection</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {rewardOptions.map(opt => {
+              const IconComponent = opt.icon;
+              const isSelected = rewardType === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setRewardType(opt.id)}
+                  className={`p-4 rounded-xl border transition-all cursor-pointer text-left flex items-start gap-3.5 relative ${
+                    isSelected
+                      ? 'bg-[#FDF8EB] border-[#D4A753] ring-2 ring-[#D4A753]/20 shadow-xs'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-white'
+                  }`}
+                >
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                    isSelected ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-white border border-[#EFECE6] text-[#7C746C]'
+                  }`}>
+                    <IconComponent className="w-4.5 h-4.5" />
+                  </div>
+                  <div className="flex-1 min-w-0 pr-6">
+                    <div className="font-bold text-[14px] text-[#1A1615] leading-tight mb-1">{opt.title}</div>
+                    <div className="text-[11px] font-medium text-[#7C746C] leading-normal">{opt.desc}</div>
+                  </div>
+                  <div className={`absolute top-4 right-4 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    isSelected ? 'border-[#D4A753]' : 'border-[#D1CDC7]'
+                  }`}>
+                    {isSelected && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Dynamic Configuration Inputs depending on Selection */}
+          {rewardType === 'cashback' && (
+            <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">CASHBACK AMOUNT</label>
+              <div className="relative max-w-[280px]">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7C746C] font-bold text-[14px]">{currSymbol}</span>
                 <input
                   type="number"
-                  value={discountValue || ''}
-                  onChange={e => setDiscountValue(Number(e.target.value))}
-                  className={`w-full ${discountType === 'Fixed' ? 'pl-8' : 'pl-4'} pr-8 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors`}
-                  placeholder="0"
+                  value={cashbackAmount || ''}
+                  onChange={e => setCashbackAmount(Number(e.target.value))}
+                  className="w-full pl-8 pr-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+                  placeholder="0.00"
                 />
-                {discountType === 'Percentage' && <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">%</span>}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {rewardType === 'points' && (
-          <div className="mt-4 pt-4 border-t border-[#EFECE6]">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Points Awarded</label>
-            <input
-              type="number"
-              value={rewardPoints || ''}
-              onChange={e => setRewardPoints(Number(e.target.value))}
-              className="w-full max-w-[260px] px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-              placeholder="0"
-            />
-          </div>
-        )}
+          {rewardType === 'discount' && (
+            <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border space-y-4">
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">DISCOUNT TYPE</label>
+                <div className="inline-flex bg-white border border-[#EFECE6] rounded-xl p-1 gap-1 shadow-2xs">
+                  {(['Fixed', 'Percentage'] as const).map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setDiscountType(t)}
+                      className={`px-4 py-1.5 rounded-lg text-[12px] font-bold transition-all cursor-pointer ${
+                        discountType === t
+                          ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-2xs'
+                          : 'text-[#7C746C] hover:text-[#1A1615]'
+                      }`}
+                    >
+                      {t} Amount
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">DISCOUNT VALUE</label>
+                <div className="relative max-w-[280px]">
+                  {discountType === 'Fixed' && <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7C746C] font-bold text-[14px]">{currSymbol}</span>}
+                  <input
+                    type="number"
+                    value={discountValue || ''}
+                    onChange={e => setDiscountValue(Number(e.target.value))}
+                    className={`w-full ${discountType === 'Fixed' ? 'pl-8' : 'pl-4'} pr-8 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs`}
+                    placeholder="0"
+                  />
+                  {discountType === 'Percentage' && <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#7C746C] font-bold text-[14px]">%</span>}
+                </div>
+              </div>
+            </div>
+          )}
 
-        {rewardType === 'free_item' && (
-          <div className="mt-4 pt-4 border-t border-[#EFECE6]">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Free Item</label>
-            <input
-              type="text"
-              value={freeItem}
-              onChange={e => setFreeItem(e.target.value)}
-              disabled={campaignType === 'existing_stamp' && !!ruleConfig?.stampItem}
-              className={`w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors ${campaignType === 'existing_stamp' && !!ruleConfig?.stampItem ? 'opacity-70 cursor-not-allowed' : ''}`}
-              placeholder="e.g. Coffee"
-            />
-            {campaignType === 'existing_stamp' && !!ruleConfig?.stampItem && (
-              <p className="mt-2 text-[11px] text-[#D4A753] font-bold flex items-center gap-1">
-                <AlertCircle className="w-3.5 h-3.5" /> Auto-set from Stamp Type configuration
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+          {rewardType === 'points' && (
+            <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">POINTS AWARDED</label>
+              <div className="relative max-w-[280px]">
+                <input
+                  type="number"
+                  value={rewardPoints || ''}
+                  onChange={e => setRewardPoints(Number(e.target.value))}
+                  className="w-full px-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+                  placeholder="0"
+                />
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#7C746C] font-bold text-[11px] uppercase tracking-wider">PTS</span>
+              </div>
+            </div>
+          )}
 
-      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
-        <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider">Usage Limits</h4>
-
-        <div>
-          <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Max Redemptions Per Customer</label>
-          <input
-            type="number"
-            value={maxRedemptions || ''}
-            onChange={e => setMaxRedemptions(Number(e.target.value))}
-            className="w-full max-w-[260px] px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-            placeholder="1"
-          />
+          {rewardType === 'free_item' && (
+            <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">FREE ITEM PRODUCT NAME</label>
+              <input
+                type="text"
+                value={freeItem}
+                onChange={e => setFreeItem(e.target.value)}
+                disabled={campaignType === 'existing_stamp' && !!ruleConfig?.stampItem}
+                className={`w-full px-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs ${
+                  campaignType === 'existing_stamp' && !!ruleConfig?.stampItem ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
+                placeholder="e.g. Single Origin Geisha 250g Whole Bean"
+              />
+              {campaignType === 'existing_stamp' && !!ruleConfig?.stampItem && (
+                <p className="mt-2 text-[11px] text-[#9E782F] font-bold flex items-center gap-1">
+                  <Info className="w-3.5 h-3.5" /> Auto-set from Stamp Type configuration
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center justify-between py-3 border-t border-[#EFECE6]">
-          <div>
-            <div className="text-[13px] font-bold text-[#1A1615]">Stackable with other campaigns</div>
-            <div className="text-[11px] text-[#9E9A93] font-medium mt-0.5">Allow customer to use this reward alongside other offers</div>
+        {/* 2. Usage Limits & Rules */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
+          <h4 className="text-[11px] font-bold text-[#9E782F] uppercase tracking-widest">USAGE LIMITS &amp; CO-EXECUTIVE POLICIES</h4>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#7C746C] block mb-2">MAX REDEMPTIONS PER CUSTOMER</label>
+              <input
+                type="number"
+                value={maxRedemptions || ''}
+                onChange={e => setMaxRedemptions(Number(e.target.value))}
+                className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+                placeholder="1"
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-3.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl">
+              <div>
+                <div className="text-[13px] font-bold text-[#1A1615]">Stackable with Other Perks</div>
+                <div className="text-[11px] text-[#7C746C] font-medium">Allow alongside existing offers</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setStackable(v => !v)}
+                className={`relative w-11 h-6 rounded-full border transition-all cursor-pointer shrink-0 ${
+                  stackable ? 'bg-[#15803D] border-[#15803D]' : 'bg-[#EFECE6] border-[#D1CDC7]'
+                }`}
+              >
+                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${
+                  stackable ? 'left-[22px]' : 'left-0.5'
+                }`} />
+              </button>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setStackable(v => !v)}
-            className={`relative w-11 h-6 rounded-full border-2 transition-all cursor-pointer ${stackable ? 'bg-[#D4A753] border-[#9E782F]' : 'bg-[#EFECE6] border-[#D1CDC7]'
-              }`}
-          >
-            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${stackable ? 'left-[22px]' : 'left-0.5'
-              }`} />
-          </button>
         </div>
-      </div>
 
-      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
-        <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider">Reward Validity</h4>
+        {/* 3. Reward Validity Horizon */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
+          <h4 className="text-[11px] font-bold text-[#9E782F] uppercase tracking-widest">REWARD EXPIRATION &amp; HORIZON</h4>
 
-        <div>
-          <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Expires</label>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <label className="flex items-center gap-3 cursor-pointer group">
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${expiryType === 'Days' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]/50'}`}>
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                expiryType === 'Days' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]'
+              }`}>
                 {expiryType === 'Days' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
               </div>
               <input
@@ -822,23 +794,26 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                 checked={expiryType === 'Days'}
                 onChange={() => setExpiryType('Days')}
               />
-              <span className="text-[13px] font-semibold text-[#1A1615]">Days after issuance</span>
+              <span className="text-[13px] font-bold text-[#1A1615]">Relative Duration (Days after token issuance)</span>
             </label>
+
             {expiryType === 'Days' && (
               <div className="ml-7 flex items-center gap-2">
                 <input
                   type="number"
                   value={expiryDays || ''}
                   onChange={e => setExpiryDays(Number(e.target.value))}
-                  className="w-24 px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  className="w-24 px-3.5 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
                   placeholder="30"
                 />
-                <span className="text-[13px] text-[#6E6A66] font-medium">days</span>
+                <span className="text-[13px] text-[#7C746C] font-semibold">Calendar Days</span>
               </div>
             )}
 
-            <label className="flex items-center gap-3 cursor-pointer group pt-2">
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${expiryType === 'Date' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]/50'}`}>
+            <label className="flex items-center gap-3 cursor-pointer group pt-1">
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                expiryType === 'Date' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]'
+              }`}>
                 {expiryType === 'Date' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
               </div>
               <input
@@ -847,15 +822,16 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                 checked={expiryType === 'Date'}
                 onChange={() => setExpiryType('Date')}
               />
-              <span className="text-[13px] font-semibold text-[#1A1615]">Fixed date</span>
+              <span className="text-[13px] font-bold text-[#1A1615]">Absolute Fixed Expiration Date</span>
             </label>
+
             {expiryType === 'Date' && (
               <div className="ml-7">
                 <input
                   type="date"
                   value={expiryDate}
                   onChange={e => setExpiryDate(e.target.value)}
-                  className="px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  className="px-3.5 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
                 />
               </div>
             )}
@@ -863,13 +839,63 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
         </div>
       </div>
 
+      {/* Right Side Summary Panel */}
+      <div className="w-full lg:w-[320px] shrink-0 space-y-6">
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
+          <div className="flex items-center gap-2 pb-3 border-b border-[#EFECE6]">
+            <CheckCircle2 className="w-5 h-5 text-[#15803D]" />
+            <h4 className="text-[14px] font-bold text-[#1A1615]">Reward Summary</h4>
+          </div>
 
+          <div className="space-y-3">
+            <div className="flex justify-between items-center text-[12px]">
+              <span className="text-[#7C746C] font-medium">Selected Perk:</span>
+              <span className="font-bold text-[#1A1615] capitalize">{rewardType.replace('_', ' ')}</span>
+            </div>
+
+            <div className="flex justify-between items-center text-[12px]">
+              <span className="text-[#7C746C] font-medium">Perk Detail:</span>
+              <span className="font-bold text-[#9E782F] truncate max-w-[140px]">
+                {rewardType === 'cashback' && `${currSymbol}${cashbackAmount}`}
+                {rewardType === 'discount' && `${discountValue}${discountType === 'Percentage' ? '%' : currSymbol}`}
+                {rewardType === 'points' && `${rewardPoints} Pts`}
+                {rewardType === 'free_item' && (freeItem || 'Free Item')}
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center text-[12px]">
+              <span className="text-[#7C746C] font-medium">Max Limit:</span>
+              <span className="font-bold text-[#1A1615]">{maxRedemptions} per guest</span>
+            </div>
+
+            <div className="flex justify-between items-center text-[12px]">
+              <span className="text-[#7C746C] font-medium">Validity Window:</span>
+              <span className="font-bold text-[#15803D]">{expiryType === 'Days' ? `${expiryDays} Days` : (expiryDate || 'Fixed Date')}</span>
+            </div>
+          </div>
+
+          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3.5 flex items-start gap-2.5">
+            <Lightbulb className="w-4 h-4 text-[#D4A753] shrink-0 mt-0.5" />
+            <p className="text-[11px] text-[#7C746C] leading-relaxed font-medium">
+              Rewards are issued instantly via Apple/Google Wallet push notifications upon POS trigger verification.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export const CampaignBuilderPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
+
+  // Scroll to top when stepping through campaign wizard
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [currentStep]);
+
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
   const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
   const [ruleConfig, setRuleConfig] = useState<any>({});
@@ -2426,7 +2452,7 @@ export const CampaignBuilderPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] md:pb-24 relative">
+    <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] relative">
 
       {/* Add Location Modal */}
       {isAddLocationOpen && (
@@ -2548,7 +2574,7 @@ export const CampaignBuilderPage: React.FC = () => {
       </div>
 
       {/* Sticky Bottom Action Bar */}
-      <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-[#EAE6E1] p-3.5 sm:p-4 z-30 shadow-md mt-6 rounded-b-xl">
+      <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-[#EAE6E1] p-3.5 sm:p-4 z-30 shadow-md mt-6">
         {currentStep === 5 ? (
           <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-3 w-full max-w-[1600px] mx-auto">
             <div className="flex items-center gap-3 flex-1">
