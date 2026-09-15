@@ -97,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => onRouteChange('/dashboard')}
         >
           {/* Gold squircle emblem matching screenshot */}
-          <div className="w-8 h-8 rounded-lg bg-[#B38637] flex items-center justify-center text-white shadow-xs">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white shadow-xs">
             <Award className="w-4 h-4 text-white" />
           </div>
           <div className="leading-tight">
@@ -130,7 +130,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       if (onMobileClose) onMobileClose();
                     }}
                     className={`w-full flex items-center px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer whitespace-nowrap ${isActive
-                        ? 'bg-[#A37837] text-white font-semibold shadow-xs'
+                        ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs'
                         : 'text-[#3D3732] hover:bg-[#FAF8F5] hover:text-[#1A1615]'
                       }`}
                   >

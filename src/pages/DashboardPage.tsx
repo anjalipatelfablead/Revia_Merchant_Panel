@@ -157,11 +157,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           <div className="relative">
             <button
               onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-              className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-semibold text-[#1A1615] flex items-center gap-2 shadow-2xs transition-colors cursor-pointer"
+              className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"
             >
-              <Calendar className="w-3.5 h-3.5 text-[#7C746C]" />
+              <Calendar className="w-3.5 h-3.5 text-white" />
               <span>{activeDateRange}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#7C746C]" />
+              <ChevronDown className="w-3.5 h-3.5 text-white/80" />
             </button>
 
             {dateDropdownOpen && (
@@ -178,7 +178,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                       setActiveDateRange(range);
                       setDateDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${range === activeDateRange ? 'font-bold text-[#A37837] bg-[#FAF6EE]' : 'text-[#1A1615]'
+                    className={`w-full text-left px-3 py-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${range === activeDateRange ? 'font-bold text-[#9E782F] bg-[#FAF6EE]' : 'text-[#1A1615]'
                       }`}
                   >
                     {range}
@@ -191,16 +191,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           {/* Export Report Button */}
           <button
             onClick={() => alert('Exporting complete merchant intelligence report (CSV / PDF)...')}
-            className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
-            <Share2 className="w-3.5 h-3.5 text-[#7C746C]" />
+            <Share2 className="w-3.5 h-3.5 text-white" />
             <span>Export Report</span>
           </button>
 
           {/* Create Campaign Primary Button */}
           <button
             onClick={() => onNavigate('/campaigns/new')}
-            className="bg-[#B38637] hover:bg-[#A37837] text-white rounded-lg px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white" />
             <span>Create Campaign</span>
@@ -389,7 +389,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                     key={t}
                     onClick={() => setTimeframe(t)}
                     className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${timeframe === t
-                      ? 'bg-[#B38637] text-white shadow-2xs'
+                      ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs font-bold'
                       : 'text-[#7C746C] hover:text-[#1A1615]'
                       }`}
                   >
@@ -666,54 +666,48 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               {/* Action 1 */}
               <button
                 onClick={() => onNavigate('/qr-codes')}
-                className="w-full text-left bg-[#B38637] hover:bg-[#A37837] border border-[#A37837] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-xs h-24 cursor-pointer group"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
                 <QrCode className="w-5 h-5 text-white mb-2" />
                 <div>
                   <div className="text-xs font-bold text-white mb-0.5">Scan & Verify</div>
-                  <div className="text-[10px] text-[#FDF8EB] opacity-90 line-clamp-1">Counter camera launch</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Counter camera launch</div>
                 </div>
               </button>
 
               {/* Action 2 */}
               <button
                 onClick={() => onNavigate('/qr-codes')}
-                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
-                  <Share2 className="w-4 h-4" />
-                </div>
+                <Share2 className="w-5 h-5 text-white mb-2" />
                 <div>
-                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">QR Pack Print</div>
-                  <div className="text-[10px] text-[#7C746C] line-clamp-1">Table stand templates</div>
+                  <div className="text-xs font-bold text-white mb-0.5">QR Pack Print</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Table stand templates</div>
                 </div>
               </button>
 
               {/* Action 3 */}
               <button
                 onClick={() => onNavigate('/staff')}
-                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
-                  <UserPlus className="w-4 h-4" />
-                </div>
+                <UserPlus className="w-5 h-5 text-white mb-2" />
                 <div>
-                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">Shift Staff</div>
-                  <div className="text-[10px] text-[#7C746C] line-clamp-1">4 baristas logged in</div>
+                  <div className="text-xs font-bold text-white mb-0.5">Shift Staff</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">4 baristas logged in</div>
                 </div>
               </button>
 
               {/* Action 4 */}
               <button
                 onClick={() => onNavigate('/loyalty')}
-                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
-                  <Zap className="w-4 h-4" />
-                </div>
+                <Zap className="w-5 h-5 text-white mb-2" />
                 <div>
-                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">Double-Stamp</div>
-                  <div className="text-[10px] text-[#7C746C] line-clamp-1">Trigger flash hour boost</div>
+                  <div className="text-xs font-bold text-white mb-0.5">Double-Stamp</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Trigger flash hour boost</div>
                 </div>
               </button>
             </div>
