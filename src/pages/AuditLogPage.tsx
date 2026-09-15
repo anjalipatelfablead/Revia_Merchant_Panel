@@ -80,10 +80,329 @@ const MobileAuditView: React.FC<{ logs: AuditLogEntry[] }> = ({ logs }) => {
   );
 };
 
+const AccessControlSettings: React.FC = () => {
+  const [invitingAdmin, setInvitingAdmin] = useState(false);
+  const [reviewingPolicies, setReviewingPolicies] = useState(false);
+
+  const identities = [
+    { name: 'Elena Rostova', role: 'General Manager', email: 'elena@revia.co', scopes: 'store:owner', status: 'Active' },
+    { name: 'Marcus Davis', role: 'Operations Lead', email: 'ops@revia.co', scopes: 'store:operations', status: 'Active' },
+    { name: 'Avery Chen', role: 'Finance Reviewer', email: 'finance@revia.co', scopes: 'billing:read', status: 'Pending' },
+  ];
+
+  const handleInviteAdmin = () => {
+    setInvitingAdmin(true);
+    window.setTimeout(() => setInvitingAdmin(false), 700);
+  };
+
+  const handleReviewPolicies = () => {
+    setReviewingPolicies(true);
+    window.setTimeout(() => setReviewingPolicies(false), 700);
+  };
+
+  return (
+    <div className="mt-4 overflow-hidden rounded-xl border border-[#E5E0D8] bg-white shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8F5] px-4 py-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-[#B7842C]" />
+            <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#1A1615]">Access Control</span>
+          </div>
+          <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">Identity & Permission Matrix</h2>
+        </div>
+        <button type="button" onClick={handleInviteAdmin} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
+          <Lock className="h-3.5 w-3.5 text-[#B7842C]" /> {invitingAdmin ? 'Inviting...' : 'Invite Admin'}
+        </button>
+      </div>
+
+      <div className="grid gap-4 p-4 lg:grid-cols-12">
+        <div className="space-y-3 lg:col-span-8">
+          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#B7842C]" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#6E6A66]">Role-Based Access Policy</span>
+              </div>
+              <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">3 ACTIVE</span>
+            </div>
+          </div>
+          {identities.map((person) => (
+            <div key={person.name} className="flex items-center justify-between rounded-lg border border-[#E5E0D8] bg-white p-3">
+              <div className="flex items-center gap-3">
+                <span className="rounded-full bg-[#F5F1EA] px-3 py-2 text-[#B7842C] font-bold text-[10px]">{person.name.split(' ').map((s) => s[0]).join('')}</span>
+                <div>
+                  <div className="text-[12px] font-bold text-[#1A1615]">{person.name}</div>
+                  <div className="text-[10px] text-[#6E6A66]">{person.role} · {person.email}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="rounded-full bg-[#FAF8F5] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">{person.scopes}</span>
+                <span className={`rounded-full px-2 py-1 text-[8px] font-bold ${person.status === 'Pending' ? 'bg-[#FFF4DC] text-[#B7842C]' : 'bg-[#E6F4ED] text-[#0D7A53]'}`}>{person.status}</span>
+              </div>
+            </div>
+          ))}
+
+          <div className="rounded-lg border border-[#E5E0D8] bg-[#FCFBF9] p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-[#B7842C]" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#1A1615]">Access Session Review</span>
+              </div>
+              <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">Last 24h</span>
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <div className="rounded-md border border-[#E5E0D8] bg-white p-2">
+                <div className="text-[9px] font-bold uppercase tracking-[0.04em] text-[#9E9A93]">Logins</div>
+                <div className="mt-1 text-[13px] font-bold text-[#1A1615]">128</div>
+              </div>
+              <div className="rounded-md border border-[#E5E0D8] bg-white p-2">
+                <div className="text-[9px] font-bold uppercase tracking-[0.04em] text-[#9E9A93]">Invites</div>
+                <div className="mt-1 text-[13px] font-bold text-[#1A1615]">04</div>
+              </div>
+              <div className="rounded-md border border-[#E5E0D8] bg-white p-2">
+                <div className="text-[9px] font-bold uppercase tracking-[0.04em] text-[#9E9A93]">Flags</div>
+                <div className="mt-1 text-[13px] font-bold text-[#1A1615]">00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside className="rounded-lg border border-[#E5E0D8] bg-[#FCFBF9] p-4 lg:col-span-4">
+          <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-[#B7842C]" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#1A1615]">Policy Controls</span>
+            </div>
+            <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">SOC-2</span>
+          </div>
+          <div className="mt-3 space-y-2">
+            <div className="rounded-md border border-[#E5E0D8] bg-white p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-[#1A1615]">Manager 2FA</span>
+                <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">ENABLED</span>
+              </div>
+            </div>
+            <div className="rounded-md border border-[#E5E0D8] bg-white p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-[#1A1615]">IP Restriction</span>
+                <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">ON</span>
+              </div>
+            </div>
+            <div className="rounded-md border border-[#E5E0D8] bg-white p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-[#1A1615]">Session Timeout</span>
+                <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">15m</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" onClick={handleReviewPolicies} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
+            {reviewingPolicies ? 'Reviewing...' : 'Review Access Policies'}
+          </button>
+        </aside>
+      </div>
+    </div>
+  );
+};
+
+const ApiKeysWebhooksSettings: React.FC = () => {
+  const [generatingSecret, setGeneratingSecret] = useState(false);
+  const [rotatingSigningSecret, setRotatingSigningSecret] = useState(false);
+
+  const handleGenerateApiSecret = () => {
+    setGeneratingSecret(true);
+    window.setTimeout(() => setGeneratingSecret(false), 700);
+  };
+
+  const handleRotateSigningSecret = () => {
+    setRotatingSigningSecret(true);
+    window.setTimeout(() => setRotatingSigningSecret(false), 700);
+  };
+
+  return (
+    <div className="mt-4 overflow-hidden rounded-xl border border-[#E5E0D8] bg-white shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8F5] px-4 py-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <Webhook className="h-4 w-4 text-[#B7842C]" />
+            <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#1A1615]">API Keys & Webhooks</span>
+          </div>
+          <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">API Access & Integration</h2>
+        </div>
+        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
+          <Key className="h-3.5 w-3.5 text-[#B7842C]" /> {generatingSecret ? 'Generating...' : 'Generate API Secret'}
+        </button>
+      </div>
+
+      <div className="grid gap-4 p-4 lg:grid-cols-12">
+        <div className="space-y-3 lg:col-span-7">
+          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] p-3">
+            <div className="flex items-center gap-2">
+              <Key className="h-4 w-4 text-[#B7842C]" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#6E6A66]">Credential Registry</span>
+            </div>
+          </div>
+          <div className="rounded-lg border border-[#E5E0D8] bg-white p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[12px] font-bold text-[#1A1615]">Shopify POS Sync</div>
+                <div className="text-[10px] text-[#6E6A66]">Production key · Last rotated 2 days ago</div>
+              </div>
+              <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">ACTIVE</span>
+            </div>
+            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-3 py-2 font-mono text-[10px] text-[#6E6A66]">
+              rev_live_994a••••••••••••
+            </div>
+          </div>
+          <div className="rounded-lg border border-[#E5E0D8] bg-white p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[12px] font-bold text-[#1A1615]">Wallet Push Endpoint</div>
+                <div className="text-[10px] text-[#6E6A66]">Apple & Google Wallet webhook</div>
+              </div>
+              <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">99.98%</span>
+            </div>
+            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-3 py-2 font-mono text-[10px] text-[#6E6A66]">
+              https://revia.example.com/webhooks/wallet/push
+            </div>
+          </div>
+        </div>
+
+        <aside className="rounded-lg border border-[#E5E0D8] bg-[#FCFBF9] p-4 lg:col-span-5">
+          <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
+            <div className="flex items-center gap-2">
+              <Webhook className="h-4 w-4 text-[#B7842C]" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#1A1615]">Webhook Events</span>
+            </div>
+            <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">3 ACTIVE</span>
+          </div>
+          <div className="mt-3 space-y-2">
+            <div className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-3 py-2">
+              <span className="text-[10px] font-bold text-[#1A1615]">reward.redemption</span>
+              <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">OK</span>
+            </div>
+            <div className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-3 py-2">
+              <span className="text-[10px] font-bold text-[#1A1615]">customer.exported</span>
+              <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">OK</span>
+            </div>
+            <div className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-3 py-2">
+              <span className="text-[10px] font-bold text-[#1A1615]">audit.sealed</span>
+              <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">IDLE</span>
+            </div>
+          </div>
+          <button type="button" onClick={handleRotateSigningSecret} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
+            {rotatingSigningSecret ? 'Rotating...' : 'Rotate Signing Secret'}
+          </button>
+        </aside>
+      </div>
+    </div>
+  );
+};
+
+const PosHardwareSettings: React.FC = () => {
+  const [syncingMesh, setSyncingMesh] = useState(false);
+  const [policyReviewing, setPolicyReviewing] = useState(false);
+
+  const hardwareNodes = [
+    { name: 'Downtown Counter 01', type: 'iPad Pro 12.9" · Revia Hub', status: 'Online', latency: '4ms', percent: '99.98%' },
+    { name: 'Roastery Bar 02', type: 'Square Register · Revia Bridge', status: 'Online', latency: '12ms', percent: '99.96%' },
+    { name: 'Northside Pop-up 01', type: 'Mobile Handheld NFC', status: 'Standby', latency: '21ms', percent: '96.70%' },
+  ];
+
+  const handleSyncHardwareMesh = () => {
+    setSyncingMesh(true);
+    window.setTimeout(() => setSyncingMesh(false), 700);
+  };
+
+  const handleReviewHardwarePolicy = () => {
+    setPolicyReviewing(true);
+    window.setTimeout(() => setPolicyReviewing(false), 700);
+  };
+
+  return (
+    <div className="mt-4 overflow-hidden rounded-xl border border-[#E5E0D8] bg-white shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8F5] px-4 py-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <Server className="h-4 w-4 text-[#B7842C]" />
+            <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#1A1615]">POS & Hardware</span>
+          </div>
+          <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">POS Hardware Fleet</h2>
+        </div>
+        <button type="button" onClick={handleSyncHardwareMesh} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
+          <Radio className="h-3.5 w-3.5 text-[#B7842C]" /> {syncingMesh ? 'Syncing...' : 'Sync Hardware Mesh'}
+        </button>
+      </div>
+
+      <div className="grid gap-4 p-4 lg:grid-cols-12">
+        <div className="space-y-3 lg:col-span-8">
+          <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Cpu className="h-4 w-4 text-[#B7842C]" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#6E6A66]">Active Terminal Inventory</span>
+              </div>
+              <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">6 / 6 ONLINE</span>
+            </div>
+          </div>
+          {hardwareNodes.map((node, idx) => (
+            <div key={node.name} className="flex items-center justify-between rounded-lg border border-[#E5E0D8] bg-white p-3">
+              <div className="flex items-center gap-3">
+                <span className="rounded-lg bg-[#F5F1EA] p-2 text-[#B7842C]"><Server className="h-4 w-4" /></span>
+                <div>
+                  <div className="text-[12px] font-bold text-[#1A1615]">{node.name}</div>
+                  <div className="text-[10px] text-[#6E6A66]">{node.type}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-[10px] font-bold">
+                <span className={node.status === 'Standby' ? 'text-[#B7842C]' : 'text-[#0D7A53]'}>{node.status}</span>
+                <span className="text-[#6E6A66]">{node.latency}</span>
+                <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[#6E6A66]">{node.percent}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <aside className="rounded-lg border border-[#E5E0D8] bg-[#FCFBF9] p-4 lg:col-span-4">
+          <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
+            <div className="flex items-center gap-2">
+              <Wifi className="h-4 w-4 text-[#B7842C]" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#1A1615]">Mesh Network</span>
+            </div>
+            <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">Auto-Ping 30s</span>
+          </div>
+          <div className="mt-3 space-y-2">
+            <div className="rounded-md border border-[#E5E0D8] bg-white p-2">
+              <div className="mb-1 text-[10px] font-bold text-[#6E6A66]">Downtown Flagship</div>
+              <div className="h-2 rounded bg-[#E5E0D8]">
+                <div className="h-2 w-[98%] rounded bg-[#0D7A53]" />
+              </div>
+            </div>
+            <div className="rounded-md border border-[#E5E0D8] bg-white p-2">
+              <div className="mb-1 text-[10px] font-bold text-[#6E6A66]">Roastery Reserve</div>
+              <div className="h-2 rounded bg-[#E5E0D8]">
+                <div className="h-2 w-[90%] rounded bg-[#B7842C]" />
+              </div>
+            </div>
+            <div className="rounded-md border border-[#E5E0D8] bg-white p-2">
+              <div className="mb-1 text-[10px] font-bold text-[#6E6A66]">Northside Market</div>
+              <div className="h-2 rounded bg-[#E5E0D8]">
+                <div className="h-2 w-[78%] rounded bg-[#C08B31]" />
+              </div>
+            </div>
+          </div>
+          <button type="button" onClick={handleReviewHardwarePolicy} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
+            {policyReviewing ? 'Reviewing...' : 'Review Hardware Policy'}
+          </button>
+        </aside>
+      </div>
+    </div>
+  );
+};
+
 export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   const [selectedHash, setSelectedHash] = useState<string | null>(null);
   const [copiedHash, setCopiedHash] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'audit' | 'customer_tiers' | 'general_brand'>('audit');
+  const [activeTab, setActiveTab] = useState<'audit' | 'customer_tiers' | 'general_brand' | 'pos_hardware' | 'api_keys_webhooks' | 'access_control'>('audit');
 
   // Security Policy Toggles
   const [enforceMfa, setEnforceMfa] = useState<boolean>(true);
@@ -146,6 +465,36 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
     window.setTimeout(() => setRefreshing(false), 900);
   };
 
+  const exportAuditDossier = () => {
+    const rows = [
+      ['Timestamp EST', 'Actor', 'Role', 'Action', 'Target', 'Terminal', 'IP', 'Hash', 'Crypto State'],
+      ...logs.map((log) => [
+        log.timestamp,
+        log.actor.name,
+        log.actor.role,
+        log.action,
+        log.target,
+        log.terminal,
+        log.ip,
+        log.hash,
+        log.cryptoState,
+      ]),
+    ];
+
+    const csv = rows
+      .map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(','))
+      .join('\n');
+
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'revia-audit-immutable-dossier.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <div className="sm:hidden"><MobileAuditView logs={logs} /></div>
@@ -184,7 +533,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               </div>
 
               <button
-                onClick={() => alert('Exporting signed audit ledger JSON bundle...')}
+                onClick={exportAuditDossier}
                 className="inline-flex w-fit items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] font-semibold text-[#1A1615] shadow-2xs transition-colors hover:bg-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#D4A753]/40"
               >
                 <Download className="h-3.5 w-3.5 text-[#9E782F]" />
@@ -201,10 +550,18 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 >
                   General & Brand
                 </button>
-                <button className="min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]" type="button">
+                <button
+                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[9px] ${activeTab === 'pos_hardware' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  type="button"
+                  onClick={() => setActiveTab('pos_hardware')}
+                >
                   POS & Hardware
                 </button>
-                <button className="min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]" type="button">
+                <button
+                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[9px] ${activeTab === 'api_keys_webhooks' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  type="button"
+                  onClick={() => setActiveTab('api_keys_webhooks')}
+                >
                   API Keys & Webhooks
                 </button>
                 <button
@@ -221,14 +578,24 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 >
                   Customer Tiers
                 </button>
-                <button className="min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]" type="button">
+                <button
+                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[9px] ${activeTab === 'access_control' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  type="button"
+                  onClick={() => setActiveTab('access_control')}
+                >
                   Access Control
                 </button>
               </div>
             </nav>
           </header>
 
-          {activeTab === 'audit' ? (
+          {activeTab === 'access_control' ? (
+            <AccessControlSettings />
+          ) : activeTab === 'api_keys_webhooks' ? (
+            <ApiKeysWebhooksSettings />
+          ) : activeTab === 'pos_hardware' ? (
+            <PosHardwareSettings />
+          ) : activeTab === 'audit' ? (
             <>
               {/* Governance summary */}
               <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4 mt-4">
@@ -439,7 +806,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 {/* Right Sidebar: POS Mesh Fleet & Venue Security Policy (4 cols) */}
                 <div className="space-y-4 lg:col-span-4">
                   {/* POS Mesh Fleet Status */}
-                  <div className="space-y-3 rounded-lg border border-[#E5E0D8] bg-white p-4 shadow-xs">
+                  <div id="pos-hardware-panel" className="space-y-3 rounded-lg border border-[#E5E0D8] bg-white p-4 shadow-xs">
                     <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
                       <div className="flex items-center gap-1.5"><Wifi className="h-3.5 w-3.5 text-[#B7842C]" /><span className="text-[12px] font-bold text-[#1A1615]">POS Mesh Fleet</span></div>
                       <span className="rounded-full bg-[#F5F1EA] px-1.5 py-1 text-[8px] font-bold text-[#6E6A66]">◌ Ping Mesh</span>
@@ -552,6 +919,18 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
           ) : activeTab === 'general_brand' ? (
             <div className="mt-4 overflow-hidden rounded-xl bg-white border border-[#E5E0D8] shadow-xs">
               <MerchantPlatformSettings />
+            </div>
+          ) : activeTab === 'pos_hardware' ? (
+            <div className="mt-4 overflow-hidden rounded-xl bg-white border border-[#E5E0D8] shadow-xs">
+              <PosHardwareSettings />
+            </div>
+          ) : activeTab === 'api_keys_webhooks' ? (
+            <div className="mt-4 overflow-hidden rounded-xl bg-white border border-[#E5E0D8] shadow-xs">
+              <ApiKeysWebhooksSettings />
+            </div>
+          ) : activeTab === 'access_control' ? (
+            <div className="mt-4 overflow-hidden rounded-xl bg-white border border-[#E5E0D8] shadow-xs">
+              <AccessControlSettings />
             </div>
           ) : null}
 
