@@ -106,10 +106,8 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
       );
       if (preScreen === 'welcome') return <WelcomeScreen onJoin={() => handleSetPreScreen('mobile')} />;
       if (preScreen === 'mobile') return <MobileScreen onNext={m => { setMobile(m); handleSetPreScreen('otp'); }} />;
-      if (preScreen === 'otp') return <OTPScreen mobile={mobile} onVerify={() => handleSetPreScreen('curate-experience')} onBack={() => handleSetPreScreen('mobile')} />;
-      if (preScreen === 'curate-experience') return <CurateExperienceScreen onConfirm={() => handleSetPreScreen('profile-form')} />;
-      if (preScreen === 'profile-form') return <ProfileFormScreen isNew={!isExistingMember} onContinue={() => { if (isExistingMember) { setIsAuthenticated(true); navigateTo('dashboard'); } else handleSetPreScreen('join-loyalty'); }} />;
-      if (preScreen === 'join-loyalty') return <JoinLoyaltyScreen onJoined={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />;
+      if (preScreen === 'otp') return <OTPScreen mobile={mobile} onVerify={() => onNavigate?.('/customer-onboarding')} onBack={() => handleSetPreScreen('mobile')} />;
+      if (preScreen === 'curate-experience') return <CurateExperienceScreen onConfirm={() => handleSetPreScreen('dashboard')} />;
       return null;
     };
 
@@ -166,7 +164,7 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
       ) : activeTab === 'scan' ? (
         <CustomerScanScreen />
       ) : activeTab === 'menu' ? (
-        <CustomerMenuScreen 
+        <CustomerMenuScreen
           setTab={handleSetActiveTab}
           cartItems={cartItems}
           addItem={addItem}
@@ -174,7 +172,7 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
           onProductClick={(id) => { setSelectedProduct(id); handleSetActiveTab('product' as MainTab); }}
         />
       ) : (activeTab as string) === 'product' && selectedProduct ? (
-        <ProductDetailScreen 
+        <ProductDetailScreen
           productId={selectedProduct}
           onBack={() => { setSelectedProduct(null); handleSetActiveTab('menu'); }}
           addItem={addItem}
@@ -190,12 +188,12 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
       ) : activeTab === 'profile' ? (
         <ProfileScreen onPrivacy={() => setShowPrivacy(true)} onNavigateApp={onNavigate} />
       ) : activeTab === 'checkout' ? (
-        <CheckoutScreen 
-          cartItems={cartItems} 
-          updateQuantity={updateQuantity} 
-          subtotal={subtotal} 
-          tax={tax} 
-          total={total} 
+        <CheckoutScreen
+          cartItems={cartItems}
+          updateQuantity={updateQuantity}
+          subtotal={subtotal}
+          tax={tax}
+          total={total}
           onSuccess={() => {
             cartItems.forEach(item => updateQuantity(item.id, -item.quantity));
             handleSetActiveTab('orders');
