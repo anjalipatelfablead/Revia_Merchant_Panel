@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
 	AlertTriangle,
 	Bell,
+	CheckCheck,
 	CheckCircle2,
 	CircleDollarSign,
 	Gift,
@@ -59,13 +60,16 @@ export const NotificationPage: React.FC = () => {
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 					<div>
 						<div className="flex items-center gap-2">
-							<Bell className="h-5 w-5 text-[#D4A753]" />
+							<Bell className="h-7 w-7 text-[#D4A753]" />
 							<h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Notifications</h1>
 							<span className="rounded-full bg-[#EBF7F0] px-2.5 py-0.5 text-[11px] font-bold text-[#15803D] border border-[#15803D]/20">{unreadCount} new</span>
 						</div>
 						<p className="mt-1 text-sm text-[#7C746C]">Manage all your system alerts and real-time updates.</p>
 					</div>
-					<button type="button" onClick={markAllRead} disabled={unreadCount === 0} className="self-start rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40">Mark all as read</button>
+					<button type="button" onClick={markAllRead} disabled={unreadCount === 0} className="self-start flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2.5 text-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40">
+						<CheckCheck className="h-4 w-4" />
+						Mark all as read
+					</button>
 				</div>
 			</div>
 

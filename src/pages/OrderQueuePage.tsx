@@ -169,6 +169,9 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
             <span className="font-medium text-[#1A1615]">Operations</span>
           </div> */}
           <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Order Queue</h1>
+          <p className="text-[13px] text-[#6E6A66] max-w-2xl leading-relaxed mt-1.5">
+            Monitor live incoming orders, track preparation times, and manage fulfillment workflow across all active channels.
+          </p>
         </div>
 
         <div className="flex items-center gap-6">
@@ -194,14 +197,15 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
           <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={handleBatchSettle}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-[#EAE6E1] text-[#1A1615] text-sm sm:text-base font-semibold rounded-xl hover:bg-[#F2EFE9] transition-colors shadow-sm whitespace-nowrap"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-[#EAE6E1] text-[#1A1615] text-xs sm:text-sm font-semibold rounded-lg hover:bg-[#F2EFE9] transition-colors shadow-sm whitespace-nowrap"
             >
               <CheckSquare className="w-4 h-4" />
               Batch Settle
             </button>
+
             <button
               onClick={() => setIsManualModalOpen(true)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-sm sm:text-base font-bold rounded-xl hover:opacity-95 transition-all shadow-sm whitespace-nowrap cursor-pointer"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-xs sm:text-sm font-bold rounded-lg hover:opacity-95 transition-opacity shadow-sm whitespace-nowrap cursor-pointer"
             >
               <Plus className="w-4 h-4 text-white" />
               Manual Order Entry

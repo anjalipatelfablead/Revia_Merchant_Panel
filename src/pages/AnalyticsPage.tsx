@@ -307,7 +307,7 @@ export const AnalyticsPage: React.FC = () => {
       <div className="hidden md:block">
         <div className="min-h-0 bg-[#F6F3EE] px-3 pb-2 pt-4 sm:px-5 lg:px-6">
           <div className="mx-auto w-full max-w-[1400px]">
-            <header className="relative z-30 bg-[#F6F3EE] pb-2 pt-1">
+            <header className="relative z-30 bg-[#F6F3EE]  pt-3">
               {/*
           <div className="mb-4 flex items-center justify-between pb-2 text-[9px] font-bold uppercase tracking-[0.12em] text-[#8C847A]">
             <div className="flex items-center gap-2">
