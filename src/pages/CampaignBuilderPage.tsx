@@ -192,7 +192,7 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
   };
 
   const renderCondition = (rule: RuleCondition, groupId?: string, idx?: number) => (
-    <div key={rule.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] sm:bg-white border border-[#EFECE6] rounded-xl p-3 sm:p-2 shadow-sm group hover:border-[#D1CDC7] transition-colors">
+    <div key={rule.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 sm:p-3 shadow-sm group hover:border-[#D1CDC7] transition-colors relative" style={{ zIndex: 50 - (idx || 0) }}>
       
       {/* Mobile Header (hidden on desktop) */}
       <div className="flex items-center justify-between sm:hidden mb-1">
@@ -204,29 +204,36 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
         </button>
       </div>
 
-      <div className="hidden sm:block px-1 text-[#D1CDC7] cursor-grab"><GripVertical className="w-4 h-4" /></div>
+      <div className="hidden sm:block text-[#D1CDC7] cursor-grab shrink-0 pl-1"><GripVertical className="w-5 h-5" /></div>
       
-      <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2">
-        <RuleDropdown 
-          value={rule.field} 
-          options={RULE_FIELDS} 
-          onChange={(v: any) => updateRule(rule.id, 'field', v, groupId)} 
-          placeholder="Select Field"
-          minWidth="180px"
-          className="w-full sm:w-auto bg-white sm:bg-[#FAF8F5]"
-        />
+      <div className="flex-1 flex flex-col sm:flex-row sm:items-stretch gap-3">
+        {/* Field */}
+        <div className="flex-1 sm:flex-[1.5]">
+          <RuleDropdown 
+            value={rule.field} 
+            options={RULE_FIELDS} 
+            onChange={(v: any) => updateRule(rule.id, 'field', v, groupId)} 
+            placeholder="Select Field"
+            minWidth="100%"
+            className="w-full h-full bg-white border border-[#EFECE6] shadow-sm rounded-lg"
+          />
+        </div>
         
-        <div className="flex gap-2 w-full sm:w-auto flex-1">
+        {/* Operator */}
+        <div className="flex-1 sm:flex-[1]">
           <RuleDropdown 
             value={rule.operator} 
             options={RULE_OPERATORS} 
             onChange={(v: any) => updateRule(rule.id, 'operator', v, groupId)} 
             placeholder="Select Operator"
-            minWidth="120px"
-            className="flex-1 sm:w-auto sm:flex-none bg-[#EFECE6]/40 sm:bg-[#FAF8F5]"
+            minWidth="100%"
+            className="w-full h-full bg-white border border-[#EFECE6] shadow-sm rounded-lg"
           />
+        </div>
 
-          <div className="flex items-center gap-2 px-3 py-2 bg-white sm:bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] w-[100px] sm:w-auto sm:flex-1">
+        {/* Value */}
+        <div className="flex-1 sm:flex-[1.5]">
+          <div className="flex items-center w-full h-full px-3 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm">
             <input 
               type="text" 
               value={rule.value} 
@@ -238,8 +245,8 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
         </div>
       </div>
       
-      <button onClick={() => removeRule(rule.id, groupId)} className="hidden sm:block p-2 text-[#9E9A93] hover:text-[#1A1615] transition-colors rounded-lg hover:bg-[#FAF8F5]">
-        <X className="w-4 h-4" />
+      <button onClick={() => removeRule(rule.id, groupId)} className="hidden sm:flex items-center justify-center p-2 text-[#9E9A93] hover:text-[#1A1615] transition-colors shrink-0 pr-1">
+        <X className="w-5 h-5" />
       </button>
     </div>
   );
@@ -258,28 +265,28 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
               </div>
               <h3 className="text-[18px] font-bold text-[#1A1615] leading-tight">Trigger & Qualification<br/>Rules</h3>
             </div>
-            <div className="flex flex-col items-end gap-1">
-              <span className="text-[9px] uppercase font-bold tracking-widest text-[#6E6A66] flex items-center gap-1"><Info className="w-3.5 h-3.5" /> EVALUATION<br/>ENGINE:</span>
-              <span className="px-3 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg shadow-sm">Real-time</span>
+            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-4">
+              <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] flex items-center gap-1"><Info className="w-3.5 h-3.5" /> EVALUATION<br className="sm:hidden"/>ENGINE:</span>
+              <span className="px-3 py-1 bg-[#FAF8F5] sm:bg-[#EFECE6]/50 border border-[#EFECE6] sm:border-none text-[#1A1615] text-[11px] font-bold rounded-lg shadow-sm sm:shadow-none">Real-time</span>
             </div>
           </div>
           
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 mb-6">
-            <span className="text-[12px] font-bold text-[#1A1615] ml-2 hidden sm:block">Match</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] sm:border-0 sm:rounded-lg p-2 sm:px-4 sm:py-3 mb-6">
+            <span className="text-[12px] sm:text-[13px] font-bold text-[#1A1615] ml-2 hidden sm:block">Match</span>
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <span className="text-[10px] uppercase font-bold text-[#6E6A66] sm:hidden flex-1 pl-1">Logic<br/>Conjunction:</span>
-              <div className="flex items-center p-1 bg-white border border-[#EFECE6] rounded-lg shadow-sm flex-1 sm:flex-none">
+              <div className="flex items-center p-1 sm:p-0.5 bg-white sm:bg-[#EFECE6]/30 border border-[#EFECE6] sm:border-none rounded-lg shadow-sm sm:shadow-none flex-1 sm:flex-none">
                 <button 
                   onClick={() => setMatchType('ALL')}
                   className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[11px] font-bold transition-colors ${matchType === 'ALL' ? 'bg-[#1A1615] sm:bg-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#FAF8F5]'}`}
-                >Match ALL [AND]</button>
+                >ALL [AND]</button>
                 <button 
                   onClick={() => setMatchType('ANY')}
                   className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[11px] font-bold transition-colors ${matchType === 'ANY' ? 'bg-[#1A1615] sm:bg-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#FAF8F5]'}`}
                 >ANY [OR]</button>
               </div>
             </div>
-            <span className="text-[12px] text-[#6E6A66] ml-2 font-medium hidden sm:block">of the following condition criteria:</span>
+            <span className="text-[12px] sm:text-[13px] text-[#6E6A66] ml-2 font-medium hidden sm:block">of the following condition criteria:</span>
           </div>
 
           <div className="space-y-3 relative">
@@ -293,18 +300,18 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
                 );
               } else {
                 return (
-                  <div key={rule.id} className="relative sm:pl-8 mt-4 sm:mt-0">
+                  <div key={rule.id} className="relative sm:pl-8 mt-4 sm:mt-0" style={{ zIndex: 50 - idx }}>
                     <div className="hidden sm:block absolute left-6 top-6 w-2 h-0.5 bg-[#EFECE6]"></div>
                     
-                    <div className="bg-[#FAF8F5] border-2 border-[#EFECE6] sm:border-l-[#D4A753] rounded-xl p-4 shadow-sm">
+                    <div className="bg-white border border-[#EFECE6] sm:border-l-[4px] sm:border-l-[#D4A753] rounded-xl p-4 shadow-sm relative">
                       <div className="flex flex-row items-center justify-between mb-4 gap-2">
-                        <div className="flex items-center gap-2 text-[11px] font-medium text-[#1A1615]">
-                          <span className="px-2 py-0.5 bg-[#D4A753] text-white font-bold rounded uppercase tracking-wider shrink-0">OR GROUP</span>
+                        <div className="flex items-center gap-2 text-[11px] sm:text-[12px] font-medium text-[#1A1615]">
+                          <span className="px-2.5 py-1 bg-[#D4A753] text-white font-bold rounded-full uppercase tracking-wider text-[10px] shrink-0">OR GROUP</span>
                           <span className="hidden sm:inline">Customer satisfies AT LEAST ONE criteria below:</span>
                           <span className="sm:hidden">Satisfies AT LEAST ONE:</span>
                         </div>
-                        <button onClick={() => removeRule(rule.id)} className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors shrink-0">
-                          <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Remove Group</span>
+                        <button onClick={() => removeRule(rule.id)} className="flex items-center gap-1.5 text-[11px] sm:text-[12px] font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors shrink-0">
+                          <Trash2 className="w-4 h-4 sm:hidden" /> <span className="hidden sm:inline"><Trash2 className="w-3.5 h-3.5 inline mr-1"/>Remove Group</span>
                         </button>
                       </div>
 
@@ -323,12 +330,12 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
           </div>
         </div>
 
-        <div className="bg-[#FAF8F5] sm:bg-white sm:border-t sm:border-[#EFECE6] p-0 sm:p-4 mt-6 sm:mt-0 flex flex-row items-center gap-2 sm:gap-3">
-          <button onClick={addRule} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2.5 sm:py-2 bg-[#EFECE6]/50 sm:bg-white sm:border sm:border-[#D1CDC7] text-[#1A1615] text-[11px] sm:text-[12px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-            <Plus className="w-3.5 h-3.5 text-[#9E782F] sm:text-[#D4A753]" /> <span className="hidden sm:inline">Add Condition</span> Rule
+        <div className="bg-[#FAF8F5] sm:bg-transparent sm:border-none p-0 sm:p-6 mt-6 sm:mt-0 flex flex-row items-center gap-2 sm:gap-4">
+          <button onClick={addRule} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-5 sm:py-2.5 bg-[#EFECE6]/50 sm:bg-white sm:border sm:border-[#EFECE6] text-[#1A1615] sm:text-[#9E782F] text-[11px] sm:text-[13px] font-bold rounded-lg sm:rounded-full shadow-sm hover:bg-[#FAF8F5] transition-colors cursor-pointer">
+            <Plus className="w-3.5 h-3.5 text-[#9E782F]" /> <span className="hidden sm:inline">Add Condition Rule</span><span className="sm:hidden">Add Condition</span>
           </button>
-          <button onClick={addGroup} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2.5 sm:py-2 bg-[#EFECE6]/50 sm:bg-white sm:border sm:border-[#D1CDC7] text-[#1A1615] text-[11px] sm:text-[12px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-            <Network className="w-3.5 h-3.5 text-[#9E782F] sm:text-[#D4A753]" /> Add Nested <span className="hidden sm:inline">Condition</span> Group
+          <button onClick={addGroup} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-5 sm:py-2.5 bg-[#EFECE6]/50 sm:bg-white sm:border sm:border-[#EFECE6] text-[#1A1615] sm:text-[#9E782F] text-[11px] sm:text-[13px] font-bold rounded-lg sm:rounded-full shadow-sm hover:bg-[#FAF8F5] transition-colors cursor-pointer">
+            <Network className="w-3.5 h-3.5 text-[#9E782F]" /> <span className="hidden sm:inline">Add Nested Condition Group (AND / OR)</span><span className="sm:hidden">Add Nested Group</span>
           </button>
         </div>
       </div>
