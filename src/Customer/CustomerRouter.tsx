@@ -18,6 +18,7 @@ import { RedemptionScreen } from './screens/post-auth/RedemptionScreen';
 import { RedemptionSuccessScreen } from './screens/post-auth/RedemptionSuccessScreen';
 import { MembershipScreen } from './screens/post-auth/MembershipScreen';
 import { HistoryScreen } from './screens/post-auth/HistoryScreen';
+import { OrdersScreen } from './screens/post-auth/OrdersScreen';
 import { CheckoutScreen } from './screens/post-auth/CheckoutScreen';
 import { PrivacyScreen } from './screens/post-auth/PrivacyScreen';
 import { ProfileScreen } from './screens/post-auth/ProfileScreen';
@@ -29,12 +30,12 @@ interface Props {
   onNavigate: (route: string) => void;
 }
 
-type MainTab = 'dashboard' | 'scan' | 'menu' | 'orders' | 'coupons' | 'membership' | 'offers' | 'rewards' | 'history' | 'profile' | 'checkout' | 'product';
+import { MainTab } from './types';
 
 const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
-  const { 
-    isAuthenticated, setIsAuthenticated, 
-    mobile, setMobile, 
+  const {
+    isAuthenticated, setIsAuthenticated,
+    mobile, setMobile,
     isExistingMember,
     cartItems, addItem, updateQuantity, subtotal, tax, total,
     selectedOffer, setSelectedOffer,
@@ -43,7 +44,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
   } = useCustomer();
 
   const subRoute = currentRoute.split('/').filter(Boolean)[1] || 'identify';
-  
+
   const navigateTo = (path: string) => {
     onNavigate('/customer/' + path);
   };
@@ -59,24 +60,22 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
   }, [isPostAuthRoute, isAuthenticated, setIsAuthenticated]);
 
   if (!isPostAuthRoute) {
+
     return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />;
+
+    // return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('menu'); }} />;
+
+    // return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('menu'); }} />;
   }
 
   const activeTab = subRoute as MainTab;
 
   // Handle overlay screens
-  if (subRoute === 'redemption-success' && selectedReward) {
-    return <RedemptionSuccessScreen rewardId={selectedReward} onDone={() => { setSelectedReward(null); navigateTo('history'); }} />;
-  }
-  
-  if (subRoute === 'redemption' && selectedReward) {
-    return <RedemptionScreen rewardId={selectedReward} onClose={() => navigateTo('rewards')} onRedeemed={() => { navigateTo('redemption-success'); }} />;
-  }
-
-  if (selectedReward && activeTab === 'rewards' && subRoute === 'reward-detail') {
+  if (subRoute === 'redemption-success' || subRoute === 'redemption' || subRoute === 'reward-detail') {
+    // Legacy sub-routes redirect cleanly to coupons / rewards tab
     return (
-      <CustomerLayout tab={'rewards'} setTab={navigateTo as any} title="Reward Detail" showBack onBack={() => navigateTo('rewards')}>
-        <RewardDetailScreen rewardId={selectedReward} onBack={() => navigateTo('rewards')} onShowQR={() => navigateTo('redemption')} />
+      <CustomerLayout tab={'coupons'} setTab={navigateTo as any} title="My Rewards" onNavigateApp={onNavigate} cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}>
+        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
       </CustomerLayout>
     );
   }
@@ -85,17 +84,17 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
     if (subRoute === 'privacy') return 'Privacy & Data';
     if (subRoute === 'offers' && selectedOffer) return 'Offer Detail';
     if (subRoute === 'product' && selectedProduct) return 'Item Details';
-    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'Coupons', membership: 'Membership Cards', offers: 'Offers', rewards: 'Rewards Wallet', history: 'Activity', profile: 'My Profile', checkout: 'Checkout' };
+    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'My Rewards', membership: 'Membership Cards', offers: 'Offers', rewards: 'My Rewards', history: 'Activity', profile: 'My Profile', checkout: 'Checkout' };
     return titles[activeTab] || 'Revia';
   };
 
-  const showBack = subRoute === 'privacy' || (subRoute === 'offers' && !!selectedOffer) || subRoute === 'product' || subRoute === 'reward-detail';
+  const showBack = subRoute === 'privacy' || (subRoute === 'offers' && !!selectedOffer) || subRoute === 'product';
 
   return (
     <CustomerLayout
       tab={activeTab}
       setTab={(t) => {
-        setSelectedOffer(null); 
+        setSelectedOffer(null);
         setSelectedReward(null);
         navigateTo(t);
       }}
@@ -104,7 +103,6 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
       onBack={() => {
         if (subRoute === 'privacy') navigateTo('profile');
         else if (subRoute === 'product') navigateTo('menu');
-        else if (subRoute === 'reward-detail') navigateTo('rewards');
         else navigateTo('dashboard');
       }}
       onNavigateApp={onNavigate}
@@ -113,11 +111,11 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
       {subRoute === 'privacy' ? (
         <PrivacyScreen onBack={() => navigateTo('profile')} />
       ) : activeTab === 'dashboard' ? (
-        <HomeScreen setTab={navigateTo as any} setSelectedOffer={id => { setSelectedOffer(id); navigateTo('offers'); }} setSelectedReward={id => { setSelectedReward(id); navigateTo('reward-detail'); }} />
+        <HomeScreen setTab={navigateTo as any} setSelectedOffer={id => { setSelectedOffer(id); navigateTo('offers'); }} setSelectedReward={id => { setSelectedReward(id); navigateTo('coupons'); }} />
       ) : activeTab === 'scan' ? (
         <CustomerScanScreen />
       ) : activeTab === 'menu' ? (
-        <CustomerMenuScreen 
+        <CustomerMenuScreen
           setTab={navigateTo as any}
           cartItems={cartItems}
           addItem={addItem}
@@ -125,28 +123,30 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
           onProductClick={(id) => { setSelectedProduct(id); navigateTo('product'); }}
         />
       ) : activeTab === 'product' && selectedProduct ? (
-        <ProductDetailScreen 
+        <ProductDetailScreen
           productId={selectedProduct}
           onBack={() => { setSelectedProduct(null); navigateTo('menu'); }}
           addItem={addItem}
         />
-      ) : activeTab === 'offers' || activeTab === 'coupons' ? (
-        <OffersScreen type={activeTab as 'offers' | 'coupons'} selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+      ) : activeTab === 'offers' ? (
+        <OffersScreen type="offers" selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+      ) : activeTab === 'coupons' || activeTab === 'rewards' ? (
+        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
       ) : activeTab === 'membership' ? (
         <MembershipScreen />
-      ) : activeTab === 'rewards' ? (
-        <RewardsScreen selectedId={selectedReward} setSelectedId={(id) => { setSelectedReward(id); navigateTo(id ? 'reward-detail' : 'rewards'); }} />
-      ) : activeTab === 'history' || activeTab === 'orders' ? (
+      ) : activeTab === 'orders' ? (
+        <OrdersScreen />
+      ) : activeTab === 'history' ? (
         <HistoryScreen />
       ) : activeTab === 'profile' ? (
         <ProfileScreen onPrivacy={() => navigateTo('privacy')} onNavigateApp={onNavigate} />
       ) : activeTab === 'checkout' ? (
-        <CheckoutScreen 
-          cartItems={cartItems} 
-          updateQuantity={updateQuantity} 
-          subtotal={subtotal} 
-          tax={tax} 
-          total={total} 
+        <CheckoutScreen
+          cartItems={cartItems}
+          updateQuantity={updateQuantity}
+          subtotal={subtotal}
+          tax={tax}
+          total={total}
           onSuccess={() => {
             cartItems.forEach(item => updateQuantity(item.id, -item.quantity));
             navigateTo('orders');

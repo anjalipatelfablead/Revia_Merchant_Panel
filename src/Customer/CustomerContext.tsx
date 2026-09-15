@@ -25,6 +25,10 @@ interface CustomerContextType {
   setSelectedReward: (id: string | null) => void;
   selectedProduct: string | null;
   setSelectedProduct: (id: string | null) => void;
+
+  // Redeemed Rewards State
+  redeemedRewardIds: string[];
+  redeemReward: (id: string) => void;
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(undefined);
@@ -39,6 +43,13 @@ export const CustomerProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
   const [selectedReward, setSelectedReward] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+
+  // Track single-use redeemed rewards
+  const [redeemedRewardIds, setRedeemedRewardIds] = useState<string[]>([]);
+
+  const redeemReward = (id: string) => {
+    setRedeemedRewardIds(prev => prev.includes(id) ? prev : [...prev, id]);
+  };
 
   return (
     <CustomerContext.Provider value={{
@@ -58,7 +69,9 @@ export const CustomerProvider: React.FC<{ children: ReactNode }> = ({ children }
       selectedReward,
       setSelectedReward,
       selectedProduct,
-      setSelectedProduct
+      setSelectedProduct,
+      redeemedRewardIds,
+      redeemReward
     }}>
       {children}
     </CustomerContext.Provider>

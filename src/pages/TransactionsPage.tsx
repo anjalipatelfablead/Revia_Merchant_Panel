@@ -221,7 +221,7 @@ export const TransactionsPage: React.FC = () => {
           </div>
         )}
 
-        <div className="p-4 sm:p-6 space-y-6 flex-1">
+        <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
 
           {/* MAIN SECTION HEADER & TOP METRICS */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -244,9 +244,9 @@ export const TransactionsPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setFastPosModalOpen(true)}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-lg transition-opacity shadow-sm cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
               >
-                <UserPlus className="w-4 h-4" />
+                <UserPlus className="w-4 h-4 text-white" />
                 Fast POS Entry
               </button>
             </div>
@@ -254,7 +254,7 @@ export const TransactionsPage: React.FC = () => {
 
           {/* Stat Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl border border-[#EFECE6] p-5 shadow-xs">
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs">
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Today Revenue</div>
                 <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded flex items-center gap-1">
@@ -265,7 +265,7 @@ export const TransactionsPage: React.FC = () => {
               <div className="text-[11px] font-semibold text-[#6E6A66]">142 total register events</div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EFECE6] p-5 shadow-xs">
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs">
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Stamps Issued Today</div>
                 <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded flex items-center gap-1">
@@ -276,7 +276,7 @@ export const TransactionsPage: React.FC = () => {
               <div className="text-[11px] font-semibold text-[#6E6A66]">+42 stamps vs yesterday peak</div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EFECE6] p-5 shadow-xs">
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs">
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Redemptions Completed</div>
                 <span className="px-2 py-0.5 text-[10px] font-bold bg-[#F5F4F0] text-[#6E6A66] rounded">
@@ -287,7 +287,7 @@ export const TransactionsPage: React.FC = () => {
               <div className="text-[11px] font-semibold text-[#6E6A66]">Complimentary pour-overs &amp; beans</div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EFECE6] p-5 shadow-xs">
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs">
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Avg Transaction Speed</div>
                 <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded flex items-center gap-1">

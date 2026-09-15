@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Minus, Plus, ShoppingBag, ArrowRight, Check } from 'lucide-react';
-import { MOCK_ADDONS } from '../../data/mockData';
-import { CatalogItem } from '../../types';
+import { Minus, Plus, ShoppingBag, ArrowRight, Check, CreditCard, Wallet, QrCode, Tag, MapPin, Clock, Utensils, Percent } from 'lucide-react';
+import { MOCK_ADDONS, MOCK_REWARDS } from '../../data/mockData';
+import { CatalogItem } from '../../../types';
 
 export interface CheckoutScreenProps {
-  cartItems: CatalogItem[];
+  cartItems: (CatalogItem & { quantity: number })[];
   updateQuantity: (id: string, delta: number) => void;
   subtotal: number;
   tax: number;
@@ -14,6 +14,14 @@ export interface CheckoutScreenProps {
 
 export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ cartItems, updateQuantity, subtotal, tax, total, onSuccess }) => {
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [orderType, setOrderType] = useState<'dine-in' | 'pickup' | 'delivery'>('dine-in');
+  const [tableNumber, setTableNumber] = useState('Table 12');
+  const [pickupTime, setPickupTime] = useState('As soon as possible (10-15 mins)');
+  const [deliveryAddress, setDeliveryAddress] = useState('45 Artisanal Lane, Flat 4B');
+  
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'counter' | 'wallet'>('upi');
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>({ code: 'GOLD15', discount: 0.15 });
+  const [promoInput, setPromoInput] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
 
   const toggleAddon = (id: string) => {
@@ -27,7 +35,17 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ cartItems, updat
     0
   );
 
-  const grandTotal = total + addonsTotal;
+  const baseTotal = total + addonsTotal;
+  const discountAmount = appliedPromo ? baseTotal * appliedPromo.discount : 0;
+  const grandTotal = Math.max(0, baseTotal - discountAmount);
+
+  const handleApplyPromo = () => {
+    if (promoInput.trim().toUpperCase() === 'FREE5') {
+      setAppliedPromo({ code: 'FREE5', discount: 0.20 });
+    } else {
+      alert('Applied promo code!');
+    }
+  };
 
   if (cartItems.length === 0 && !isSuccess) {
     return (
@@ -43,236 +61,240 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ cartItems, updat
 
   if (isSuccess) {
     return (
-      <>
-        {/* DESKTOP UI (Split Layout Full Width) */}
-        <div className="hidden md:flex min-h-[75vh] w-full animate-in fade-in duration-700 items-stretch gap-12 py-4">
+      <div className="max-w-4xl mx-auto py-8 animate-in fade-in duration-500">
+        <div className="bg-white rounded-3xl border border-[#E6E6E6] shadow-2xl p-8 md:p-12 space-y-8">
+          
+          <div className="text-center space-y-4">
+            <div className="w-20 h-20 bg-gradient-to-tr from-[#C89B3C] to-[#E0B85E] rounded-3xl flex items-center justify-center shadow-xl mx-auto text-white">
+              <Check className="w-10 h-10 stroke-[3]" />
+            </div>
+            <h2 className="text-3xl font-black text-[#222]">Order Successfully Placed!</h2>
+            <p className="text-base text-[#666] max-w-md mx-auto">
+              Your order has been sent directly to the kitchen.
+            </p>
+          </div>
 
-          {/* Left Side: Massive Graphic & Status */}
-          <div className="w-1/2 pr-12 border-r border-[#E6E6E6] relative">
-            <div className="sticky top-32 flex flex-col items-center justify-center text-center h-[calc(100vh-16rem)]">
-              <div className="relative group mb-8 inline-block w-max mx-auto">
-                <div className="absolute inset-0 bg-[#C89B3C] rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
-                <div className="w-32 h-32 bg-gradient-to-tr from-[#C89B3C] to-[#E0B85E] rounded-[2rem] flex items-center justify-center shadow-2xl relative z-10 border-8 border-white/50 backdrop-blur-sm mx-auto">
-                  <Check className="w-16 h-16 text-white animate-in zoom-in duration-500 delay-300" strokeWidth={3} />
-                </div>
+          <div className="bg-[#F8F8F6] rounded-2xl p-6 border border-[#E6E6E6] space-y-4">
+            <div className="flex justify-between items-center pb-4 border-b border-[#E6E6E6]">
+              <div>
+                <p className="text-[10px] font-black text-[#999] uppercase tracking-wider">Order Reference</p>
+                <p className="text-xl font-black text-[#222]">#REV-4921</p>
               </div>
+              <div className="text-right">
+                <p className="text-[10px] font-black text-[#999] uppercase tracking-wider">Order Type</p>
+                <span className="bg-[#C89B3C] text-white text-xs font-bold px-3 py-1 rounded-full uppercase">
+                  {orderType} • {orderType === 'dine-in' ? tableNumber : orderType === 'pickup' ? 'Counter' : 'Delivery'}
+                </span>
+              </div>
+            </div>
 
-              <h2 className="text-5xl font-black text-[#222] tracking-tight leading-[1.1] mb-6">
-                Order Successfully<br />Placed.
-              </h2>
-              <p className="text-[#666] text-xl leading-relaxed max-w-md mx-auto">
-                We've received your order and are preparing your items right now. Thank you for choosing Revia!
-              </p>
-
-              <button
-                onClick={() => onSuccess?.()}
-                className="mt-10 bg-[#222] text-white px-8 py-5 rounded-2xl font-black hover:bg-black transition-all shadow-xl hover:-translate-y-1 inline-flex items-center justify-center gap-3 w-max text-lg mx-auto"
-              >
-                View My Orders <ArrowRight className="w-5 h-5" />
-              </button>
+            <div className="space-y-3 text-sm">
+              <p className="text-xs font-black text-[#999] uppercase tracking-wider">Items Ordered</p>
+              {cartItems.map((item, idx) => (
+                <div key={idx} className="flex justify-between">
+                  <span className="text-[#222] font-medium">{item.quantity}x {item.title}</span>
+                  <span className="font-bold text-[#222]">${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
+              {appliedPromo && (
+                <div className="flex justify-between text-[#0D7A53] pt-2 border-t border-[#E6E6E6]">
+                  <span>Discount ({appliedPromo.code})</span>
+                  <span>-${discountAmount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center text-lg font-black text-[#222] pt-3 border-t border-[#E6E6E6]">
+                <span>Total Paid</span>
+                <span className="text-[#C89B3C]">${grandTotal.toFixed(2)}</span>
+              </div>
             </div>
           </div>
 
-          {/* Right Side: The Receipt */}
-          <div className="w-1/2 flex flex-col justify-center pl-4">
-            <div className="w-full max-w-xl bg-white rounded-[40px] border border-[#E6E6E6] shadow-2xl shadow-black/5 p-10 text-left relative overflow-hidden">
-
-              {/* Header */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-black text-[#999] uppercase tracking-[0.2em]">Order ID</p>
-                  <p className="text-2xl font-black text-[#222] mt-1">#REV-{(Math.random() * 10000).toFixed(0).padStart(4, '0')}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-black text-[#999] uppercase tracking-[0.2em]">Spot / Table</p>
-                  <div className="inline-flex items-center justify-center bg-[#C89B3C] text-white px-4 py-1.5 rounded-xl mt-2 shadow-sm">
-                    <span className="text-base font-bold">Table 12</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Perfect Ticket Divider with aligned Cutouts */}
-              <div className="relative flex items-center my-8">
-                <div className="absolute -left-10 w-6 h-12 bg-[#F8F8F6] rounded-r-full border-y border-r border-[#E6E6E6] z-10"></div>
-                <div className="w-full border-b-2 border-dashed border-[#E6E6E6]"></div>
-                <div className="absolute -right-10 w-6 h-12 bg-[#F8F8F6] rounded-l-full border-y border-l border-[#E6E6E6] z-10"></div>
-              </div>
-
-              <div className="space-y-8 pb-4">
-                <p className="text-xs font-black text-[#999] uppercase tracking-[0.2em]">Items Ordered</p>
-                <div className="space-y-6">
-                  {cartItems.map((item, idx) => (
-                    <div key={idx} className="flex items-start justify-between group">
-                      <div className="flex items-center gap-5">
-                        <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 border border-[#E6E6E6] bg-[#F8F8F6] group-hover:scale-105 transition-transform shadow-sm">
-                          <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                        </div>
-                        <div>
-                          <p className="text-lg font-bold text-[#222] line-clamp-1">{item.title}</p>
-                          <p className="text-sm font-bold text-[#999] mt-1">Qty: {item.quantity} × ${(item.price).toFixed(2)}</p>
-                        </div>
-                      </div>
-                      <p className="text-xl font-black text-[#222] mt-2">${(item.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                  ))}
-
-                  {selectedAddons.length > 0 && (
-                    <div className="flex items-center justify-between pt-6 mt-6 border-t border-[#F0F0F0]">
-                      <p className="text-base font-bold text-[#666]">Extras ({selectedAddons.length})</p>
-                      <p className="text-lg font-bold text-[#222]">${addonsTotal.toFixed(2)}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-8 mt-2 border-t-2 border-dashed border-[#E6E6E6] bg-[#F8F8F6] -mx-10 -mb-10 p-10 rounded-b-[40px]">
-                <p className="text-sm font-black text-[#666] uppercase tracking-[0.2em]">Total Paid</p>
-                <p className="text-4xl font-black text-[#222]">${grandTotal.toFixed(2)}</p>
-              </div>
-            </div>
-          </div>
+          <button
+            onClick={() => onSuccess?.()}
+            className="w-full bg-[#222] text-white py-4 rounded-2xl font-black text-base hover:bg-black transition-all shadow-lg flex items-center justify-center gap-2"
+          >
+            View Live Order Status <ArrowRight className="w-5 h-5" />
+          </button>
         </div>
-
-        {/* MOBILE UI */}
-        <div className="md:hidden flex flex-col h-full w-full bg-[#F8F8F6] absolute inset-0 z-50 animate-in slide-in-from-bottom-full duration-500">
-          <div className="flex-1 overflow-y-auto pb-32">
-
-            {/* Mobile Header Graphic */}
-            <div className="bg-[#222] rounded-b-[40px] pt-16 pb-12 px-6 flex flex-col items-center text-center relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-              <div className="w-20 h-20 bg-gradient-to-tr from-[#C89B3C] to-[#E0B85E] rounded-full flex items-center justify-center shadow-lg relative z-10 mb-6">
-                <Check className="w-10 h-10 text-white animate-in zoom-in duration-500 delay-300" strokeWidth={3} />
-              </div>
-              <h2 className="text-3xl font-black text-white tracking-tight relative z-10">Order Placed</h2>
-              <p className="text-[#999] mt-2 text-sm relative z-10">Your order has been sent to the kitchen.</p>
-            </div>
-
-            {/* Mobile Receipt Card */}
-            <div className="px-4 -mt-6 relative z-20">
-              <div className="bg-white rounded-3xl border border-[#E6E6E6] shadow-sm p-6 text-left space-y-6">
-
-                <div className="flex items-center justify-between pb-4 border-b border-[#F0F0F0]">
-                  <div>
-                    <p className="text-[10px] font-black text-[#999] uppercase tracking-[0.2em]">Order ID</p>
-                    <p className="text-base font-black text-[#222] mt-1">#REV-{(Math.random() * 10000).toFixed(0).padStart(4, '0')}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-black text-[#999] uppercase tracking-[0.2em]">Spot</p>
-                    <p className="text-base font-black text-[#222] mt-1">Table 12</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-[#222] uppercase tracking-[0.2em]">Items Ordered</p>
-                  <div className="space-y-4">
-                    {cartItems.map((item, idx) => (
-                      <div key={idx} className="flex items-start justify-between">
-                        <div className="flex gap-3">
-                          <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-[#E6E6E6] bg-[#F8F8F6]">
-                            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-[#222] line-clamp-1">{item.title}</p>
-                            <p className="text-xs font-medium text-[#999]">Qty: {item.quantity}</p>
-                          </div>
-                        </div>
-                        <p className="text-sm font-black text-[#222] mt-1">${(item.price * item.quantity).toFixed(2)}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-[#F0F0F0]">
-                  <p className="text-xs font-black text-[#222] uppercase tracking-[0.2em]">Total</p>
-                  <p className="text-xl font-black text-[#C89B3C]">${grandTotal.toFixed(2)}</p>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          {/* Sticky Mobile Button */}
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-[#E6E6E6] shadow-[0_-10px_20px_rgba(0,0,0,0.03)] z-50">
-            <button
-              onClick={() => onSuccess?.()}
-              className="w-full bg-[#222] text-white py-4 rounded-2xl font-black hover:bg-black transition-all shadow-lg flex items-center justify-center gap-2"
-            >
-              View My Orders <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <div className="max-w-full mx-auto pb-24 space-y-8 animate-in fade-in duration-500">
-
+    <div className="max-w-[1280px] mx-auto pb-24 space-y-8 animate-in fade-in duration-500">
+      
       <div>
-        <h2 className="text-3xl font-black text-[#222]">Checkout</h2>
-        <p className="text-[#666] mt-1">Review your items and add any extras.</p>
+        <h1 className="text-3xl font-black text-[#222]">Checkout & Payment</h1>
+        <p className="text-[#666] text-sm mt-1">Configure your order type, apply rewards, and choose payment method.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        {/* Left Col: Cart Items & Add-ons */}
+        {/* Left Column: Order details & customizers */}
         <div className="lg:col-span-7 space-y-8">
+          
+          {/* 1. Order Type Selection */}
+          <div className="bg-white rounded-3xl border border-[#E6E6E6] p-6 space-y-4 shadow-sm">
+            <h2 className="text-xs font-black text-[#222] uppercase tracking-wider flex items-center gap-2">
+              <Utensils className="w-4 h-4 text-[#C89B3C]" /> 1. Select Order Type
+            </h2>
 
-          {/* Items */}
-          <div className="space-y-4">
-            <h3 className="text-xs font-black text-[#222] uppercase tracking-wider">Your Order</h3>
-            <div className="bg-white rounded-2xl border border-[#E6E6E6] p-2 divide-y divide-[#F0F0F0] shadow-sm">
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { id: 'dine-in', label: 'Dine-In', icon: Utensils },
+                { id: 'pickup', label: 'Takeaway', icon: Clock },
+                { id: 'delivery', label: 'Delivery', icon: MapPin }
+              ].map(type => {
+                const isSelected = orderType === type.id;
+                const Icon = type.icon;
+                return (
+                  <button
+                    key={type.id}
+                    onClick={() => setOrderType(type.id as any)}
+                    className={`py-3 px-4 rounded-2xl border text-xs font-bold transition-all flex flex-col items-center gap-1.5 ${
+                      isSelected 
+                        ? 'bg-[#FFF8ED] border-[#C89B3C] text-[#C89B3C] shadow-sm font-black' 
+                        : 'bg-white border-[#E6E6E6] text-[#666] hover:border-[#C89B3C]'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{type.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Sub-inputs based on order type */}
+            <div className="pt-2">
+              {orderType === 'dine-in' && (
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-[#999] uppercase tracking-wider">Table / Spot Number</label>
+                  <input 
+                    type="text" 
+                    value={tableNumber} 
+                    onChange={e => setTableNumber(e.target.value)}
+                    className="w-full p-3 bg-[#F8F8F6] border border-[#E6E6E6] rounded-xl text-sm font-bold text-[#222]" 
+                  />
+                </div>
+              )}
+              {orderType === 'pickup' && (
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-[#999] uppercase tracking-wider">Estimated Pickup Time</label>
+                  <select 
+                    value={pickupTime} 
+                    onChange={e => setPickupTime(e.target.value)}
+                    className="w-full p-3 bg-[#F8F8F6] border border-[#E6E6E6] rounded-xl text-sm font-bold text-[#222]"
+                  >
+                    <option>As soon as possible (10-15 mins)</option>
+                    <option>In 30 minutes</option>
+                    <option>In 1 hour</option>
+                  </select>
+                </div>
+              )}
+              {orderType === 'delivery' && (
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-[#999] uppercase tracking-wider">Delivery Address</label>
+                  <input 
+                    type="text" 
+                    value={deliveryAddress} 
+                    onChange={e => setDeliveryAddress(e.target.value)}
+                    className="w-full p-3 bg-[#F8F8F6] border border-[#E6E6E6] rounded-xl text-sm font-bold text-[#222]" 
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 2. Cart Items */}
+          <div className="bg-white rounded-3xl border border-[#E6E6E6] p-6 space-y-4 shadow-sm">
+            <h2 className="text-xs font-black text-[#222] uppercase tracking-wider">2. Review Cart Items</h2>
+            <div className="divide-y divide-[#F0F0F0]">
               {cartItems.map(item => (
-                <div key={item.id} className="flex gap-4 p-4">
-                  <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border border-[#E6E6E6] bg-[#F8F8F6]">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                <div key={item.id} className="flex items-center gap-4 py-3 first:pt-0">
+                  <img src={item.image} alt={item.title} className="w-14 h-14 rounded-xl object-cover border border-[#E6E6E6]" />
+                  <div className="flex-1">
+                    <h3 className="font-bold text-[#222] text-sm">{item.title}</h3>
+                    <p className="text-xs text-[#999]">${item.price.toFixed(2)} each</p>
                   </div>
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-bold text-[#222] text-sm leading-tight line-clamp-2">{item.title}</h3>
-                      <p className="text-xs text-[#999] mt-1">${item.price.toFixed(2)} each</p>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <p className="font-black text-[#C89B3C]">${(item.price * item.quantity).toFixed(2)}</p>
-                      <div className="flex items-center gap-3 bg-[#F8F8F6] rounded-full px-2 py-1 border border-[#E6E6E6]">
-                        <button onClick={() => updateQuantity(item.id, -1)} className="w-6 h-6 flex items-center justify-center text-[#666] hover:text-[#222] bg-white rounded-full shadow-sm">
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, 1)} className="w-6 h-6 flex items-center justify-center text-[#666] hover:text-[#222] bg-white rounded-full shadow-sm">
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-3 bg-[#F8F8F6] rounded-full px-2 py-1 border border-[#E6E6E6]">
+                    <button onClick={() => updateQuantity(item.id, -1)} className="w-6 h-6 flex items-center justify-center text-[#666]">
+                      <Minus className="w-3 h-3" />
+                    </button>
+                    <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.id, 1)} className="w-6 h-6 flex items-center justify-center text-[#666]">
+                      <Plus className="w-3 h-3" />
+                    </button>
                   </div>
+                  <p className="font-black text-[#222] text-sm min-w-[60px] text-right">${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Addons */}
-          <div className="space-y-4">
-            <h3 className="text-xs font-black text-[#222] uppercase tracking-wider">Frequently Added Extras</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {MOCK_ADDONS.map(addon => {
-                const isSelected = selectedAddons.includes(addon.id);
+          {/* 3. Promo Code & Reward Selection */}
+          <div className="bg-white rounded-3xl border border-[#E6E6E6] p-6 space-y-4 shadow-sm">
+            <h2 className="text-xs font-black text-[#222] uppercase tracking-wider flex items-center gap-2">
+              <Tag className="w-4 h-4 text-[#C89B3C]" /> 3. Apply Reward / Promo Code
+            </h2>
+
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Enter promo code (e.g. GOLD15, FREE5)"
+                value={promoInput}
+                onChange={e => setPromoInput(e.target.value)}
+                className="flex-1 p-3 bg-[#F8F8F6] border border-[#E6E6E6] rounded-xl text-sm font-bold uppercase tracking-wider"
+              />
+              <button 
+                onClick={handleApplyPromo}
+                className="bg-[#222] hover:bg-black text-white px-5 py-3 rounded-xl text-xs font-bold transition-all"
+              >
+                Apply
+              </button>
+            </div>
+
+            {appliedPromo && (
+              <div className="bg-[#F0FFF8] border border-[#BCE3D1] rounded-2xl p-3 flex items-center justify-between text-xs text-[#0D7A53] font-bold">
+                <div className="flex items-center gap-2">
+                  <Percent className="w-4 h-4" />
+                  <span>Promo Code <strong>{appliedPromo.code}</strong> Applied ({(appliedPromo.discount * 100)}% OFF)</span>
+                </div>
+                <button onClick={() => setAppliedPromo(null)} className="text-[#D32F2F] text-xs hover:underline">Remove</button>
+              </div>
+            )}
+          </div>
+
+          {/* 4. Payment Method Selection */}
+          <div className="bg-white rounded-3xl border border-[#E6E6E6] p-6 space-y-4 shadow-sm">
+            <h2 className="text-xs font-black text-[#222] uppercase tracking-wider flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-[#C89B3C]" /> 4. Payment Method Selection
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { id: 'upi', label: 'UPI / GPay / PhonePe', desc: 'Instant QR / Mobile Pay', icon: QrCode },
+                { id: 'card', label: 'Credit / Debit Card', desc: 'Visa, Mastercard, Amex', icon: CreditCard },
+                { id: 'wallet', label: 'Revia Wallet ($45.50)', desc: 'Pay instantly with wallet balance', icon: Wallet },
+                { id: 'counter', label: 'Pay at Counter / Cash', desc: 'Pay directly when ready', icon: Utensils }
+              ].map(method => {
+                const isSelected = paymentMethod === method.id;
+                const Icon = method.icon;
                 return (
                   <button
-                    key={addon.id}
-                    onClick={() => toggleAddon(addon.id)}
-                    className={`flex items-center gap-4 p-3 rounded-2xl border transition-all text-left ${isSelected ? 'border-[#C89B3C] bg-[#FFF8ED] shadow-sm' : 'border-[#E6E6E6] bg-white hover:border-[#C89B3C] hover:bg-[#FFF8ED]/50'}`}
+                    key={method.id}
+                    onClick={() => setPaymentMethod(method.id as any)}
+                    className={`p-4 rounded-2xl border text-left transition-all ${
+                      isSelected 
+                        ? 'bg-[#FFF8ED] border-[#C89B3C] ring-1 ring-[#C89B3C]' 
+                        : 'bg-white border-[#E6E6E6] hover:border-[#C89B3C]'
+                    }`}
                   >
-                    <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-[#E6E6E6] bg-white relative">
-                      {addon.image && <img src={addon.image} alt={addon.name} className="w-full h-full object-cover" />}
-                      {isSelected && (
-                        <div className="absolute inset-0 bg-[#C89B3C]/80 flex items-center justify-center backdrop-blur-[1px]">
-                          <Check className="w-6 h-6 text-white" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-[#222] text-sm">{addon.name}</p>
-                      <p className={`text-xs font-bold mt-0.5 ${isSelected ? 'text-[#C89B3C]' : 'text-[#666]'}`}>+${addon.price.toFixed(2)}</p>
+                    <div className="flex items-center gap-3">
+                      <Icon className={`w-5 h-5 ${isSelected ? 'text-[#C89B3C]' : 'text-[#666]'}`} />
+                      <div>
+                        <p className="text-sm font-bold text-[#222]">{method.label}</p>
+                        <p className="text-[10px] text-[#999]">{method.desc}</p>
+                      </div>
                     </div>
                   </button>
                 );
@@ -282,43 +304,51 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ cartItems, updat
 
         </div>
 
-        {/* Right Col: Summary */}
+        {/* Right Column: Order Summary & Place Order */}
         <div className="lg:col-span-5">
-          <div className="bg-white rounded-2xl border border-[#E6E6E6] p-6 shadow-sm sticky top-6">
-            <h3 className="text-lg font-black text-[#222] mb-6">Order Summary</h3>
+          <div className="bg-white rounded-3xl border border-[#E6E6E6] p-6 shadow-xl sticky top-24 space-y-6">
+            <h3 className="text-xl font-black text-[#222]">Order Summary</h3>
 
-            <div className="space-y-4 text-sm mb-6">
+            <div className="space-y-3 text-sm">
               <div className="flex justify-between text-[#666]">
-                <span>Subtotal</span>
-                <span className="font-medium text-[#222]">${subtotal.toFixed(2)}</span>
+                <span>Items Subtotal</span>
+                <span className="font-bold text-[#222]">${subtotal.toFixed(2)}</span>
               </div>
 
               {addonsTotal > 0 && (
                 <div className="flex justify-between text-[#666]">
-                  <span>Extras</span>
-                  <span className="font-medium text-[#222]">${addonsTotal.toFixed(2)}</span>
+                  <span>Custom Extras</span>
+                  <span className="font-bold text-[#222]">${addonsTotal.toFixed(2)}</span>
+                </div>
+              )}
+
+              {appliedPromo && (
+                <div className="flex justify-between text-[#0D7A53] font-bold">
+                  <span>Discount ({appliedPromo.code})</span>
+                  <span>-${discountAmount.toFixed(2)}</span>
                 </div>
               )}
 
               <div className="flex justify-between text-[#666]">
-                <span>Tax (8%)</span>
-                <span className="font-medium text-[#222]">${tax.toFixed(2)}</span>
+                <span>Taxes & Fees (8%)</span>
+                <span className="font-bold text-[#222]">${tax.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between items-center text-xl font-black text-[#222] pt-4 border-t border-[#E6E6E6]">
-                <span>Total</span>
+                <span>Grand Total</span>
                 <span className="text-[#C89B3C]">${grandTotal.toFixed(2)}</span>
               </div>
             </div>
 
             <button
               onClick={() => setIsSuccess(true)}
-              className="w-full bg-gradient-to-r from-[#E0B85E] to-[#C89B3C] hover:from-[#F5DEB3] hover:to-[#D4AF37] text-[#222] py-4 rounded-xl font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#C89B3C]/20"
+              className="w-full bg-gradient-to-r from-[#C89B3C] to-[#E0B85E] hover:from-[#B88A2B] hover:to-[#D0A74D] text-[#222] py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#C89B3C]/20"
             >
-              Place Order <ArrowRight className="w-5 h-5" />
+              Place Order • ${grandTotal.toFixed(2)} <ArrowRight className="w-5 h-5" />
             </button>
-            <p className="text-center text-[10px] text-[#999] font-bold uppercase tracking-widest mt-4 flex items-center justify-center gap-1">
-              <Check className="w-3 h-3" /> Secure Checkout
+
+            <p className="text-[10px] text-[#999] text-center font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+              <Check className="w-3 h-3 text-[#0D7A53]" /> 256-bit Encrypted Checkout
             </p>
           </div>
         </div>

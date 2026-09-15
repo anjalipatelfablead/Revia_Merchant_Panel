@@ -58,10 +58,14 @@ export const NotificationPage: React.FC = () => {
 			<div className="border-b border-[#E5EAF0] px-4 py-5 sm:px-6 lg:px-8">
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 					<div>
-						<div className="flex items-center gap-2"><Bell className="h-5 w-5 text-[#6288B5]" /><h1 className="text-[22px] font-semibold tracking-[-0.02em] text-[#162235]">Notifications</h1><span className="rounded-full bg-[#EEF5FF] px-2 py-0.5 text-[11px] font-semibold text-[#4C7FEA]">{unreadCount} new</span></div>
-						<p className="mt-1 text-[14px] text-[#6F829C]">Manage all your alerts and updates.</p>
+						<div className="flex items-center gap-2">
+							<Bell className="h-5 w-5 text-[#D4A753]" />
+							<h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Notifications</h1>
+							<span className="rounded-full bg-[#EBF7F0] px-2.5 py-0.5 text-[11px] font-bold text-[#15803D] border border-[#15803D]/20">{unreadCount} new</span>
+						</div>
+						<p className="mt-1 text-sm text-[#7C746C]">Manage all your system alerts and real-time updates.</p>
 					</div>
-					<button type="button" onClick={markAllRead} disabled={unreadCount === 0} className="self-start rounded-md border border-[#D9E5F2] bg-[#F1F6FC] px-3 py-1.5 text-[12px] font-medium text-[#4C7FEA] transition-colors hover:border-[#B9D0E8] hover:bg-[#E7F0FA] disabled:cursor-default disabled:opacity-40">Mark all as read</button>
+					<button type="button" onClick={markAllRead} disabled={unreadCount === 0} className="self-start rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40">Mark all as read</button>
 				</div>
 			</div>
 

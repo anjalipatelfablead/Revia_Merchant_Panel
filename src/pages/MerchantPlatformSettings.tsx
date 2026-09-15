@@ -22,11 +22,11 @@ export const MerchantPlatformSettings: React.FC = () => {
   };
 
   return (
-    <div className="w-full font-inter bg-white p-6">
+    <div className="w-full font-sans bg-white p-6">
       <div className="w-full">
         <div className="mb-6">
-          <h1 className="text-[20px] font-bold text-[#1A1615] tracking-tight">Platform Settings</h1>
-          <p className="text-[13px] text-[#6E6A66] mt-1">Manage global preferences for your Revia merchant instance.</p>
+          <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Platform Settings</h1>
+          <p className="text-sm text-[#7C746C] mt-1">Manage global preferences for your Revia merchant instance.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">

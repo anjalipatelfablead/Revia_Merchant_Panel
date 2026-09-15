@@ -32,8 +32,11 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { AuditLogPage } from './pages/AuditLogPage';
 import { StaffPage } from './pages/StaffPage';
 import { QrCodesPage } from './pages/QrCodesPage';
+import { ItemCatalogPage } from './pages/ItemCatalogPage';
+import { OrderQueuePage } from './pages/OrderQueuePage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
+import { RedemptionTerminalPage } from './pages/RedemptionTerminalPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationPage } from './pages/NotificationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -45,7 +48,7 @@ import { TermsOfServicePage } from './pages/TermsOfServicePage';
 
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/catalog', '/orders', '/invoices',
+  '/loyalty', '/qr-codes', '/item-catalog', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
@@ -128,9 +131,7 @@ export default function App() {
     return <TermsOfServicePage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  if (currentRoute === '/customer/landing') {
-    return <CustomerOnboardingPage onComplete={() => handleNavigate('/customer/curate-experience')} />;
-  }
+
 
 
 
@@ -205,7 +206,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
@@ -245,6 +246,14 @@ export default function App() {
             <QrCodesPage />
           )}
 
+          {currentRoute === '/item-catalog' && (
+            <ItemCatalogPage />
+          )}
+
+          {currentRoute === '/orders' && (
+            <OrderQueuePage onNavigate={handleNavigate} />
+          )}
+
           {currentRoute === '/customerlist' && (
             <CustomersPage
               customers={customers}
@@ -269,6 +278,10 @@ export default function App() {
 
           {currentRoute === '/rewards' && (
             <RewardsPage />
+          )}
+
+          {currentRoute === '/terminal' && (
+            <RedemptionTerminalPage />
           )}
 
           {currentRoute === '/analytics' && (

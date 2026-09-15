@@ -64,7 +64,7 @@ const MobileAnalyticsView: React.FC = () => {
 
         <div className="pt-4">
           <div className="flex items-center justify-between gap-2">
-            <h1 className="text-[26px] font-extrabold leading-none tracking-normal">Analytics &amp; Retention</h1>
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Analytics &amp; Retention</h1>
             <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#B9F1CF] px-2 py-1 text-[10px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Live Telemetry</span>
           </div>
           <p className="mt-2 text-[15px] text-[#756D65]">Longitudinal cohort curves &amp; VIP telemetry</p>
@@ -72,7 +72,7 @@ const MobileAnalyticsView: React.FC = () => {
 
         <div className="mt-4 flex gap-2 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {['Last 30D', 'Last 90D', 'YTD', 'All Branches'].map((period, index) => (
-            <button key={period} type="button" className={`shrink-0 rounded-full px-4 py-2.5 text-[12px] font-semibold ${index === 1 ? 'bg-[#C99B42] text-white shadow-sm' : 'bg-[#F3E9DF] text-[#3D3732]'}`}>{period}</button>
+            <button key={period} type="button" className={`shrink-0 rounded-full px-4 py-2 text-[12px] font-bold cursor-pointer transition-all ${index === 1 ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-[#F3E9DF] text-[#3D3732] hover:bg-[#EAE1D7]'}`}>{period}</button>
           ))}
         </div>
 
@@ -327,7 +327,7 @@ export const AnalyticsPage: React.FC = () => {
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
                 <div className="max-w-[480px]">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-[24px] font-bold tracking-normal leading-[1.05] text-[#1A1615]">
+                    <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-[1.05] text-[#1A1615]">
                       Analytics &amp; Cohort Retention
                     </h1>
                   </div>

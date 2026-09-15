@@ -6,19 +6,22 @@ import { BottomNav } from './BottomNav';
 import { CustomerDashboardHeader } from './CustomerDashboardHeader';
 import { DesktopSidebar } from './DesktopSidebar';
 
+import { NotificationsOverlay } from './NotificationsOverlay';
+
 export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children, onNavigateApp, cartCount }: {
   tab: MainTab; setTab: (t: MainTab) => void; title?: string; showBack?: boolean;
   onBack?: () => void; children: React.ReactNode; onNavigateApp?: (route: string) => void;
   cartCount?: number;
 }) => {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const tabs: { id: MainTab; label: string; Icon: React.ElementType; badge?: React.ReactNode }[] = [
     { id: 'dashboard', label: 'Home', Icon: Home },
     // { id: 'scan', label: 'Scan QR', Icon: Scan, badge: <span className="bg-[#EBE7E0] text-[#666] text-[10px] font-bold px-2 py-0.5 rounded-full">Table</span> },
     { id: 'menu', label: 'Menu / Order', Icon: Utensils, badge: <span className="bg-[#94F1C6] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full">Fresh</span> },
     { id: 'orders', label: 'My Orders', Icon: ReceiptText, badge: <span className="bg-[#F8F8F6] border border-[#E6E6E6] text-[#666] text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span> },
-    { id: 'coupons', label: 'Coupons', Icon: Ticket, badge: <span className="bg-[#FFF8ED] border border-[#F5DEB3] text-[#C89B3C] text-[10px] font-bold px-1.5 py-0.5 rounded-full">4</span> },
+    { id: 'coupons', label: 'My Rewards', Icon: Ticket, badge: <span className="bg-[#FFF8ED] border border-[#F5DEB3] text-[#C89B3C] text-[10px] font-bold px-1.5 py-0.5 rounded-full">4</span> },
     { id: 'membership', label: 'Membership Cards', Icon: CreditCard },
     { id: 'offers', label: 'Offers', Icon: Zap, badge: <div className="w-2 h-2 rounded-full bg-[#D32F2F]" /> },
     { id: 'profile', label: 'Profile', Icon: User },
@@ -26,6 +29,7 @@ export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children,
 
   return (
     <div className="min-h-screen bg-[#F8F8F6] flex flex-col md:flex-row">
+      <NotificationsOverlay isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} />
       
       {/* Sidebar for Desktop */}
       <DesktopSidebar 
@@ -44,6 +48,7 @@ export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children,
           activeTab={tab}
           setTab={setTab}
           cartCount={cartCount}
+          onNotificationsClick={() => setIsNotificationsOpen(true)}
         />
 
       {/* Mobile Drawer Overlay */}
@@ -62,7 +67,7 @@ export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children,
 
             <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
               <div className="flex-shrink-0 flex items-center px-4 mb-4 gap-3">
-                <div className="w-8 h-8 bg-[#C89B3C] rounded-lg flex items-center justify-center shadow-md">
+                <div className="w-8 h-8 bg-gradient-to-tr from-[#D4A753] to-[#9E782F] rounded-lg flex items-center justify-center shadow-md">
                   <span className="text-white font-black text-lg leading-none">R</span>
                 </div>
                 <span className="text-xl font-black tracking-[0.2em] uppercase text-[#222]">REVIA</span>
@@ -72,9 +77,9 @@ export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children,
                   const isActive = tab === t.id;
                   return (
                     <button key={t.id} onClick={() => { setTab(t.id); setIsMobileDrawerOpen(false); }}
-                      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-sm transition-all ${isActive ? 'bg-[#C89B3C]/10 text-[#C89B3C] font-black' : 'text-[#666] font-bold hover:bg-[#F8F8F6] hover:text-[#222]'}`}>
+                      className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-sm transition-all ${isActive ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-black shadow-md shadow-[#D4A753]/20' : 'text-[#666] font-bold hover:bg-[#FAF8F5] hover:text-[#9E782F]'}`}>
                       <div className="flex items-center gap-3">
-                        <t.Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : ''}`} />
+                        <t.Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5] text-white' : ''}`} />
                         <span>{t.label}</span>
                       </div>
                       {t.badge && <div>{t.badge}</div>}

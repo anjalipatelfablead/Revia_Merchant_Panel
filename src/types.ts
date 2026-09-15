@@ -143,6 +143,7 @@ export type NavRoute =
   | '/staff'
   | '/loyalty'
   | '/qr-codes'
+  | '/item-catalog'
   | '/catalog'
   | '/orders'
   | '/invoices'
@@ -161,6 +162,7 @@ export type NavRoute =
   | '/onboarding'
   | '/customer'
   | '/customer/landing'
+  | '/customer/identify'
   | '/customer/onboarding'
   | '/customer/curate-experience'
   | '/customer-onboarding';

@@ -39,8 +39,14 @@ export const OfferCard: React.FC<{ offer: typeof MOCK_OFFERS[0]; onClick?: () =>
         </div>
         
         {isActive && (
-          <button className="w-full py-2.5 rounded-lg text-xs font-bold text-[#C89B3C] border-2 border-[#F5DEB3] hover:bg-[#FFF8ED] transition-colors">
-            View Offer
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onClick) onClick();
+            }}
+            className="w-full py-3 rounded-xl text-xs font-bold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:from-[#C89B3C] hover:to-[#8E6825] shadow-md shadow-[#9E782F]/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            Redeem Reward (Code / QR)
           </button>
         )}
       </div>

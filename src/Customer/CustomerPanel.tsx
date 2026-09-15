@@ -9,8 +9,8 @@ import { ErrorState } from './components/ui/States';
 // Additional imports for cart functionality
 import { useCart } from './hooks/useCart';
 
+// Pre-auth Screens
 import { CustomerWizard } from './screens/pre-auth/CustomerWizard';
-import { CurateExperienceScreen } from './screens/pre-auth/CurateExperienceScreen';
 
 // Post-auth Screens
 import { HomeScreen } from './screens/post-auth/HomeScreen';
@@ -23,6 +23,7 @@ import { RedemptionScreen } from './screens/post-auth/RedemptionScreen';
 import { RedemptionSuccessScreen } from './screens/post-auth/RedemptionSuccessScreen';
 import { MembershipScreen } from './screens/post-auth/MembershipScreen';
 import { HistoryScreen } from './screens/post-auth/HistoryScreen';
+import { OrdersScreen } from './screens/post-auth/OrdersScreen';
 import { CheckoutScreen } from './screens/post-auth/CheckoutScreen';
 import { PrivacyScreen } from './screens/post-auth/PrivacyScreen';
 import { ProfileScreen } from './screens/post-auth/ProfileScreen';
@@ -33,7 +34,7 @@ interface Props {
   onNavigate?: (route: string) => void;
 }
 
-type PreScreen = 'qr' | 'qr-loading' | 'qr-error' | 'welcome' | 'mobile' | 'otp' | 'curate-experience' | 'member-status' | 'profile-form' | 'join-loyalty';
+type PreScreen = 'qr' | 'qr-loading' | 'qr-error' | 'mobile' | 'otp' | 'curate-experience' | 'member-status' | 'profile-form' | 'join-loyalty';
 
 export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => {
   // Parse initial route
@@ -86,12 +87,10 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
     return (
       <div className="min-h-screen flex flex-col">
         <div className="flex-1 flex flex-col">
-          <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />
+          <CustomerWizard onComplete={() => { setIsAuthenticated(true); handleSetActiveTab('dashboard'); }} />
         </div>
       </div>
     );
-
-
   }
 
   // Redemption overlay
@@ -99,25 +98,14 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
     return <RedemptionSuccessScreen rewardId={selectedReward} onDone={() => { setShowRedemptionSuccess(false); setSelectedReward(null); handleSetActiveTab('history'); }} />;
   }
 
-  if (showRedemption && selectedReward) {
-    return <RedemptionScreen rewardId={selectedReward} onClose={() => setShowRedemption(false)} onRedeemed={() => { setShowRedemption(false); setShowRedemptionSuccess(true); }} />;
-  }
 
-  // Reward detail (full-screen over main)
-  if (selectedReward && activeTab === 'rewards') {
-    return (
-      <CustomerLayout tab={activeTab} setTab={t => { handleSetActiveTab(t); setSelectedReward(null); }} title="Reward Detail" showBack onBack={() => setSelectedReward(null)}>
-        <RewardDetailScreen rewardId={selectedReward} onBack={() => setSelectedReward(null)} onShowQR={() => setShowRedemption(true)} />
-      </CustomerLayout>
-    );
-  }
 
   // Post-auth main tabs
   const getTitle = () => {
     if (showPrivacy) return 'Privacy & Data';
     if (activeTab === 'offers' && selectedOffer) return 'Offer Detail';
     if ((activeTab as string) === 'product' && selectedProduct) return 'Item Details';
-    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'Coupons', membership: 'Membership Cards', offers: 'Offers', rewards: 'Rewards Wallet', history: 'Activity', profile: 'My Profile', checkout: 'Checkout' };
+    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'My Rewards', membership: 'Membership Cards', offers: 'Offers', rewards: 'Rewards Wallet', history: 'Activity', profile: 'My Profile', checkout: 'Checkout' };
     return titles[activeTab] || 'Revia';
   };
 
@@ -151,13 +139,15 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
           onBack={() => { setSelectedProduct(null); handleSetActiveTab('menu'); }}
           addItem={addItem}
         />
-      ) : activeTab === 'offers' || activeTab === 'coupons' ? (
-        <OffersScreen type={activeTab} selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+      ) : activeTab === 'offers' ? (
+        <OffersScreen type="offers" selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+      ) : activeTab === 'coupons' || activeTab === 'rewards' ? (
+        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
       ) : activeTab === 'membership' ? (
         <MembershipScreen />
-      ) : activeTab === 'rewards' ? (
-        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
-      ) : activeTab === 'history' || activeTab === 'orders' ? (
+      ) : activeTab === 'orders' ? (
+        <OrdersScreen />
+      ) : activeTab === 'history' ? (
         <HistoryScreen />
       ) : activeTab === 'profile' ? (
         <ProfileScreen onPrivacy={() => setShowPrivacy(true)} onNavigateApp={onNavigate} />

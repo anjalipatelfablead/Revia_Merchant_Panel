@@ -54,6 +54,10 @@ export const Header: React.FC<HeaderProps> = ({
       case '/settings/audit':
       case '/settings/branding':
         return { category: 'Governance', page: 'Settings & Audit Log' };
+      case '/item-catalog':
+        return { category: 'Catalog', page: 'Item Catalog' };
+      case '/orders':
+        return { category: 'Orders', page: 'Order Queue' };
       case '/dashboard':
       default:
         return { category: 'Merchant Portal', page: 'Dashboard Overview' };
@@ -63,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
+    <header className="sticky top-0 z-50 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
       {/* Left: Mobile hamburger & Clean Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button

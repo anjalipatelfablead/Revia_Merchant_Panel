@@ -61,7 +61,7 @@ export const RewardsPage: React.FC = () => {
   };
 
   return (
-    <div className="p-4 lg:p-8 max-w-[1400px] mx-auto space-y-6">
+    <div className="p-4 lg:p-6 max-w-[1400px] mx-auto space-y-6">
       {feedbackToast && (
         <div className="fixed bottom-4 right-4 bg-[#1A1615] text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-in fade-in slide-in-from-bottom-4">
           <div className="w-8 h-8 rounded-full bg-[#0D7A53]/20 flex items-center justify-center text-[#0D7A53]">
@@ -86,7 +86,7 @@ export const RewardsPage: React.FC = () => {
             <span className="text-[#9E9A93] text-[10px] font-bold uppercase tracking-widest">• Engine v4.2</span>
           </div> */}
 
-          <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] leading-tight">
+          <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] leading-tight">
             Rewards Catalog & Tier Perks Manager
           </h1>
           <p className="text-sm text-[#6E6A66] mt-1 font-medium">
@@ -101,11 +101,11 @@ export const RewardsPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EFECE6] text-[#1A1615] text-xs font-bold rounded-lg shadow-sm hover:bg-[#FAF8F5] transition-colors cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] text-[#1A1615] text-xs font-bold rounded-lg shadow-xs hover:bg-[#FAF8F5] transition-colors cursor-pointer">
               <Download className="w-4 h-4" /> Export Matrix (CSV)
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] border border-[#9E782F] text-white text-xs font-bold rounded-lg shadow-sm hover:opacity-95 transition-opacity cursor-pointer">
-              <Plus className="w-4 h-4" /> Create New Reward
+            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-xs font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
+              <Plus className="w-4 h-4 text-white" /> Create New Reward
             </button>
           </div>
         </div>
@@ -114,7 +114,7 @@ export const RewardsPage: React.FC = () => {
       {/* KPI Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1 */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
+        <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">ACTIVE REWARD<br />CATALOG</h3>
             <span className="bg-[#FDF8EB] text-[#9E782F] text-[9px] font-bold uppercase px-2 py-1 rounded">Across 4<br />Tiers</span>
@@ -129,7 +129,7 @@ export const RewardsPage: React.FC = () => {
         </div>
 
         {/* Card 2 */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
+        <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">30-DAY REDEMPTIONS</h3>
             <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full">+18.4%</span>
@@ -148,7 +148,7 @@ export const RewardsPage: React.FC = () => {
         </div>
 
         {/* Card 3 */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
+        <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs">
           <div className="flex justify-between items-start mb-3">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">HIGHEST VELOCITY</h3>
             <span className="bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] text-[10px] font-bold px-2 py-0.5 rounded">412 claimed</span>
@@ -163,7 +163,7 @@ export const RewardsPage: React.FC = () => {
         </div>
 
         {/* Card 4 */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm">
+        <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs">
           <div className="flex justify-between items-start mb-3">
             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">LIABILITY / ESCROW</h3>
             <span className="bg-[#E6F4ED] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full">Sealed</span>
