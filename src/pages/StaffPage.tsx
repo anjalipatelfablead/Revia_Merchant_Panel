@@ -323,7 +323,7 @@ export const StaffPage: React.FC = () => {
       )}
 
       {/* Page Title & Main Action Buttons */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
             <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
@@ -338,7 +338,7 @@ export const StaffPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 self-start md:self-auto">
+        <div className="flex items-center gap-2.5 self-start lg:self-auto">
           <button
             onClick={handleExportAudit}
             className="px-3.5 py-2 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
@@ -541,11 +541,10 @@ export const StaffPage: React.FC = () => {
                       <tr
                         key={member.id}
                         onClick={() => setSelectedStaffId(member.id)}
-                        className={`transition-colors cursor-pointer ${
-                          isSelected
+                        className={`transition-colors cursor-pointer ${isSelected
                             ? 'bg-[#FAF6EE]/70 font-medium'
                             : 'hover:bg-[#FAF8F5]'
-                        }`}
+                          }`}
                       >
                         {/* Member & Avatar */}
                         <td className="py-3 px-5">
@@ -603,7 +602,7 @@ export const StaffPage: React.FC = () => {
               {filteredStaff.map((member) => {
                 const isSelected = member.id === selectedStaff.id;
                 const isExpanded = expandedStaffRow === member.id;
-                
+
                 return (
                   <div key={member.id} className="border-b border-[#F2EFE9] last:border-b-0 overflow-hidden">
                     <button
@@ -611,9 +610,8 @@ export const StaffPage: React.FC = () => {
                         setSelectedStaffId(member.id);
                         setExpandedStaffRow(isExpanded ? null : member.id);
                       }}
-                      className={`w-full p-4 flex items-center justify-between transition-colors cursor-pointer ${
-                        isSelected ? 'bg-[#FAF6EE]/70' : 'bg-white hover:bg-[#FAF8F5]'
-                      }`}
+                      className={`w-full p-4 flex items-center justify-between transition-colors cursor-pointer ${isSelected ? 'bg-[#FAF6EE]/70' : 'bg-white hover:bg-[#FAF8F5]'
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         {member.avatar ? (
@@ -632,7 +630,7 @@ export const StaffPage: React.FC = () => {
                           <div className="text-[11px] text-[#7C746C]">{member.email}</div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-3">
                         <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-semibold ${member.roleTierClass}`}>
                           {member.roleTierLabel}
@@ -644,7 +642,7 @@ export const StaffPage: React.FC = () => {
                         )}
                       </div>
                     </button>
-                    
+
                     {isExpanded && (
                       <div className={`p-4 grid grid-cols-2 gap-4 border-t border-[#F2EFE9] ${isSelected ? 'bg-[#FAF6EE]/30' : 'bg-[#FAF8F5]/50'}`}>
                         <div>
@@ -921,11 +919,10 @@ export const StaffPage: React.FC = () => {
                       <span className="font-medium text-[#1A1615]">{vp.name}</span>
                     </div>
                     <span
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
-                        vp.type === 'gold'
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${vp.type === 'gold'
                           ? 'bg-[#FDF3D6] text-[#9E782F] border border-[#E5D7BE]'
                           : 'bg-[#F5F2EC] text-[#5C554E]'
-                      }`}
+                        }`}
                     >
                       {vp.role}
                     </span>
