@@ -36,6 +36,10 @@ export const TransactionsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 7;
 
+  const [selectedStampsAction, setSelectedStampsAction] = useState<number>(2);
+  const [customStamps, setCustomStamps] = useState<string>('');
+  const [orderValue, setOrderValue] = useState<string>('$18.50');
+
   const showToast = (msg: string) => {
     setFeedbackToast(msg);
     setTimeout(() => setFeedbackToast(null), 3000);
@@ -52,7 +56,7 @@ export const TransactionsPage: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const transactions = [
+  const [transactions, setTransactions] = useState([
     {
       id: '#ORD-94812 (NFC-TAP-44)',
       guestName: 'Marcus Vance',
@@ -118,7 +122,7 @@ export const TransactionsPage: React.FC = () => {
       stamps: '0 Stamps',
       status: 'Completed',
     },
-  ];
+  ]);
 
   const filteredTransactions = transactions.filter(tx => {
     const matchesSearch = tx.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -552,7 +556,7 @@ export const TransactionsPage: React.FC = () => {
                 {/* Header */}
                 <div className="px-5 py-4 border-b border-[#EFECE6] bg-[#1A1615] text-white rounded-t-xl flex items-center justify-between">
                   <h2 className="text-[15px] font-bold flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-[#D4A753]" /> ⚡ Fast Counter Entry
+                    <Zap className="w-4 h-4 text-[#D4A753]" />Fast Counter Entry
                   </h2>
                   <div className="flex items-center gap-2">
                     <span className="text-[9px] font-bold uppercase tracking-wider text-white/70">QUICK MODE</span>
@@ -620,38 +624,66 @@ export const TransactionsPage: React.FC = () => {
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2">Rapid Stamp Action</div>
                     <div className="grid grid-cols-2 gap-3 mb-3">
-                      <button className="p-3 bg-white border border-[#EFECE6] hover:border-[#D4A753] hover:bg-[#FDF8EB] rounded-xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm cursor-pointer group">
-                        <div className="w-8 h-8 rounded-full bg-[#FAF8F5] group-hover:bg-[#D4A753] flex items-center justify-center transition-colors">
-                          <Coffee className="w-4 h-4 text-[#1A1615] group-hover:text-white" />
+                      <button
+                        onClick={() => { setSelectedStampsAction(1); setCustomStamps(''); }}
+                        className={`p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm cursor-pointer relative overflow-hidden ${selectedStampsAction === 1 ? 'bg-[#FDF8EB]/30 border-2 border-[#D4A753]' : 'bg-white border border-[#EFECE6] hover:border-[#D4A753] hover:bg-[#FDF8EB] group'}`}
+                      >
+                        {selectedStampsAction === 1 && (
+                          <div className="absolute top-2 right-2">
+                            <div className="w-4 h-4 rounded-full bg-[#D4A753] text-white flex items-center justify-center"><Check className="w-2.5 h-2.5" /></div>
+                          </div>
+                        )}
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${selectedStampsAction === 1 ? 'bg-[#D4A753]' : 'bg-[#FAF8F5] group-hover:bg-[#D4A753]'}`}>
+                          <Coffee className={`w-4 h-4 ${selectedStampsAction === 1 ? 'text-white' : 'text-[#1A1615] group-hover:text-white'}`} />
                         </div>
                         <span className="text-sm font-bold text-[#1A1615]">+1 Stamp</span>
-                        <span className="text-[10px] font-semibold text-[#6E6A66]">Drip / Espresso</span>
+                        <span className={`text-[10px] font-semibold ${selectedStampsAction === 1 ? 'text-[#9E782F]' : 'text-[#6E6A66]'}`}>Drip / Espresso</span>
                       </button>
-                      <button className="p-3 bg-white border-2 border-[#D4A753] bg-[#FDF8EB]/30 rounded-xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm cursor-pointer relative overflow-hidden">
-                        <div className="absolute top-2 right-2">
-                          <div className="w-4 h-4 rounded-full bg-[#D4A753] text-white flex items-center justify-center"><Check className="w-2.5 h-2.5" /></div>
-                        </div>
-                        <div className="w-8 h-8 rounded-full bg-[#D4A753] flex items-center justify-center">
-                          <Coffee className="w-4 h-4 text-white" />
+                      <button
+                        onClick={() => { setSelectedStampsAction(2); setCustomStamps(''); }}
+                        className={`p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm cursor-pointer relative overflow-hidden ${selectedStampsAction === 2 ? 'bg-[#FDF8EB]/30 border-2 border-[#D4A753]' : 'bg-white border border-[#EFECE6] hover:border-[#D4A753] hover:bg-[#FDF8EB] group'}`}
+                      >
+                        {selectedStampsAction === 2 && (
+                          <div className="absolute top-2 right-2">
+                            <div className="w-4 h-4 rounded-full bg-[#D4A753] text-white flex items-center justify-center"><Check className="w-2.5 h-2.5" /></div>
+                          </div>
+                        )}
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${selectedStampsAction === 2 ? 'bg-[#D4A753]' : 'bg-[#FAF8F5] group-hover:bg-[#D4A753]'}`}>
+                          <Coffee className={`w-4 h-4 ${selectedStampsAction === 2 ? 'text-white' : 'text-[#1A1615] group-hover:text-white'}`} />
                         </div>
                         <span className="text-sm font-bold text-[#1A1615]">+2 Stamps</span>
-                        <span className="text-[10px] font-semibold text-[#9E782F]">Pour-Over / Beans</span>
+                        <span className={`text-[10px] font-semibold ${selectedStampsAction === 2 ? 'text-[#9E782F]' : 'text-[#6E6A66]'}`}>Pour-Over / Beans</span>
                       </button>
                     </div>
 
                     <div className="flex items-center justify-between px-1">
                       <span className="text-[11px] font-semibold text-[#6E6A66]">Need custom count?</span>
-                      <input type="text" placeholder="Enter Custom Stamps" className="w-36 px-2 py-1 bg-white border border-[#EFECE6] rounded text-xs font-mono text-right focus:outline-none focus:border-[#D4A753]" />
+                      <input
+                        type="text"
+                        value={customStamps}
+                        onChange={e => { setCustomStamps(e.target.value); setSelectedStampsAction(0); }}
+                        placeholder="Enter Custom Stamps"
+                        className="w-36 px-2 py-1 bg-white border border-[#EFECE6] rounded text-xs font-mono text-right focus:outline-none focus:border-[#D4A753]"
+                      />
                     </div>
                   </div>
 
                   {/* Section 3: Order Value */}
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2">Order Value (Optional Sync)</div>
-                    <input type="text" defaultValue="$ 18.50" className="w-full px-4 py-3 bg-white border border-[#EFECE6] rounded-xl text-xl font-bold font-mono text-[#1A1615] focus:outline-none shadow-inner mb-2" />
+                    <input
+                      type="text"
+                      value={orderValue}
+                      onChange={e => setOrderValue(e.target.value)}
+                      className="w-full px-4 py-3 bg-white border border-[#EFECE6] rounded-xl text-xl font-bold font-mono text-[#1A1615] focus:outline-none shadow-inner mb-2"
+                    />
                     <div className="grid grid-cols-4 gap-2">
                       {['$5', '$10', '$25', '$50'].map((val) => (
-                        <button key={val} className="py-1.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg text-xs font-bold text-[#6E6A66] transition-colors cursor-pointer">
+                        <button
+                          key={val}
+                          onClick={() => setOrderValue(val)}
+                          className="py-1.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg text-xs font-bold text-[#6E6A66] transition-colors cursor-pointer"
+                        >
                           {val}
                         </button>
                       ))}
@@ -675,8 +707,34 @@ export const TransactionsPage: React.FC = () => {
 
                 {/* Section 5: Primary Submission Button & POS Status */}
                 <div className="p-5 border-t border-[#EFECE6] bg-white">
-                  <button className="w-full py-3.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[15px] font-bold transition-opacity shadow-md mb-3 cursor-pointer">
-                    Process &amp; Log Stamp (Enter ↵) &rarr;
+                  <button
+                    onClick={() => {
+                      const finalStampsCount = customStamps ? parseInt(customStamps) || 0 : selectedStampsAction;
+                      const stampsString = finalStampsCount > 0 ? `+${finalStampsCount} Stamp${finalStampsCount > 1 ? 's' : ''}` : '0 Stamps';
+
+                      const newTx = {
+                        id: `#ORD-${Math.floor(10000 + Math.random() * 90000)} (FAST-COUNTER)`,
+                        guestName: counterSearch.includes('REV') ? 'Marcus Vance' : 'Guest Walk-in',
+                        avatar: counterSearch.includes('REV') ? 'MV' : 'GW',
+                        tier: counterSearch.includes('REV') ? 'BLACK TIER' : 'NON-MEMBER',
+                        type: 'Direct Fast POS Entry',
+                        items: 'Manual Counter Entry',
+                        channel: 'POS-02 (Downtown Flagship)',
+                        time: 'Just now',
+                        amount: orderValue || '$0.00',
+                        stamps: stampsString,
+                        status: 'Completed',
+                      };
+                      setTransactions([newTx, ...transactions]);
+                      showToast('Processed and logged stamp successfully.');
+                      setCounterSearch('');
+                      setSelectedStampsAction(2);
+                      setCustomStamps('');
+                      setOrderValue('$18.50');
+                    }}
+                    className="w-full py-3.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[15px] font-bold transition-opacity shadow-md mb-3 cursor-pointer flex justify-center items-center gap-2"
+                  >
+                    <CheckCircle2 className="w-5 h-5" /> Process &amp; Log Stamp
                   </button>
                   <div className="flex flex-col sm:flex-row items-center justify-between text-[10px] font-semibold text-[#6E6A66]">
                     <span className="flex items-center gap-1">
@@ -732,8 +790,25 @@ export const TransactionsPage: React.FC = () => {
               <h3 className="text-lg font-bold text-[#1A1615]">Connection Established</h3>
               <p className="text-xs text-[#6E6A66] mb-4">Please complete the transaction on the physical terminal reader.</p>
               <button
-                onClick={() => { setFastPosModalOpen(false); showToast('Terminal sync complete.'); }}
-                className="w-full py-2.5 bg-[#1A1615] hover:bg-black text-white rounded-lg text-sm font-bold shadow-sm transition-colors"
+                onClick={() => {
+                  const newTx = {
+                    id: `#ORD-${Math.floor(10000 + Math.random() * 90000)} (TERMINAL-SYNC)`,
+                    guestName: 'Walk-in Customer',
+                    avatar: 'WC',
+                    tier: 'NON-MEMBER',
+                    type: 'Terminal Sync Purchase',
+                    items: 'Hardware Terminal Sync',
+                    channel: 'POS-01 (Barista Counter)',
+                    time: 'Just now',
+                    amount: '$22.00',
+                    stamps: '+2 Stamps',
+                    status: 'Completed',
+                  };
+                  setTransactions([newTx, ...transactions]);
+                  setFastPosModalOpen(false);
+                  showToast('Terminal sync complete. Transaction recorded.');
+                }}
+                className="w-full py-2.5 bg-[#1A1615] hover:bg-black text-white rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer"
               >
                 Acknowledge & Close
               </button>
