@@ -862,13 +862,15 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
           </div>
         </div>
       </div>
-
-
     </div>
   );
 };
 
-export const CampaignBuilderPage: React.FC = () => {
+export interface CampaignBuilderPageProps {
+  initialViewMode?: 'dashboard' | 'builder';
+}
+
+export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard' }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
   const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
@@ -888,7 +890,7 @@ export const CampaignBuilderPage: React.FC = () => {
   const [showCustomSegmentModal, setShowCustomSegmentModal] = useState(false);
   const [customSegmentName, setCustomSegmentName] = useState('');
 
-  const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>('dashboard');
+  const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
