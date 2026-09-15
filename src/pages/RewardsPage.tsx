@@ -24,7 +24,7 @@ import {
   Trophy
 } from 'lucide-react';
 
-export const RewardsPage: React.FC = () => {
+export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('All Rewards (18)');
   const [dynamicQR, setDynamicQR] = useState(true);
   const [pinOverride, setPinOverride] = useState(true);
@@ -60,8 +60,99 @@ export const RewardsPage: React.FC = () => {
     return true;
   };
 
+  const [showQRPreview, setShowQRPreview] = useState<string | null>(null);
+  const [showManageSlots, setShowManageSlots] = useState<string | null>(null);
+  const [showEdit, setShowEdit] = useState<string | null>(null);
+
   return (
-    <div className="p-4 lg:p-8 max-w-[1400px] mx-auto space-y-6">
+    <div className="p-4 lg:p-8 max-w-[1400px] mx-auto space-y-6 relative">
+      {/* Modals */}
+      {showQRPreview && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-all">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full relative shadow-2xl animate-in zoom-in-95 duration-200">
+            <button onClick={() => setShowQRPreview(null)} className="absolute top-4 right-4 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            <div className="text-center">
+              <h3 className="text-xl font-bold text-[#1A1615] mb-2">QR Preview</h3>
+              <p className="text-[13px] text-[#6E6A66] mb-8">Scan to preview voucher <strong className="text-[#1A1615]">{showQRPreview}</strong></p>
+              <div className="bg-[#FAF8F5] w-56 h-56 mx-auto rounded-2xl flex items-center justify-center border border-[#EFECE6] mb-8 shadow-inner">
+                <QrCode className="w-32 h-32 text-[#1A1615]" />
+              </div>
+              <button onClick={() => setShowQRPreview(null)} className="w-full py-3.5 bg-[#D4A753] hover:bg-[#C29541] text-white rounded-xl text-[14px] font-bold transition-colors shadow-sm cursor-pointer">Close Preview</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showManageSlots && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-all">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl animate-in zoom-in-95 duration-200">
+            <button onClick={() => setShowManageSlots(null)} className="absolute top-4 right-4 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            <div>
+              <h3 className="text-xl font-bold text-[#1A1615] mb-2 flex items-center gap-2"><Calendar className="w-5 h-5 text-[#D4A753]" /> Manage Slots</h3>
+              <p className="text-[13px] text-[#6E6A66] mb-6">Configure availability for VIP experience <strong className="text-[#1A1615]">{showManageSlots}</strong></p>
+              <div className="space-y-3 mb-8">
+                 <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-[#FAF8F5] shadow-sm">
+                   <div className="flex flex-col">
+                     <span className="text-sm font-bold text-[#1A1615]">Friday, Oct 24</span>
+                     <span className="text-[11px] text-[#6E6A66]">19:00 - 21:00</span>
+                   </div>
+                   <span className="text-[12px] font-bold text-[#D4A753] bg-[#FDF8EB] px-3 py-1 rounded-full border border-[#F3E5C8]">4/4 Booked</span>
+                 </div>
+                 <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-white shadow-sm hover:border-[#D1CDC7] transition-colors">
+                   <div className="flex flex-col">
+                     <span className="text-sm font-bold text-[#1A1615]">Saturday, Oct 25</span>
+                     <span className="text-[11px] text-[#6E6A66]">19:00 - 21:00</span>
+                   </div>
+                   <span className="text-[12px] font-bold text-[#0D7A53] bg-[#E6F4ED] px-3 py-1 rounded-full border border-[#BCE3D1]">2/4 Available</span>
+                 </div>
+              </div>
+              <button onClick={() => setShowManageSlots(null)} className="w-full py-3.5 bg-[#1A1615] hover:bg-black text-white rounded-xl text-[14px] font-bold transition-colors cursor-pointer">Done</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEdit && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-all">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl animate-in zoom-in-95 duration-200">
+            <button onClick={() => setShowEdit(null)} className="absolute top-4 right-4 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            <div>
+              <h3 className="text-xl font-bold text-[#1A1615] mb-2 flex items-center gap-2"><Edit2 className="w-5 h-5 text-[#D4A753]" /> Edit Reward</h3>
+              <p className="text-[13px] text-[#6E6A66] mb-6">Modifying details for <strong className="text-[#1A1615]">{showEdit}</strong></p>
+              <div className="space-y-5 mb-8">
+                <div>
+                  <label className="block text-[11px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2">Title</label>
+                  <input type="text" defaultValue={showEdit} className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2">Cost</label>
+                    <input type="text" defaultValue="10 Stamps" className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2">Status</label>
+                    <select className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] appearance-none cursor-pointer">
+                      <option>Active</option>
+                      <option>Draft</option>
+                      <option>Paused</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowEdit(null)} className="flex-1 py-3.5 bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-xl text-[14px] font-bold transition-colors cursor-pointer">Cancel</button>
+                <button onClick={() => { setShowEdit(null); showToast('Reward updated successfully!'); }} className="flex-1 py-3.5 bg-[#D4A753] hover:bg-[#C29541] text-white rounded-xl text-[14px] font-bold transition-colors shadow-sm cursor-pointer">Save Changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {feedbackToast && (
         <div className="fixed bottom-4 right-4 bg-[#1A1615] text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-in fade-in slide-in-from-bottom-4">
           <div className="w-8 h-8 rounded-full bg-[#0D7A53]/20 flex items-center justify-center text-[#0D7A53]">
@@ -104,7 +195,7 @@ export const RewardsPage: React.FC = () => {
             <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] text-[#1A1615] text-xs font-bold rounded-lg shadow-xs hover:bg-[#FAF8F5] transition-colors cursor-pointer">
               <Download className="w-4 h-4" /> Export Matrix (CSV)
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-xs font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
+            <button onClick={() => onNavigate?.('/rewards/new')} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-xs font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
               <Plus className="w-4 h-4 text-white" /> Create New Reward
             </button>
           </div>
@@ -300,9 +391,9 @@ export const RewardsPage: React.FC = () => {
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
                     <Clock className="w-3.5 h-3.5" /> Just Added
                   </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer"><QrCode className="w-3 h-3" /> QR Preview</button>
-                    <button onClick={() => { setNewVoucherTitle(card.title); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setShowQRPreview(card.id)} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer"><QrCode className="w-3 h-3" /> QR Preview</button>
+                    <button onClick={() => setShowEdit(card.title)} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, card.id])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -348,11 +439,11 @@ export const RewardsPage: React.FC = () => {
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
                     <Clock className="w-3.5 h-3.5" /> 30 Days expiry
                   </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setShowQRPreview('#REV-041')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-3 h-3" /> QR Preview
                     </button>
-                    <button onClick={() => { setNewVoucherTitle('Complimentary Specialty Flight & Pastry'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('Complimentary Specialty Flight & Pastry')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-041'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -398,11 +489,11 @@ export const RewardsPage: React.FC = () => {
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
                     <Calendar className="w-3.5 h-3.5" /> Continuous Season
                   </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setShowQRPreview('#REV-108')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-3 h-3" /> QR Preview
                     </button>
-                    <button onClick={() => { setNewVoucherTitle('$10 Off Any Roasted Bean Bag (250g)'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('$10 Off Any Roasted Bean Bag (250g)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-108'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -448,11 +539,11 @@ export const RewardsPage: React.FC = () => {
                     <Trophy className="w-3.5 h-3.5" /> Concierge RSVP Required
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => showToast('Slot Manager opened')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1615] text-[#D4A753] border border-[#332e2d] text-[11px] font-bold rounded-lg hover:bg-black transition-colors cursor-pointer">
+                    <button onClick={() => setShowManageSlots('Revia Obsidian Private Tasting Tour')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1615] text-[#D4A753] border border-[#332e2d] text-[11px] font-bold rounded-lg hover:bg-black transition-colors cursor-pointer">
                       <Calendar className="w-3 h-3" /> Manage Slots
                     </button>
-                    <button onClick={() => { setNewVoucherTitle('Revia Obsidian Private Tasting Tour'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setDeletedCards([...deletedCards, '#VIP-001'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('Revia Obsidian Private Tasting Tour')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setDeletedCards([...deletedCards, '#VIP-001'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
               </div>
@@ -499,11 +590,11 @@ export const RewardsPage: React.FC = () => {
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
                     <Activity className="w-3.5 h-3.5" /> Recurring Weekly
                   </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setShowQRPreview('#REV-012')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-3 h-3" /> QR Preview
                     </button>
-                    <button onClick={() => { setNewVoucherTitle('Artisanal Single-Origin Pour-Over Upgrade'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('Artisanal Single-Origin Pour-Over Upgrade')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-012'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -551,11 +642,11 @@ export const RewardsPage: React.FC = () => {
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66]">
                     <Clock className="w-3.5 h-3.5" /> Weekend Refresh
                   </div>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => showToast('QR Preview generated')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setShowQRPreview('#REV-077')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-3 h-3" /> QR Preview
                     </button>
-                    <button onClick={() => { setNewVoucherTitle('Reserve Cold Brew Growler Refill (50% Off)'); showToast('Edit mode enabled') }} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('Reserve Cold Brew Growler Refill (50% Off)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-077'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>

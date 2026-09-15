@@ -35,6 +35,7 @@ import { QrCodesPage } from './pages/QrCodesPage';
 import { ItemCatalogPage } from './pages/ItemCatalogPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
+import { CreateRewardPage } from './pages/CreateRewardPage';
 import { RedemptionTerminalPage } from './pages/RedemptionTerminalPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationPage } from './pages/NotificationPage';
@@ -49,7 +50,7 @@ const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
   '/loyalty', '/qr-codes', '/item-catalog', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
-  '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
+  '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
   '/customer/landing', '/customer', '/customer/identify', '/',
   '/about', '/contact', '/privacy', '/terms'
@@ -272,7 +273,11 @@ export default function App() {
           )}
 
           {currentRoute === '/rewards' && (
-            <RewardsPage />
+            <RewardsPage onNavigate={handleNavigate} />
+          )}
+
+          {currentRoute === '/rewards/new' && (
+            <CreateRewardPage onNavigate={handleNavigate} />
           )}
 
           {currentRoute === '/terminal' && (

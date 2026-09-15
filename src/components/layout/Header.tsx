@@ -45,6 +45,8 @@ export const Header: React.FC<HeaderProps> = ({
         return { category: 'Growth & Automation', page: 'Campaign Builder' };
       case '/rewards':
         return { category: 'Rewards Engine', page: 'Perks Catalog' };
+      case '/rewards/new':
+        return { category: 'Rewards Catalog', page: 'Create New Reward' };
       case '/analytics':
         return { category: 'Intelligence', page: 'Analytics & Reports' };
       case '/billing':
