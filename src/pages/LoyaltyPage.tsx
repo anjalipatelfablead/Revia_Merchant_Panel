@@ -129,23 +129,23 @@ export const LoyaltyPage: React.FC = () => {
           <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">
             Loyalty Program Builder
           </h1>
-          <button className="lg:hidden px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer shrink-0">
+          <button className="md:hidden px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer shrink-0">
             Discard
           </button>
         </div>
 
-        <div className="flex flex-row items-center gap-2 lg:gap-3 w-full lg:w-auto">
-          <button className="hidden lg:block flex-none px-4 py-2 text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
+        <div className="flex flex-row items-center gap-2 lg:gap-3 self-start lg:self-auto">
+          <button className="hidden md:block flex-none px-4 py-2 text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
             Discard Changes
           </button>
-          <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer whitespace-nowrap">
+          <button className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer whitespace-nowrap">
             <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Save Draft
           </button>
           <button
             onClick={handlePublish}
             disabled={publishStatus !== 'idle'}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-3 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${publishStatus === 'published'
+            className={`flex items-center justify-center gap-2 px-3 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${publishStatus === 'published'
               ? 'bg-[#0D7A53] cursor-default'
               : publishStatus === 'publishing'
                 ? 'bg-[#1A1615] opacity-80 cursor-wait'

@@ -185,7 +185,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="hidden md:flex items-center gap-10 text-sm font-bold text-gray-600 bg-white/50 px-8 py-3 rounded-full backdrop-blur-md border border-white/60 shadow-sm"
+                  className="hidden lg:flex items-center gap-10 text-sm font-bold text-gray-600 bg-white/50 px-8 py-3 rounded-full backdrop-blur-md border border-white/60 shadow-sm"
                >
                   <a href="#features" className="hover:text-[#B8862E] transition-colors">Features</a>
                   <a href="#how-it-works" className="hover:text-[#B8862E] transition-colors">How It Works</a>
@@ -196,7 +196,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="hidden md:flex items-center gap-6"
+                  className="hidden lg:flex items-center gap-6"
                >
                   <button onClick={() => onNavigate?.('/login')} className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-[#B8862E] transition-colors">
                      <Lock className="w-4 h-4" />
@@ -208,7 +208,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   </button>
                </motion.div>
 
-               <button className="md:hidden z-50 relative" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+               <button className="lg:hidden z-50 relative" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
                   {isMobileMenuOpen ? <X className="w-6 h-6 text-[#241C15]" /> : <Menu className="w-6 h-6" />}
                </button>
             </div>
@@ -220,7 +220,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="fixed inset-0 z-40 bg-white/95 backdrop-blur-2xl pt-28 px-6 flex flex-col gap-6 md:hidden border-b border-gray-100"
+                  className="fixed inset-0 z-40 bg-white/95 backdrop-blur-2xl pt-28 px-6 flex flex-col gap-6 lg:hidden border-b border-gray-100"
                >
                   <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black border-b border-gray-100 pb-4">Features</a>
                   <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black border-b border-gray-100 pb-4">How It Works</a>
@@ -281,7 +281,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   </motion.p>
                </motion.div>
 
-               <div className="flex justify-center lg:justify-end lg:pr-12 h-auto sm:h-[580px] items-center mt-6 sm:mt-10 lg:mt-0 pb-4 sm:pb-0">
+               <div className="flex justify-center lg:justify-end lg:pr-12 h-auto sm:h-auto lg:h-[580px] items-center mt-6 sm:mt-10 lg:mt-0 pb-4 sm:pb-0">
                   <div className="relative">
                      {/* Ambient glow behind phone */}
                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-gradient-to-br from-[#D9A94E]/40 to-[#241C15]/10 rounded-full blur-[80px]" />
@@ -321,7 +321,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         </div>
                      </motion.div>
 
-                     <MobileFrame className="transform lg:rotate-3 transition-transform duration-700 hover:rotate-0 relative z-10">
+                     <MobileFrame className="transform lg:rotate-3 transition-transform duration-700 hover:rotate-0 relative z-10 sm:scale-90 md:scale-90 lg:scale-100">
                         <div className="flex flex-col h-full bg-[#FAF6EE] p-5">
                            <div className="bg-gradient-to-br from-[#241C15] to-[#1A1410] rounded-3xl p-6 mb-5 text-white shadow-xl relative overflow-hidden">
                               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2" />
@@ -623,12 +623,12 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         Annual
                         <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${isAnnual ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700'}`}>Save 20%</span>
                      </button>
-                     <div className={`absolute top-1 bottom-1 bg-[#241C15] rounded-full transition-all duration-300 ease-out shadow-md ${isAnnual ? 'translate-x-[98px] w-[140px] sm:w-[170px]' : 'translate-x-0 w-[90px] sm:w-[98px]'}`} />
+                     <div className={`absolute top-1 bottom-1 bg-[#241C15] rounded-full transition-all duration-300 ease-out shadow-md ${isAnnual ? 'translate-x-[90px] sm:translate-x-[98px] w-[130px] sm:w-[170px]' : 'translate-x-0 w-[85px] sm:w-[98px]'}`} />
                   </div>
                </div>
 
                {/* Desktop pricing grid */}
-               <div className="hidden md:grid grid-cols-3 gap-8 max-w-6xl mx-auto items-center mt-2">
+               <div className="hidden lg:grid grid-cols-3 gap-8 max-w-6xl mx-auto items-center mt-2">
                   {/* Starter */}
                   <div className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-xl shadow-gray-200/40 hover:-translate-y-2 transition-transform duration-300">
                      <h3 className="text-2xl font-black mb-2 text-[#241C15]">Starter</h3>
@@ -693,7 +693,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                </div>
 
                {/* Mobile pricing slider */}
-               <div className="md:hidden mt-4">
+               <div className="lg:hidden mt-4">
                   <div
                      ref={pricingScrollRef}
                      onScroll={handlePricingScroll}

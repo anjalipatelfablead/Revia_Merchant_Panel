@@ -159,7 +159,9 @@ export type NavRoute =
   | '/settings/branding'
   | '/login'
   | '/onboarding'
-  | '/customer-landing'
   | '/customer'
+  | '/customer/landing'
+  | '/customer/onboarding'
+  | '/customer/curate-experience'
   | '/customer-onboarding';
 

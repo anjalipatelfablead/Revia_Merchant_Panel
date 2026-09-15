@@ -41,7 +41,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({ onNavigate }) => {
           </button>
           
           <button
-            onClick={() => onNavigate('/customer-landing')}
+            onClick={() => onNavigate('/')}
             className="w-full sm:w-1/2 flex items-center justify-center gap-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:from-[#c29646] hover:to-[#8c6724] text-white px-6 py-4 rounded-xl text-sm font-black transition-all shadow-lg shadow-[#D4A753]/20"
           >
             <Home className="w-4 h-4" /> System Core

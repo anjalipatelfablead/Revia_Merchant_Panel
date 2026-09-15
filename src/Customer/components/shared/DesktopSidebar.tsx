@@ -14,7 +14,7 @@ export const DesktopSidebar: React.FC<SidebarProps> = ({ tabs, activeTab, setTab
       
       {/* Logo */}
       <div className="h-[70px] flex items-center px-6 border-b border-[#E6E6E6] shrink-0">
-        <button onClick={() => onNavigateApp?.('/customer-landing')} className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
+        <button onClick={() => onNavigateApp?.('/')} className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="w-8 h-8 bg-[#C89B3C] rounded-lg flex items-center justify-center shadow-md">
             <span className="text-white font-black text-lg leading-none">R</span>
           </div>
