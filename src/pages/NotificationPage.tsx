@@ -60,7 +60,7 @@ export const NotificationPage: React.FC = () => {
 					<div>
 						<div className="flex items-center gap-2">
 							<Bell className="h-5 w-5 text-[#D4A753]" />
-							<h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">Notifications</h1>
+							<h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Notifications</h1>
 							<span className="rounded-full bg-[#EBF7F0] px-2.5 py-0.5 text-[11px] font-bold text-[#15803D] border border-[#15803D]/20">{unreadCount} new</span>
 						</div>
 						<p className="mt-1 text-sm text-[#7C746C]">Manage all your system alerts and real-time updates.</p>

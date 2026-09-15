@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  Maximize, 
-  Wifi, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Search, 
+import {
+  Maximize,
+  Wifi,
+  AlertTriangle,
+  CheckCircle2,
+  Search,
   Filter,
   CreditCard,
   History,
@@ -15,13 +15,13 @@ import {
 
 export const RedemptionTerminalPage = () => {
   return (
-    <div className="max-w-[1200px] mx-auto w-full p-4 sm:p-8 sm:pb-12 flex flex-col gap-6 font-sans">
-      
+    <div className="max-w-[1600px] mx-auto w-full p-4 lg:p-6 sm:pb-12 flex flex-col gap-6 font-sans">
+
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
-          <h1 className="text-[24px] font-bold text-[#1A1615] leading-tight mb-1">
-            Reward Redemption & Pass<br />Verification
+          <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight mb-1">
+            Reward Redemption & Pass Verification
           </h1>
           <p className="text-[13px] text-[#6E6A66]">
             Live counter validation, optical scanner target lock, and immediate<br />voucher settlement.
@@ -49,9 +49,9 @@ export const RedemptionTerminalPage = () => {
       <div className="flex flex-col md:flex-row gap-3 w-full">
         <div className="flex-1 bg-[#F5F2EC] border border-[#EFECE6] rounded-xl flex items-center px-4 py-3 shadow-inner">
           <Maximize className="w-5 h-5 text-[#9E9A93] mr-3 shrink-0" />
-          <input 
-            type="text" 
-            placeholder="Scan or type voucher code..." 
+          <input
+            type="text"
+            placeholder="Scan or type voucher code..."
             value="REV - VCH - 8924"
             readOnly
             className="w-full min-w-0 bg-transparent border-none outline-none text-[14px] font-bold text-[#1A1615] truncate"
@@ -70,10 +70,10 @@ export const RedemptionTerminalPage = () => {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-6">
-        
+
         {/* Left Column (Hardware & Scanners) */}
         <div className="space-y-4">
-          
+
           {/* Scanner Viewport */}
           <div className="bg-[#1A1615] rounded-2xl p-4 aspect-[4/3] flex flex-col justify-between relative overflow-hidden shadow-md">
             <div className="flex justify-between items-center relative z-10">
@@ -83,7 +83,7 @@ export const RedemptionTerminalPage = () => {
               </span>
               <span className="text-[10px] font-mono text-[#D4A753]">CAM - 01 / MACRO</span>
             </div>
-            
+
             {/* Simulated QR Code Target */}
             <div className="absolute inset-0 flex items-center justify-center p-12">
               <div className="w-full max-w-[200px] aspect-square border-2 border-[#D4A753]/30 relative rounded-lg">
@@ -92,7 +92,7 @@ export const RedemptionTerminalPage = () => {
                 <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-[#D4A753]"></div>
                 <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-[#D4A753]"></div>
                 <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-[#D4A753]"></div>
-                
+
                 {/* QR Box */}
                 <div className="absolute inset-4 bg-white rounded flex items-center justify-center shadow-lg relative">
                   <div className="absolute inset-2 border-4 border-black border-dashed opacity-20 rounded"></div>
@@ -150,7 +150,7 @@ export const RedemptionTerminalPage = () => {
 
         {/* Right Column (Settlement) */}
         <div className="flex flex-col gap-4">
-          
+
           {/* Reward Settlement Card */}
           <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm flex flex-col gap-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
@@ -192,7 +192,7 @@ export const RedemptionTerminalPage = () => {
                 <span className="flex items-center gap-1.5"><Store className="w-3 h-3" /> Downtown Flagship & SoHo Roastery</span>
               </div>
             </div>
-            
+
             {/* User Profile Snippet */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 py-2">
               <div className="flex items-center gap-4 flex-1">
@@ -209,7 +209,7 @@ export const RedemptionTerminalPage = () => {
               </div>
               <div className="text-left sm:text-right bg-[#FAF8F5] sm:bg-transparent p-4 sm:p-0 rounded-2xl sm:rounded-none flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2">
                 <p className="text-[9px] font-bold text-[#9E9A93] uppercase tracking-widest leading-tight sm:mb-1 w-[80px] sm:w-auto">
-                  STAMP CARD <span className="sm:hidden"><br/></span>STATUS
+                  STAMP CARD <span className="sm:hidden"><br /></span>STATUS
                 </p>
                 <div className="flex items-center gap-2 sm:gap-1 flex-1 sm:flex-initial justify-center sm:justify-end">
                   <div className="flex items-center gap-0.5 sm:mr-2">
@@ -256,7 +256,7 @@ export const RedemptionTerminalPage = () => {
               </span>
               <span className="text-[11px] text-[#6E6A66]">Lane #02 • 14 settled today</span>
             </div>
-            
+
             <div className="space-y-2">
               {[
                 { id: '01', item: 'Artisanal Oat Cortado & Financier', guest: "Clara O'Donnell", vch: 'REV-7712', amount: '$11.50', time: '14:22' },

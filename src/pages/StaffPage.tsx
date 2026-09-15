@@ -365,7 +365,7 @@ export const StaffPage: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
               Staff &amp; RBAC Permissions
             </h1>
             <span className="bg-[#FAF6EE] text-[#9E782F] border border-[#E5D7BE] text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
