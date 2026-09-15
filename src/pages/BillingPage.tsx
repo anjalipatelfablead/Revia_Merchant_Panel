@@ -11,10 +11,7 @@ const MobileBillingPage: React.FC = () => {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#FBF6F1] px-4 pb-7 pt-3 text-[#211C19] sm:px-5">
       <div className="mx-auto w-full max-w-[430px]">
-        <header className="flex items-center justify-between border-b border-[#EDE1D7] pb-3">
-          <div className="flex items-center gap-2.5"><div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[#211C19] text-sm font-bold text-white">R</div><div className="leading-tight"><div className="flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-[0.03em]">Downtown Flagship <span className="text-[#756D65]">⌄</span></div><div className="text-[10px] font-bold uppercase text-[#B28529]">Revia Merchant</div></div></div>
-          <div className="flex items-center gap-3"><div className="relative"><span className="absolute -right-0.5 -top-1 h-1.5 w-1.5 rounded-full bg-[#C99B42]" /><Bell className="h-4 w-4 text-[#4F4842]" /></div><div className="h-8 w-8 overflow-hidden rounded-full border-2 border-[#C99B42]"><img src="https://i.pravatar.cc/80?img=47" alt="Account" className="h-full w-full object-cover" /></div></div>
-        </header>
+
 
         <div className="pt-3"><div className="flex items-center justify-between gap-2"><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#756D65]">Administration &amp; Quotas</div><span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#B9F1CF] px-3 py-1 text-[11px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Active</span></div><div className="mt-2 flex items-center justify-between gap-3"><h1 className="min-w-0 whitespace-nowrap text-2xl sm:text-[28px] font-bold leading-none tracking-tight text-[#1A1615]">Subscription &amp; Billing</h1><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F8EEDC] text-[#98701F]"><ShieldCheck className="h-5 w-5" /></span></div><p className="mt-1 text-[14px] text-[#756D65]">Downtown Flagship &amp; Unified Venues</p></div>
 
