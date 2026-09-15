@@ -84,31 +84,13 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
 
   // Pre-auth flow
   if (!isAuthenticated) {
-    const renderPreScreen = () => {
-      if (preScreen === 'qr') return <QRScreen onNext={() => handleSetPreScreen('qr-loading')} />;
-      if (preScreen === 'qr-loading') return <QRLoadingScreen onDone={() => handleSetPreScreen('mobile')} />;
-      if (preScreen === 'qr-error') return (
-        <div className="min-h-screen bg-[#F8F8F6] md:bg-[#EBEBEB] flex items-center justify-center md:p-6">
-          <div className="w-full max-w-[400px] bg-[#F8F8F6] min-h-screen md:min-h-0 md:h-[800px] md:rounded-[40px] md:shadow-2xl flex flex-col items-center justify-center p-6 text-center overflow-hidden relative">
-            <ErrorState title="QR Code Unavailable" desc="This QR code is no longer active. Please try a different code." onRetry={() => handleSetPreScreen('qr')} />
-          </div>
-        </div>
-      );
-      if (preScreen === 'mobile') return <MobileScreen onNext={m => { setMobile(m); handleSetPreScreen('otp'); }} />;
-      if (preScreen === 'otp') return <OTPScreen mobile={mobile} onVerify={() => onNavigate?.('/customer-onboarding')} onBack={() => handleSetPreScreen('mobile')} />;
-      if (preScreen === 'curate-experience') return <CurateExperienceScreen onConfirm={() => { setIsAuthenticated(true); handleSetActiveTab('dashboard'); }} />;
-      return null;
-    };
-
     return (
       <div className="min-h-screen flex flex-col">
         <div className="flex-1 flex flex-col">
-          <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />
+          <CustomerWizard onComplete={() => { setIsAuthenticated(true); handleSetActiveTab('dashboard'); }} />
         </div>
       </div>
     );
-
-
   }
 
   // Redemption overlay
