@@ -99,7 +99,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ catalog, onUpdateItem,
           <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
             MENU & SPECIALTY MERCHANDISE // CATALOG
           </span>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">Item & Product Catalog Management</h1>
+          <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Item &amp; Product Catalog Management</h1>
           <p className="text-xs text-[#6E6A66] mt-0.5">
             Single origin roasts, sensory cupping profiles, unit economics, and loyalty stamp multipliers.
           </p>

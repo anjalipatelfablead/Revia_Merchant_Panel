@@ -15,6 +15,7 @@ import {
   Award,
   Plus,
   Package,
+  ClipboardList,
   ScanLine
 } from 'lucide-react';
 import { NavRoute } from '../../types';
@@ -65,6 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'CATALOG & ORDERS',
       items: [
         { name: 'Item Catalog', route: '/item-catalog', icon: Package },
+        { name: 'Order Queue', route: '/orders', icon: ClipboardList },
       ],
     },
     {
@@ -138,11 +140,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     onRouteChange(item.route);
                     if (onMobileClose) onMobileClose();
                   }}
-                  className={`w-full flex items-center px-3 py-2 rounded-lg text-[13px] transition-all duration-150 cursor-pointer whitespace-nowrap ${
-                    isActive
+                  className={`w-full flex items-center px-3 py-2 rounded-lg text-[13px] transition-all duration-150 cursor-pointer whitespace-nowrap ${isActive
                       ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs'
                       : 'bg-transparent text-[#4A433D] hover:bg-[#FAF8F5] hover:text-[#1A1615] font-medium'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
                     <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />

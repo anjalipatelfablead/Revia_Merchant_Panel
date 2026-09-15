@@ -65,13 +65,13 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
   const [showEdit, setShowEdit] = useState<string | null>(null);
 
   return (
-    <div className="p-4 lg:p-8 max-w-[1400px] mx-auto space-y-6 relative">
+    <div className="p-4 lg:p-6 max-w-[1400px] mx-auto space-y-6 relative">
       {/* Modals */}
       {showQRPreview && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-all">
           <div className="bg-white rounded-3xl p-8 max-w-sm w-full relative shadow-2xl animate-in zoom-in-95 duration-200">
             <button onClick={() => setShowQRPreview(null)} className="absolute top-4 right-4 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
             <div className="text-center">
               <h3 className="text-xl font-bold text-[#1A1615] mb-2">QR Preview</h3>
@@ -89,26 +89,26 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-all">
           <div className="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl animate-in zoom-in-95 duration-200">
             <button onClick={() => setShowManageSlots(null)} className="absolute top-4 right-4 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
             <div>
               <h3 className="text-xl font-bold text-[#1A1615] mb-2 flex items-center gap-2"><Calendar className="w-5 h-5 text-[#D4A753]" /> Manage Slots</h3>
               <p className="text-[13px] text-[#6E6A66] mb-6">Configure availability for VIP experience <strong className="text-[#1A1615]">{showManageSlots}</strong></p>
               <div className="space-y-3 mb-8">
-                 <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-[#FAF8F5] shadow-sm">
-                   <div className="flex flex-col">
-                     <span className="text-sm font-bold text-[#1A1615]">Friday, Oct 24</span>
-                     <span className="text-[11px] text-[#6E6A66]">19:00 - 21:00</span>
-                   </div>
-                   <span className="text-[12px] font-bold text-[#D4A753] bg-[#FDF8EB] px-3 py-1 rounded-full border border-[#F3E5C8]">4/4 Booked</span>
-                 </div>
-                 <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-white shadow-sm hover:border-[#D1CDC7] transition-colors">
-                   <div className="flex flex-col">
-                     <span className="text-sm font-bold text-[#1A1615]">Saturday, Oct 25</span>
-                     <span className="text-[11px] text-[#6E6A66]">19:00 - 21:00</span>
-                   </div>
-                   <span className="text-[12px] font-bold text-[#0D7A53] bg-[#E6F4ED] px-3 py-1 rounded-full border border-[#BCE3D1]">2/4 Available</span>
-                 </div>
+                <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-[#FAF8F5] shadow-sm">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-[#1A1615]">Friday, Oct 24</span>
+                    <span className="text-[11px] text-[#6E6A66]">19:00 - 21:00</span>
+                  </div>
+                  <span className="text-[12px] font-bold text-[#D4A753] bg-[#FDF8EB] px-3 py-1 rounded-full border border-[#F3E5C8]">4/4 Booked</span>
+                </div>
+                <div className="flex items-center justify-between p-4 border border-[#EFECE6] rounded-xl bg-white shadow-sm hover:border-[#D1CDC7] transition-colors">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-[#1A1615]">Saturday, Oct 25</span>
+                    <span className="text-[11px] text-[#6E6A66]">19:00 - 21:00</span>
+                  </div>
+                  <span className="text-[12px] font-bold text-[#0D7A53] bg-[#E6F4ED] px-3 py-1 rounded-full border border-[#BCE3D1]">2/4 Available</span>
+                </div>
               </div>
               <button onClick={() => setShowManageSlots(null)} className="w-full py-3.5 bg-[#1A1615] hover:bg-black text-white rounded-xl text-[14px] font-bold transition-colors cursor-pointer">Done</button>
             </div>
@@ -120,7 +120,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-all">
           <div className="bg-white rounded-3xl p-8 max-w-md w-full relative shadow-2xl animate-in zoom-in-95 duration-200">
             <button onClick={() => setShowEdit(null)} className="absolute top-4 right-4 text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
             <div>
               <h3 className="text-xl font-bold text-[#1A1615] mb-2 flex items-center gap-2"><Edit2 className="w-5 h-5 text-[#D4A753]" /> Edit Reward</h3>
@@ -177,7 +177,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
             <span className="text-[#9E9A93] text-[10px] font-bold uppercase tracking-widest">• Engine v4.2</span>
           </div> */}
 
-          <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] leading-tight">
+          <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] leading-tight">
             Rewards Catalog & Tier Perks Manager
           </h1>
           <p className="text-sm text-[#6E6A66] mt-1 font-medium">

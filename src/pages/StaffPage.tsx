@@ -230,6 +230,15 @@ export const StaffPage: React.FC = () => {
   const [inviteRole, setInviteRole] = useState<'Manager' | 'Barista' | 'Counter Staff'>('Barista');
   const [inviteBranch, setInviteBranch] = useState('Downtown Flagship');
 
+  // Edit staff form state
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [editName, setEditName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editRole, setEditRole] = useState<'Manager' | 'Barista' | 'Counter Staff' | 'Owner (Super Admin)'>('Barista');
+  const [editBranch, setEditBranch] = useState('');
+  const [editNfc, setEditNfc] = useState('');
+
   const showToast = (msg: string) => {
     setFeedbackToast(msg);
     setTimeout(() => setFeedbackToast(null), 3000);
@@ -304,6 +313,36 @@ export const StaffPage: React.FC = () => {
     showToast(`Invitation sent to ${inviteEmail} with temporary POS PIN credentials.`);
   };
 
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editName || !editEmail) return;
+
+    setStaffList(prevList => prevList.map(staff => {
+      if (staff.id === selectedStaff.id) {
+        return {
+          ...staff,
+          name: editName,
+          email: editEmail,
+          phone: editPhone,
+          role: editRole,
+          roleTierLabel: editRole,
+          roleTierClass: editRole === 'Owner (Super Admin)' ? 'bg-[#6E4B1F] text-[#FAF6EE]' : editRole === 'Manager'
+            ? 'bg-[#FDF3D6] text-[#9E782F] border border-[#E5D7BE]'
+            : 'bg-[#F5F2EC] text-[#5C554E] border border-[#EAE6E1]',
+          assignedVenues: editBranch,
+          nfcKeycard: editNfc,
+          primaryVenue: editBranch,
+          venuePermissions: [
+            { name: editBranch, role: editRole === 'Manager' ? 'Full Management' : 'Shift Coverage', type: editRole === 'Manager' ? 'gold' : 'neutral' },
+          ]
+        };
+      }
+      return staff;
+    }));
+    setIsEditModalOpen(false);
+    showToast(`Staff details updated successfully.`);
+  };
+
   const handleResetPin = () => {
     showToast(`New 4-digit PIN generated and dispatched to ${selectedStaff.email}.`);
   };
@@ -326,7 +365,7 @@ export const StaffPage: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
               Staff &amp; RBAC Permissions
             </h1>
             <span className="bg-[#FAF6EE] text-[#9E782F] border border-[#E5D7BE] text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -542,8 +581,8 @@ export const StaffPage: React.FC = () => {
                         key={member.id}
                         onClick={() => setSelectedStaffId(member.id)}
                         className={`transition-colors cursor-pointer ${isSelected
-                            ? 'bg-[#FAF6EE]/70 font-medium'
-                            : 'hover:bg-[#FAF8F5]'
+                          ? 'bg-[#FAF6EE]/70 font-medium'
+                          : 'hover:bg-[#FAF8F5]'
                           }`}
                       >
                         {/* Member & Avatar */}
@@ -840,7 +879,15 @@ export const StaffPage: React.FC = () => {
               </div>
 
               <button
-                onClick={() => showToast(`Opening profile editor for ${selectedStaff.name}`)}
+                onClick={() => {
+                  setEditName(selectedStaff.name);
+                  setEditEmail(selectedStaff.email);
+                  setEditPhone(selectedStaff.phone);
+                  setEditRole(selectedStaff.role);
+                  setEditBranch(selectedStaff.assignedVenues);
+                  setEditNfc(selectedStaff.nfcKeycard);
+                  setIsEditModalOpen(true);
+                }}
                 className="p-1.5 text-[#8C827A] hover:text-[#1A1615] rounded-lg hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                 title="Edit staff details"
               >
@@ -920,8 +967,8 @@ export const StaffPage: React.FC = () => {
                     </div>
                     <span
                       className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${vp.type === 'gold'
-                          ? 'bg-[#FDF3D6] text-[#9E782F] border border-[#E5D7BE]'
-                          : 'bg-[#F5F2EC] text-[#5C554E]'
+                        ? 'bg-[#FDF3D6] text-[#9E782F] border border-[#E5D7BE]'
+                        : 'bg-[#F5F2EC] text-[#5C554E]'
                         }`}
                     >
                       {vp.role}
@@ -1138,6 +1185,131 @@ export const StaffPage: React.FC = () => {
                 Save Role Templates
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Edit Staff Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EAE6E1]">
+              <div>
+                <h3 className="text-base font-bold text-[#1A1615]">Edit Staff Profile</h3>
+                <p className="text-xs text-[#7C746C]">Update details and terminal credentials</p>
+              </div>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-[#8C827A] hover:text-[#1A1615] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                  Work Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                    Role Tier
+                  </label>
+                  <select
+                    value={editRole}
+                    onChange={(e) => setEditRole(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
+                  >
+                    <option value="Owner (Super Admin)">Owner (Super Admin)</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Barista">Barista</option>
+                    <option value="Counter Staff">Counter Staff</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                    Assigned Venue
+                  </label>
+                  <select
+                    value={editBranch}
+                    onChange={(e) => setEditBranch(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
+                  >
+                    <option value="All Branches (3)">All Branches (3)</option>
+                    <option value="All Venues (Global)">All Venues (Global)</option>
+                    <option value="Downtown Flagship">Downtown Flagship</option>
+                    <option value="Northside Mall">Northside Mall</option>
+                    <option value="West End Espresso">West End Espresso</option>
+                    <option value="West End Kiosk">West End Kiosk</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                  NFC Staff Keycard ID
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editNfc}
+                  onChange={(e) => setEditNfc(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg font-mono text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EAE6E1]">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-3.5 py-2 text-xs font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-xs"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

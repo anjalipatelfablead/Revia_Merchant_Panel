@@ -39,7 +39,7 @@ export const BrandingPage: React.FC = () => {
    return (
       <div className="flex flex-col h-full bg-[#FAF8F5] text-[#1A1615] font-sans pb-24">
 
-         <div className="p-4 sm:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
+         <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
             {/* Page Title Section */}
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-8">
                <div>
@@ -52,7 +52,7 @@ export const BrandingPage: React.FC = () => {
                         Sync: 3 Roasteries Synced • Edge CDN Warm
                      </span>
                   </div>
-                  <h1 className="text-[32px] font-extrabold tracking-tight text-[#1A1615] mb-2 leading-none font-sans">Business Profile & Branding</h1>
+                  <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] mb-2 leading-none font-sans">Business Profile &amp; Branding</h1>
                   <p className="text-[14px] text-[#6E6A66] max-w-2xl">
                      Curate your maison's visual identity, token architecture, stamp marks, and real-time member portal experience across all physical tasting salons.
                   </p>
