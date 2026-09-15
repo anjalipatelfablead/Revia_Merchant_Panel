@@ -1,44 +1,177 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Scan } from 'lucide-react';
+import { MainTab } from './types';
+import { MOCK_BUSINESS } from './data/mockData';
 
-export const CustomerPanel: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 p-6 flex flex-col h-screen">
-        <h2 className="text-2xl font-bold text-[#A37837] mb-8">Customer Panel</h2>
-        <nav className="flex-1 space-y-2">
-          <a href="#" className="block px-4 py-2 rounded-lg bg-[#FAF6EE] text-[#A37837] font-medium">Dashboard</a>
-          <a href="#" className="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50">My Orders</a>
-          <a href="#" className="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50">Rewards</a>
-          <a href="#" className="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50">Settings</a>
-        </nav>
-      </aside>
-      
-      {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto">
-        <header className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-500">Welcome, John Doe</span>
-            <div className="w-10 h-10 bg-[#A37837] rounded-full text-white flex items-center justify-center font-bold">JD</div>
-          </div>
-        </header>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Total Points</h3>
-            <p className="text-3xl font-bold text-[#A37837]">1,250</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Active Offers</h3>
-            <p className="text-3xl font-bold text-[#A37837]">3</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Recent Orders</h3>
-            <p className="text-3xl font-bold text-[#A37837]">12</p>
-          </div>
+// Shared Components
+import { CustomerLayout } from './components/shared/CustomerLayout';
+import { ErrorState } from './components/ui/States';
+// Additional imports for cart functionality
+import { useCart } from './hooks/useCart';
+
+// Pre-auth Screens
+import { CustomerWizard } from './screens/pre-auth/CustomerWizard';
+
+// Post-auth Screens
+import { HomeScreen } from './screens/post-auth/HomeScreen';
+import { CustomerScanScreen } from './screens/post-auth/CustomerScanScreen';
+import { CustomerMenuScreen } from './screens/post-auth/CustomerMenuScreen';
+import { OffersScreen } from './screens/post-auth/OffersScreen';
+import { RewardsScreen } from './screens/post-auth/RewardsScreen';
+import { RewardDetailScreen } from './screens/post-auth/RewardDetailScreen';
+import { RedemptionScreen } from './screens/post-auth/RedemptionScreen';
+import { RedemptionSuccessScreen } from './screens/post-auth/RedemptionSuccessScreen';
+import { MembershipScreen } from './screens/post-auth/MembershipScreen';
+import { HistoryScreen } from './screens/post-auth/HistoryScreen';
+import { OrdersScreen } from './screens/post-auth/OrdersScreen';
+import { CheckoutScreen } from './screens/post-auth/CheckoutScreen';
+import { PrivacyScreen } from './screens/post-auth/PrivacyScreen';
+import { ProfileScreen } from './screens/post-auth/ProfileScreen';
+import { ProductDetailScreen } from './screens/post-auth/ProductDetailScreen';
+
+interface Props {
+  currentRoute?: string;
+  onNavigate?: (route: string) => void;
+}
+
+type PreScreen = 'qr' | 'qr-loading' | 'qr-error' | 'mobile' | 'otp' | 'curate-experience' | 'member-status' | 'profile-form' | 'join-loyalty';
+
+export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => {
+  // Parse initial route
+  const subRoute = currentRoute?.split('/').filter(Boolean)[1] || 'qr';
+
+  // Pre-auth state
+  const [preScreen, setPreScreen] = useState<PreScreen>(subRoute as PreScreen);
+  const isPostAuthRoute = ['dashboard', 'scan', 'menu', 'orders', 'coupons', 'membership', 'offers', 'rewards', 'history', 'profile', 'checkout'].includes(subRoute);
+  const [isAuthenticated, setIsAuthenticated] = useState(isPostAuthRoute);
+  const [isExistingMember] = useState(true);
+  const [mobile, setMobile] = useState('');
+  // Active tab for post-auth navigation
+  const [activeTab, setActiveTab] = useState<MainTab>((subRoute as MainTab) || 'dashboard');
+
+  // Post-auth state
+  const { cartItems, addItem, updateQuantity, subtotal, tax, total } = useCart();
+  const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
+  const [selectedReward, setSelectedReward] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const [showRedemption, setShowRedemption] = useState(false);
+  const [showRedemptionSuccess, setShowRedemptionSuccess] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+
+  // Sync state to URL when changed programmatically
+  const navigateTo = (path: string) => {
+    onNavigate?.('/customer/' + path);
+  };
+
+  const handleSetPreScreen = (screen: PreScreen) => {
+    setPreScreen(screen);
+    navigateTo(screen);
+  };
+
+  const handleSetActiveTab = (tab: MainTab) => {
+    setActiveTab(tab);
+    navigateTo(tab);
+  };
+
+  // Sync URL changes back to state (e.g. back button)
+  React.useEffect(() => {
+    const sr = currentRoute?.split('/').filter(Boolean)[1];
+    if (sr) {
+      if (!isAuthenticated) setPreScreen(sr as PreScreen);
+      else setActiveTab(sr as MainTab);
+    }
+  }, [currentRoute, isAuthenticated]);
+
+  // Pre-auth flow
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col">
+          <CustomerWizard onComplete={() => { setIsAuthenticated(true); handleSetActiveTab('dashboard'); }} />
         </div>
-      </main>
-    </div>
+      </div>
+    );
+  }
+
+  // Redemption overlay
+  if (showRedemptionSuccess && selectedReward) {
+    return <RedemptionSuccessScreen rewardId={selectedReward} onDone={() => { setShowRedemptionSuccess(false); setSelectedReward(null); handleSetActiveTab('history'); }} />;
+  }
+
+
+
+  // Post-auth main tabs
+  const getTitle = () => {
+    if (showPrivacy) return 'Privacy & Data';
+    if (activeTab === 'offers' && selectedOffer) return 'Offer Detail';
+    if ((activeTab as string) === 'product' && selectedProduct) return 'Item Details';
+    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'My Rewards', membership: 'Membership Cards', offers: 'Offers', rewards: 'Rewards Wallet', history: 'Activity', profile: 'My Profile', checkout: 'Checkout' };
+    return titles[activeTab] || 'Revia';
+  };
+
+  return (
+    <CustomerLayout
+      tab={activeTab}
+      setTab={t => { handleSetActiveTab(t); setSelectedOffer(null); setSelectedReward(null); setShowPrivacy(false); }}
+      title={getTitle()}
+      showBack={showPrivacy || (activeTab === 'offers' && !!selectedOffer)}
+      onBack={() => { if (showPrivacy) setShowPrivacy(false); else setSelectedOffer(null); }}
+      onNavigateApp={onNavigate}
+      cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+    >
+      {showPrivacy ? (
+        <PrivacyScreen onBack={() => setShowPrivacy(false)} />
+      ) : activeTab === 'dashboard' ? (
+        <HomeScreen setTab={handleSetActiveTab} setSelectedOffer={id => { setSelectedOffer(id); handleSetActiveTab('offers'); }} setSelectedReward={id => { setSelectedReward(id); handleSetActiveTab('rewards'); }} />
+      ) : activeTab === 'scan' ? (
+        <CustomerScanScreen />
+      ) : activeTab === 'menu' ? (
+        <CustomerMenuScreen
+          setTab={handleSetActiveTab}
+          cartItems={cartItems}
+          addItem={addItem}
+          updateQuantity={updateQuantity}
+          onProductClick={(id) => { setSelectedProduct(id); handleSetActiveTab('product' as MainTab); }}
+        />
+      ) : (activeTab as string) === 'product' && selectedProduct ? (
+        <ProductDetailScreen
+          productId={selectedProduct}
+          onBack={() => { setSelectedProduct(null); handleSetActiveTab('menu'); }}
+          addItem={addItem}
+        />
+      ) : activeTab === 'offers' ? (
+        <OffersScreen type="offers" selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+      ) : activeTab === 'coupons' || activeTab === 'rewards' ? (
+        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
+      ) : activeTab === 'membership' ? (
+        <MembershipScreen />
+      ) : activeTab === 'orders' ? (
+        <OrdersScreen />
+      ) : activeTab === 'history' ? (
+        <HistoryScreen />
+      ) : activeTab === 'profile' ? (
+        <ProfileScreen onPrivacy={() => setShowPrivacy(true)} onNavigateApp={onNavigate} />
+      ) : activeTab === 'checkout' ? (
+        <CheckoutScreen
+          cartItems={cartItems}
+          updateQuantity={updateQuantity}
+          subtotal={subtotal}
+          tax={tax}
+          total={total}
+          onSuccess={() => {
+            cartItems.forEach(item => updateQuantity(item.id, -item.quantity));
+            handleSetActiveTab('orders');
+          }}
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-16 h-16 bg-[#F8F8F6] rounded-2xl flex items-center justify-center mb-4 border border-[#E6E6E6]">
+            <Scan className="w-8 h-8 text-[#ccc]" />
+          </div>
+          <h2 className="text-xl font-black text-[#222] mb-2">{getTitle()}</h2>
+          <p className="text-[#666] text-sm">This section is coming soon.</p>
+        </div>
+      )}
+    </CustomerLayout>
   );
 };

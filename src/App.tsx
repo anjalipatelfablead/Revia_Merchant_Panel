@@ -19,6 +19,9 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
+
+import { MarketingLandingPage } from './pages/MarketingLandingPage';
+import { CustomerRouter } from './Customer/CustomerRouter';
 import { CatalogPage } from './pages/CatalogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
 import { CampaignBuilderPage } from './pages/CampaignBuilderPage';
@@ -29,25 +32,43 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { AuditLogPage } from './pages/AuditLogPage';
 import { StaffPage } from './pages/StaffPage';
 import { QrCodesPage } from './pages/QrCodesPage';
+import { ItemCatalogPage } from './pages/ItemCatalogPage';
+import { OrderQueuePage } from './pages/OrderQueuePage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
+import { CreateRewardPage } from './pages/CreateRewardPage';
+import { RedemptionTerminalPage } from './pages/RedemptionTerminalPage';
 import { BillingPage } from './pages/BillingPage';
-import { NotificationsPage } from './pages/NotificationsPage';
-import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+import { NotificationPage } from './pages/NotificationPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+// Marketing Pages
+import { AboutUsPage } from './pages/AboutUsPage';
+import { ContactPage } from './pages/ContactPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
 
-
+const VALID_ROUTES = [
+  '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
+  '/loyalty', '/qr-codes', '/item-catalog', '/catalog', '/orders', '/invoices',
+  '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
+  '/terminal', '/rewards', '/rewards/new', '/analytics', '/billing', '/notifications',
+  '/settings/audit', '/settings/branding', '/login', '/onboarding',
+  '/customer/landing', '/customer', '/customer/identify', '/',
+  '/about', '/contact', '/privacy', '/terms'
+];
 
 export default function App() {
   const [currentRoute, setCurrentRouteState] = useState<NavRoute>(() => {
     const path = window.location.pathname;
     if (path === '/' || path === '') {
-      return '/customer-landing';
+      return '/';
     }
     return path as NavRoute;
   });
   const [activeBranch, setActiveBranch] = useState<string>(AVAILABLE_BRANCHES[0]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isStandaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
 
   // Core Mock Datasets
   const [customers, setCustomers] = useState(MOCK_CUSTOMERS);
@@ -69,63 +90,81 @@ export default function App() {
     }
   };
 
-  // Standalone mode for auth and onboarding, but allow switching to shell
-  const [standaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
 
   const handleNavigate = (route: NavRoute) => {
     window.history.pushState({}, '', route);
     setCurrentRouteState(route);
     setIsMobileMenuOpen(false);
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
-      setCurrentRouteState((path === '/' || path === '' ? '/customer-landing' : path) as NavRoute);
+      setCurrentRouteState((path === '/' || path === '' ? '/' : path) as NavRoute);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  if (currentRoute === '/customer-landing') {
-    return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/');
+  if (!isValidRoute) {
+    return <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  // If user is viewing login or onboarding in standalone full-screen presentation mode
-  if (standaloneAuthView && (currentRoute === '/login' || currentRoute === '/onboarding')) {
-    return (
-      <div className="min-h-screen bg-[#FAF8F5] text-[#1A1615]">
-        {/* Top Float Navigation Bar to return to dashboard */}
-        <div className="bg-white/80 backdrop-blur-md border-b border-[#EAE6E1] px-4 py-2.5 flex items-center justify-between sticky top-0 z-50">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#15803D]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-[#1A1615]">
-              Standalone Presentation Mode
-            </span>
-          </div>
-          <button
-            onClick={() => {
-              setStandaloneAuthView(false);
-              handleNavigate('/dashboard');
-            }}
-            className="text-xs font-semibold text-[#A37837] hover:underline px-2.5 py-1 rounded bg-[#FAF8F5] border border-[#EAE6E1] cursor-pointer"
-          >
-            ← Return to Dashboard Shell
-          </button>
-        </div>
+  if (currentRoute === '/') {
+    return <MarketingLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
 
-        {currentRoute === '/login' ? (
-          <LoginPage
-            onLoginSuccess={() => handleNavigate('/dashboard')}
-            onGoToOnboarding={() => handleNavigate('/onboarding')}
-          />
-        ) : (
-          <OnboardingPage
-            onComplete={() => handleNavigate('/dashboard')}
-            onCancel={() => handleNavigate('/login')}
-          />
-        )}
-      </div>
+  if (currentRoute === '/about') {
+    return <AboutUsPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/contact') {
+    return <ContactPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/privacy') {
+    return <PrivacyPolicyPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  if (currentRoute === '/terms') {
+    return <TermsOfServicePage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+
+
+
+
+  if (currentRoute === '/customer' || currentRoute.startsWith('/customer/')) {
+    return <CustomerRouter currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+  }
+
+  // Render auth and onboarding pages directly as standalone
+  if (currentRoute === '/login') {
+    return (
+      <LoginPage
+        onLoginSuccess={(role) => {
+          if (role.startsWith('/')) {
+            handleNavigate(role as NavRoute);
+          } else if (role === 'customer') {
+            // Navigate to onboarding after successful customer login
+            handleNavigate('/customer/identify');
+          } else {
+            handleNavigate('/dashboard');
+          }
+        }}
+        onGoToOnboarding={() => handleNavigate('/onboarding')}
+      />
+    );
+  }
+
+  if (currentRoute === '/onboarding') {
+    return (
+      <OnboardingPage
+        onComplete={() => handleNavigate('/dashboard')}
+        onCancel={() => handleNavigate('/login')}
+      />
     );
   }
 
@@ -134,7 +173,7 @@ export default function App() {
       {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-xs transition-opacity cursor-pointer"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs transition-opacity cursor-pointer"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -158,7 +197,7 @@ export default function App() {
       />
 
       {/* Main Content Viewport (Starts right next to Sidebar, no overlap!) */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
         {/* Top Header */}
         <Header
           currentRoute={currentRoute}
@@ -168,7 +207,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className="flex-1 pb-12">
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
@@ -208,7 +247,15 @@ export default function App() {
             <QrCodesPage />
           )}
 
-          {currentRoute === '/customers' && (
+          {currentRoute === '/item-catalog' && (
+            <ItemCatalogPage />
+          )}
+
+          {currentRoute === '/orders' && (
+            <OrderQueuePage onNavigate={handleNavigate} />
+          )}
+
+          {currentRoute === '/customerlist' && (
             <CustomersPage
               customers={customers}
               onUpdateCustomer={(updated) => {
@@ -227,11 +274,19 @@ export default function App() {
           )}
 
           {(currentRoute === '/campaigns' || currentRoute === '/campaigns/new') && (
-            <CampaignBuilderPage />
+            <CampaignBuilderPage initialViewMode={currentRoute === '/campaigns/new' ? 'builder' : 'dashboard'} />
           )}
 
           {currentRoute === '/rewards' && (
-            <RewardsPage />
+            <RewardsPage onNavigate={handleNavigate} />
+          )}
+
+          {currentRoute === '/rewards/new' && (
+            <CreateRewardPage onNavigate={handleNavigate} />
+          )}
+
+          {currentRoute === '/terminal' && (
+            <RedemptionTerminalPage />
           )}
 
           {currentRoute === '/analytics' && (
@@ -243,7 +298,7 @@ export default function App() {
           )}
 
           {currentRoute === '/notifications' && (
-            <NotificationsPage />
+            <NotificationPage />
           )}
 
           {currentRoute === '/settings/audit' && (
@@ -268,47 +323,10 @@ export default function App() {
             />
           )}
 
-          {currentRoute === '/login' && (
-            <div className="p-4 sm:p-6">
-              <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl border border-[#EAE6E1]">
-                <span className="text-xs text-[#7C746C]">
-                  Viewing Auth Screen inside Merchant Shell
-                </span>
-                <button
-                  onClick={() => setStandaloneAuthView(true)}
-                  className="text-xs font-bold text-[#A37837] hover:underline"
-                >
-                  Open Full-Screen Presentation Mode ↗
-                </button>
-              </div>
-              <LoginPage
-                onLoginSuccess={() => handleNavigate('/dashboard')}
-                onGoToOnboarding={() => handleNavigate('/onboarding')}
-              />
-            </div>
-          )}
 
-          {currentRoute === '/onboarding' && (
-            <div className="p-4 sm:p-6">
-              <div className="mb-4 flex items-center justify-between bg-white p-3 rounded-xl border border-[#EAE6E1]">
-                <span className="text-xs text-[#7C746C]">
-                  Viewing Onboarding Wizard inside Merchant Shell
-                </span>
-                <button
-                  onClick={() => setStandaloneAuthView(true)}
-                  className="text-xs font-bold text-[#A37837] hover:underline"
-                >
-                  Open Full-Screen Presentation Mode ↗
-                </button>
-              </div>
-              <OnboardingPage
-                onComplete={() => handleNavigate('/dashboard')}
-                onCancel={() => handleNavigate('/login')}
-              />
-            </div>
-          )}
-        </main>
-      </div>
-    </div>
+
+        </main >
+      </div >
+    </div >
   );
 }

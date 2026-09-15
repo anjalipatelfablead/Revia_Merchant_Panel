@@ -409,15 +409,47 @@ export const INITIAL_AUDIT_LOGS: AuditLogEntry[] = [
     cryptoState: 'VERIFIED',
     hash: '1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
   },
+  {
+    id: 'LOG-9396',
+    timestamp: '2026-09-10 13:30:00 UTC',
+    actor: {
+      name: 'System Daemon',
+      avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
+      role: 'Mesh Integrity Guard',
+    },
+    action: 'POS_HEARTBEAT_RECONNECT',
+    target: 'POS Terminal #02 Heartbeat Reconnect',
+    terminal: 'POS-DOWNTOWN-02',
+    ip: '192.168.1.45',
+    cryptoState: 'PENDING',
+    hash: '78aa9c4d2e1f0b8a7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4',
+  },
+  {
+    id: 'LOG-9395',
+    timestamp: '2026-09-10 11:15:22 UTC',
+    actor: {
+      name: 'Elena Rostova',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      role: 'Store Manager',
+    },
+    action: 'CUSTOMER_EXPORT_REQUESTED',
+    target: 'Export Customer CRM Roster CSV',
+    terminal: 'HQ-DESKTOP-MGR',
+    ip: '172.56.21.90 (VPN)',
+    cryptoState: 'PENDING',
+    hash: '12af8d6e4c2b0a9f8e7d6c5b4a392817161514131211100f0e0d0c0b0a090807',
+  },
 ];
 
 export const RETENTION_COHORT_DATA: RetentionCohortRow[] = [
-  { cohort: 'Apr 2026', members: 1240, m1: 88, m2: 82, m3: 79, m4: 76, m5: 75, m6: 74 },
-  { cohort: 'May 2026', members: 1380, m1: 91, m2: 84, m3: 81, m4: 78, m5: 76, m6: 75 },
-  { cohort: 'Jun 2026', members: 1520, m1: 89, m2: 83, m3: 80, m4: 77, m5: 76, m6: 0 },
-  { cohort: 'Jul 2026', members: 1690, m1: 93, m2: 87, m3: 84, m4: 81, m5: 0, m6: 0 },
-  { cohort: 'Aug 2026', members: 1840, m1: 94, m2: 89, m3: 86, m4: 0, m5: 0, m6: 0 },
-  { cohort: 'Sep 2026', members: 1950, m1: 96, m2: 91, m3: 0, m4: 0, m5: 0, m6: 0 },
+  { cohort: 'Week of Sep 2', members: 412, m1: 84, m2: 78, m3: 73, m4: 66, m5: 62, m6: 0 },
+  { cohort: 'Week of Sep 9', members: 388, m1: 86, m2: 79, m3: 75, m4: 69, m5: 61, m6: 0 },
+  { cohort: 'Week of Sep 16', members: 465, m1: 89, m2: 82, m3: 77, m4: 72, m5: 66, m6: 0 },
+  { cohort: 'Week of Sep 23', members: 510, m1: 85, m2: 80, m3: 74, m4: 67, m5: 63, m6: 0 },
+  { cohort: 'Week of Sep 30', members: 430, m1: 87, m2: 83, m3: 76, m4: 71, m5: 0, m6: 0 },
+  { cohort: 'Week of Oct 7', members: 492, m1: 91, m2: 84, m3: 78, m4: 0, m5: 0, m6: 0 },
+  { cohort: 'Week of Oct 14', members: 534, m1: 88, m2: 81, m3: 0, m4: 0, m5: 0, m6: 0 },
+  { cohort: 'Week of Oct 21', members: 560, m1: 92, m2: 0, m3: 0, m4: 0, m5: 0, m6: 0 },
 ];
 
 export const MOCK_CUSTOMERS = INITIAL_CUSTOMERS;

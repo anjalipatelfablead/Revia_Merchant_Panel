@@ -13,7 +13,10 @@ import {
   Bell,
   ShieldCheck,
   Award,
-  Plus
+  Plus,
+  Package,
+  ClipboardList,
+  ScanLine
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -60,11 +63,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
+      label: 'CATALOG & ORDERS',
+      items: [
+        { name: 'Item Catalog', route: '/item-catalog', icon: Package },
+        { name: 'Order Queue', route: '/orders', icon: ClipboardList },
+      ],
+    },
+    {
       label: 'CRM & ACTIVITY',
       items: [
-        { name: 'Customers', route: '/customers', icon: Users },
+        { name: 'Customers', route: '/customerlist', icon: Users },
         { name: 'Transactions', route: '/transactions', icon: Receipt },
         { name: 'Campaigns', route: '/campaigns/new', icon: Megaphone },
+        { name: 'Redemption Terminal', route: '/terminal', icon: ScanLine },
         { name: 'Rewards', route: '/rewards', icon: Award },
       ],
     },
@@ -75,6 +86,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Subscription & Billing', route: '/billing', icon: CreditCard },
         { name: 'Notifications', route: '/notifications', icon: Bell },
         { name: 'Settings & Audit Log', route: '/settings/audit', icon: ShieldCheck },
+        { name: 'Business Profile & Branding', route: '/settings/branding', icon: Store },
       ],
     },
   ];
@@ -83,27 +95,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside
       className={`
         bg-white border-r border-[#EAE6E1] flex flex-col shrink-0 h-screen transition-all duration-200 z-50
-        md:static md:w-[240px] md:translate-x-0
-        ${isMobileOpen 
-          ? 'fixed inset-y-0 left-0 w-[260px] translate-x-0 shadow-2xl' 
-          : 'fixed inset-y-0 left-0 w-[260px] -translate-x-full md:translate-x-0'}
+        lg:static lg:w-[240px] lg:translate-x-0
+        ${isMobileOpen
+          ? 'fixed inset-y-0 left-0 w-[260px] translate-x-0 shadow-2xl'
+          : 'fixed inset-y-0 left-0 w-[260px] -translate-x-full lg:translate-x-0'}
       `}
     >
       {/* Brand Header */}
       <div className="p-4 pb-3 border-b border-[#EAE6E1]/70">
-        <div 
-          className="flex items-center gap-2.5 cursor-pointer select-none" 
+        <div
+          className="flex items-center gap-2.5 cursor-pointer select-none"
           onClick={() => onRouteChange('/dashboard')}
         >
           {/* Gold squircle emblem matching screenshot */}
-          <div className="w-8 h-8 rounded-lg bg-[#B38637] flex items-center justify-center text-white shadow-xs">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white shadow-xs">
             <Award className="w-4 h-4 text-white" />
           </div>
           <div className="leading-tight">
-            <div className="text-[13px] font-bold tracking-wider text-[#1A1615] font-serif">
+            <div className="text-sm font-extrabold tracking-wider text-[#1A1615] font-sans">
               REVIA
             </div>
-            <div className="text-[8px] uppercase tracking-widest text-[#8C827A] font-semibold">
+            <div className="text-[9px] uppercase tracking-widest text-[#8C827A] font-bold font-sans">
               MERCHANT SUITE
             </div>
           </div>
@@ -111,42 +123,36 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Navigation Links Area */}
-      <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-4">
+      <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5">
         {navigationGroups.map((group) => (
-          <div key={group.label} className="space-y-0.5">
-            <div className="px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#9C948C] uppercase">
-              {group.label}
-            </div>
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = 
-                  currentRoute === item.route || 
-                  (item.route === '/branches' && currentRoute === '/branches/new') ||
-                  (item.route === '/campaigns/new' && currentRoute === '/campaigns');
+          <React.Fragment key={group.label}>
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                currentRoute === item.route ||
+                (item.route === '/branches' && currentRoute === '/branches/new') ||
+                (item.route === '/campaigns/new' && currentRoute === '/campaigns');
 
-                return (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      onRouteChange(item.route);
-                      if (onMobileClose) onMobileClose();
-                    }}
-                    className={`w-full flex items-center px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer whitespace-nowrap ${
-                      isActive
-                        ? 'bg-[#A37837] text-white font-semibold shadow-xs'
-                        : 'text-[#3D3732] hover:bg-[#FAF8F5] hover:text-[#1A1615]'
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    onRouteChange(item.route);
+                    if (onMobileClose) onMobileClose();
+                  }}
+                  className={`w-full flex items-center px-3 py-2 rounded-lg text-[13px] transition-all duration-150 cursor-pointer whitespace-nowrap ${isActive
+                      ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs'
+                      : 'bg-transparent text-[#4A433D] hover:bg-[#FAF8F5] hover:text-[#1A1615] font-medium'
                     }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
-                      <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />
-                      <span className="whitespace-nowrap tracking-tight">{item.name}</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />
+                    <span className="whitespace-nowrap tracking-tight font-sans">{item.name}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </React.Fragment>
         ))}
       </div>
 

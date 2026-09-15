@@ -9,6 +9,7 @@ import {
   UserPlus,
   Edit2,
   ChevronDown,
+  ChevronRight,
   SlidersHorizontal,
   KeyRound,
   Store,
@@ -216,6 +217,7 @@ export const StaffPage: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string>('All');
   const [branchFilter, setBranchFilter] = useState<string>('All');
   const [statusFilter, setStatusFilter] = useState<string>('All');
+  const [expandedStaffRow, setExpandedStaffRow] = useState<string | null>(null);
 
   // Modals & Interactivity
   const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false);
@@ -227,6 +229,15 @@ export const StaffPage: React.FC = () => {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'Manager' | 'Barista' | 'Counter Staff'>('Barista');
   const [inviteBranch, setInviteBranch] = useState('Downtown Flagship');
+
+  // Edit staff form state
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [editName, setEditName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editRole, setEditRole] = useState<'Manager' | 'Barista' | 'Counter Staff' | 'Owner (Super Admin)'>('Barista');
+  const [editBranch, setEditBranch] = useState('');
+  const [editNfc, setEditNfc] = useState('');
 
   const showToast = (msg: string) => {
     setFeedbackToast(msg);
@@ -302,6 +313,36 @@ export const StaffPage: React.FC = () => {
     showToast(`Invitation sent to ${inviteEmail} with temporary POS PIN credentials.`);
   };
 
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editName || !editEmail) return;
+
+    setStaffList(prevList => prevList.map(staff => {
+      if (staff.id === selectedStaff.id) {
+        return {
+          ...staff,
+          name: editName,
+          email: editEmail,
+          phone: editPhone,
+          role: editRole,
+          roleTierLabel: editRole,
+          roleTierClass: editRole === 'Owner (Super Admin)' ? 'bg-[#6E4B1F] text-[#FAF6EE]' : editRole === 'Manager'
+            ? 'bg-[#FDF3D6] text-[#9E782F] border border-[#E5D7BE]'
+            : 'bg-[#F5F2EC] text-[#5C554E] border border-[#EAE6E1]',
+          assignedVenues: editBranch,
+          nfcKeycard: editNfc,
+          primaryVenue: editBranch,
+          venuePermissions: [
+            { name: editBranch, role: editRole === 'Manager' ? 'Full Management' : 'Shift Coverage', type: editRole === 'Manager' ? 'gold' : 'neutral' },
+          ]
+        };
+      }
+      return staff;
+    }));
+    setIsEditModalOpen(false);
+    showToast(`Staff details updated successfully.`);
+  };
+
   const handleResetPin = () => {
     showToast(`New 4-digit PIN generated and dispatched to ${selectedStaff.email}.`);
   };
@@ -321,10 +362,10 @@ export const StaffPage: React.FC = () => {
       )}
 
       {/* Page Title & Main Action Buttons */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
               Staff &amp; RBAC Permissions
             </h1>
             <span className="bg-[#FAF6EE] text-[#9E782F] border border-[#E5D7BE] text-[11px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -336,7 +377,7 @@ export const StaffPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 self-start md:self-auto">
+        <div className="flex items-center gap-2.5 self-start lg:self-auto">
           <button
             onClick={handleExportAudit}
             className="px-3.5 py-2 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
@@ -347,7 +388,7 @@ export const StaffPage: React.FC = () => {
 
           <button
             onClick={() => setIsInviteModalOpen(true)}
-            className="px-4 py-2 rounded-lg bg-[#B38637] hover:bg-[#A37837] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
             <UserPlus className="w-4 h-4 text-white" />
             <span>Invite Team Member</span>
@@ -439,8 +480,8 @@ export const StaffPage: React.FC = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="relative w-full sm:w-80">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="relative w-full lg:w-80">
           <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A]" />
           <input
             type="text"
@@ -451,7 +492,7 @@ export const StaffPage: React.FC = () => {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
           {/* Role Filter */}
           <div className="relative">
             <select
@@ -520,8 +561,8 @@ export const StaffPage: React.FC = () => {
               </span>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[#F2EFE9] text-[10px] uppercase font-bold tracking-wider text-[#8C827A] bg-[#FAF8F5]/50">
@@ -539,11 +580,10 @@ export const StaffPage: React.FC = () => {
                       <tr
                         key={member.id}
                         onClick={() => setSelectedStaffId(member.id)}
-                        className={`transition-colors cursor-pointer ${
-                          isSelected
-                            ? 'bg-[#FAF6EE]/70 font-medium'
-                            : 'hover:bg-[#FAF8F5]'
-                        }`}
+                        className={`transition-colors cursor-pointer ${isSelected
+                          ? 'bg-[#FAF6EE]/70 font-medium'
+                          : 'hover:bg-[#FAF8F5]'
+                          }`}
                       >
                         {/* Member & Avatar */}
                         <td className="py-3 px-5">
@@ -594,6 +634,72 @@ export const StaffPage: React.FC = () => {
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Expandable List */}
+            <div className="sm:hidden flex flex-col">
+              {filteredStaff.map((member) => {
+                const isSelected = member.id === selectedStaff.id;
+                const isExpanded = expandedStaffRow === member.id;
+
+                return (
+                  <div key={member.id} className="border-b border-[#F2EFE9] last:border-b-0 overflow-hidden">
+                    <button
+                      onClick={() => {
+                        setSelectedStaffId(member.id);
+                        setExpandedStaffRow(isExpanded ? null : member.id);
+                      }}
+                      className={`w-full p-4 flex items-center justify-between transition-colors cursor-pointer ${isSelected ? 'bg-[#FAF6EE]/70' : 'bg-white hover:bg-[#FAF8F5]'
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {member.avatar ? (
+                          <img
+                            src={member.avatar}
+                            alt={member.name}
+                            className="w-10 h-10 rounded-full object-cover ring-1 ring-[#EAE6E1]"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-[#F5F2EC] text-[#5C554E] flex items-center justify-center font-bold text-sm ring-1 ring-[#EAE6E1]">
+                            {member.initials || 'ST'}
+                          </div>
+                        )}
+                        <div className="text-left">
+                          <div className="font-bold text-[#1A1615] text-[13px]">{member.name}</div>
+                          <div className="text-[11px] text-[#7C746C]">{member.email}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-semibold ${member.roleTierClass}`}>
+                          {member.roleTierLabel}
+                        </span>
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4 text-[#8C827A]" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-[#8C827A]" />
+                        )}
+                      </div>
+                    </button>
+
+                    {isExpanded && (
+                      <div className={`p-4 grid grid-cols-2 gap-4 border-t border-[#F2EFE9] ${isSelected ? 'bg-[#FAF6EE]/30' : 'bg-[#FAF8F5]/50'}`}>
+                        <div>
+                          <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Assigned Venues</div>
+                          <div className="font-medium text-[#3D3732] text-xs">{member.assignedVenues}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Terminal PIN</div>
+                          <div className="font-mono">
+                            <span className="text-[#8C827A] mr-1.5 font-bold">••••</span>
+                            <span className="text-[#15803D] font-medium text-xs">Active</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -773,7 +879,15 @@ export const StaffPage: React.FC = () => {
               </div>
 
               <button
-                onClick={() => showToast(`Opening profile editor for ${selectedStaff.name}`)}
+                onClick={() => {
+                  setEditName(selectedStaff.name);
+                  setEditEmail(selectedStaff.email);
+                  setEditPhone(selectedStaff.phone);
+                  setEditRole(selectedStaff.role);
+                  setEditBranch(selectedStaff.assignedVenues);
+                  setEditNfc(selectedStaff.nfcKeycard);
+                  setIsEditModalOpen(true);
+                }}
                 className="p-1.5 text-[#8C827A] hover:text-[#1A1615] rounded-lg hover:bg-[#FAF8F5] transition-colors cursor-pointer"
                 title="Edit staff details"
               >
@@ -852,11 +966,10 @@ export const StaffPage: React.FC = () => {
                       <span className="font-medium text-[#1A1615]">{vp.name}</span>
                     </div>
                     <span
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
-                        vp.type === 'gold'
-                          ? 'bg-[#FDF3D6] text-[#9E782F] border border-[#E5D7BE]'
-                          : 'bg-[#F5F2EC] text-[#5C554E]'
-                      }`}
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${vp.type === 'gold'
+                        ? 'bg-[#FDF3D6] text-[#9E782F] border border-[#E5D7BE]'
+                        : 'bg-[#F5F2EC] text-[#5C554E]'
+                        }`}
                     >
                       {vp.role}
                     </span>
@@ -903,7 +1016,7 @@ export const StaffPage: React.FC = () => {
 
               <button
                 onClick={() => showToast(`Saved permissions for ${selectedStaff.name}. Syncing mesh nodes...`)}
-                className="px-4 py-2 rounded-lg bg-[#B38637] hover:bg-[#A37837] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
               >
                 Save Changes
               </button>
@@ -940,7 +1053,7 @@ export const StaffPage: React.FC = () => {
                   placeholder="e.g. Liam Vance"
                   value={inviteName}
                   onChange={(e) => setInviteName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
                 />
               </div>
 
@@ -954,11 +1067,11 @@ export const StaffPage: React.FC = () => {
                   placeholder="e.g. liam.v@revia.co"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
                     Role Tier
@@ -966,7 +1079,7 @@ export const StaffPage: React.FC = () => {
                   <select
                     value={inviteRole}
                     onChange={(e) => setInviteRole(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#D4A753]"
                   >
                     <option value="Manager">Manager</option>
                     <option value="Barista">Barista</option>
@@ -981,7 +1094,7 @@ export const StaffPage: React.FC = () => {
                   <select
                     value={inviteBranch}
                     onChange={(e) => setInviteBranch(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#D4A753]"
                   >
                     <option value="Downtown Flagship">Downtown Flagship</option>
                     <option value="Northside Mall">Northside Mall</option>
@@ -1010,7 +1123,7 @@ export const StaffPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-xs"
+                  className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
                 >
                   Send Invitation
                 </button>
@@ -1067,11 +1180,136 @@ export const StaffPage: React.FC = () => {
                   setIsEditTemplatesOpen(false);
                   showToast('Role templates updated and dispatched to mesh registers.');
                 }}
-                className="px-4 py-2 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
+                className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
               >
                 Save Role Templates
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Edit Staff Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EAE6E1]">
+              <div>
+                <h3 className="text-base font-bold text-[#1A1615]">Edit Staff Profile</h3>
+                <p className="text-xs text-[#7C746C]">Update details and terminal credentials</p>
+              </div>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-[#8C827A] hover:text-[#1A1615] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                  Work Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                    Role Tier
+                  </label>
+                  <select
+                    value={editRole}
+                    onChange={(e) => setEditRole(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
+                  >
+                    <option value="Owner (Super Admin)">Owner (Super Admin)</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Barista">Barista</option>
+                    <option value="Counter Staff">Counter Staff</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                    Assigned Venue
+                  </label>
+                  <select
+                    value={editBranch}
+                    onChange={(e) => setEditBranch(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
+                  >
+                    <option value="All Branches (3)">All Branches (3)</option>
+                    <option value="All Venues (Global)">All Venues (Global)</option>
+                    <option value="Downtown Flagship">Downtown Flagship</option>
+                    <option value="Northside Mall">Northside Mall</option>
+                    <option value="West End Espresso">West End Espresso</option>
+                    <option value="West End Kiosk">West End Kiosk</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                  NFC Staff Keycard ID
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editNfc}
+                  onChange={(e) => setEditNfc(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg font-mono text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EAE6E1]">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-3.5 py-2 text-xs font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-xs"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -63,8 +63,8 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
 
   const [searchQuery, setSearchQuery] = useState('');
   const [regionFilter, setRegionFilter] = useState('All West Coast');
-  const [statusFilter, setStatusFilter] = useState('Active');
-  const [sortBy, setSortBy] = useState<'revenue' | 'name'>('revenue');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [sortBy, setSortBy] = useState<'revenue-desc' | 'revenue-asc' | 'name-asc' | 'name-desc'>('revenue-desc');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -75,6 +75,13 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
   const [newAddress, setNewAddress] = useState('');
   const [newManager, setNewManager] = useState('');
 
+  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setFeedbackToast(msg);
+    setTimeout(() => setFeedbackToast(null), 3000);
+  };
+
   const selectedOutlet = outlets.find((o) => o.id === selectedOutletId) || outlets[0];
 
   const filteredOutlets = outlets.filter((outlet) => {
@@ -82,7 +89,28 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
       outlet.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       outlet.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
       outlet.manager.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
+
+    const matchesRegion =
+      regionFilter === 'All West Coast' ||
+      outlet.address.toLowerCase().includes(regionFilter.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === 'All' ||
+      (statusFilter === 'Active' && (outlet.type === 'Active' || outlet.type === 'Primary Hub')) ||
+      outlet.type.toLowerCase().includes(statusFilter.toLowerCase());
+
+    return matchesSearch && matchesRegion && matchesStatus;
+  }).sort((a, b) => {
+    if (sortBy === 'name-asc') {
+      return a.name.localeCompare(b.name);
+    } else if (sortBy === 'name-desc') {
+      return b.name.localeCompare(a.name);
+    } else {
+      const parseRev = (rev: string) => parseFloat(rev.replace(/[^0-9.-]+/g, ''));
+      const revA = parseRev(a.volume30d);
+      const revB = parseRev(b.volume30d);
+      return sortBy === 'revenue-desc' ? revB - revA : revA - revB;
+    }
   });
 
   const handleSelectOutlet = (id: string, name: string) => {
@@ -150,25 +178,33 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
 
   return (
     <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5 text-[#1A1615]">
+      {/* Bottom Toast Feedback */}
+      {feedbackToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
+          <CheckCircle2 className="w-5 h-5 text-[#15803D]" />
+          <span>{feedbackToast}</span>
+        </div>
+      )}
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
-            Branch&amp; Outlets Management
+          <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
+            Branch &amp; Outlets Management
           </h1>
         </div>
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
           {/* Export Ledger button */}
           <button
-            onClick={() => alert('Generating cryptographic ledger snapshot (CSV / PDF)...')}
+            onClick={() => showToast('Generating cryptographic ledger snapshot (CSV / PDF)...')}
             className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] rounded-lg px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-[#5C554E]" />
             <span>Export Ledger</span>
           </button>
 
-          {/* + Add New Branch button (warm gold) */}
+          {/* + Add New Branch button (brand gold gradient) */}
           <button
             onClick={() => {
               if (onNavigate) {
@@ -177,7 +213,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 setIsAddModalOpen(true);
               }
             }}
-            className="bg-[#B38637] hover:bg-[#A37837] text-white rounded-lg px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white" />
             <span>Add New Branch</span>
@@ -306,9 +342,9 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
               onChange={(e) => setRegionFilter(e.target.value)}
               className="appearance-none bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 pr-8 text-xs font-medium text-[#1A1615] shadow-2xs focus:outline-none cursor-pointer"
             >
-              <option>Region: All West Coast</option>
-              <option>Region: Los Angeles</option>
-              <option>Region: San Francisco</option>
+              <option value="All West Coast">Region: All West Coast</option>
+              <option value="Los Angeles">Region: Los Angeles</option>
+              <option value="San Francisco">Region: San Francisco</option>
             </select>
             <ChevronDown className="w-3 h-3 text-[#8C827A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
@@ -320,8 +356,9 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
               onChange={(e) => setStatusFilter(e.target.value)}
               className="appearance-none bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 pr-8 text-xs font-medium text-[#1A1615] shadow-2xs focus:outline-none cursor-pointer"
             >
-              <option>Status: Active ({outlets.length})</option>
-              <option>Status: Maintenance</option>
+              <option value="All">Status: All</option>
+              <option value="Active">Status: Active ({outlets.length})</option>
+              <option value="Maintenance">Status: Maintenance</option>
             </select>
             <ChevronDown className="w-3 h-3 text-[#8C827A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
@@ -333,8 +370,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
               onChange={(e) => setSortBy(e.target.value as any)}
               className="appearance-none bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 pr-8 text-xs font-medium text-[#1A1615] shadow-2xs focus:outline-none cursor-pointer"
             >
-              <option value="revenue">Sort by: Revenue (High to Low)</option>
-              <option value="name">Sort by: Name (A-Z)</option>
+              <option value="revenue-desc">Sort by: Revenue (High to Low)</option>
+              <option value="revenue-asc">Sort by: Revenue (Low to High)</option>
+              <option value="name-asc">Sort by: Name (A-Z)</option>
+              <option value="name-desc">Sort by: Name (Z-A)</option>
             </select>
             <Sliders className="w-3 h-3 text-[#8C827A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
@@ -343,11 +382,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           <div className="flex items-center border border-[#EAE6E1] bg-white rounded-lg p-0.5 shadow-2xs">
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md transition-colors cursor-pointer ${
-                viewMode === 'list'
-                  ? 'bg-[#FAF8F5] text-[#1A1615] font-semibold'
-                  : 'text-[#8C827A] hover:text-[#1A1615]'
-              }`}
+              className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === 'list'
+                ? 'bg-[#FAF8F5] text-[#1A1615] font-semibold'
+                : 'text-[#8C827A] hover:text-[#1A1615]'
+                }`}
               title="List View"
             >
               <TableIcon className="w-4 h-4" />
@@ -355,13 +393,12 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
             <button
               onClick={() => {
                 setViewMode('map');
-                alert('Interactive Map View: 3 Outlets mapped across Southern California.');
+                showToast('Interactive Map View: 3 Outlets mapped across Southern California.');
               }}
-              className={`p-1.5 rounded-md transition-colors cursor-pointer ${
-                viewMode === 'map'
-                  ? 'bg-[#FAF8F5] text-[#1A1615] font-semibold'
-                  : 'text-[#8C827A] hover:text-[#1A1615]'
-              }`}
+              className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === 'map'
+                ? 'bg-[#FAF8F5] text-[#1A1615] font-semibold'
+                : 'text-[#8C827A] hover:text-[#1A1615]'
+                }`}
               title="Map View"
             >
               <Map className="w-4 h-4" />
@@ -375,11 +412,11 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
         {/* Left Column: Configured Outlets + Velocity Chart (8 cols or 7 cols) */}
         <div className={`${inspectorVisible ? 'lg:col-span-7' : 'lg:col-span-12'} space-y-4`}>
           {/* Section Header */}
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <Store className="w-4 h-4 text-[#B38637]" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between px-1 gap-1.5 sm:gap-0">
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              <Store className="w-4 h-4 text-[#B38637] shrink-0" />
               <h2 className="text-sm font-bold text-[#1A1615]">Configured Outlets</h2>
-              <span className="bg-[#FAF8F5] text-[#7C746C] text-[10px] font-bold px-2 py-0.5 rounded border border-[#EAE6E1]">
+              <span className="bg-[#FAF8F5] text-[#7C746C] text-[10px] font-bold px-2 py-0.5 rounded border border-[#EAE6E1] whitespace-nowrap">
                 {filteredOutlets.length} Visible
               </span>
             </div>
@@ -397,24 +434,22 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 <div
                   key={outlet.id}
                   onClick={() => handleSelectOutlet(outlet.id, outlet.shortName)}
-                  className={`bg-white border rounded-xl p-4 sm:p-5 transition-all cursor-pointer shadow-2xs ${
-                    isSelected
-                      ? 'border-[#B38637] ring-1 ring-[#B38637]/30 shadow-xs'
-                      : 'border-[#EAE6E1] hover:border-[#D4A753]'
-                  }`}
+                  className={`bg-white border rounded-xl p-4 sm:p-5 transition-all cursor-pointer shadow-2xs ${isSelected
+                    ? 'border-[#B38637] ring-1 ring-[#B38637]/30 shadow-xs'
+                    : 'border-[#EAE6E1] hover:border-[#D4A753]'
+                    }`}
                 >
                   {/* Top Header of Card */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0">
                       {/* Left icon square */}
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                          outlet.id === 'downtown'
-                            ? 'bg-[#1A1615] text-[#D4A753]'
-                            : outlet.id === 'northside'
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${outlet.id === 'downtown'
+                          ? 'bg-[#1A1615] text-[#D4A753]'
+                          : outlet.id === 'northside'
                             ? 'bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615]'
                             : 'bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615]'
-                        }`}
+                          }`}
                       >
                         {outlet.id === 'westend' ? (
                           <Laptop className="w-5 h-5" />
@@ -429,11 +464,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                             {outlet.name}
                           </h3>
                           <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                              outlet.type === 'Primary Hub'
-                                ? 'bg-[#FAF6EE] text-[#9E782F] border border-[#E5D7BE]'
-                                : 'bg-[#EBF7F0] text-[#15803D] border border-[#CEEBD9]'
-                            }`}
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${outlet.type === 'Primary Hub'
+                              ? 'bg-[#FAF6EE] text-[#9E782F] border border-[#E5D7BE]'
+                              : 'bg-[#EBF7F0] text-[#15803D] border border-[#CEEBD9]'
+                              }`}
                           >
                             {outlet.type}
                           </span>
@@ -471,7 +505,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          alert(`Managing options for ${outlet.shortName}`);
+                          showToast(`Managing options for ${outlet.shortName}`);
                         }}
                         className="p-1 text-[#8C827A] hover:text-[#1A1615] rounded hover:bg-[#FAF8F5] cursor-pointer"
                       >
@@ -647,7 +681,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
               <span className="text-[10px] uppercase font-bold text-[#8C827A] tracking-wider block">
                 OPERATIONAL SNAPSHOT
               </span>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-[#8C827A] text-[11px] block">Hours</span>
                   <span className="font-semibold text-[#1A1615] mt-0.5 block leading-tight">
@@ -709,13 +743,12 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                             {hw.name}
                           </span>
                           <span
-                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                              hw.badge === 'Square'
-                                ? 'bg-[#EBF7F0] text-[#15803D]'
-                                : hw.badge === 'Clover'
+                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${hw.badge === 'Square'
+                              ? 'bg-[#EBF7F0] text-[#15803D]'
+                              : hw.badge === 'Clover'
                                 ? 'bg-neutral-100 text-neutral-700'
                                 : 'bg-[#FAF6EE] text-[#9E782F]'
-                            }`}
+                              }`}
                           >
                             {hw.badge}
                           </span>
@@ -791,7 +824,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 if (onNavigate) {
                   onNavigate('/qr-codes');
                 } else {
-                  alert(`Downloading Printable QR Stands Pack for ${selectedOutlet.shortName}...`);
+                  showToast(`Downloading Printable QR Stands Pack for ${selectedOutlet.shortName}...`);
                 }
               }}
               className="w-full mt-2 bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-2xs transition-colors cursor-pointer"
@@ -939,7 +972,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 <button
                   onClick={() => {
                     setIsEditModalOpen(false);
-                    alert('Branch details updated successfully.');
+                    showToast('Branch details updated successfully.');
                   }}
                   className="px-4 py-1.5 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
                 >

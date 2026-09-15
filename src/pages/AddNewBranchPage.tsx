@@ -157,7 +157,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
   };
 
   return (
-    <div className="p-4 lg:p-8 max-w-[1440px] mx-auto space-y-6">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
       {/* Toast feedback for PDF kit download */}
       {showDownloadToast && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl border border-neutral-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-5">
@@ -185,7 +185,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
           {/* Page Title with Staging Tier Badge */}
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-[#1A1615]">
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
               Add New Branch / Outlet
             </h1>
             <span className="bg-[#FAF6EE] border border-[#E5D7BE] text-[#9E782F] text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -207,7 +207,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           <button
             onClick={handleProvisionBranch}
             disabled={isSubmitting}
-            className="px-4 py-2 rounded-lg bg-[#A37837] hover:bg-[#8F662A] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer disabled:opacity-50"
           >
             <Plus className="w-3.5 h-3.5 text-white" />
             <span>Provision &amp; Launch Branch</span>
@@ -350,7 +350,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   >
                     <Tent className={`w-4 h-4 mb-2 ${venueProfile === 'popup' ? 'text-white' : 'text-[#8C827A]'}`} />
                     <div className="text-xs font-bold leading-tight">
-                      Pop-Up Atelier
+                      Pop-Up Kiosk
                     </div>
                     <div className={`text-[10px] mt-0.5 ${venueProfile === 'popup' ? 'text-white/80' : 'text-[#7C746C]'}`}>
                       Seasonal space
@@ -606,7 +606,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               {/* Designated Head of Atelier (General Manager) */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[#3D3732] block">
-                  Designated Head of Atelier (General Manager)
+                  Designated General Manager
                 </label>
                 <div className="relative">
                   <select

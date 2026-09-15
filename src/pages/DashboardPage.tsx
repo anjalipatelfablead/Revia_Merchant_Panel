@@ -31,6 +31,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const [timeframe, setTimeframe] = useState<'Daily' | 'Weekly' | 'Monthly'>('Daily');
   const [activeDateRange, setActiveDateRange] = useState('Last 30 Days (Oct 1 - Oct 31, 2024)');
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
+  const [exportToast, setExportToast] = useState(false);
+  const [expandedBranch, setExpandedBranch] = useState<string | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<{
     date: string;
     stamps: number;
@@ -47,28 +49,111 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
     y2: 155,
   });
 
-  // Chart data points representing the 30-day dynamic volume curve
-  const chartPoints = [
-    { date: 'Oct 01', stamps: 740, redeemed: 110, x: 20, y1: 120, y2: 180 },
-    { date: 'Oct 05', stamps: 820, redeemed: 125, x: 80, y1: 105, y2: 172 },
-    { date: 'Oct 09', stamps: 790, redeemed: 118, x: 140, y1: 112, y2: 176 },
-    { date: 'Oct 13', stamps: 910, redeemed: 140, x: 200, y1: 92, y2: 165 },
-    { date: 'Oct 16', stamps: 860, redeemed: 132, x: 260, y1: 100, y2: 169 },
-    { date: 'Oct 20', stamps: 980, redeemed: 165, x: 320, y1: 80, y2: 160 },
-    { date: 'Oct 22', stamps: 1020, redeemed: 175, x: 380, y1: 72, y2: 158 },
-    { date: 'Thu, Oct 24', stamps: 1084, redeemed: 186, x: 440, y1: 65, y2: 155 },
-    { date: 'Oct 26', stamps: 990, redeemed: 170, x: 500, y1: 78, y2: 162 },
-    { date: 'Oct 29', stamps: 1050, redeemed: 180, x: 560, y1: 68, y2: 157 },
-    { date: 'Oct 31', stamps: 1120, redeemed: 195, x: 620, y1: 55, y2: 152 },
-  ];
+  // Dynamic Chart data and totals based on filters
+  const { chartPoints, totalStamps, totalRedeemed, ratio } = React.useMemo(() => {
+    let basePoints = [];
+    let stamps = 0;
+    let redeemed = 0;
+
+    if (activeDateRange === 'Last 7 Days') {
+      basePoints = [
+        { date: 'Mon', stamps: 820, redeemed: 120, x: 20, y1: 140, y2: 180 },
+        { date: 'Tue', stamps: 950, redeemed: 140, x: 120, y1: 120, y2: 175 },
+        { date: 'Wed', stamps: 880, redeemed: 130, x: 220, y1: 130, y2: 178 },
+        { date: 'Thu', stamps: 1100, redeemed: 180, x: 320, y1: 100, y2: 165 },
+        { date: 'Fri', stamps: 1400, redeemed: 220, x: 420, y1: 70, y2: 140 },
+        { date: 'Sat', stamps: 1600, redeemed: 280, x: 520, y1: 50, y2: 120 },
+        { date: 'Sun', stamps: 1450, redeemed: 240, x: 620, y1: 60, y2: 130 },
+      ];
+      stamps = 8200;
+      redeemed = 1310;
+    } else if (activeDateRange === 'This Quarter (Q4 2024)') {
+      basePoints = [
+        { date: 'Oct', stamps: 28410, redeemed: 4180, x: 20, y1: 120, y2: 180 },
+        { date: 'Nov', stamps: 32000, redeemed: 4800, x: 320, y1: 80, y2: 160 },
+        { date: 'Dec', stamps: 45000, redeemed: 7500, x: 620, y1: 40, y2: 120 },
+      ];
+      stamps = 105410;
+      redeemed = 16480;
+    } else if (activeDateRange === 'Year to Date (2024)') {
+      basePoints = [
+        { date: 'Q1', stamps: 65000, redeemed: 8500, x: 20, y1: 150, y2: 190 },
+        { date: 'Q2', stamps: 82000, redeemed: 11000, x: 220, y1: 120, y2: 170 },
+        { date: 'Q3', stamps: 95000, redeemed: 13500, x: 420, y1: 90, y2: 150 },
+        { date: 'Q4', stamps: 105410, redeemed: 16480, x: 620, y1: 50, y2: 110 },
+      ];
+      stamps = 347410;
+      redeemed = 49480;
+    } else {
+      // Default: Last 30 Days
+      basePoints = [
+        { date: 'Oct 01', stamps: 740, redeemed: 110, x: 20, y1: 120, y2: 180 },
+        { date: 'Oct 05', stamps: 820, redeemed: 125, x: 80, y1: 105, y2: 172 },
+        { date: 'Oct 09', stamps: 790, redeemed: 118, x: 140, y1: 112, y2: 176 },
+        { date: 'Oct 13', stamps: 910, redeemed: 140, x: 200, y1: 92, y2: 165 },
+        { date: 'Oct 16', stamps: 860, redeemed: 132, x: 260, y1: 100, y2: 169 },
+        { date: 'Oct 20', stamps: 980, redeemed: 165, x: 320, y1: 80, y2: 160 },
+        { date: 'Oct 22', stamps: 1020, redeemed: 175, x: 380, y1: 72, y2: 158 },
+        { date: 'Thu, Oct 24', stamps: 1084, redeemed: 186, x: 440, y1: 65, y2: 155 },
+        { date: 'Oct 26', stamps: 990, redeemed: 170, x: 500, y1: 78, y2: 162 },
+        { date: 'Oct 29', stamps: 1050, redeemed: 180, x: 560, y1: 68, y2: 157 },
+        { date: 'Oct 31', stamps: 1120, redeemed: 195, x: 620, y1: 55, y2: 152 },
+      ];
+      stamps = 28410;
+      redeemed = 4180;
+    }
+
+    if (timeframe === 'Weekly') {
+      stamps = Math.round(stamps * 0.25);
+      redeemed = Math.round(redeemed * 0.25);
+    } else if (timeframe === 'Monthly') {
+      stamps = Math.round(stamps * 1.05);
+      redeemed = Math.round(redeemed * 1.05);
+    }
+
+    const calculatedRatio = redeemed > 0 ? (stamps / redeemed).toFixed(2) : '0.00';
+
+    return { chartPoints: basePoints, totalStamps: stamps, totalRedeemed: redeemed, ratio: calculatedRatio };
+  }, [activeDateRange, timeframe]);
+
+  // Path generators
+  const generatePath = (points: any[], key: 'y1' | 'y2') => {
+    if (points.length === 0) return '';
+    return points.map((p, i) => {
+      if (i === 0) return `M ${p.x} ${p[key]}`;
+      const prev = points[i - 1];
+      const cx1 = prev.x + (p.x - prev.x) / 3;
+      const cy1 = prev[key];
+      const cx2 = prev.x + 2 * (p.x - prev.x) / 3;
+      const cy2 = p[key];
+      return `C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p.x} ${p[key]}`;
+    }).join(' ');
+  };
+
+  const stampsPath = generatePath(chartPoints, 'y1');
+  const redeemedPath = generatePath(chartPoints, 'y2');
+  const areaPath = chartPoints.length > 0 ? `${stampsPath} L ${chartPoints[chartPoints.length - 1].x} 190 L ${chartPoints[0].x} 190 Z` : '';
 
   return (
-    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5 relative">
+      {/* Export Toast Notification */}
+      {exportToast && (
+        <div className="fixed top-20 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-2xl shadow-2xl border border-[#D4A753]/40 flex items-center gap-3 animate-in slide-in-from-top-4 duration-300">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white shrink-0 shadow-md">
+            <Share2 className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-white">Report Export Triggered ✓</p>
+            <p className="text-[10px] text-[#A8A29E]">Downloading merchant intelligence report (CSV / PDF)...</p>
+          </div>
+        </div>
+      )}
+
       {/* 1. Header Overview Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
               Dashboard Overview
             </h1>
             <span className="bg-[#EBF7F0] text-[#15803D] text-[11px] font-semibold px-2.5 py-0.5 rounded-md border border-[#CEEBD9] inline-flex items-center gap-1">
@@ -80,17 +165,17 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           </p>
         </div>
 
-        {/* Top Right Action Controls */}
-        <div className="flex items-center gap-2.5 flex-wrap">
+        {/* Top Right Action Controls — Single Line */}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-0 relative z-10">
           {/* Date Picker Dropdown */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-              className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-semibold text-[#1A1615] flex items-center gap-2 shadow-2xs transition-colors cursor-pointer"
+              className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap"
             >
-              <Calendar className="w-3.5 h-3.5 text-[#7C746C]" />
+              <Calendar className="w-3.5 h-3.5 text-white shrink-0" />
               <span>{activeDateRange}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#7C746C]" />
+              <ChevronDown className="w-3.5 h-3.5 text-white/80 shrink-0" />
             </button>
 
             {dateDropdownOpen && (
@@ -107,9 +192,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                       setActiveDateRange(range);
                       setDateDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${
-                      range === activeDateRange ? 'font-bold text-[#A37837] bg-[#FAF6EE]' : 'text-[#1A1615]'
-                    }`}
+                    className={`w-full text-left px-3 py-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${range === activeDateRange ? 'font-bold text-[#9E782F] bg-[#FAF6EE]' : 'text-[#1A1615]'
+                      }`}
                   >
                     {range}
                   </button>
@@ -120,26 +204,29 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
           {/* Export Report Button */}
           <button
-            onClick={() => alert('Exporting complete merchant intelligence report (CSV / PDF)...')}
-            className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+            onClick={() => {
+              setExportToast(true);
+              setTimeout(() => setExportToast(false), 3000);
+            }}
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Share2 className="w-3.5 h-3.5 text-[#7C746C]" />
+            <Share2 className="w-3.5 h-3.5 text-white shrink-0" />
             <span>Export Report</span>
           </button>
 
           {/* Create Campaign Primary Button */}
           <button
             onClick={() => onNavigate('/campaigns/new')}
-            className="bg-[#B38637] hover:bg-[#A37837] text-white rounded-lg px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4 text-white" />
+            <Plus className="w-4 h-4 text-white shrink-0" />
             <span>Create Campaign</span>
           </button>
         </div>
       </div>
 
       {/* 2. Top 4 Metric KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {/* Metric 1: Active Loyalty Members */}
         <div className="bg-white border border-[#EAE6E1] rounded-xl p-4 shadow-2xs flex flex-col justify-between">
           <div>
@@ -295,14 +382,17 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
       {/* 3. Middle Grid: Visits/Redemptions (8 cols) & Program Velocity (4 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Left Chart: Customer Visits & Reward Redemptions */}
+        {/* Left Card: Volume Trends Chart */}
         <div className="lg:col-span-8 bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs flex flex-col justify-between">
-          <div>
+          <div className="flex flex-col flex-1">
             {/* Card Header & Toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-base font-bold text-[#1A1615]">
-                  Customer Visits &amp; Reward Redemptions
+                <h2 className="text-base font-bold text-[#1A1615] flex items-center gap-2">
+                  Volume Trends
+                  <span className="text-[10px] font-bold bg-[#EBF7F0] text-[#15803D] border border-[#CEEBD9] px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    Live
+                  </span>
                 </h2>
                 <p className="text-xs text-[#7C746C] mt-0.5">
                   Dynamic volume comparison across all terminal stamps
@@ -315,11 +405,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                   <button
                     key={t}
                     onClick={() => setTimeframe(t)}
-                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-                      timeframe === t
-                        ? 'bg-[#B38637] text-white shadow-2xs'
-                        : 'text-[#7C746C] hover:text-[#1A1615]'
-                    }`}
+                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${timeframe === t
+                      ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs font-bold'
+                      : 'text-[#7C746C] hover:text-[#1A1615]'
+                      }`}
                   >
                     {t}
                   </button>
@@ -333,23 +422,23 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 <span className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#B38637]" />
                   <span className="text-[#7C746C]">Stamps Issued</span>
-                  <span className="font-bold text-[#1A1615]">28,410</span>
+                  <span className="font-bold text-[#1A1615]">{totalStamps.toLocaleString()}</span>
                 </span>
                 <span className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#1A1615]" />
                   <span className="text-[#7C746C]">Rewards Redeemed</span>
-                  <span className="font-bold text-[#1A1615]">4,180</span>
+                  <span className="font-bold text-[#1A1615]">{totalRedeemed.toLocaleString()}</span>
                 </span>
               </div>
               <div className="font-mono text-xs text-[#7C746C]">
-                Scan Ratio: <span className="font-semibold text-[#1A1615]">6.79 : 1</span>
+                Scan Ratio: <span className="font-semibold text-[#1A1615]">{ratio} : 1</span>
               </div>
             </div>
 
             {/* Interactive SVG Chart Viewport */}
-            <div className="relative mt-4 h-64 w-full select-none">
+            <div className="relative mt-4 min-h-[16rem] flex-1 w-full select-none">
               <svg
-                className="w-full h-full overflow-visible"
+                className="w-full h-full overflow-visible absolute inset-0"
                 viewBox="0 0 640 210"
                 preserveAspectRatio="none"
               >
@@ -369,27 +458,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
                 {/* Area under stamps curve */}
                 <path
-                  d="
-                    M 20 120 
-                    C 80 105, 140 112, 200 92 
-                    C 260 100, 320 80, 380 72 
-                    C 440 65, 500 78, 560 68 
-                    C 590 62, 620 55, 620 55
-                    L 620 190 
-                    L 20 190 Z
-                  "
+                  d={areaPath}
                   fill="url(#goldAreaGrad)"
                 />
 
                 {/* Gold Line: Stamps Issued */}
                 <path
-                  d="
-                    M 20 120 
-                    C 80 105, 140 112, 200 92 
-                    C 260 100, 320 80, 380 72 
-                    C 440 65, 500 78, 560 68 
-                    C 590 62, 620 55, 620 55
-                  "
+                  d={stampsPath}
                   stroke="#B38637"
                   strokeWidth="2.5"
                   fill="none"
@@ -398,13 +473,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
                 {/* Dark Charcoal Line: Rewards Redeemed */}
                 <path
-                  d="
-                    M 20 180 
-                    C 80 172, 140 176, 200 165 
-                    C 260 169, 320 160, 380 158 
-                    C 440 155, 500 162, 560 157 
-                    C 590 154, 620 152, 620 152
-                  "
+                  d={redeemedPath}
                   stroke="#1A1615"
                   strokeWidth="2"
                   fill="none"
@@ -610,47 +679,53 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             <div className="text-[10px] uppercase font-bold text-[#8C827A] tracking-wider mb-2">
               QUICK OPERATIONAL ACTIONS
             </div>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Action 1 */}
               <button
                 onClick={() => onNavigate('/qr-codes')}
-                className="w-full text-left bg-[#FAF8F5] hover:bg-[#F5F2EC] border border-[#EAE6E1] rounded-lg p-2.5 flex items-center justify-between transition-colors group cursor-pointer"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="flex items-center gap-2.5">
-                  <QrCode className="w-4 h-4 text-[#B38637]" />
-                  <span className="text-xs font-semibold text-[#1A1615]">
-                    Download Printable QR Pack
-                  </span>
+                <QrCode className="w-5 h-5 text-white mb-2" />
+                <div>
+                  <div className="text-xs font-bold text-white mb-0.5">Scan & Verify</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Counter camera launch</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C827A] group-hover:translate-x-0.5 transition-transform" />
               </button>
 
               {/* Action 2 */}
               <button
-                onClick={() => onNavigate('/staff')}
-                className="w-full text-left bg-[#FAF8F5] hover:bg-[#F5F2EC] border border-[#EAE6E1] rounded-lg p-2.5 flex items-center justify-between transition-colors group cursor-pointer"
+                onClick={() => onNavigate('/qr-codes')}
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="flex items-center gap-2.5">
-                  <UserPlus className="w-4 h-4 text-[#B38637]" />
-                  <span className="text-xs font-semibold text-[#1A1615]">
-                    Add Shift Counter Staff
-                  </span>
+                <Share2 className="w-5 h-5 text-white mb-2" />
+                <div>
+                  <div className="text-xs font-bold text-white mb-0.5">QR Pack Print</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Table stand templates</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C827A] group-hover:translate-x-0.5 transition-transform" />
               </button>
 
               {/* Action 3 */}
               <button
-                onClick={() => onNavigate('/loyalty')}
-                className="w-full text-left bg-[#FAF8F5] hover:bg-[#F5F2EC] border border-[#EAE6E1] rounded-lg p-2.5 flex items-center justify-between transition-colors group cursor-pointer"
+                onClick={() => onNavigate('/staff')}
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="flex items-center gap-2.5">
-                  <Zap className="w-4 h-4 text-[#B38637]" />
-                  <span className="text-xs font-semibold text-[#1A1615]">
-                    Launch Double-Stamp Day
-                  </span>
+                <UserPlus className="w-5 h-5 text-white mb-2" />
+                <div>
+                  <div className="text-xs font-bold text-white mb-0.5">Shift Staff</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">4 baristas logged in</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8C827A] group-hover:translate-x-0.5 transition-transform" />
+              </button>
+
+              {/* Action 4 */}
+              <button
+                onClick={() => onNavigate('/loyalty')}
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
+              >
+                <Zap className="w-5 h-5 text-white mb-2" />
+                <div>
+                  <div className="text-xs font-bold text-white mb-0.5">Double-Stamp</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Trigger flash hour boost</div>
+                </div>
               </button>
             </div>
           </div>
@@ -662,16 +737,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* Left: Real-time Branch Activity */}
         <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-[#1A1615]">
-                  Real-time Branch Activity
-                </h2>
-                <span className="w-2 h-2 rounded-full bg-[#15803D] animate-pulse" />
+            <div className="flex items-start sm:items-center justify-between gap-2">
+              <h2 className="text-base font-bold text-[#1A1615]">
+                Real-time Branch Activity
+              </h2>
+              <div className="flex items-center gap-1.5 shrink-0 mt-1 sm:mt-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] animate-pulse" />
+                <span className="font-mono text-[11px] sm:text-xs text-[#5C554E] whitespace-nowrap">
+                  Stream: Connected
+                </span>
               </div>
-              <span className="font-mono text-xs text-[#5C554E]">
-                Stream: Connected
-              </span>
             </div>
             <p className="text-xs text-[#7C746C] mt-0.5 mb-4">
               Instant log of counter scans, member tier upgrades, and verified redemptions
@@ -794,15 +869,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           </div>
 
           {/* Footer Action */}
-          <div className="mt-4 pt-3 border-t border-[#F5F2EC] flex items-center justify-between">
+          <div className="mt-4 pt-3 border-t border-[#F5F2EC] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-0">
             <button
               onClick={() => onNavigate('/settings/audit')}
-              className="text-xs font-bold text-[#A37837] hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-[11px] sm:text-xs font-bold text-[#A37837] hover:underline flex items-center gap-1 cursor-pointer w-fit"
             >
               <span>View full activity audit ledger</span>
               <span>→</span>
             </button>
-            <span className="text-[11px] text-[#8C827A]">
+            <span className="text-[10px] sm:text-[11px] text-[#8C827A] flex items-center gap-1">
+              <span className="w-1 h-1 rounded-full bg-[#8C827A] sm:hidden"></span>
               Refreshed automatically
             </span>
           </div>
@@ -815,7 +891,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <h2 className="text-base font-bold text-[#1A1615]">
                 Branch Comparison &amp; Stand Status
               </h2>
-              <button 
+              <button
                 className="text-[#8C827A] hover:text-[#1A1615] p-1 cursor-pointer"
                 aria-label="Options"
               >
@@ -826,8 +902,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               Operational stand performance across live retail sites
             </p>
 
-            {/* Performance Table */}
-            <div className="overflow-x-auto">
+            {/* Desktop Performance Table */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[#F2EFE9] text-[10px] uppercase font-bold tracking-wider text-[#8C827A]">
@@ -839,94 +915,83 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F5F2EC] text-xs">
-                  {/* Row 1 */}
-                  <tr>
-                    <td className="py-3">
-                      <div className="font-bold text-[#1A1615]">
-                        Downtown Flagship
-                      </div>
-                      <div className="text-[10px] text-[#8C827A]">
-                        742 Evergreen Terr.
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className="flex items-center gap-1.5 font-medium text-[#1A1615]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
-                        6 Active
-                      </span>
-                    </td>
-                    <td className="py-3 font-bold text-[#1A1615]">
-                      412
-                    </td>
-                    <td className="py-3 font-bold text-[#B38637]">
-                      38
-                    </td>
-                    <td className="py-3 text-right">
-                      <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[11px] font-medium px-2.5 py-0.5 rounded-full inline-block">
-                        3 On-duty
-                      </span>
-                    </td>
-                  </tr>
-
-                  {/* Row 2 */}
-                  <tr>
-                    <td className="py-3">
-                      <div className="font-bold text-[#1A1615]">
-                        Northside Mall
-                      </div>
-                      <div className="text-[10px] text-[#8C827A]">
-                        Atrium Level 2, Unit 4B
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className="flex items-center gap-1.5 font-medium text-[#1A1615]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
-                        4 Active
-                      </span>
-                    </td>
-                    <td className="py-3 font-bold text-[#1A1615]">
-                      245
-                    </td>
-                    <td className="py-3 font-bold text-[#B38637]">
-                      22
-                    </td>
-                    <td className="py-3 text-right">
-                      <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[11px] font-medium px-2.5 py-0.5 rounded-full inline-block">
-                        2 On-duty
-                      </span>
-                    </td>
-                  </tr>
-
-                  {/* Row 3 */}
-                  <tr>
-                    <td className="py-3">
-                      <div className="font-bold text-[#1A1615]">
-                        West End Kiosk
-                      </div>
-                      <div className="text-[10px] text-[#8C827A]">
-                        Transit Plaza Central
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className="flex items-center gap-1.5 font-medium text-[#1A1615]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
-                        2 Active
-                      </span>
-                    </td>
-                    <td className="py-3 font-bold text-[#1A1615]">
-                      118
-                    </td>
-                    <td className="py-3 font-bold text-[#B38637]">
-                      14
-                    </td>
-                    <td className="py-3 text-right">
-                      <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[11px] font-medium px-2.5 py-0.5 rounded-full inline-block">
-                        1 On-duty
-                      </span>
-                    </td>
-                  </tr>
+                  {[
+                    { id: 'downtown', name: 'Downtown Flagship', address: '742 Evergreen Terr.', stands: 6, scans: 412, redeemed: 38, staff: '3 On-duty' },
+                    { id: 'northside', name: 'Northside Mall', address: 'Atrium Level 2, Unit 4B', stands: 4, scans: 245, redeemed: 22, staff: '2 On-duty' },
+                    { id: 'westend', name: 'West End Kiosk', address: 'Transit Plaza Central', stands: 2, scans: 118, redeemed: 14, staff: '1 On-duty' }
+                  ].map(branch => (
+                    <tr key={branch.id}>
+                      <td className="py-3">
+                        <div className="font-bold text-[#1A1615]">{branch.name}</div>
+                        <div className="text-[10px] text-[#8C827A]">{branch.address}</div>
+                      </td>
+                      <td className="py-3">
+                        <span className="flex items-center gap-1.5 font-medium text-[#1A1615]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
+                          {branch.stands} Active
+                        </span>
+                      </td>
+                      <td className="py-3 font-bold text-[#1A1615]">{branch.scans}</td>
+                      <td className="py-3 font-bold text-[#B38637]">{branch.redeemed}</td>
+                      <td className="py-3 text-right">
+                        <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[11px] font-medium px-2.5 py-0.5 rounded-full inline-block">
+                          {branch.staff}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Expandable List */}
+            <div className="sm:hidden space-y-3">
+              {[
+                { id: 'downtown', name: 'Downtown Flagship', address: '742 Evergreen Terr.', stands: 6, scans: 412, redeemed: 38, staff: '3 On-duty' },
+                { id: 'northside', name: 'Northside Mall', address: 'Atrium Level 2, Unit 4B', stands: 4, scans: 245, redeemed: 22, staff: '2 On-duty' },
+                { id: 'westend', name: 'West End Kiosk', address: 'Transit Plaza Central', stands: 2, scans: 118, redeemed: 14, staff: '1 On-duty' }
+              ].map(branch => (
+                <div key={branch.id} className="border border-[#EAE6E1] rounded-xl overflow-hidden shadow-2xs">
+                  <button
+                    onClick={() => setExpandedBranch(expandedBranch === branch.id ? null : branch.id)}
+                    className="w-full bg-[#FAF8F5] p-3 flex items-center justify-between transition-colors cursor-pointer hover:bg-[#F5F2EC]"
+                  >
+                    <div className="text-left">
+                      <div className="font-bold text-[#1A1615] text-xs">{branch.name}</div>
+                      <div className="text-[10px] text-[#8C827A]">{branch.address}</div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-1 font-medium text-[#1A1615] text-[11px]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
+                        {branch.stands} Active
+                      </span>
+                      {expandedBranch === branch.id ? (
+                        <ChevronDown className="w-4 h-4 text-[#8C827A]" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-[#8C827A]" />
+                      )}
+                    </div>
+                  </button>
+                  {expandedBranch === branch.id && (
+                    <div className="p-3 bg-white grid grid-cols-3 gap-3 border-t border-[#EAE6E1]">
+                      <div>
+                        <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Today Scans</div>
+                        <div className="font-bold text-[#1A1615] text-sm">{branch.scans}</div>
+                      </div>
+                      <div>
+                        <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Redeemed</div>
+                        <div className="font-bold text-[#B38637] text-sm">{branch.redeemed}</div>
+                      </div>
+                      <div className="text-right flex flex-col items-end">
+                        <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Staff Active</div>
+                        <span className="bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] text-[10px] font-medium px-2 py-0.5 rounded-full inline-block">
+                          {branch.staff}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* Terminal Telemetry Box */}

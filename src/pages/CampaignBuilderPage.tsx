@@ -1,380 +1,3017 @@
 import React, { useState } from 'react';
 import {
-  Sparkles,
+  Clock,
+  BookOpen,
+  Wifi,
   Check,
+  CheckCircle2,
   Plus,
   Trash2,
-  Users,
-  TrendingUp,
-  DollarSign,
-  Bell,
   ArrowRight,
-  Filter,
-  CheckCircle2,
+  ArrowLeft,
   Calendar,
-  Clock
+  Zap,
+  UserPlus,
+  RefreshCw,
+  Percent,
+  Star,
+  Activity,
+  FileText,
+  Smartphone,
+  ChevronDown,
+  DollarSign,
+  Users,
+  HelpCircle,
+  Circle,
+  CircleDot,
+  X,
+  Trophy,
+  Gift,
+  SlidersHorizontal,
+  Lightbulb,
+  GripVertical,
+  Copy,
+  Info,
+  Network,
+  CornerDownRight,
+  Lock,
+  Store,
+  BarChart3,
+  Sparkles,
+  TrendingUp,
+  Link2,
+  Edit2,
+  AlertCircle,
+  Hourglass,
+  MessageSquare,
+  Send,
+  ShieldCheck,
+  QrCode,
+  Package,
+  Printer,
+  Box,
+  BellRing,
+  Bookmark,
+  ChevronRight,
+  Wallet
 } from 'lucide-react';
-import { PrimaryButton } from '../components/common/Badges';
 
-interface CampaignCondition {
-  id: string;
-  field: string;
-  operator: string;
-  value: string;
-  logic: 'AND' | 'OR';
+interface CampaignRulesStepProps {
+  campaignType: string;
+  currency: string;
+  onContinue: (config: any) => void;
+  onBack: () => void;
 }
 
-export const CampaignBuilderPage: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<number>(3); // 3. Conditions & Rules [Active]
+type RuleCondition = {
+  id: string;
+  type: 'condition';
+  field: string;
+  operator: string;
+  value: any;
+};
 
-  // Campaign basics
-  const [campaignTitle, setCampaignTitle] = useState('Autumn Geisha Velocity Boost');
-  const [channel, setChannel] = useState<'push' | 'sms' | 'wallet'>('wallet');
+type RuleGroup = {
+  id: string;
+  type: 'group';
+  matchType: 'ALL' | 'ANY';
+  rules: RuleCondition[];
+};
 
-  // Rule Builder: Visual AND/OR block logic
-  const [conditions, setConditions] = useState<CampaignCondition[]>([
+type RuleNode = RuleCondition | RuleGroup;
+
+const RULE_FIELDS = [
+  { value: 'Customer Lifetime', label: 'Customer Lifetime', icon: Wallet },
+  { value: 'Last Visit Date', label: 'Last Visit Date', icon: Calendar },
+  { value: 'Current Tier', label: 'Current Tier', icon: Trophy },
+  { value: 'Total Stamp Cyc', label: 'Total Stamp Cyc', icon: FileText },
+];
+
+const RULE_OPERATORS = [
+  { value: 'is greater than or equal to', label: 'is greater than or equal to' },
+  { value: 'is within the last', label: 'is within the last' },
+  { value: 'is one of', label: 'is one of' },
+  { value: 'is greater than', label: 'is greater than' },
+];
+
+const RuleDropdown = ({ value, options, onChange, placeholder, minWidth = '160px', className = '' }: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const selected = options.find((o: any) => o.value === value);
+  const Icon = selected?.icon;
+
+  return (
+    <div className={`relative shrink-0 ${className.includes('w-full') ? 'w-full' : ''} ${className.includes('flex-1') ? 'flex-1' : ''}`} style={{ minWidth: className.includes('w-full') || className.includes('flex-1') ? 'auto' : minWidth }}>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center gap-2 px-3 py-2 border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] cursor-pointer ${className || 'bg-[#FAF8F5]'}`}
+      >
+        {Icon && <Icon className="w-4 h-4 text-[#D4A753]" />}
+        {selected ? selected.label : placeholder}
+        <ChevronDown className="w-4 h-4 text-[#9E9A93] ml-auto" />
+      </div>
+
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
+          <div className="absolute top-full left-0 mt-1 w-[200px] max-h-60 overflow-y-auto bg-white border border-[#EFECE6] rounded-lg shadow-lg z-50 py-1">
+            {options.map((opt: any) => (
+              <div
+                key={opt.value}
+                onClick={() => { onChange(opt.value); setIsOpen(false); }}
+                className="flex items-center gap-2 px-3 py-2 text-[13px] font-medium text-[#1A1615] hover:bg-[#FAF8F5] cursor-pointer"
+              >
+                {opt.icon && <opt.icon className="w-4 h-4 text-[#D4A753]" />}
+                {opt.label}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, currency, onContinue, onBack }) => {
+  const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
+  const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
+
+  const [rules, setRules] = useState<RuleNode[]>([
     {
-      id: 'rule-1',
-      field: 'Customer Lifetime Spend',
-      operator: '>=',
-      value: '$250.00',
-      logic: 'AND',
+      id: 'r1', type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '$ 250.00'
     },
     {
-      id: 'rule-2',
-      field: 'Last Visit Recency',
-      operator: 'within',
-      value: '14 days',
-      logic: 'AND',
+      id: 'r2', type: 'condition', field: 'Last Visit Date', operator: 'is within the last', value: '14 days'
     },
+    {
+      id: 'g1', type: 'group', matchType: 'ANY', rules: [
+        { id: 'sr1', type: 'condition', field: 'Current Tier', operator: 'is one of', value: 'Obsidian VIP, Gold Reserve' },
+        { id: 'sr2', type: 'condition', field: 'Total Stamp Cyc', operator: 'is greater than', value: '' }
+      ]
+    }
   ]);
 
-  const addCondition = () => {
-    setConditions([
-      ...conditions,
-      {
-        id: `rule-${Date.now()}`,
-        field: 'Total Visits',
-        operator: '>=',
-        value: '5 visits',
-        logic: 'AND',
-      },
-    ]);
+  const addRule = () => {
+    setRules([...rules, { id: Date.now().toString(), type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }]);
   };
 
-  const removeCondition = (id: string) => {
-    if (conditions.length > 1) {
-      setConditions(conditions.filter((c) => c.id !== id));
+  const addGroup = () => {
+    setRules([...rules, {
+      id: Date.now().toString(), type: 'group', matchType: 'ANY', rules: [
+        { id: Date.now().toString() + 'sub', type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }
+      ]
+    }]);
+  };
+
+  const addSubRule = (groupId: string) => {
+    setRules(rules.map(r => {
+      if (r.id === groupId && r.type === 'group') {
+        return { ...r, rules: [...r.rules, { id: Date.now().toString(), type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }] };
+      }
+      return r;
+    }));
+  };
+
+  const updateRule = (ruleId: string, field: string, value: any, groupId?: string) => {
+    setRules(rules.map(r => {
+      if (groupId && r.id === groupId && r.type === 'group') {
+        return { ...r, rules: r.rules.map(sr => sr.id === ruleId ? { ...sr, [field]: value } : sr) };
+      }
+      if (!groupId && r.id === ruleId && r.type === 'condition') {
+        return { ...r, [field]: value };
+      }
+      return r;
+    }));
+  };
+
+  const removeRule = (ruleId: string, groupId?: string) => {
+    if (groupId) {
+      setRules(rules.map(r => {
+        if (r.id === groupId && r.type === 'group') {
+          return { ...r, rules: r.rules.filter(sr => sr.id !== ruleId) };
+        }
+        return r;
+      }));
+    } else {
+      setRules(rules.filter(r => r.id !== ruleId));
     }
   };
 
-  const updateCondition = (id: string, key: keyof CampaignCondition, val: string) => {
-    setConditions(
-      conditions.map((c) => (c.id === id ? { ...c, [key]: val } : c))
-    );
+  const handleContinue = () => {
+    onContinue({});
   };
 
-  // Dynamic audience impact calculator based on conditions count
-  const qualifyingReach = 342 + (conditions.length * 45);
-  const expectedVisits = Math.round(qualifyingReach * 0.64);
-  const projectedGMV = (expectedVisits * 25.00).toLocaleString('en-US', { minimumFractionDigits: 2 });
+  const renderCondition = (rule: RuleCondition, groupId?: string, idx?: number) => (
+    <div key={rule.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 sm:p-3 shadow-2xs group hover:border-[#D4A753] transition-colors relative">
+
+      {/* Mobile Header (hidden on desktop) */}
+      <div className="flex items-center justify-between sm:hidden mb-1">
+        <span className="text-[10px] font-bold text-[#9E782F] tracking-widest uppercase">
+          {groupId ? `Criteria ${String.fromCharCode(65 + (idx || 0))}` : `Metric Rule 0${(idx || 0) + 1}`}
+        </span>
+        <button onClick={() => removeRule(rule.id, groupId)} className="p-1 text-[#9E9A93] hover:text-[#1A1615] transition-colors">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      <div className="hidden sm:block text-[#D1CDC7] cursor-grab shrink-0 pl-1"><GripVertical className="w-5 h-5" /></div>
+
+      <div className="flex-1 flex flex-col sm:flex-row sm:items-stretch gap-3">
+        {/* Field */}
+        <div className="flex-1 sm:flex-[1.5]">
+          <RuleDropdown
+            value={rule.field}
+            options={RULE_FIELDS}
+            onChange={(v: any) => updateRule(rule.id, 'field', v, groupId)}
+            placeholder="Select Field"
+            minWidth="100%"
+            className="w-full h-full bg-white border border-[#EFECE6] shadow-sm rounded-lg"
+          />
+        </div>
+
+        {/* Operator */}
+        <div className="flex-1 sm:flex-[1]">
+          <RuleDropdown
+            value={rule.operator}
+            options={RULE_OPERATORS}
+            onChange={(v: any) => updateRule(rule.id, 'operator', v, groupId)}
+            placeholder="Select Operator"
+            minWidth="100%"
+            className="w-full h-full bg-white border border-[#EFECE6] shadow-sm rounded-lg"
+          />
+        </div>
+
+        {/* Value */}
+        <div className="flex-1 sm:flex-[1.5]">
+          <div className="flex items-center w-full h-full px-3 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] shadow-sm">
+            <input
+              type="text"
+              value={rule.value}
+              onChange={e => updateRule(rule.id, 'value', e.target.value, groupId)}
+              className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]"
+              placeholder="Value..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <button onClick={() => removeRule(rule.id, groupId)} className="hidden sm:flex items-center justify-center p-2 text-[#9E9A93] hover:text-[#1A1615] transition-colors shrink-0 pr-1">
+        <X className="w-5 h-5" />
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="max-w-[1024px] mx-auto w-full flex flex-col lg:flex-row gap-6 items-start">
+      <div className="flex-1 w-full space-y-6 max-w-[700px]">
+
+        {/* Trigger & Qualification Rules */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm overflow-hidden">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6]">
+                  <Network className="w-5 h-5 text-[#D4A753]" />
+                </div>
+                <h3 className="text-[18px] font-bold text-[#1A1615] leading-tight">Trigger & Qualification<br />Rules</h3>
+              </div>
+              <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1 sm:gap-4">
+                <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] flex items-center gap-1"><Info className="w-3.5 h-3.5" /> EVALUATION<br className="sm:hidden" />ENGINE:</span>
+                <span className="px-3 py-1 bg-[#FAF8F5] sm:bg-[#EFECE6]/50 border border-[#EFECE6] sm:border-none text-[#1A1615] text-[11px] font-bold rounded-lg shadow-sm sm:shadow-none">Real-time</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] sm:border-0 sm:rounded-lg p-2 sm:px-4 sm:py-3 mb-6">
+              <span className="text-[12px] sm:text-[13px] font-bold text-[#1A1615] ml-2 hidden sm:block">Match</span>
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <span className="text-[10px] uppercase font-bold text-[#6E6A66] sm:hidden flex-1 pl-1">Logic<br />Conjunction:</span>
+                <div className="flex items-center p-1 sm:p-0.5 bg-white sm:bg-[#EFECE6]/30 border border-[#EFECE6] sm:border-none rounded-lg shadow-sm sm:shadow-none flex-1 sm:flex-none">
+                  <button
+                    onClick={() => setMatchType('ALL')}
+                    className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[11px] font-bold transition-colors ${matchType === 'ALL' ? 'bg-[#1A1615] sm:bg-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#FAF8F5]'}`}
+                  >ALL [AND]</button>
+                  <button
+                    onClick={() => setMatchType('ANY')}
+                    className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[11px] font-bold transition-colors ${matchType === 'ANY' ? 'bg-[#1A1615] sm:bg-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#FAF8F5]'}`}
+                  >ANY [OR]</button>
+                </div>
+              </div>
+              <span className="text-[12px] sm:text-[13px] text-[#6E6A66] ml-2 font-medium hidden sm:block">of the following condition criteria:</span>
+            </div>
+
+            <div className="space-y-3 relative">
+              {rules.map((rule, idx) => {
+                if (rule.type === 'condition') {
+                  return (
+                    <React.Fragment key={rule.id}>
+                      {renderCondition(rule, undefined, idx)}
+                      {idx < rules.length - 1 && <div className="hidden sm:block absolute left-6 w-0.5 bg-[#EFECE6] z-0" style={{ top: `${(idx * 60) + 30}px`, height: '30px' }}></div>}
+                    </React.Fragment>
+                  );
+                } else {
+                  return (
+                    <div key={rule.id} className="relative sm:pl-8 mt-4 sm:mt-0">
+                      <div className="hidden sm:block absolute left-6 top-6 w-2 h-0.5 bg-[#EAE6E1]"></div>
+
+                      <div className="bg-white border border-[#EFECE6] sm:border-l-[4px] sm:border-l-[#D4A753] rounded-xl p-4 shadow-sm relative">
+                        <div className="flex flex-row items-center justify-between mb-4 gap-2">
+                          <div className="flex items-center gap-2 text-[11px] sm:text-[12px] font-medium text-[#1A1615]">
+                            <span className="px-2.5 py-1 bg-[#D4A753] text-white font-bold rounded-full uppercase tracking-wider text-[10px] shrink-0">OR GROUP</span>
+                            <span className="hidden sm:inline">Customer satisfies AT LEAST ONE criteria below:</span>
+                            <span className="sm:hidden">Satisfies AT LEAST ONE:</span>
+                          </div>
+                          <button onClick={() => removeRule(rule.id)} className="flex items-center gap-1.5 text-[11px] sm:text-[12px] font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors shrink-0">
+                            <Trash2 className="w-4 h-4 sm:hidden" /> <span className="hidden sm:inline"><Trash2 className="w-3.5 h-3.5 inline mr-1" />Remove Group</span>
+                          </button>
+                        </div>
+
+                        <div className="space-y-3 relative">
+                          {rule.rules.map((subRule, subIdx) => renderCondition(subRule, rule.id, subIdx))}
+                        </div>
+
+                        <button onClick={() => addSubRule(rule.id)} className="mt-4 flex items-center gap-1.5 text-[12px] font-bold text-[#D4A753] hover:text-[#9E782F] transition-colors">
+                          <Plus className="w-4 h-4" /> Add condition inside this OR block
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          </div>
+
+          <div className="bg-[#FAF8F5] sm:bg-transparent sm:border-none p-0 sm:p-6 mt-6 sm:mt-0 flex flex-row items-center gap-2 sm:gap-4">
+            <button onClick={addRule} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-5 sm:py-2.5 bg-[#EFECE6]/50 sm:bg-white sm:border sm:border-[#EFECE6] text-[#1A1615] sm:text-[#9E782F] text-[11px] sm:text-[13px] font-bold rounded-lg sm:rounded-full shadow-sm hover:bg-[#FAF8F5] transition-colors cursor-pointer">
+              <Plus className="w-3.5 h-3.5 text-[#9E782F]" /> <span className="hidden sm:inline">Add Condition Rule</span><span className="sm:hidden">Add Condition</span>
+            </button>
+            <button onClick={addGroup} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-5 sm:py-2.5 bg-[#EFECE6]/50 sm:bg-white sm:border sm:border-[#EFECE6] text-[#1A1615] sm:text-[#9E782F] text-[11px] sm:text-[13px] font-bold rounded-lg sm:rounded-full shadow-sm hover:bg-[#FAF8F5] transition-colors cursor-pointer">
+              <Network className="w-3.5 h-3.5 text-[#9E782F]" /> <span className="hidden sm:inline">Add Nested Condition Group (AND / OR)</span><span className="sm:hidden">Add Nested Group</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Delivery Timing & Branch Eligibility */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm p-6 space-y-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6] shrink-0">
+              <Store className="w-5 h-5 text-[#D4A753]" />
+            </div>
+            <h3 className="text-[18px] font-bold text-[#1A1615] leading-tight">Delivery Timing & Branch Eligibility</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-2">TRIGGER EVENT</label>
+              <div className="flex items-center gap-3 px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl cursor-pointer">
+                <Zap className="w-5 h-5 text-[#9E782F] shrink-0" />
+                <div className="flex-1 text-[13px] font-bold text-[#1A1615] truncate">On QR Stand Scan at Count</div>
+                <ChevronDown className="w-4 h-4 text-[#9E9A93] shrink-0" />
+              </div>
+              <p className="mt-2 text-[11px] text-[#6E6A66] leading-relaxed pr-4">Triggers automatically when qualified guest scans NFC/QR point of service.</p>
+            </div>
+
+            <div>
+              <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-2">CAMPAIGN RUNTIME WINDOW</label>
+              <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-[#9E782F] shrink-0" />
+                  <div className="text-[12px] sm:text-[13px] font-bold text-[#1A1615]">Nov 1, 2024 — Nov 30, 2024</div>
+                </div>
+                <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold uppercase tracking-widest rounded shadow-sm">30 Days</span>
+              </div>
+              <p className="mt-2 text-[11px] text-[#6E6A66] leading-relaxed">Configured in merchant home timezone (PST - Pacific Standard).</p>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-3">ACTIVE BRANCHES (3 SELECTED)</label>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Downtown Flagship <Check className="w-3 h-3 text-[#6E6A66]" />
+              </span>
+              <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Northside Mall <Check className="w-3 h-3 text-[#6E6A66]" />
+              </span>
+              <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> West End Kiosk <Check className="w-3 h-3 text-[#6E6A66]" />
+              </span>
+              <button className="px-3 py-1.5 bg-[#FAF8F5] border border-[#D1CDC7] text-[#9E782F] text-[12px] font-bold rounded-full flex items-center gap-1.5 hover:bg-[#FDF8EB] transition-colors">
+                <Plus className="w-3 h-3" /> Add Location
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right side panels */}
+      <div className="w-full lg:w-[320px] shrink-0 space-y-6">
+
+        {/* Audience Impact Panel */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm p-6">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#D4A753]" />
+              <h3 className="text-[15px] font-bold text-[#1A1615] leading-tight">Audience<br />Impact</h3>
+            </div>
+            <span className="px-2.5 py-1 bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold rounded-full leading-tight text-center">Dynamic<br />Cohort</span>
+          </div>
+
+          <div className="mb-6">
+            <div className="flex justify-between items-end mb-1">
+              <span className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase">QUALIFYING CUSTOMERS</span>
+              <span className="text-[10px] font-bold text-[#0D7A53]">16.6% Reach</span>
+            </div>
+            <div className="flex items-baseline gap-2 mb-2">
+              <span className="text-[28px] font-bold text-[#1A1615] tracking-tight">4,120</span>
+              <span className="text-[12px] font-medium text-[#9E9A93]">of 24,850 members</span>
+            </div>
+            <div className="w-full h-2 bg-[#F5F4F2] rounded-full overflow-hidden">
+              <div className="h-full bg-[#D4A753] rounded-full" style={{ width: '16.6%' }}></div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3">
+              <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-1">EXPECTED<br />VISITS</div>
+              <div className="text-[15px] font-bold text-[#1A1615]">680 - 820</div>
+              <div className="text-[10px] font-bold text-[#0D7A53] mt-1">~18% claim<br />rate</div>
+            </div>
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3">
+              <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-1">PROJECTED<br />GMV</div>
+              <div className="text-[15px] font-bold text-[#9E782F]">+$28,400</div>
+              <div className="text-[10px] font-medium text-[#6E6A66] mt-1">Estimated lift</div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-3">TIER DISTRIBUTION</div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-[11px]">
+                <div className="flex items-center gap-1.5 font-bold text-[#1A1615]"><span className="w-1.5 h-1.5 bg-[#1A1615] rounded-full"></span> Obsidian VIP</div>
+                <div className="font-bold text-[#1A1615]">1,840 (44.6%)</div>
+              </div>
+              <div className="flex justify-between items-center text-[11px]">
+                <div className="flex items-center gap-1.5 font-bold text-[#1A1615]"><span className="w-1.5 h-1.5 bg-[#D4A753] rounded-full"></span> Gold Reserve</div>
+                <div className="font-bold text-[#1A1615]">2,280 (55.4%)</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-2">QUALIFICATION VELOCITY (LAST 14 DAYS)</div>
+            <div className="h-12 bg-[#FAF8F5] rounded-lg border border-[#EFECE6] relative overflow-hidden">
+              {/* Decorative line mimicking chart */}
+              <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full text-[#D4A753]">
+                <path d="M0,25 Q20,22 40,20 T70,10 T100,8 L100,30 L0,30 Z" fill="currentColor" fillOpacity="0.1" />
+                <path d="M0,25 Q20,22 40,20 T70,10 T100,8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Guest Experience Preview Panel */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Smartphone className="w-4 h-4 text-[#D4A753]" />
+              <h3 className="text-[15px] font-bold text-[#1A1615] leading-tight">Guest<br />Experience<br />Preview</h3>
+            </div>
+            <span className="px-2.5 py-1 bg-[#FAF8F5] text-[#6E6A66] text-[10px] font-bold rounded-lg border border-[#EFECE6] leading-tight text-center">iOS /<br />Android</span>
+          </div>
+
+          <p className="text-[11px] text-[#6E6A66] leading-relaxed mb-6">
+            Live simulation of the privileged push card rendered on the member's passbook wallet when conditions match.
+          </p>
+
+          {/* Wallet Card Mockup */}
+          <div className="bg-[#1A1615] rounded-xl overflow-hidden shadow-md border border-[#3D3730] mb-6">
+            <div className="p-3 border-b border-[#3D3730] flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-[#9E782F] text-[#1A1615] flex items-center justify-center font-black text-[10px]">R</div>
+                <span className="text-[9px] font-bold tracking-widest text-[#9E9A93]">BLUE BOTTLE - REVIA PASS</span>
+              </div>
+              <span className="text-[9px] font-bold text-[#9E9A93]">Now</span>
+            </div>
+            <div className="p-4 flex gap-4">
+              <div className="w-[60px] h-[60px] rounded-lg bg-[#3D3730] shrink-0 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=150&q=80" className="w-full h-full object-cover" alt="Coffee pour over" />
+              </div>
+              <div>
+                <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#D4A753] text-[#1A1615] text-[9px] font-bold rounded mb-1.5">
+                  <span className="w-1 h-1 rounded-full bg-[#1A1615]"></span> FLASH PRIVILEGE
+                </div>
+                <h4 className="text-[13px] font-bold text-white leading-tight mb-1">Double Stamp<br />on Pour-Over</h4>
+                <p className="text-[9px] text-[#9E9A93] leading-relaxed">Valid today only at<br />Downtown Flagship...</p>
+              </div>
+            </div>
+            <div className="p-3 bg-[#000000]/40 flex items-center justify-between border-t border-[#3D3730]">
+              <div className="flex items-center gap-1.5 text-[#D4A753]">
+                <Clock className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold leading-tight">Expires in 11h<br />42m</span>
+              </div>
+              <button className="px-3 py-1.5 bg-white text-[#1A1615] text-[10px] font-bold rounded-lg leading-tight">
+                Redeem at<br />POS
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] font-bold text-[#6E6A66]">
+            <button className="flex items-center gap-1.5 hover:text-[#D4A753] transition-colors text-center leading-tight">
+              <RefreshCw className="w-3 h-3" /> Regenerate<br />Sample Member
+            </button>
+            <div className="w-1 h-1 rounded-full bg-[#D1CDC7]"></div>
+            <button className="hover:text-[#D4A753] transition-colors text-center leading-tight">
+              Test Push to<br />Device
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface CampaignRewardStepProps {
+  campaignType: string;
+  ruleConfig: any;
+  currency: string;
+  onContinue: (config: any) => void;
+  onBack: () => void;
+}
+
+const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, ruleConfig, currency, onContinue, onBack }) => {
+  const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
+  const [rewardType, setRewardType] = useState<string>('free_item');
+  const [cashbackAmount, setCashbackAmount] = useState<number>(10);
+
+  const [discountType, setDiscountType] = useState<'Fixed' | 'Percentage'>('Percentage');
+  const [discountValue, setDiscountValue] = useState<number>(15);
+
+  const [rewardPoints, setRewardPoints] = useState<number>(500);
+
+  const [freeItem, setFreeItem] = useState<string>('Single Origin Geisha (250g Whole Bean)');
+
+  const [maxRedemptions, setMaxRedemptions] = useState<number>(1);
+  const [stackable, setStackable] = useState<boolean>(false);
+
+  const [expiryType, setExpiryType] = useState<'Days' | 'Date'>('Days');
+  const [expiryDays, setExpiryDays] = useState<number>(30);
+  const [expiryDate, setExpiryDate] = useState<string>('');
+
+  // Auto-prefill for existing_stamp
+  React.useEffect(() => {
+    if (campaignType === 'existing_stamp' && ruleConfig?.stampItem) {
+      if (rewardType === 'free_item') {
+        setFreeItem(ruleConfig.stampItem);
+      }
+    }
+  }, [campaignType, ruleConfig, rewardType]);
+
+  const rewardOptions = [
+    {
+      id: 'cashback',
+      title: 'Cashback',
+      desc: 'Credit fixed wallet amount back to customer balance',
+      icon: Wallet,
+    },
+    {
+      id: 'discount',
+      title: 'Discount',
+      desc: 'Apply % percentage or fixed value price deduction',
+      icon: Percent,
+    },
+    {
+      id: 'points',
+      title: 'Reward Points',
+      desc: 'Grant loyalty program bonus point boost',
+      icon: Star,
+    },
+    {
+      id: 'free_item',
+      title: 'Free Item',
+      desc: 'Give 100% complimentary product or Perk BOGO',
+      icon: Gift,
+    },
+  ];
+
+  return (
+    <div className="max-w-[1024px] mx-auto w-full flex flex-col lg:flex-row gap-6 items-start">
+      {/* Left Main Config Column */}
+      <div className="flex-1 w-full space-y-6">
+
+        {/* Header Banner */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6]">
+              <Gift className="w-5 h-5 text-[#D4A753]" />
+            </div>
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E782F]">STEP 4 OF 5</span>
+              <h3 className="text-[20px] font-bold text-[#1A1615] leading-tight">Reward Definition</h3>
+            </div>
+          </div>
+          <p className="text-[13px] text-[#7C746C] font-medium leading-relaxed">
+            Specify the precise perk, item, discount, or points granted to qualifying guests upon meeting campaign conditions.
+          </p>
+        </div>
+
+        {/* 1. Reward Type Selection */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
+          <div className="flex items-center justify-between">
+            <h4 className="text-[11px] font-bold text-[#9E782F] uppercase tracking-widest">WHAT DOES THE CUSTOMER GET?</h4>
+            <span className="text-[11px] font-bold text-[#15803D] bg-[#EBF7F0] px-2.5 py-0.5 rounded-full border border-[#15803D]/20">Active Reward Selection</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {rewardOptions.map(opt => {
+              const IconComponent = opt.icon;
+              const isSelected = rewardType === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setRewardType(opt.id)}
+                  className={`p-4 rounded-xl border transition-all cursor-pointer text-left flex items-start gap-3.5 relative ${isSelected
+                      ? 'bg-[#FDF8EB] border-[#D4A753] ring-2 ring-[#D4A753]/20 shadow-xs'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-white'
+                    }`}
+                >
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${isSelected ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-white border border-[#EFECE6] text-[#7C746C]'
+                    }`}>
+                    <IconComponent className="w-4.5 h-4.5" />
+                  </div>
+                  <div className="flex-1 min-w-0 pr-6">
+                    <div className="font-bold text-[14px] text-[#1A1615] leading-tight mb-1">{opt.title}</div>
+                    <div className="text-[11px] font-medium text-[#7C746C] leading-normal">{opt.desc}</div>
+                  </div>
+                  <div className={`absolute top-4 right-4 w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-[#D4A753]' : 'border-[#D1CDC7]'
+                    }`}>
+                    {isSelected && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Dynamic Configuration Inputs depending on Selection */}
+          {rewardType === 'cashback' && (
+            <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">CASHBACK AMOUNT</label>
+              <div className="relative max-w-[280px]">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7C746C] font-bold text-[14px]">{currSymbol}</span>
+                <input
+                  type="number"
+                  value={cashbackAmount || ''}
+                  onChange={e => setCashbackAmount(Number(e.target.value))}
+                  className="w-full pl-8 pr-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+          )}
+
+          {rewardType === 'discount' && (
+            <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border space-y-4">
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">DISCOUNT TYPE</label>
+                <div className="inline-flex bg-white border border-[#EFECE6] rounded-xl p-1 gap-1 shadow-2xs">
+                  {(['Fixed', 'Percentage'] as const).map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setDiscountType(t)}
+                      className={`px-4 py-1.5 rounded-lg text-[12px] font-bold transition-all cursor-pointer ${discountType === t
+                          ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-2xs'
+                          : 'text-[#7C746C] hover:text-[#1A1615]'
+                        }`}
+                    >
+                      {t} Amount
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">DISCOUNT VALUE</label>
+                <div className="relative max-w-[280px]">
+                  {discountType === 'Fixed' && <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7C746C] font-bold text-[14px]">{currSymbol}</span>}
+                  <input
+                    type="number"
+                    value={discountValue || ''}
+                    onChange={e => setDiscountValue(Number(e.target.value))}
+                    className={`w-full ${discountType === 'Fixed' ? 'pl-8' : 'pl-4'} pr-8 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs`}
+                    placeholder="0"
+                  />
+                  {discountType === 'Percentage' && <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#7C746C] font-bold text-[14px]">%</span>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {rewardType === 'points' && (
+            <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">POINTS AWARDED</label>
+              <div className="relative max-w-[280px]">
+                <input
+                  type="number"
+                  value={rewardPoints || ''}
+                  onChange={e => setRewardPoints(Number(e.target.value))}
+                  className="w-full px-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+                  placeholder="0"
+                />
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#7C746C] font-bold text-[11px] uppercase tracking-wider">PTS</span>
+              </div>
+            </div>
+          )}
+
+          {rewardType === 'free_item' && (
+            <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">FREE ITEM PRODUCT NAME</label>
+              <input
+                type="text"
+                value={freeItem}
+                onChange={e => setFreeItem(e.target.value)}
+                disabled={campaignType === 'existing_stamp' && !!ruleConfig?.stampItem}
+                className={`w-full px-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs ${campaignType === 'existing_stamp' && !!ruleConfig?.stampItem ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
+                placeholder="e.g. Single Origin Geisha 250g Whole Bean"
+              />
+              {campaignType === 'existing_stamp' && !!ruleConfig?.stampItem && (
+                <p className="mt-2 text-[11px] text-[#9E782F] font-bold flex items-center gap-1">
+                  <Info className="w-3.5 h-3.5" /> Auto-set from Stamp Type configuration
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* 2. Usage Limits & Rules */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
+          <h4 className="text-[11px] font-bold text-[#9E782F] uppercase tracking-widest">USAGE LIMITS &amp; CO-EXECUTIVE POLICIES</h4>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#7C746C] block mb-2">MAX REDEMPTIONS PER CUSTOMER</label>
+              <input
+                type="number"
+                value={maxRedemptions || ''}
+                onChange={e => setMaxRedemptions(Number(e.target.value))}
+                className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+                placeholder="1"
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-3.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl">
+              <div>
+                <div className="text-[13px] font-bold text-[#1A1615]">Stackable with Other Perks</div>
+                <div className="text-[11px] text-[#7C746C] font-medium">Allow alongside existing offers</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setStackable(v => !v)}
+                className={`relative w-11 h-6 rounded-full border transition-all cursor-pointer shrink-0 ${stackable ? 'bg-[#15803D] border-[#15803D]' : 'bg-[#EFECE6] border-[#D1CDC7]'
+                  }`}
+              >
+                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${stackable ? 'left-[22px]' : 'left-0.5'
+                  }`} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Reward Validity Horizon */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
+          <h4 className="text-[11px] font-bold text-[#9E782F] uppercase tracking-widest">REWARD EXPIRATION &amp; HORIZON</h4>
+
+          <div className="space-y-4">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${expiryType === 'Days' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]'
+                }`}>
+                {expiryType === 'Days' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+              </div>
+              <input
+                type="radio"
+                className="hidden"
+                checked={expiryType === 'Days'}
+                onChange={() => setExpiryType('Days')}
+              />
+              <span className="text-[13px] font-bold text-[#1A1615]">Relative Duration (Days after token issuance)</span>
+            </label>
+
+            {expiryType === 'Days' && (
+              <div className="ml-7 flex items-center gap-2">
+                <input
+                  type="number"
+                  value={expiryDays || ''}
+                  onChange={e => setExpiryDays(Number(e.target.value))}
+                  className="w-24 px-3.5 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  placeholder="30"
+                />
+                <span className="text-[13px] text-[#7C746C] font-semibold">Calendar Days</span>
+              </div>
+            )}
+
+            <label className="flex items-center gap-3 cursor-pointer group pt-1">
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${expiryType === 'Date' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]'
+                }`}>
+                {expiryType === 'Date' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
+              </div>
+              <input
+                type="radio"
+                className="hidden"
+                checked={expiryType === 'Date'}
+                onChange={() => setExpiryType('Date')}
+              />
+              <span className="text-[13px] font-bold text-[#1A1615]">Absolute Fixed Expiration Date</span>
+            </label>
+
+            {expiryType === 'Date' && (
+              <div className="ml-7">
+                <input
+                  type="date"
+                  value={expiryDate}
+                  onChange={e => setExpiryDate(e.target.value)}
+                  className="px-3.5 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side Summary Panel */}
+      <div className="w-full lg:w-[320px] shrink-0 space-y-6">
+        <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
+          <div className="flex items-center gap-2 pb-3 border-b border-[#EFECE6]">
+            <CheckCircle2 className="w-5 h-5 text-[#15803D]" />
+            <h4 className="text-[14px] font-bold text-[#1A1615]">Reward Summary</h4>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex justify-between items-center text-[12px]">
+              <span className="text-[#7C746C] font-medium">Selected Perk:</span>
+              <span className="font-bold text-[#1A1615] capitalize">{rewardType.replace('_', ' ')}</span>
+            </div>
+
+            <div className="flex justify-between items-center text-[12px]">
+              <span className="text-[#7C746C] font-medium">Perk Detail:</span>
+              <span className="font-bold text-[#9E782F] truncate max-w-[140px]">
+                {rewardType === 'cashback' && `${currSymbol}${cashbackAmount}`}
+                {rewardType === 'discount' && `${discountValue}${discountType === 'Percentage' ? '%' : currSymbol}`}
+                {rewardType === 'points' && `${rewardPoints} Pts`}
+                {rewardType === 'free_item' && (freeItem || 'Free Item')}
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center text-[12px]">
+              <span className="text-[#7C746C] font-medium">Max Limit:</span>
+              <span className="font-bold text-[#1A1615]">{maxRedemptions} per guest</span>
+            </div>
+
+            <div className="flex justify-between items-center text-[12px]">
+              <span className="text-[#7C746C] font-medium">Validity Window:</span>
+              <span className="font-bold text-[#15803D]">{expiryType === 'Days' ? `${expiryDays} Days` : (expiryDate || 'Fixed Date')}</span>
+            </div>
+          </div>
+
+          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3.5 flex items-start gap-2.5">
+            <Lightbulb className="w-4 h-4 text-[#D4A753] shrink-0 mt-0.5" />
+            <p className="text-[11px] text-[#7C746C] leading-relaxed font-medium">
+              Rewards are issued instantly via Apple/Google Wallet push notifications upon POS trigger verification.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export interface CampaignBuilderPageProps {
+  initialViewMode?: 'dashboard' | 'builder';
+}
+
+export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard' }) => {
+  const [currentStep, setCurrentStep] = useState<number>(1);
+
+  // Scroll to top when stepping through campaign wizard
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [currentStep]);
+
+  const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
+  const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
+  const [ruleConfig, setRuleConfig] = useState<any>({});
+  const [rewardConfig, setRewardConfig] = useState<any>({});
+
+  // Step 1 – Basics state
+  const [campaignName, setCampaignName] = useState('');
+  const [topLevelType, setTopLevelType] = useState<'new_customer' | 'existing_customer' | 'direct_customer' | 'product_qr' | ''>('');
+  const [existingSubType, setExistingSubType] = useState<'existing_visit' | 'existing_billing' | 'existing_stamp' | 'new_welcome' | 'new_first_visit' | 'new_first_billing' | ''>('');
+  const [directCustomerName, setDirectCustomerName] = useState<string>('Elena Rostova');
+  const [directCustomerMobile, setDirectCustomerMobile] = useState<string>('+91 98765 43210');
+  const [directCustomerBillNo, setDirectCustomerBillNo] = useState<string>('INV-88219');
+  const [directRedemptionMode, setDirectRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
+  const [productQrName, setProductQrName] = useState<string>('Single Origin Geisha (250g Whole Bean)');
+  const [productQrQuantity, setProductQrQuantity] = useState<number>(100);
+  const [productQrRedemptionMode, setProductQrRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [statusDraft, setStatusDraft] = useState(true);
+  const [currency, setCurrency] = useState('INR (₹)');
+
+  // Custom Segment Modal state
+  const [showCustomSegmentModal, setShowCustomSegmentModal] = useState(false);
+  const [customSegmentName, setCustomSegmentName] = useState('');
+
+  const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All Status');
+  const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
+
+  const [campaigns, setCampaigns] = useState([
+    { id: 1, name: 'Autumn Reserve Tasting', type: 'Welcome Campaign', status: 'Active', target: 'VIP', startDate: 'Nov 1, 2024', endDate: 'Nov 30, 2024', progress: 85, reward: 'Free Geisha Pour Over' },
+    { id: 2, name: 'Holiday Triple Stamps', type: 'Stamp Campaign', status: 'Draft', target: 'All Customers', startDate: 'Dec 1, 2024', endDate: 'Dec 31, 2024', progress: 0, reward: 'Free Pastry' },
+    { id: 3, name: 'Morning Happy Hour', type: 'Happy Hours', status: 'Active', target: 'Gold', startDate: 'Oct 15, 2024', endDate: 'Ongoing', progress: 42, reward: '10% Discount' },
+  ]);
+
+  const [priorityLevel, setPriorityLevel] = useState<number>(1);
+  const [selectedTiers, setSelectedTiers] = useState<string[]>(['Obsidian VIP', 'Gold Reserve']);
+  const [lifecycleType, setLifecycleType] = useState<string>('Both');
+  const [birthdayHorizon, setBirthdayHorizon] = useState<number>(7);
+  const [minAge, setMinAge] = useState<number>(21);
+  const [maxAge, setMaxAge] = useState<number>(65);
+
+  const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
+  const [rewardType, setRewardType] = useState<'Same' | 'Different'>('Same');
+
+  const [rewardSelection, setRewardSelection] = useState<string>('Free item / BOG');
+  const [redemptionLimit, setRedemptionLimit] = useState<string>('1 Time Only');
+  const [stackingControl, setStackingControl] = useState<boolean>(true);
+  const [expirationWindow, setExpirationWindow] = useState<string>('Dynamic Qualification Window');
+
+  type RuleType = 'standard1' | 'standard2' | 'bogo' | 'orGroup';
+  interface RuleItem { id: number; type: RuleType; }
+  const [rulesList, setRulesList] = useState<RuleItem[]>([
+    { id: 1, type: 'standard1' },
+    { id: 2, type: 'standard2' },
+    { id: 3, type: 'bogo' },
+    { id: 4, type: 'orGroup' }
+  ]);
+  const addRule = (type: RuleType) => setRulesList([...rulesList, { id: Date.now(), type }]);
+  const removeRule = (id: number) => setRulesList(rulesList.filter(r => r.id !== id));
+  const duplicateRule = (id: number) => {
+    const rule = rulesList.find(r => r.id === id);
+    if (rule) setRulesList([...rulesList, { ...rule, id: Date.now() }]);
+  };
+
+  const [orGroupItems, setOrGroupItems] = useState<{ id: number, type: 'tier' | 'stamp' }[]>([
+    { id: 1, type: 'tier' },
+    { id: 2, type: 'stamp' }
+  ]);
+  const addOrGroupItem = () => setOrGroupItems([...orGroupItems, { id: Date.now(), type: 'stamp' }]);
+  const removeOrGroupItem = (id: number) => setOrGroupItems(orGroupItems.filter(i => i.id !== id));
+
+  const [activeBranches, setActiveBranches] = useState<string[]>(['Downtown Flagship', 'Northside Mall', 'West End Kiosk']);
+  const allBranchOptions = ['Downtown Flagship', 'Northside Mall', 'West End Kiosk', 'Airport Lounge', 'Eastside Store'];
+  const toggleBranch = (branch: string) => {
+    setActiveBranches(prev =>
+      prev.includes(branch) ? prev.filter(b => b !== branch) : [...prev, branch]
+    );
+  };
+  const availableBranches = ['Airport Lounge', 'Eastside Store', 'Uptown Boutique'];
+  const handleAddLocation = () => {
+    const nextBranch = availableBranches.find(b => !activeBranches.includes(b));
+    if (nextBranch) setActiveBranches([...activeBranches, nextBranch]);
+    else showToast('All locations added');
+  };
+  const handleRemoveLocation = (branchToRemove: string) => {
+    setActiveBranches(activeBranches.filter(b => b !== branchToRemove));
+  };
+
+  const [draggedRuleId, setDraggedRuleId] = useState<number | null>(null);
+  const handleDragStart = (id: number) => setDraggedRuleId(id);
+  const handleDragOver = (e: React.DragEvent, targetId: number) => {
+    e.preventDefault();
+    if (draggedRuleId === null || draggedRuleId === targetId) return;
+    const draggedIndex = rulesList.findIndex(r => r.id === draggedRuleId);
+    const targetIndex = rulesList.findIndex(r => r.id === targetId);
+    if (draggedIndex < 0 || targetIndex < 0) return;
+    const newRules = [...rulesList];
+    const [draggedItem] = newRules.splice(draggedIndex, 1);
+    newRules.splice(targetIndex, 0, draggedItem);
+    setRulesList(newRules);
+  };
+  const handleDragEnd = () => setDraggedRuleId(null);
+
+
+  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setFeedbackToast(msg);
+    setTimeout(() => setFeedbackToast(null), 3000);
+  };
+
+  const toggleTier = (tier: string) => {
+    if (tier === 'All Tiers') {
+      setSelectedTiers(['Obsidian VIP', 'Gold Reserve', 'Silver Tier']);
+    } else {
+      setSelectedTiers(prev =>
+        prev.includes(tier) ? prev.filter(t => t !== tier) : [...prev, tier]
+      );
+    }
+  };
+
+  const campaignTypes = [
+    { id: '% Discount', icon: Percent },
+    { id: 'Loyalty Boost', icon: Star },
+    { id: 'Flash Promo', icon: Zap },
+    { id: 'Referral Bonus', icon: Users },
+    { id: 'New Customer', icon: UserPlus },
+    { id: 'Old Customer', icon: RefreshCw },
+    { id: 'Welcome Campaign', icon: Sparkles },
+    { id: 'Visit Campaign', icon: Activity },
+    { id: 'Billing Campaign', icon: DollarSign },
+    { id: 'Stamp Campaign', icon: FileText },
+    { id: 'Happy Hours', icon: Clock },
+  ];
 
   const steps = [
     { id: 1, name: 'Basics' },
     { id: 2, name: 'Audience' },
     { id: 3, name: 'Conditions & Rules' },
-    { id: 4, name: 'Reward Definition' },
+    { id: 4, name: 'Reward Def' },
     { id: 5, name: 'Review & Publish' },
   ];
 
-  return (
-    <div className="p-4 sm:p-6 space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  // Derived full campaign type key for Step 3 routing
+  const fullCampaignType =
+    (topLevelType === 'existing_customer' || topLevelType === 'new_customer') && existingSubType
+      ? existingSubType
+      : topLevelType;
+
+  const step1Valid = campaignName.trim().length > 0 && fullCampaignType !== '';
+
+  const renderStep1 = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+      {/* ── LEFT COLUMN ── */}
+      <div className="lg:col-span-7 flex flex-col gap-4 lg:block lg:bg-white lg:border lg:border-[#EFECE6] lg:rounded-xl lg:p-6 lg:shadow-sm lg:space-y-6">
+
+        {/* Mobile: Estimated Reach banner */}
+        <div className="lg:hidden bg-white border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#FDF8EB] rounded-full flex items-center justify-center text-[#9E782F]"><Users className="w-5 h-5" /></div>
+            <div>
+              <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93] mb-0.5">ESTIMATED LIVE REACH</div>
+              <div className="text-sm font-bold text-[#1A1615]">~1,840 <span className="font-medium text-[#6E6A66]">VIP Members</span></div>
+            </div>
+          </div>
+          <div className="px-2 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded font-bold text-[10px] flex items-center gap-1">
+            <TrendingUp className="w-3 h-3" /> +18.4%
+          </div>
+        </div>
+
+        {/* Desktop section label */}
+        <div className="hidden lg:block border-b border-[#EFECE6] pb-3">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">CONFIG 1/5</span>
+          <h3 className="text-base font-bold text-[#1A1615]">Campaign Details</h3>
+        </div>
+
+        {/* ── CAMPAIGN NAME ── */}
+        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
+          <div className="lg:hidden flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615]">
+              <Sparkles className="w-4 h-4 text-[#D4A753]" /> Campaign Identity
+            </div>
+            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] text-[10px] font-bold rounded">Required</span>
+          </div>
+
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66]">Campaign Name</label>
+              <span className="text-[11px] font-semibold text-[#9E9A93]">{campaignName.length} / 64 characters</span>
+            </div>
+            <input
+              id="campaign-name-input"
+              type="text"
+              value={campaignName}
+              maxLength={64}
+              onChange={e => setCampaignName(e.target.value)}
+              placeholder="e.g. Autumn Reserve Tasting & Geisha Perk"
+              className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] placeholder:text-[#B0ABA5] focus:outline-none focus:border-[#D4A753] transition-colors"
+            />
+          </div>
+
+          {/* ── CAMPAIGN TYPE (nested radio-cards) ── */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#1A1615] lg:text-[#6E6A66] mb-3">
+              Campaign Type <span className="text-[#B7362F] ml-0.5">*</span>
+            </label>
+
+            {/* Level 1 – 4 top-level cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-2">
+              {/* New Customer */}
+              <button
+                id="type-new-customer"
+                type="button"
+                onClick={() => {
+                  setTopLevelType('new_customer');
+                  if (!['new_welcome', 'new_first_visit', 'new_first_billing'].includes(existingSubType)) {
+                    setExistingSubType('new_welcome');
+                  }
+                }}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'new_customer'
+                  ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                  : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  }`}
+              >
+                {topLevelType === 'new_customer' && (
+                  <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'new_customer' ? 'bg-[#D4A753]/20' : 'bg-[#F3EDE6]'
+                  }`}>
+                  <Sparkles className={`w-5 h-5 ${topLevelType === 'new_customer' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                </div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'new_customer' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                  }`}>New Customer</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">Welcome offer for first-time customers</div>
+              </button>
+
+              {/* Existing Customer */}
+              <button
+                id="type-existing-customer"
+                type="button"
+                onClick={() => {
+                  setTopLevelType('existing_customer');
+                  if (!['existing_visit', 'existing_billing', 'existing_stamp'].includes(existingSubType)) {
+                    setExistingSubType('existing_visit');
+                  }
+                }}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'existing_customer'
+                  ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                  : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  }`}
+              >
+                {topLevelType === 'existing_customer' && (
+                  <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'existing_customer' ? 'bg-[#D4A753]/20' : 'bg-[#F3EDE6]'
+                  }`}>
+                  <RefreshCw className={`w-5 h-5 ${topLevelType === 'existing_customer' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                </div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'existing_customer' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                  }`}>Existing Customer</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">Reward repeat customers</div>
+              </button>
+
+              {/* Direct Special Offer */}
+              <button
+                id="type-direct-customer"
+                type="button"
+                onClick={() => { setTopLevelType('direct_customer'); setExistingSubType(''); }}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'direct_customer'
+                  ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                  : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  }`}
+              >
+                {topLevelType === 'direct_customer' && (
+                  <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'direct_customer' ? 'bg-[#25D366]/20' : 'bg-[#F3EDE6]'
+                  }`}>
+                  <MessageSquare className={`w-5 h-5 ${topLevelType === 'direct_customer' ? 'text-[#128C7E]' : 'text-[#9E9A93]'}`} />
+                </div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'direct_customer' ? 'text-[#128C7E]' : 'text-[#1A1615]'
+                  }`}>Direct Special Offer</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">WhatsApp link for targeted customer</div>
+              </button>
+
+              {/* Product Batch QR */}
+              <button
+                id="type-product-qr"
+                type="button"
+                onClick={() => { setTopLevelType('product_qr'); setExistingSubType(''); }}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'product_qr'
+                  ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                  : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  }`}
+              >
+                {topLevelType === 'product_qr' && (
+                  <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'product_qr' ? 'bg-[#D4A753]/20' : 'bg-[#F3EDE6]'
+                  }`}>
+                  <QrCode className={`w-5 h-5 ${topLevelType === 'product_qr' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                </div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'product_qr' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                  }`}>Product Batch QR</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">Batch QR stickers for N product pieces</div>
+              </button>
+            </div>
+
+            {/* Sub-config panel for Direct Special Offer */}
+            {topLevelType === 'direct_customer' && (
+              <div className="mt-3 p-5 bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl space-y-4">
+                <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-[#25D366]" />
+                    <span className="text-[13px] font-bold text-[#1A1615]">Target Customer Details &amp; WhatsApp Dispatch</span>
+                  </div>
+                  <span className="px-2.5 py-0.5 bg-[#25D366]/10 text-[#128C7E] rounded-full text-[10px] font-bold uppercase tracking-wider">WhatsApp &amp; SMS</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Customer Name</label>
+                    <input
+                      type="text"
+                      value={directCustomerName}
+                      onChange={e => setDirectCustomerName(e.target.value)}
+                      placeholder="e.g. Elena Rostova"
+                      className="w-full px-3.5 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Mobile Number (WhatsApp)</label>
+                    <input
+                      type="text"
+                      value={directCustomerMobile}
+                      onChange={e => setDirectCustomerMobile(e.target.value)}
+                      placeholder="e.g. +91 98765 43210"
+                      className="w-full px-3.5 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Bill / Reference No.</label>
+                    <input
+                      type="text"
+                      value={directCustomerBillNo}
+                      onChange={e => setDirectCustomerBillNo(e.target.value)}
+                      placeholder="e.g. INV-88219"
+                      className="w-full px-3.5 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                    />
+                  </div>
+                </div>
+
+                {/* Redemption Protocol Selector */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider block mb-2">Redemption Protocol</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Auto Redeem */}
+                    <button
+                      type="button"
+                      onClick={() => setDirectRedemptionMode('auto')}
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
+                        directRedemptionMode === 'auto'
+                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        directRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                      }`}>
+                        <Zap className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-bold text-[#1A1615]">⚡ Auto Redeem</div>
+                        <div className="text-[10px] text-[#6E6A66] leading-snug">Instant redemption automatically upon customer clicking the WhatsApp offer link.</div>
+                      </div>
+                    </button>
+
+                    {/* Merchant Approval Required */}
+                    <button
+                      type="button"
+                      onClick={() => setDirectRedemptionMode('merchant_approval')}
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
+                        directRedemptionMode === 'merchant_approval'
+                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        directRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                      }`}>
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-bold text-[#1A1615]">🛡️ Merchant Approval Required</div>
+                        <div className="text-[10px] text-[#6E6A66] leading-snug">Customer sends request via link; merchant accepts on POS terminal to complete redemption.</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Live WhatsApp Dispatch Preview */}
+                <div className="bg-[#E7F8E9] border border-[#25D366]/30 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-start gap-2.5">
+                    <MessageSquare className="w-5 h-5 text-[#25D366] shrink-0 mt-0.5" />
+                    <div className="text-[11px] text-[#128C7E] leading-snug">
+                      <span className="font-bold block">WhatsApp Message Dispatch Preview:</span>
+                      "Hi {directCustomerName || 'Customer'}, here is your special offer for Bill #{directCustomerBillNo || 'INV-001'}: <span className="underline font-bold">https://revia.app/r/offer-{directCustomerBillNo || '001'}</span> ({directRedemptionMode === 'auto' ? 'Auto-Redeem' : 'Requires Merchant Acceptance'})"
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => showToast('Test WhatsApp Offer Link generated!')} className="px-3.5 py-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold text-[11px] rounded-lg shadow-sm transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer">
+                    <Send className="w-3.5 h-3.5" /> Send WhatsApp Link
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Sub-config panel for Product Batch QR Offer */}
+            {topLevelType === 'product_qr' && (
+              <div className="mt-3 p-5 bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl space-y-4">
+                <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
+                  <div className="flex items-center gap-2">
+                    <Package className="w-4.5 h-4.5 text-[#D4A753]" />
+                    <span className="text-[13px] font-bold text-[#1A1615]">Physical Product Inventory &amp; Batch QR Generation</span>
+                  </div>
+                  <span className="px-2.5 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded-full text-[10px] font-bold uppercase tracking-wider">Product Asset Batch</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Target Specific Product / Item</label>
+                    <input
+                      type="text"
+                      value={productQrName}
+                      onChange={e => setProductQrName(e.target.value)}
+                      placeholder="e.g. Single Origin Geisha 250g Whole Bean"
+                      className="w-full px-3.5 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Total Batch Inventory (Piece Count)</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={productQrQuantity || ''}
+                        onChange={e => setProductQrQuantity(Number(e.target.value))}
+                        placeholder="100"
+                        className="w-full px-3.5 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                      />
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-[#9E782F]">PIECES / UNITS</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Redemption Protocol Selector for Physical Product QR */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider block mb-2">Select Product QR Redemption Protocol</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Auto Redeem */}
+                    <button
+                      type="button"
+                      onClick={() => setProductQrRedemptionMode('auto')}
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
+                        productQrRedemptionMode === 'auto'
+                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        productQrRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                      }`}>
+                        <Zap className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-bold text-[#1A1615]">⚡ Auto Redeem</div>
+                        <div className="text-[10px] text-[#6E6A66] leading-snug">Customer scans physical product QR sticker; reward auto-redeems immediately.</div>
+                      </div>
+                    </button>
+
+                    {/* Merchant Approval Required */}
+                    <button
+                      type="button"
+                      onClick={() => setProductQrRedemptionMode('merchant_approval')}
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
+                        productQrRedemptionMode === 'merchant_approval'
+                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        productQrRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                      }`}>
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-bold text-[#1A1615]">🛡️ Merchant Approval Required</div>
+                        <div className="text-[10px] text-[#6E6A66] leading-snug">Customer scans QR sticker; merchant receives request on POS terminal &amp; accepts to validate redemption.</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Batch Printable Stickers Preview & Download */}
+                <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#FDF8EB] border border-[#F3E5C8] rounded-xl flex items-center justify-center text-[#9E782F] shrink-0">
+                      <QrCode className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-[12px] font-bold text-[#1A1615]">Batch #{productQrQuantity || 100} Unique QR Sticker Envelopes</div>
+                      <div className="text-[10px] font-medium text-[#7C746C]">Pre-generated tokens for "{productQrName || 'Selected Product'}" ({productQrRedemptionMode === 'auto' ? 'Auto-Redeem' : 'Requires POS Merchant Acceptance'})</div>
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => showToast(`Generated batch of ${productQrQuantity || 100} QR Sticker PDF Sheet`)} className="px-3.5 py-2 bg-[#1A1615] hover:bg-black text-white font-bold text-[11px] rounded-lg shadow-sm transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer">
+                    <Printer className="w-3.5 h-3.5" /> Download {productQrQuantity || 100} Print-Ready Stickers
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Level 2 – Customer Reward Triggers */}
+            {topLevelType === 'new_customer' && (
+              <div className="mt-2 ml-0 sm:ml-2 pl-3 border-l-2 border-[#D4A753]/40">
+                <p className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider mb-2">Select Reward Trigger</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Welcome Bonus */}
+                  <button
+                    id="subtype-welcome"
+                    type="button"
+                    onClick={() => setExistingSubType('new_welcome')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'new_welcome'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'new_welcome' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'new_welcome' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <Gift className={`w-4 h-4 ${existingSubType === 'new_welcome' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'new_welcome' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>Welcome Bonus</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Instant reward upon account sign-up</div>
+                  </button>
+
+                  {/* First Visit */}
+                  <button
+                    id="subtype-first-visit"
+                    type="button"
+                    onClick={() => setExistingSubType('new_first_visit')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'new_first_visit'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'new_first_visit' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'new_first_visit' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <UserPlus className={`w-4 h-4 ${existingSubType === 'new_first_visit' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'new_first_visit' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>First Visit</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward upon initial guest check-in</div>
+                  </button>
+
+                  {/* First Purchase */}
+                  <button
+                    id="subtype-first-billing"
+                    type="button"
+                    onClick={() => setExistingSubType('new_first_billing')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'new_first_billing'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'new_first_billing' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'new_first_billing' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <DollarSign className={`w-4 h-4 ${existingSubType === 'new_first_billing' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'new_first_billing' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>First Purchase</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward on first checkout transaction</div>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {topLevelType === 'existing_customer' && (
+              <div className="mt-2 ml-0 sm:ml-2 pl-3 border-l-2 border-[#D4A753]/40">
+                <p className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider mb-2">Select Reward Trigger</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Visit Type */}
+                  <button
+                    id="subtype-visit"
+                    type="button"
+                    onClick={() => setExistingSubType('existing_visit')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_visit'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'existing_visit' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'existing_visit' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <Activity className={`w-4 h-4 ${existingSubType === 'existing_visit' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'existing_visit' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>Visit Type</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward after N qualifying visits</div>
+                  </button>
+
+                  {/* Billing Type */}
+                  <button
+                    id="subtype-billing"
+                    type="button"
+                    onClick={() => setExistingSubType('existing_billing')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_billing'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'existing_billing' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'existing_billing' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <DollarSign className={`w-4 h-4 ${existingSubType === 'existing_billing' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'existing_billing' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>Billing Type</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward based on cumulative spend</div>
+                  </button>
+
+                  {/* Stamp Type */}
+                  <button
+                    id="subtype-stamp"
+                    type="button"
+                    onClick={() => setExistingSubType('existing_stamp')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'existing_stamp'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'existing_stamp' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'existing_stamp' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <FileText className={`w-4 h-4 ${existingSubType === 'existing_stamp' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'existing_stamp' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>Stamp Type</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward after N purchases of a specific item</div>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Resolved type pill */}
+            {fullCampaignType && (
+              <div className="mt-3 flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#0D7A53]" />
+                <span className="text-[11px] font-bold text-[#0D7A53]">
+                  Type resolved: <span className="capitalize">{fullCampaignType.replace(/_/g, ' ')}</span>
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── DATE RANGE & STATUS ── */}
+        <div className="space-y-4 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">MANDATORY CAMPAIGN VALIDITY</label>
+            <span className="px-2 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded text-[10px] font-bold uppercase">Required</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Start Date & Time</label>
+              <input
+                id="start-date-input"
+                type="datetime-local"
+                value={startDate}
+                onChange={e => setStartDate(e.target.value)}
+                className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-sm"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">End Date & Time</label>
+              <input
+                id="end-date-input"
+                type="datetime-local"
+                value={endDate}
+                onChange={e => setEndDate(e.target.value)}
+                className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-sm"
+              />
+            </div>
+          </div>
+
+          {/* Status Toggle */}
+          <div>
+            <label className="text-[11px] font-bold text-[#6E6A66] block mb-2">Status</label>
+            <div className="inline-flex items-center bg-white border border-[#EFECE6] rounded-full p-1 shadow-sm">
+              <button
+                id="status-draft"
+                type="button"
+                onClick={() => setStatusDraft(true)}
+                className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusDraft
+                  ? 'bg-[#1A1615] text-white shadow'
+                  : 'text-[#6E6A66] hover:text-[#1A1615]'
+                  }`}
+              >
+                Draft
+              </button>
+              <button
+                id="status-active"
+                type="button"
+                onClick={() => setStatusDraft(false)}
+                className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${!statusDraft
+                  ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow'
+                  : 'text-[#6E6A66] hover:text-[#1A1615]'
+                  }`}
+              >
+                Active
+              </button>
+            </div>
+            <p className="mt-1.5 text-[10px] text-[#9E9A93] font-medium">
+              Campaign activates only when Status = Active AND current date is within range.
+            </p>
+          </div>
+
+          <div className="bg-[#E0F9ED] border border-[#BCE3D1] p-3 rounded-lg flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#0D7A53] shrink-0 mt-0.5" />
+            <p className="text-[11px] font-medium text-[#0D7A53] leading-tight">
+              Active = Status is Active <strong>AND</strong> current date &ge; Start Date <strong>AND</strong> current date &le; End Date.
+            </p>
+          </div>
+        </div>
+
+        {/* ── ACTIVE BRANCHES ── */}
+        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66]">Active Branches</label>
+            <button
+              type="button"
+              onClick={() => setActiveBranches([...allBranchOptions])}
+              className="text-[11px] font-bold text-[#D4A753] hover:underline cursor-pointer"
+            >
+              Select All
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {allBranchOptions.map(branch => {
+              const selected = activeBranches.includes(branch);
+              return (
+                <button
+                  key={branch}
+                  type="button"
+                  id={`branch-${branch.replace(/\s+/g, '-').toLowerCase()}`}
+                  onClick={() => toggleBranch(branch)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${selected
+                    ? 'bg-[#E6F4ED] border-[#BCE3D1] text-[#0D7A53]'
+                    : 'bg-[#FAF8F5] border-[#EFECE6] text-[#6E6A66] hover:border-[#D4A753]/50'
+                    }`}
+                >
+                  {selected ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                  {branch}
+                </button>
+              );
+            })}
+          </div>
+          <div className="text-[11px] text-[#6E6A66] flex items-center gap-1">
+            <Info className="w-3.5 h-3.5 text-[#D4A753] shrink-0" />
+            {activeBranches.length} branch{activeBranches.length !== 1 ? 'es' : ''} selected
+          </div>
+        </div>
+
+        {/* ── SETTINGS: PRIORITY & CURRENCY ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+          {/* ── PRIORITY ── */}
+          <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-4 lg:border lg:border-[#EFECE6] lg:shadow-sm">
+            <div className="hidden lg:block">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Priority Level</label>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center bg-[#FAF8F5] border border-[#EFECE6] rounded-lg h-[42px]">
+                  <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="w-[42px] h-full flex items-center justify-center text-[#1A1615] font-medium hover:bg-[#EFECE6] transition-colors rounded-l-lg cursor-pointer text-lg">-</button>
+                  <div className="px-4 h-full flex items-center justify-center text-sm font-bold text-[#1A1615] border-x border-[#EFECE6] min-w-[90px] whitespace-nowrap bg-white">
+                    {priorityLevel} <span className="text-[#9E9A93] font-semibold text-[11px] ml-1">(P{priorityLevel})</span>
+                  </div>
+                  <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="w-[42px] h-full flex items-center justify-center text-[#1A1615] font-medium hover:bg-[#EFECE6] transition-colors rounded-r-lg cursor-pointer text-lg">+</button>
+                </div>
+              </div>
+              <p className="text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
+                Tier {priorityLevel} Override Active: Highest arbitration queue. Higher priority wins if a transaction qualifies for multiple active campaigns.
+              </p>
+            </div>
+            {/* Mobile priority */}
+            <div className="lg:hidden bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between">
+              <div>
+                <div className="text-xs font-bold text-[#1A1615] mb-1">Priority Queue Level</div>
+                <div className="text-[10px] text-[#6E6A66] max-w-[120px]">Defines precedence over competing discounts</div>
+              </div>
+              <div className="flex items-center bg-white border border-[#EFECE6] rounded-full px-2 py-1 shadow-sm">
+                <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="w-6 h-6 flex items-center justify-center text-[#9E9A93] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">-</button>
+                <div className="px-3 text-center">
+                  <div className="text-sm font-bold text-[#D4A753]">{priorityLevel}</div>
+                  <div className="text-[10px] font-bold text-[#1A1615]">(P{priorityLevel})</div>
+                </div>
+                <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="w-6 h-6 flex items-center justify-center text-[#1A1615] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">+</button>
+              </div>
+            </div>
+          </div>
+
+          {/* ── CURRENCY ── */}
+          <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-4 lg:border lg:border-[#EFECE6] lg:shadow-sm">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Currency</label>
+            <div className="relative mb-1">
+              <select
+                value={currency}
+                onChange={e => setCurrency(e.target.value)}
+                className="w-full bg-[#FAF8F5] border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] appearance-none cursor-pointer"
+              >
+                <option value="INR (₹)">INR (₹)</option>
+                <option value="USD ($)">USD ($)</option>
+                <option value="EUR (€)">EUR (€)</option>
+                <option value="GBP (£)">GBP (£)</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <ChevronDown className="w-4 h-4 text-[#9E9A93]" />
+              </div>
+            </div>
+            <p className="mt-1.5 text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
+              Read from merchant/system configuration. Base currency for all campaign targets and calculations.
+            </p>
+          </div>
+        </div>
+
+        {/* Mobile featured cohort banner */}
+        <div className="lg:hidden mt-2 bg-[#1A1615] rounded-xl shadow-xl text-white relative overflow-hidden h-32">
+          <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=500&auto=format&fit=crop&q=80" alt="Coffee" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+          <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+            <div>
+              <div className="text-[10px] font-bold tracking-widest uppercase text-[#D4A753] mb-1">FEATURED COHORT</div>
+              <h4 className="text-sm font-bold text-white">Geisha Harvest Collection</h4>
+            </div>
+            <span className="px-2 py-0.5 bg-black/50 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase backdrop-blur-sm">EXCLUSIVE</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── RIGHT COLUMN – Live Preview ── */}
+      <div className="hidden lg:block lg:col-span-5 space-y-4">
+        <div className="bg-[#1A1615] rounded-2xl p-6 shadow-xl text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Zap className="w-24 h-24" />
+          </div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">REVIA ARTISAN PASS</span>
+              <span className="px-2 py-0.5 bg-[#D4A753]/20 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase">
+                {topLevelType ? topLevelType.replace(/_/g, ' ').toUpperCase() : 'NEW CAMPAIGN'}
+              </span>
+            </div>
+            <div className="h-32 bg-neutral-800 rounded-xl mb-4 overflow-hidden border border-neutral-700">
+              <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=500&auto=format&fit=crop&q=80" alt="Coffee Flight" className="w-full h-full object-cover opacity-80" />
+            </div>
+            <h4 className="text-lg font-bold mb-2">{campaignName || 'Untitled Campaign'}</h4>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#0D7A53]" /> {activeBranches.length} Branch{activeBranches.length !== 1 ? 'es' : ''} Selected
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
+                <Calendar className="w-3.5 h-3.5 text-[#D4A753]" />
+                {startDate && endDate ? `${startDate.replace('T', ' ')} – ${endDate.replace('T', ' ')}` : 'No dates set'}
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" />
+                Status: {statusDraft ? 'Draft' : 'Active'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm space-y-4">
+          <h4 className="text-[11px] uppercase font-bold tracking-wider text-[#1A1615]">Summary Specs</h4>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs font-semibold">
+              <span className="text-[#6E6A66]">Campaign Type</span>
+              <span className="text-[#1A1615] capitalize">{fullCampaignType ? fullCampaignType.replace(/_/g, ' ') : '—'}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs font-semibold">
+              <span className="text-[#6E6A66]">Branch Eligibility</span>
+              <span className="text-[#1A1615]">{activeBranches.length} Outlet{activeBranches.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs font-semibold">
+              <span className="text-[#6E6A66]">Conflict Resolution</span>
+              <span className="text-[#1A1615]">Level {priorityLevel} (P{priorityLevel})</span>
+            </div>
+            <div className="pt-3 border-t border-[#EFECE6] flex items-center justify-between">
+              <div>
+                <div className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">Estimated Scope</div>
+                <div className="text-sm font-bold text-[#1A1615]">~1,420 Target Members</div>
+              </div>
+              <span className="px-2 py-1 bg-[#E6F4ED] text-[#0D7A53] rounded text-[10px] font-bold">+18.4% vs last cohort</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+
+  const renderStep2 = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="lg:col-span-7 bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm space-y-8">
         <div>
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-            AUTOMATION ENGINE // RULE-BASED MARKETING
-          </span>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">Campaign Builder</h1>
-          <p className="text-xs text-[#6E6A66] mt-0.5">
-            Construct complex segmentation algorithms with instant mobile wallet push triggers.
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-[24px] font-bold text-[#1A1615] tracking-tight">Who is this campaign for?</h2>
+            <span className="px-2.5 py-1 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded uppercase tracking-wider">STEP 2/5</span>
+          </div>
+          <p className="text-sm text-[#6E6A66] font-medium leading-relaxed max-w-lg">
+            Narrow campaign eligibility by tier status, patron lifecycle stage, demographic filters, and guest satisfaction ratings.
           </p>
         </div>
 
-        <PrimaryButton onClick={() => alert('Campaign Published to Audience Reach Segment!')} className="py-2 px-4 text-xs font-semibold">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Publish & Launch Campaign</span>
-        </PrimaryButton>
+        <div className="space-y-3">
+          <div>
+            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615] mb-1">
+              <Trophy className="w-4 h-4 text-[#D4A753]" /> Tier &amp; Membership
+            </div>
+            <p className="text-[13px] text-[#6E6A66]">Select eligible member tiers that can unlock this campaign perk.</p>
+          </div>
+          <div className="flex flex-wrap gap-2.5">
+            <button onClick={() => toggleTier('Obsidian VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Obsidian VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Obsidian VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Obsidian VIP
+            </button>
+            <button onClick={() => toggleTier('VVIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('VVIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('VVIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              VVIP
+            </button>
+            <button onClick={() => toggleTier('VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              VIP
+            </button>
+            <button onClick={() => toggleTier('Gold')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Gold') ? 'bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Gold') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" /> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Gold
+            </button>
+            <button onClick={() => toggleTier('Silver')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Silver') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Silver') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Silver
+            </button>
+            <button onClick={() => toggleTier('Bronze')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Bronze') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+              {selectedTiers.includes('Bronze') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
+              Bronze
+            </button>
+            <button onClick={() => toggleTier('All Tiers')} className={`flex items-center px-4 py-2 rounded-full text-[13px] font-bold transition-colors ${selectedTiers.includes('All Tiers') ? 'bg-[#EFECE6] text-[#1A1615]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] hover:bg-[#EFECE6]'}`}>
+              All Customers
+            </button>
+          </div>
+
+          {selectedTiers.some(t => ['VIP', 'VVIP', 'Gold', 'Silver', 'Bronze'].includes(t)) && (
+            <div className="mt-4 p-4 border border-[#EFECE6] bg-white rounded-xl shadow-sm space-y-4">
+              <h5 className="text-[12px] font-bold text-[#1A1615] uppercase tracking-wider">Customer Type Conditions</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Minimum Billing Amount</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold">₹</span>
+                    <input type="number" defaultValue={1000} className="w-full pl-7 pr-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Status</label>
+                  <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
+                    <option>Active</option>
+                    <option>Inactive</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Start Date</label>
+                  <input type="date" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Expiry Date</label>
+                  <input type="date" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+                </div>
+              </div>
+            </div>
+          )}
+          <button onClick={() => setShowCustomSegmentModal(true)} className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FAF8F5] text-[#9E782F] border border-[#EFECE6] rounded-full text-[12px] font-bold hover:bg-[#FDF8EB] transition-colors mt-1 cursor-pointer">
+            <Plus className="w-3 h-3" /> Add Custom Segment
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615] mb-1">
+              <RefreshCw className="w-4 h-4 text-[#D4A753]" /> Customer Lifecycle Type
+            </div>
+            <p className="text-[13px] text-[#6E6A66]">Target new first-time salon guests or re-engage loyal recurring patrons.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-1.5 sm:gap-0 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-1.5">
+            <button onClick={() => setLifecycleType('New')} className={`flex-1 py-2.5 text-[13px] font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${lifecycleType === 'New' ? 'text-white bg-gradient-to-b from-[#C59B46] to-[#9E782F] shadow-sm border border-[#9E782F]' : 'text-[#6E6A66] hover:bg-[#EFECE6] cursor-pointer'}`}>
+              New Patrons {lifecycleType === 'New' && <Check className="w-4 h-4" />}
+            </button>
+            <button onClick={() => setLifecycleType('Returning')} className={`flex-1 py-2.5 text-[13px] font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${lifecycleType === 'Returning' ? 'text-white bg-gradient-to-b from-[#C59B46] to-[#9E782F] shadow-sm border border-[#9E782F]' : 'text-[#6E6A66] hover:bg-[#EFECE6] cursor-pointer'}`}>
+              Returning Patrons {lifecycleType === 'Returning' && <Check className="w-4 h-4" />}
+            </button>
+            <button onClick={() => setLifecycleType('Both')} className={`flex-1 py-2.5 text-[13px] font-bold rounded-lg transition-colors flex items-center justify-center gap-2 ${lifecycleType === 'Both' ? 'text-white bg-gradient-to-b from-[#C59B46] to-[#9E782F] shadow-sm border border-[#9E782F]' : 'text-[#6E6A66] hover:bg-[#EFECE6] cursor-pointer'}`}>
+              Both (Active Cohort) {lifecycleType === 'Both' && <Check className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615] mb-1">
+              <Gift className="w-4 h-4 text-[#D4A753]" /> Birthday &amp; Celebration Window
+            </div>
+            <p className="text-[13px] text-[#6E6A66]">Trigger perk availability around patron birthdays or anniversary milestones.</p>
+          </div>
+
+          <div className="bg-[#FDF8EB] border border-[#F3E5C8] rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm border border-[#EFECE6]">
+                <Calendar className="w-5 h-5 text-[#D4A753]" />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-[#1A1615] mb-0.5">Active Birthday Horizon</div>
+                <div className="text-[12px] font-semibold text-[#6E6A66]">Patron birth date falls within range</div>
+              </div>
+            </div>
+            <div className="flex items-center bg-white border border-[#EFECE6] rounded-lg shadow-sm">
+              <button onClick={() => setBirthdayHorizon(Math.max(1, birthdayHorizon - 1))} className="px-3.5 py-2 text-[#1A1615] hover:bg-[#FAF8F5] transition-colors rounded-l-lg border-r border-[#EFECE6] font-bold text-lg leading-none cursor-pointer">-</button>
+              <div className="px-4 py-2 text-[14px] font-bold text-[#1A1615]">{birthdayHorizon} <span className="font-semibold text-[13px]">days</span></div>
+              <button onClick={() => setBirthdayHorizon(birthdayHorizon + 1)} className="px-3.5 py-2 text-[#1A1615] hover:bg-[#FAF8F5] transition-colors rounded-r-lg border-l border-[#EFECE6] font-bold text-lg leading-none cursor-pointer">+</button>
+            </div>
+          </div>
+          <div className="flex items-start gap-2 text-[12px] font-medium text-[#6E6A66]">
+            <Smartphone className="w-4 h-4 text-[#0D7A53] shrink-0 mt-0.5" /> Automatically syncs with guest Apple Wallet &amp; Passbook notifications 48h prior to celebration.
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615] mb-1">
+                  <Users className="w-4 h-4 text-[#D4A753]" /> Age Range
+                </div>
+                <p className="text-[13px] text-[#6E6A66]">Restrict campaign visibility by registered patron age bracket.</p>
+              </div>
+              <span className="px-2.5 py-1 text-[10px] font-bold bg-[#FAF8F5] text-[#6E6A66] rounded uppercase tracking-wider">OPTIONAL DEMOGRAPHIC</span>
+            </div>
+
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex-1 bg-white border border-[#EFECE6] rounded-lg p-3 shadow-sm flex items-center justify-between">
+                  <div>
+                    <div className="text-[10px] uppercase font-bold text-[#9E9A93] mb-1">MIN AGE</div>
+                    <div className="text-[20px] font-bold text-[#1A1615]">{minAge} <span className="text-xs font-semibold text-[#6E6A66]">yrs</span></div>
+                  </div>
+                  <div className="text-[#6E6A66]"><SlidersHorizontal className="w-5 h-5 opacity-50" /></div>
+                </div>
+                <div className="flex-1 bg-white border border-[#EFECE6] rounded-lg p-3 shadow-sm flex items-center justify-between">
+                  <div>
+                    <div className="text-[10px] uppercase font-bold text-[#9E9A93] mb-1">MAX AGE</div>
+                    <div className="text-[20px] font-bold text-[#1A1615]">{maxAge} <span className="text-xs font-semibold text-[#6E6A66]">yrs</span></div>
+                  </div>
+                  <div className="text-[#6E6A66]"><SlidersHorizontal className="w-5 h-5 opacity-50" /></div>
+                </div>
+              </div>
+
+              <div className="px-2">
+                <div className="h-1.5 bg-[#EFECE6] rounded-full relative mb-3">
+                  <div
+                    className="absolute h-full bg-[#D4A753] rounded-full"
+                    style={{ left: `${((minAge - 18) / (80 - 18)) * 100}%`, right: `${100 - ((maxAge - 18) / (80 - 18)) * 100}%` }}
+                  ></div>
+
+                  <input
+                    type="range"
+                    min="18"
+                    max="80"
+                    value={minAge}
+                    onChange={(e) => setMinAge(Math.min(maxAge - 1, Number(e.target.value)))}
+                    className="absolute w-full top-1/2 -translate-y-1/2 opacity-0 cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto z-20"
+                  />
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm pointer-events-none z-10"
+                    style={{ left: `${((minAge - 18) / (80 - 18)) * 100}%` }}
+                  ></div>
+
+                  <input
+                    type="range"
+                    min="18"
+                    max="80"
+                    value={maxAge}
+                    onChange={(e) => setMaxAge(Math.max(minAge + 1, Number(e.target.value)))}
+                    className="absolute w-full top-1/2 -translate-y-1/2 opacity-0 cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto z-30"
+                  />
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm pointer-events-none z-10"
+                    style={{ left: `${((maxAge - 18) / (80 - 18)) * 100}%` }}
+                  ></div>
+                </div>
+                <div className="flex justify-between items-center text-[11px] font-bold text-[#6E6A66]">
+                  <span>18 yrs</span>
+                  <span className="text-[#D4A753]">Active Segment: {minAge}–{maxAge}</span>
+                  <span>80+ yrs</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <div className="flex items-center gap-2 text-sm font-bold text-[#1A1615] mb-1">
+                <Star className="w-4 h-4 text-[#D4A753]" /> Feedback &amp; Satisfaction Rating
+              </div>
+              <p className="text-[13px] text-[#6E6A66]">Filter by historical tasting room ratings and post-visit CSAT scores.</p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 items-center bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 pl-4 shadow-sm">
+              <div className="flex-1 w-full relative">
+                <select className="w-full appearance-none bg-transparent text-[13px] font-bold text-[#1A1615] py-2.5 focus:outline-none cursor-pointer">
+                  <option>Average guest rating ≥</option>
+                </select>
+                <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+              </div>
+              <div className="flex items-center gap-3 pr-3 bg-white border border-[#EFECE6] rounded-lg px-4 py-2 shadow-sm">
+                <div className="flex items-center gap-1.5 text-[#1A1615] font-bold text-sm">
+                  <Star className="w-4 h-4 fill-[#D4A753] text-[#D4A753]" /> 4.5 <span className="text-[#9E9A93] text-[11px]">/ 5.0</span>
+                </div>
+                <span className="px-2 py-0.5 text-[9px] font-bold bg-[#E0F9ED] text-[#0D7A53] rounded uppercase tracking-widest border border-[#BCE3D1]">PRIME CSAT</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 bg-[#FAF8F5] p-3 rounded-lg text-[12px] font-medium text-[#6E6A66]">
+              <span className="w-4 h-4 rounded-full border border-[#D1CDC7] flex items-center justify-center text-[9px] font-bold shrink-0 text-[#9E9A93]">i</span>
+              Only includes members with at least 2 verified visits to avoid sample bias.
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* 5-Step Horizontal Stepper */}
-      <div className="bg-white border border-[#E5E0D8] rounded-xl p-4 shadow-xs">
-        <div className="flex items-center justify-between relative">
-          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#E5E0D8] -translate-y-1/2 z-0 hidden md:block" />
+      <div className="lg:col-span-5 space-y-4">
+        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-[15px] font-bold text-[#1A1615] flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#0D7A53]"></span> Audience Impact
+            </h3>
+            <span className="px-3 py-1 text-[10px] font-bold bg-[#E0F9ED] text-[#0D7A53] rounded-full uppercase tracking-widest">LIVE SIMULATION</span>
+          </div>
 
+          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 mb-6">
+            <div className="flex items-start justify-between mb-3">
+              <div className="text-[36px] leading-none font-bold text-[#1A1615] tracking-tight">2,840</div>
+              <span className="px-2.5 py-1 text-[11px] font-bold bg-[#E0F9ED] text-[#0D7A53] rounded-full">11.4% Reach</span>
+            </div>
+            <p className="text-[12px] text-[#6E6A66] font-medium mb-4">
+              Eligible patrons out of <span className="font-bold text-[#1A1615]">24,850</span> total enrolled members
+            </p>
+            <div className="h-2.5 bg-[#EFECE6] rounded-full overflow-hidden flex">
+              <div className="h-full bg-[#D4A753] w-[11.4%] rounded-full"></div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-3">ACTIVE TIER COMPOSITION</h4>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-[13px] font-bold">
+                <span className="flex items-center gap-2.5"><span className="w-2.5 h-2.5 rounded-full bg-[#1A1615]"></span> Obsidian VIP</span>
+                <div><span className="text-[#1A1615] mr-2">1,260</span> <span className="text-[#9E9A93] text-[11px] font-semibold">(44.4%)</span></div>
+              </div>
+              <div className="flex items-center justify-between text-[13px] font-bold">
+                <span className="flex items-center gap-2.5"><span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> Gold Reserve</span>
+                <div><span className="text-[#1A1615] mr-2">1,580</span> <span className="text-[#9E9A93] text-[11px] font-semibold">(55.6%)</span></div>
+              </div>
+              <div className="flex items-center justify-between text-[13px] font-bold">
+                <span className="flex items-center gap-2.5"><span className="w-2.5 h-2.5 rounded-full bg-[#D1CDC7]"></span> Silver Tier</span>
+                <span className="text-[#F87171] text-[11px] font-bold uppercase tracking-wider">EXCLUDED</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-3">PROJECTED CAMPAIGN FORECAST</h4>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl">
+                <div>
+                  <div className="text-[11px] font-medium text-[#6E6A66] mb-0.5">Expected Redemptions</div>
+                  <div className="text-[15px] font-bold text-[#1A1615]">520 – 640 visits</div>
+                </div>
+                <span className="px-2.5 py-1 bg-[#E0F9ED] text-[#0D7A53] rounded-full text-[11px] font-bold">+22% lift</span>
+              </div>
+
+              <div className="flex justify-between items-center bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl">
+                <div>
+                  <div className="text-[11px] font-medium text-[#6E6A66] mb-0.5">Projected Gross GMV</div>
+                  <div className="text-[15px] font-bold text-[#0D7A53]">+$19,800</div>
+                </div>
+                <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] rounded-full text-[11px] font-bold uppercase border border-[#F3E5C8]">High ROI</span>
+              </div>
+
+              <div className="flex justify-between items-center bg-white border border-[#EFECE6] p-4 rounded-xl">
+                <div>
+                  <div className="text-[11px] font-medium text-[#6E6A66] mb-0.5">Estimated Incentive Cost</div>
+                  <div className="text-[15px] font-bold text-[#1A1615]">$2,860 – $3,320</div>
+                </div>
+                <span className="text-[12px] font-medium text-[#6E6A66]">Within Budget</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-3">SAMPLE QUALIFYING PATRON</h4>
+            <div className="flex items-center gap-3 bg-white border border-[#EFECE6] p-4 rounded-xl shadow-sm">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80" alt="Julian Vane" className="w-11 h-11 rounded-full object-cover border border-[#EFECE6]" />
+              <div>
+                <div className="text-[14px] font-bold text-[#1A1615] flex items-center gap-2">
+                  Julian Vane <span className="px-1.5 py-0.5 bg-[#1A1615] text-[#D4A753] text-[9px] rounded uppercase tracking-wider font-bold">VIP</span>
+                </div>
+                <div className="text-[12px] font-medium text-[#6E6A66] mt-0.5">14 Salon Visits • Rating 5.0 ★ • Birthday in 4d</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#FAF8F5] rounded-xl p-4 flex items-start gap-3 border border-[#EFECE6]">
+          <div className="shrink-0 mt-0.5">
+            <Lightbulb className="w-5 h-5 text-[#D4A753]" />
+          </div>
+          <p className="text-[12px] font-medium text-[#6E6A66] leading-relaxed">
+            Narrowing audience by 4.5★ rating preserves brand exclusivity and significantly reduces drop-off rates on high-margin reservations.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStep3 = () => (
+    <CampaignRulesStep
+      campaignType={fullCampaignType}
+      currency={currency}
+      onContinue={(config) => {
+        setRuleConfig(config);
+        console.log('Step 3 Config:', config);
+        setCurrentStep(4);
+      }}
+      onBack={() => setCurrentStep(2)}
+    />
+  );
+
+  const renderStep4 = () => (
+    <CampaignRewardStep
+      campaignType={fullCampaignType}
+      ruleConfig={ruleConfig}
+      currency={currency}
+      onContinue={(config) => {
+        setRewardConfig(config);
+        console.log('Step 4 Config:', config);
+        setCurrentStep(5);
+      }}
+      onBack={() => setCurrentStep(3)}
+    />
+  );
+
+  const renderStep5 = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="lg:col-span-8 space-y-6">
+
+        {/* Auto-validation Alert */}
+        <div className="bg-white border-l-4 border-l-[#0D7A53] border-y border-r border-[#EFECE6] rounded-r-xl p-5 shadow-sm flex flex-col xl:flex-row xl:items-start justify-between gap-4 relative overflow-hidden">
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="w-8 h-8 rounded-full bg-[#E0F9ED] flex items-center justify-center shrink-0 mt-0.5">
+              <Check className="w-5 h-5 text-[#0D7A53]" />
+            </div>
+            <div>
+              <h4 className="text-[13px] font-bold text-[#1A1615] mb-1">Auto-validation passed — zero logic or budget conflicts detected across 3 active branch registers.</h4>
+              <p className="text-[11px] font-medium text-[#6E6A66]">All cryptographic token envelopes are pre-compiled and ready for instantaneous sync.</p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 items-start xl:items-end shrink-0 pl-11 xl:pl-0">
+            <span className="px-2.5 py-1 bg-[#E0F9ED] border border-[#BCE3D1] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> POS MESH READY</span>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded text-[9px] font-bold uppercase tracking-widest">NO BUDGET CONFLICT</span>
+              <span className="px-2 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded text-[9px] font-bold uppercase tracking-widest">SECURITY POLICY VERIFIED</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 01 Basics Summary */}
+        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm relative">
+          <div className="flex items-start justify-between mb-6 border-b border-[#EFECE6] pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#FDF8EB] text-[#9E782F] flex items-center justify-center text-[12px] font-bold border border-[#F3E5C8]">01</div>
+              <div>
+                <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-0.5">BASICS CONFIGURATION</div>
+                <h3 className="text-[18px] font-bold text-[#1A1615]">Step 1: Basics Summary</h3>
+              </div>
+            </div>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(1)}>
+              Edit Step 1 <ArrowRight className="w-3 h-3 -rotate-45" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 mb-6">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1">CAMPAIGN NAME</div>
+              <div className="flex items-center gap-2">
+                <span className="text-[14px] font-bold text-[#1A1615]">Autumn Reserve Tasting &amp; Geisha Perk</span>
+                <span className="px-2 py-0.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#9E9A93] rounded text-[9px] font-bold tracking-widest uppercase">#CMP-8821</span>
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1">CAMPAIGN TYPE</div>
+              <span className="px-2.5 py-1 bg-gradient-to-r from-[#FDF8EB] to-[#FAF8F5] border border-[#F3E5C8] text-[#9E782F] rounded-full text-[11px] font-bold flex items-center gap-1.5 inline-flex shadow-sm">
+                <Trophy className="w-3.5 h-3.5 text-[#D4A753]" /> Loyalty Boost
+              </span>
+            </div>
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2">ACTIVE BRANCHES (3 LOCATIONS)</div>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2.5 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded-md text-[11px] font-semibold">Downtown Flagship</span>
+                <span className="px-2.5 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded-md text-[11px] font-semibold">Northside Mall</span>
+                <span className="px-2.5 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded-md text-[11px] font-semibold">West End Kiosk</span>
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-1">RUNTIME HORIZON</div>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#D4A753]" />
+                <span className="text-[13px] font-bold text-[#1A1615]">Nov 1, 2024 – Nov 30, 2024</span>
+                <span className="text-[11px] font-medium text-[#9E9A93]">(30 Calendar Days)</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#FDF8EB] border border-[#F3E5C8] rounded-xl p-4 flex items-center justify-between shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 w-1 h-8 bg-[#D4A753] rounded-full"></div>
+              <div>
+                <span className="text-[12px] font-bold text-[#1A1615] block mb-0.5">Priority Arbitration: Priority 1 (P1)</span>
+                <p className="text-[11px] font-medium text-[#6E6A66]">Supercedes seasonal discount codes and default tier stamp boosts during checkout conflict.</p>
+              </div>
+            </div>
+            <span className="px-3 py-1.5 bg-white border border-[#EFECE6] rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#1A1615] shadow-sm">STRICT ARBITRATION</span>
+          </div>
+        </div>
+
+        {/* 02 Audience Summary */}
+        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm relative">
+          <div className="flex items-start justify-between mb-6 border-b border-[#EFECE6] pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#FDF8EB] text-[#9E782F] flex items-center justify-center text-[12px] font-bold border border-[#F3E5C8]">02</div>
+              <div>
+                <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-0.5">PATRON COHORTS</div>
+                <h3 className="text-[18px] font-bold text-[#1A1615]">Step 2: Audience Summary</h3>
+              </div>
+            </div>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(2)}>
+              Edit Step 2 <ArrowRight className="w-3 h-3 -rotate-45" />
+            </button>
+          </div>
+
+          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 mb-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#D4A753]"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
+              <span className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93]">DYNAMIC COHORT LOGIC FILTER</span>
+            </div>
+            <p className="text-[14px] font-medium text-[#1A1615] leading-relaxed">
+              "Targets <span className="text-[#D4A753] font-bold">Gold Reserve &amp; Obsidian VIP</span> patrons, ages 21–65, with average visit rating ≥ 4.5★ and birthday within 7 days of order date."
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl shadow-sm flex flex-col justify-between">
+              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-2 leading-tight">ENROLLED<br />SEGMENT</div>
+              <div>
+                <div className="text-[20px] font-bold text-[#1A1615] mb-1">2,840</div>
+                <div className="text-[9px] font-bold text-[#0D7A53]">+14% vs last cycle</div>
+              </div>
+            </div>
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl shadow-sm flex flex-col justify-between">
+              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-2 leading-tight">ESTIMATED<br />REACH</div>
+              <div>
+                <div className="text-[20px] font-bold text-[#1A1615] mb-1">11.4%</div>
+                <div className="text-[9px] font-medium text-[#6E6A66]">of total register network</div>
+              </div>
+            </div>
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl shadow-sm flex flex-col justify-between">
+              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-2 leading-tight">PATRON<br />PROFILE</div>
+              <div>
+                <div className="text-[18px] font-bold text-[#1A1615] mb-1">Mixed</div>
+                <div className="text-[9px] font-medium text-[#6E6A66]">New &amp; Returning Active</div>
+              </div>
+            </div>
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl shadow-sm flex flex-col justify-between">
+              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-2 leading-tight">OPT-IN<br />COMPLIANCE</div>
+              <div>
+                <div className="text-[20px] font-bold text-[#0D7A53] mb-1">100%</div>
+                <div className="text-[9px] font-medium text-[#6E6A66]">Zero spam exclusions</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 03 Conditions & Rules Summary */}
+        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm relative">
+          <div className="flex items-start justify-between mb-6 border-b border-[#EFECE6] pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#FDF8EB] text-[#9E782F] flex items-center justify-center text-[12px] font-bold border border-[#F3E5C8]">03</div>
+              <div>
+                <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-0.5">RULE LOGIC TREE</div>
+                <h3 className="text-[18px] font-bold text-[#1A1615]">Step 3: Conditions &amp; Rules Summary</h3>
+              </div>
+            </div>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(3)}>
+              Edit Step 3 <ArrowRight className="w-3 h-3 -rotate-45" />
+            </button>
+          </div>
+
+          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 shadow-sm mb-4">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="px-2.5 py-1 bg-[#1A1615] text-white rounded text-[10px] font-bold tracking-widest uppercase shadow-sm">MATCH ALL (AND)</span>
+              <span className="text-[11px] font-medium text-[#6E6A66]">Parent root evaluation container</span>
+            </div>
+
+            <div className="space-y-4 md:space-y-2 pl-4 border-l-2 border-[#EFECE6]">
+              <div className="bg-white border border-[#EFECE6] rounded-lg p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615]">
+                  <span className="text-[#D4A753] break-all">Customer.LifetimeSpend</span> <span className="text-[#6E6A66]">≥</span> <span>$250.00</span>
+                  <span className="text-[#6E6A66] px-1 md:px-2 text-[10px] font-sans">AND</span>
+                  <span className="text-[#D4A753] break-all">Customer.LastVisit</span> <span className="text-[#6E6A66]">≤</span> <span className="whitespace-nowrap">14 days</span>
+                </div>
+                <div className="self-start md:self-auto">
+                  <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest">VALIDATED</span>
+                </div>
+              </div>
+
+              <div className="bg-[#E6F4ED] border border-[#BCE3D1] rounded-lg p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+                  <span className="self-start md:self-auto px-2 py-0.5 bg-[#0D7A53] text-white rounded text-[9px] font-bold tracking-widest uppercase">BOGO TRIGGER</span>
+                  <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615]">
+                    <span className="text-[#0D7A53] break-all">Basket.ItemCount</span><span>("Single Origin Geisha 250g")</span> <span className="text-[#6E6A66]">≥</span> <span>2</span>
+                  </div>
+                </div>
+                <div className="self-start md:self-auto text-[10px] font-bold text-[#6E6A66] md:text-right leading-tight">
+                  Qty ≥ 2<br className="hidden md:block" />Required
+                </div>
+              </div>
+
+              <div className="bg-white border border-[#EFECE6] rounded-lg p-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
+                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 mb-2">
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-[#1A1615]">OR SUB-GROUP</span>
+                  <span className="text-[10px] font-medium text-[#9E9A93] italic">Any condition satisfies eligibility</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615] pl-2 border-l-2 border-[#D4A753]">
+                  <span className="text-[#9E782F] font-sans text-[10px] whitespace-nowrap">Option A:</span> <span className="text-[#D4A753] break-all">Patron.Tier</span> <span className="text-[#6E6A66]">==</span> <span className="whitespace-nowrap">"Obsidian VIP"</span>
+                  <span className="text-[#6E6A66] px-1 md:px-3">||</span>
+                  <span className="text-[#9E782F] font-sans text-[10px] whitespace-nowrap">Option B:</span> <span className="text-[#D4A753] break-all">Patron.CurrentStampCycle</span> <span className="text-[#6E6A66]">≥</span> <span className="whitespace-nowrap">8 stamps</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 text-[#1A1615] bg-[#FDF8EB] border border-[#F3E5C8] p-3 rounded-xl shadow-sm">
+            <div className="w-8 h-8 rounded-md bg-white border border-[#EFECE6] flex items-center justify-center shrink-0">
+              <Store className="w-4 h-4 text-[#D4A753]" />
+            </div>
+            <p className="text-[11px] font-medium">Trigger Event: Dynamic QR / NFC scan at POS counter stand with immediate terminal authorization.</p>
+          </div>
+        </div>
+
+        {/* 04 Reward Definition Summary */}
+        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 lg:p-8 shadow-sm relative">
+          <div className="flex items-start justify-between mb-6 border-b border-[#EFECE6] pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#FDF8EB] text-[#9E782F] flex items-center justify-center text-[12px] font-bold border border-[#F3E5C8]">04</div>
+              <div>
+                <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93] mb-0.5">INCENTIVE SETTLEMENT</div>
+                <h3 className="text-[18px] font-bold text-[#1A1615]">Step 4: Reward Definition Summary</h3>
+              </div>
+            </div>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(4)}>
+              Edit Step 4 <ArrowRight className="w-3 h-3 -rotate-45" />
+            </button>
+          </div>
+
+          <div className="bg-white border border-[#EFECE6] rounded-xl p-5 flex items-center justify-between mb-5 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-[#FDF8EB] border border-[#F3E5C8] rounded-xl flex items-center justify-center shrink-0">
+                <Gift className="w-6 h-6 text-[#D4A753]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[11px] font-bold text-[#1A1615] uppercase tracking-widest">FREE ITEM (BOGO PERK)</span>
+                  <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold tracking-widest uppercase border border-[#BCE3D1]">100% WAIVED</span>
+                </div>
+                <h4 className="text-[14px] font-bold text-[#1A1615]">1x Complimentary Single Origin Geisha (250g Whole Bean)</h4>
+                <p className="text-[11px] font-medium text-[#6E6A66] mt-0.5">$0.00 patron co-pay at point of checkout.</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-[9px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">WHOLESALE UNIT VALUE</div>
+              <div className="text-[16px] font-bold text-[#1A1615] leading-none">$28.00 <span className="text-[11px] font-medium text-[#6E6A66]">retail</span></div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3 text-[#9E782F]">
+                <Activity className="w-4 h-4" />
+                <span className="text-[10px] font-bold tracking-widest uppercase">VELOCITY GUARDRAILS</span>
+              </div>
+              <ul className="space-y-2 text-[11px] font-medium text-[#1A1615]">
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Strictly limited to 1 time redemption per loyalty profile.</li>
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Campaign hard velocity cap: <span className="font-bold">500 claims maximum</span>.</li>
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Hard financial ceiling: <span className="font-bold">$3,500 incentive budget cap</span>.</li>
+              </ul>
+            </div>
+
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-3 text-[#9E782F]">
+                <BellRing className="w-4 h-4" />
+                <span className="text-[10px] font-bold tracking-widest uppercase">EXPIRATION &amp; PUSH TRIGGERS</span>
+              </div>
+              <ul className="space-y-2 text-[11px] font-medium text-[#1A1615]">
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Valid for dynamic 14 days upon receiving trigger token.</li>
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Automated push alert via Apple/Google Wallet 48h prior to cutoff.</li>
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">WhatsApp concierge ping configured for Obsidian tier members.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="lg:col-span-4 space-y-6">
+        {/* Right Sidebar 1: Deployment Forecast */}
+        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">EXECUTIVE PROJECTION</span>
+            <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] border border-[#BCE3D1] rounded text-[9px] font-bold tracking-widest uppercase">8.4x ROI</span>
+          </div>
+
+          <h3 className="text-[16px] font-bold text-[#1A1615] mb-6">Deployment Forecast</h3>
+
+          <div className="space-y-4 mb-6">
+            <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
+              <span className="text-[12px] font-medium text-[#6E6A66]">Estimated Claims</span>
+              <span className="text-[13px] font-bold text-[#1A1615]">420 – 510 claims</span>
+            </div>
+            <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
+              <span className="text-[12px] font-medium text-[#6E6A66]">Projected Net<br />GMV</span>
+              <span className="text-[16px] font-bold text-[#0D7A53]">+$16,400.00</span>
+            </div>
+            <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
+              <span className="text-[12px] font-medium text-[#6E6A66]">Incentive Budget<br />Allocated</span>
+              <div className="text-right">
+                <div className="text-[13px] font-bold text-[#1A1615]">$1,950 / $3,500 cap</div>
+                <div className="text-[9px] font-medium text-[#9E9A93] mt-0.5">55.7% max financial exposure</div>
+              </div>
+            </div>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-[12px] font-medium text-[#6E6A66]">Projected Net<br />Margin</span>
+              <div className="text-right">
+                <span className="text-[16px] font-bold text-[#1A1615]">71.8%</span>
+                <span className="text-[11px] font-bold text-[#0D7A53] ml-1">(Target &gt;65%)</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 flex items-center gap-2 shadow-sm">
+            <div className="w-2 h-2 rounded-full bg-[#0D7A53] animate-pulse shrink-0"></div>
+            <span className="text-[10px] font-bold text-[#6E6A66] leading-tight">Roastery Register Mesh: <span className="text-[#1A1615]">3 Outlets Synced</span> (14ms latency)</span>
+          </div>
+        </div>
+
+        {/* Right Sidebar 2: Patron Experience */}
+        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
+          <div className="flex items-start justify-between mb-5">
+            <div>
+              <div className="text-[10px] font-bold tracking-widest uppercase text-[#9E9A93] mb-1">LIVE TOKEN CARD</div>
+              <h3 className="text-[14px] font-bold text-[#1A1615]">Guest Mobile Preview</h3>
+            </div>
+            <span className="text-[10px] font-bold tracking-widest text-[#D4A753]">Apple &amp; Google Wallet</span>
+          </div>
+
+          <div className="bg-[#1A1615] rounded-[20px] p-1 shadow-xl relative mx-auto w-full max-w-[260px]">
+            {/* Phone Notch */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-b-lg z-20"></div>
+
+            {/* Pass Container */}
+            <div className="bg-[#1A1615] border border-white/10 rounded-[16px] overflow-hidden relative pt-7 pb-5 px-4 flex flex-col">
+              {/* Pass Header */}
+              <div className="flex items-center justify-between mb-3 relative z-10">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-[#D4A753] rounded-full flex items-center justify-center text-white font-bold text-[9px]">R</div>
+                  <span className="text-[9px] font-bold tracking-widest uppercase text-white/90">REVIA ROASTERS &amp; CO.</span>
+                </div>
+                <span className="text-[8px] font-semibold text-white/50 tracking-widest uppercase text-right leading-tight">RESERVE<br />PASS CARD</span>
+              </div>
+
+              <div className="mt-8 mb-4">
+                <span className="inline-block px-2 py-0.5 border border-[#D4A753]/30 text-[#D4A753] rounded text-[8px] font-bold tracking-widest uppercase mb-2">EXCLUSIVE AUTUMN PERK</span>
+                <h4 className="text-[18px] font-black text-white leading-snug mb-1">BUY 2, GET 1 FREE</h4>
+                <p className="text-[10px] font-medium text-white/70 mb-4">Single Origin Geisha (Whole Bean 250g)</p>
+              </div>
+
+              {/* Barcode Area */}
+              <div className="bg-white rounded-lg p-3 flex flex-col items-center justify-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/UPC-A-036000291452.svg" alt="barcode" className="w-full h-10 opacity-90 object-cover mb-1.5" style={{ filter: 'grayscale(100%) contrast(200%)' }} />
+                <div className="text-[6px] font-bold tracking-widest text-[#1A1615] uppercase mt-1 text-center leading-tight">
+                  <span className="flex items-center justify-center gap-1"><Wifi className="w-2.5 h-2.5 rotate-90" /> HOLD NEAR COUNTER NFC OR</span>
+                  SCAN BARCODE
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-[9px] font-medium text-center text-[#9E9A93] mt-4 leading-relaxed">
+            Pass adapts automatically to patron's local Apple / Google Wallet dark mode.
+          </p>
+        </div>
+
+        {/* Right Sidebar 3: Deployment Protocol */}
+        <div className="bg-white border border-[#EFECE6] rounded-[16px] p-6 shadow-sm">
+          <h3 className="text-[14px] font-bold text-[#1A1615] mb-4">Deployment Protocol</h3>
+          <div className="space-y-3">
+            <label className="flex items-start gap-3 text-[13px] font-bold text-[#1A1615] cursor-pointer bg-[#FAF8F5] p-4 rounded-xl border border-[#D4A753] shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 bottom-0 left-0 w-1 bg-[#D4A753]"></div>
+              <div className="mt-0.5"><CircleDot className="w-4 h-4 text-[#D4A753]" /></div>
+              <div>
+                <span className="block mb-0.5">Publish Instantly</span>
+                <span className="text-[11px] font-medium text-[#6E6A66]">Mesh registers synchronize instantly upon clicking Publish.</span>
+              </div>
+            </label>
+            <label className="flex items-start gap-3 text-[13px] font-bold text-[#1A1615] cursor-pointer bg-white p-4 rounded-xl border border-[#EFECE6] hover:bg-[#FAF8F5] transition-colors">
+              <div className="mt-0.5"><Circle className="w-4 h-4 text-[#D1CDC7]" /></div>
+              <div>
+                <span className="block mb-0.5">Schedule Activation</span>
+                <span className="text-[11px] font-medium text-[#6E6A66]">Automated staging for Nov 1, 2024 at 00:00 PST.</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDashboard = () => (
+    <div className="p-4 sm:p-6 space-y-6 font-sans text-[#1A1615]">
+      <div className="max-w-[1400px] mx-auto space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Campaign &amp; Loyalty Management</h1>
+            <p className="text-xs sm:text-sm text-[#7C746C] mt-1">Create, monitor, and optimize your customer engagement programs.</p>
+          </div>
+          <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl px-4.5 py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto">
+            <Plus className="w-4 h-4 text-white" /> Create New Campaign
+          </button>
+        </div>
+
+        {/* Filters & Search */}
+        <div className="bg-white border border-[#EAE6E1] rounded-xl p-4 shadow-2xs flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-[#9E9A93]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search campaigns by name or reward..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2.5 border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-[#D4A753] focus:border-[#D4A753]"
+            />
+          </div>
+          <div className="grid grid-cols-2 md:flex md:items-center gap-3 w-full md:w-auto">
+            <select className="w-full md:w-auto border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] py-2.5 px-3 text-xs sm:text-sm font-semibold text-[#1A1615] focus:outline-none focus:ring-1 focus:ring-[#D4A753]">
+              <option>All Types</option>
+              <option>Visit Type</option>
+              <option>Billing Type</option>
+              <option>Stamp Type</option>
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full md:w-auto border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] py-2.5 px-3 text-xs sm:text-sm font-semibold text-[#1A1615] focus:outline-none focus:ring-1 focus:ring-[#D4A753]"
+            >
+              <option>All Status</option>
+              <option>Active</option>
+              <option>Draft</option>
+              <option>Ended</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Campaign List */}
+        <div className="bg-white border border-[#EAE6E1] rounded-xl shadow-2xs overflow-hidden">
+          {/* Desktop Table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="bg-[#FAF8F5] border-b border-[#EAE6E1]">
+                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Campaign Info</th>
+                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Type &amp; Target</th>
+                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Status</th>
+                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Timeline</th>
+                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Performance</th>
+                  <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C] text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {campaigns.filter(c =>
+                  (statusFilter === 'All' || statusFilter === 'All Status' || c.status === statusFilter) &&
+                  (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).map(c => (
+                  <tr key={c.id} className="border-b border-[#EAE6E1] hover:bg-[#FAF8F5]/60 transition-colors">
+                    <td className="py-4 px-5">
+                      <div className="text-sm font-bold text-[#1A1615] mb-0.5">{c.name}</div>
+                      <div className="text-xs font-medium text-[#7C746C] flex items-center gap-1.5"><Gift className="w-3.5 h-3.5 text-[#D4A753]" /> {c.reward}</div>
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="text-sm font-semibold text-[#1A1615] mb-0.5">{c.type}</div>
+                      <div className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider bg-[#FDF8EB] border border-[#F3E5C8] inline-block px-2 py-0.5 rounded">{c.target}</div>
+                    </td>
+                    <td className="py-4 px-5">
+                      {c.status === 'Active' ? (
+                        <span className="px-2.5 py-0.5 bg-[#EBF7F0] border border-[#15803D]/20 text-[#15803D] rounded-full text-xs font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#15803D] rounded-full"></span> {c.status}
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-0.5 bg-[#FAF6EE] border border-[#E5D7BE] text-[#9E782F] rounded-full text-xs font-semibold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#9E782F] rounded-full"></span> {c.status}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="text-xs font-semibold text-[#1A1615]">{c.startDate}</div>
+                      <div className="text-[11px] text-[#7C746C]">{c.endDate}</div>
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <div className="h-1.5 flex-1 bg-[#FAF8F5] border border-[#EAE6E1] rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-full" style={{ width: `${c.progress}%` }}></div>
+                        </div>
+                        <span className="text-xs font-bold text-[#1A1615] w-8">{c.progress}%</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 text-right space-x-2 flex justify-end">
+                      <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                      <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
+                      <button className="p-1.5 text-[#6E6A66] hover:text-[#EF4444] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Accordion List */}
+          <div className="md:hidden flex flex-col">
+            {campaigns.filter(c =>
+              (statusFilter === 'All' || statusFilter === 'All Status' || c.status === statusFilter) &&
+              (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.reward.toLowerCase().includes(searchQuery.toLowerCase()))
+            ).map((c) => {
+              const isExpanded = expandedCampaignId === c.id;
+
+              return (
+                <div key={c.id} className="border-b border-[#EFECE6] last:border-b-0 overflow-hidden">
+                  <button
+                    onClick={() => setExpandedCampaignId(isExpanded ? null : c.id)}
+                    className="w-full flex items-center justify-between p-4 bg-white hover:bg-[#FAF8F5] transition-colors text-left"
+                  >
+                    <div>
+                      <div className="text-sm font-bold text-[#1A1615] mb-1">{c.name}</div>
+                      <div className="text-xs font-medium text-[#6E6A66] flex items-center gap-1.5 mb-2"><Gift className="w-3.5 h-3.5" /> {c.reward}</div>
+
+                      {c.status === 'Active' ? (
+                        <span className="px-2 py-0.5 bg-[#E0F9ED] border border-[#BCE3D1] text-[#0D7A53] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#0D7A53] rounded-full"></span> {c.status}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-[#EFECE6] text-[#6E6A66] rounded-full text-[10px] font-bold uppercase flex items-center w-max gap-1">
+                          <span className="w-1.5 h-1.5 bg-[#9E9A93] rounded-full"></span> {c.status}
+                        </span>
+                      )}
+                    </div>
+                    <div className="shrink-0 ml-3">
+                      {isExpanded ? (
+                        <ChevronDown className="w-5 h-5 text-[#8C827A]" />
+                      ) : (
+                        <ChevronRight className="w-5 h-5 text-[#8C827A]" />
+                      )}
+                    </div>
+                  </button>
+
+                  {isExpanded && (
+                    <div className="p-4 bg-[#FAF8F5] border-t border-[#EFECE6] space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Type</span>
+                          <div className="text-xs font-semibold text-[#1A1615]">{c.type}</div>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Target</span>
+                          <div className="text-[10px] font-bold text-[#9E782F] uppercase tracking-wider bg-[#FDF8EB] border border-[#F3E5C8] inline-block px-1.5 py-0.5 rounded">{c.target}</div>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">Start Date</span>
+                          <div className="text-xs font-semibold text-[#1A1615]">{c.startDate}</div>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-1 block">End Date</span>
+                          <div className="text-[10px] font-semibold text-[#6E6A66]">{c.endDate}</div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <span className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider mb-2 block">Performance ({c.progress}%)</span>
+                        <div className="h-1.5 w-full bg-[#EFECE6] rounded-full overflow-hidden">
+                          <div className="h-full bg-[#D4A753] rounded-full" style={{ width: `${c.progress}%` }}></div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 pt-2 border-t border-[#EFECE6]">
+                        <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                          <Edit2 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                          <Copy className="w-3.5 h-3.5" /> Dup
+                        </button>
+                        <button className="flex-1 py-2 bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] font-semibold text-xs rounded-lg hover:bg-[#FCA5A5] transition-colors flex justify-center items-center gap-1.5">
+                          <Trash2 className="w-3.5 h-3.5" /> Del
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (viewMode === 'dashboard') {
+    return renderDashboard();
+  }
+
+  return (
+    <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] relative">
+
+      {/* Add Location Modal */}
+      {isAddLocationOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-[#1A1615]">Add Location</h3>
+              <button onClick={() => setIsAddLocationOpen(false)} className="text-[#9E9A93] hover:text-[#1A1615] bg-[#FAF8F5] p-2 rounded-full transition-colors cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#6E6A66] mb-1.5">Search Branch/Outlet</label>
+                <input type="text" placeholder="e.g. Downtown Flagship" className="w-full px-4 py-2.5 border border-[#EFECE6] bg-[#FAF8F5] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
+              </div>
+              <button onClick={() => setIsAddLocationOpen(false)} className="w-full py-3 bg-[#1A1615] text-white rounded-lg text-sm font-bold mt-2 shadow-md hover:bg-black transition-colors cursor-pointer">Confirm Location</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. SHARED LAYOUT & TOP HEADER BAR */}
+      {/* Mobile Header */}
+      {/* <div className="lg:hidden bg-[#FAF8F5] px-4 py-3 flex items-center justify-between z-20 sticky top-0 border-b border-[#EFECE6]">
+        <button className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm">
+          <ArrowLeft className="w-5 h-5 text-[#1A1615]" />
+        </button>
+        <div className="text-center">
+          <div className="text-[10px] font-bold text-[#D4A753] uppercase tracking-widest mb-0.5">Revia Merchant</div>
+          <div className="text-base font-black text-[#1A1615] leading-none">Campaign Wizard</div>
+        </div>
+        <div className="relative">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-sm font-bold text-[#1A1615] shadow-sm">ER</div>
+          <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#0D7A53] rounded-full border-2 border-white"></div>
+        </div>
+      </div> */}
+
+      <div className="hidden lg:flex bg-white border border-[#EAE6E1] rounded-xl px-4 sm:px-6 py-4 flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs mb-4">
+        <div className="flex items-center gap-3">
+          <button onClick={() => setViewMode('dashboard')} className="p-2 bg-[#FAF8F5] text-[#1A1615] hover:bg-[#FAF6EE] border border-[#EAE6E1] rounded-lg transition-colors cursor-pointer" title="Back to Dashboard">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Campaign Builder</h1>
+            <p className="text-xs text-[#7C746C]">Audit parameters, preview the live guest pass token, and deploy the campaign across roastery registers.</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-2xs min-w-[160px]">
+            <div className="w-9 h-9 bg-white border border-[#EAE6E1] rounded-full flex items-center justify-center shrink-0 shadow-2xs relative">
+              <Users className="w-4 h-4 text-[#D4A753]" />
+              <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#FDF8EB] border border-[#F3E5C8] rounded-full flex items-center justify-center">
+                <Plus className="w-2.5 h-2.5 text-[#9E782F]" />
+              </div>
+            </div>
+            <div>
+              <div className="text-[9px] uppercase font-bold tracking-wider text-[#7C746C]">AUDIENCE BASE</div>
+              <div className="text-base font-bold text-[#1A1615] leading-tight">1,840</div>
+            </div>
+          </div>
+          <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-2xs min-w-[160px]">
+            <div className="w-9 h-9 bg-white border border-[#EAE6E1] rounded-full flex items-center justify-center shrink-0 shadow-2xs">
+              <TrendingUp className="w-4 h-4 text-[#15803D]" />
+            </div>
+            <div>
+              <div className="text-[9px] uppercase font-bold tracking-wider text-[#7C746C]">EST. LIFETIME GMV</div>
+              <div className="text-base font-bold text-[#15803D] leading-tight">+$16,400</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 lg:p-6 space-y-5 flex-1 max-w-[1600px] mx-auto w-full">
+
+        {/* Stepper Indicator */}
+        <div className="lg:hidden flex justify-between items-center mb-4 px-1">
+          <div className="flex items-center gap-3">
+            {currentStep > 1 && (
+              <button onClick={() => setCurrentStep(prev => prev - 1)} className="w-8 h-8 flex items-center justify-center bg-white border border-[#EAE6E1] rounded-full text-[#1A1615] shadow-2xs cursor-pointer shrink-0">
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            )}
+            <div>
+              <div className="text-[10px] font-bold text-[#9E782F] uppercase tracking-wider mb-0.5">Campaign Builder</div>
+              <div className="text-xs text-[#7C746C]">Step {currentStep} of 5 · {steps.find(s => s.id === currentStep)?.name}</div>
+            </div>
+          </div>
+          <div className="px-3 py-1 bg-[#EBF7F0] border border-[#15803D]/20 rounded-full text-[11px] font-bold text-[#15803D] flex items-center gap-1.5 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]"></span> 20% Ready
+          </div>
+        </div>
+
+        <div className="flex justify-between bg-white border border-[#EAE6E1] rounded-xl px-2 sm:px-4 py-5 shadow-2xs mb-6 relative">
+          <div className="absolute top-9 left-[10%] right-[10%] h-0.5 bg-[#EAE6E1] z-0"></div>
           {steps.map((step) => {
             const isPast = step.id < currentStep;
             const isCurrent = step.id === currentStep;
-
             return (
-              <div
-                key={step.id}
-                onClick={() => setCurrentStep(step.id)}
-                className="relative z-10 flex flex-col items-center group cursor-pointer"
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                    isPast
-                      ? 'bg-[#0D7A53] text-white'
-                      : isCurrent
-                      ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white ring-4 ring-[#FDF8EB] shadow-xs'
-                      : 'bg-white border-2 border-[#E5E0D8] text-[#9E9A93]'
-                  }`}
-                >
-                  {isPast ? <Check className="w-3.5 h-3.5" /> : step.id}
+              <div key={step.id} onClick={() => setCurrentStep(step.id)} className="relative z-10 flex flex-col items-center flex-1 cursor-pointer group">
+                <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center text-xs font-bold transition-all relative z-10 ${isPast ? 'bg-[#15803D] text-white border-2 border-[#15803D]' : isCurrent ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white border-2 border-[#D4A753] ring-4 ring-[#FDF8EB]' : 'bg-white border-2 border-[#EAE6E1] text-[#7C746C] group-hover:border-[#D4A753]'}`}>
+                  {isPast ? <Check className="w-4 h-4" /> : step.id}
                 </div>
-                <div className="mt-1.5 text-center">
-                  <span
-                    className={`text-xs font-semibold block ${
-                      isCurrent ? 'text-[#1A1615] font-bold' : isPast ? 'text-[#0D7A53]' : 'text-[#9E9A93]'
-                    }`}
-                  >
-                    {step.name}
-                  </span>
-                  {isCurrent && (
-                    <span className="text-[9px] uppercase font-bold text-[#9E782F] tracking-wider block">
-                      • ACTIVE
-                    </span>
-                  )}
+                <div className="mt-2 text-center w-full px-0 sm:px-1 lg:px-2">
+                  <span className={`text-[9px] sm:text-[10px] lg:text-[11px] font-bold block leading-tight ${isCurrent ? 'text-[#1A1615]' : isPast ? 'text-[#15803D]' : 'text-[#7C746C]'}`}>{step.name}</span>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* Dynamic Step Content */}
+        {currentStep === 1 && renderStep1()}
+        {currentStep === 2 && renderStep2()}
+        {currentStep === 3 && renderStep3()}
+        {currentStep === 4 && renderStep4()}
+        {currentStep === 5 && renderStep5()}
       </div>
 
-      {/* Main Grid: Rule Builder (Left 7 cols) + Audience Impact Calculator (Right 5 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Rule Builder Form */}
-        <div className="lg:col-span-7 bg-white border border-[#E5E0D8] rounded-xl p-5 shadow-xs space-y-5">
-          <div className="border-b border-[#E5E0D8] pb-3">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-              LOGIC CRITERIA BUILDER
-            </span>
-            <h3 className="text-base font-bold text-[#1A1615] mt-0.5">
-              Visual AND / OR Segmentation Filter
-            </h3>
-            <p className="text-xs text-[#6E6A66]">
-              Target customers who satisfy the combined Boolean conditions below.
-            </p>
+      {/* Sticky Bottom Action Bar */}
+      <div className="sticky bottom-0 left-0 right-0 bg-white border-t border-[#EAE6E1] p-3.5 sm:p-4 z-30 shadow-md mt-6">
+        {currentStep === 5 ? (
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-3 w-full max-w-[1600px] mx-auto">
+            <div className="flex items-center gap-3 flex-1">
+              <div className="w-2 h-2 rounded-full bg-[#15803D] animate-pulse"></div>
+              <div>
+                <div className="text-[13px] font-bold text-[#1A1615]">Ready to deploy campaign</div>
+                <div className="text-[11px] font-medium text-[#7C746C]">All 5 steps validated • Zero conflict warnings</div>
+              </div>
+            </div>
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-3 w-full md:w-auto">
+              <button onClick={() => setCurrentStep(4)} className="flex-1 md:flex-none px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm whitespace-nowrap text-center flex items-center justify-center gap-1.5 cursor-pointer">
+                <ArrowLeft className="w-3.5 h-3.5" /> Back to Reward Def
+              </button>
+              <button className="flex-1 md:flex-none px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm whitespace-nowrap text-center cursor-pointer">
+                Save Draft
+              </button>
+              <button className="w-full md:w-auto px-5 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl text-[12px] font-bold shadow-md transition-opacity flex items-center justify-center gap-2 cursor-pointer">
+                <Zap className="w-3.5 h-3.5" /> Deploy &amp; Publish Campaign <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full max-w-[1600px] mx-auto">
+            <div className="flex items-center gap-3 text-xs font-semibold text-[#7C746C]">
+              <span className="w-2 h-2 rounded-full bg-[#15803D] inline-block shrink-0"></span>
+              <span className="whitespace-nowrap">Draft autosaved just now</span>
+              <span className="text-[#0D7A53] bg-[#E6F4ED] px-2.5 py-0.5 rounded-full border border-[#BCE3D1] font-bold text-[11px] whitespace-nowrap">• Validation Passed</span>
+            </div>
+            <div className="flex items-center justify-end gap-3 w-full sm:w-auto">
+              {currentStep > 1 && (
+                <button onClick={() => setCurrentStep(prev => prev - 1)} className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <ArrowLeft className="w-3.5 h-3.5" /> Back
+                </button>
+              )}
+              <button className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                Save as Draft
+              </button>
+              {currentStep < 5 && (
+                <button onClick={() => setCurrentStep(prev => prev + 1)} className="px-5 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-xs font-bold shadow-md transition-opacity flex items-center gap-1.5 cursor-pointer">
+                  <span>Continue to {steps.find(s => s.id === currentStep + 1)?.name}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
-          {/* Conditions List */}
-          <div className="space-y-3">
-            {conditions.map((cond, index) => (
-              <div key={cond.id} className="space-y-2">
-                {index > 0 && (
-                  <div className="flex items-center gap-2 pl-4">
-                    <span className="w-4 h-0.5 bg-[#E5E0D8]" />
-                    <div className="flex p-0.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-md text-[10px] font-bold">
-                      <button
-                        type="button"
-                        onClick={() => updateCondition(cond.id, 'logic', 'AND')}
-                        className={`px-2 py-0.5 rounded transition-colors ${
-                          cond.logic === 'AND' ? 'bg-[#9E782F] text-white' : 'text-[#6E6A66]'
-                        }`}
-                      >
-                        AND
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => updateCondition(cond.id, 'logic', 'OR')}
-                        className={`px-2 py-0.5 rounded transition-colors ${
-                          cond.logic === 'OR' ? 'bg-[#9E782F] text-white' : 'text-[#6E6A66]'
-                        }`}
-                      >
-                        OR
-                      </button>
-                    </div>
-                    <span className="flex-1 h-0.5 bg-[#E5E0D8]" />
-                  </div>
-                )}
+      {/* Global Toast Notification */}
+      {feedbackToast && (
+        <div className="fixed bottom-6 right-6 z-[100] bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-fade-in-up border border-[#332e2d]">
+          <CheckCircle2 className="w-5 h-5 text-[#D4A753]" />
+          <span className="text-sm font-bold">{feedbackToast}</span>
+        </div>
+      )}
 
-                <div className="p-3.5 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl flex flex-col sm:flex-row items-center gap-2.5">
-                  {/* Field Selector */}
-                  <select
-                    value={cond.field}
-                    onChange={(e) => updateCondition(cond.id, 'field', e.target.value)}
-                    className="w-full sm:w-48 text-xs font-semibold px-2.5 py-2 bg-white border border-[#E5E0D8] rounded-lg text-[#1A1615]"
-                  >
-                    <option value="Customer Lifetime Spend">Lifetime Spend</option>
-                    <option value="Last Visit Recency">Last Visit Recency</option>
-                    <option value="Total Visits">Total Visits</option>
-                    <option value="Stamps in Current Pass">Stamps in Pass</option>
-                    <option value="Preferred Category">Category Interest</option>
-                  </select>
-
-                  {/* Operator */}
-                  <select
-                    value={cond.operator}
-                    onChange={(e) => updateCondition(cond.id, 'operator', e.target.value)}
-                    className="w-full sm:w-28 text-xs font-semibold px-2.5 py-2 bg-white border border-[#E5E0D8] rounded-lg text-[#1A1615]"
-                  >
-                    <option value=">=">&gt;= (At least)</option>
-                    <option value="<=">&lt;= (At most)</option>
-                    <option value="within">within</option>
-                    <option value="equals">equals</option>
-                  </select>
-
-                  {/* Value */}
+      {/* Custom Segment Modal */}
+      {showCustomSegmentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#1A1615]/40 backdrop-blur-sm" onClick={() => setShowCustomSegmentModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col relative z-10">
+            <div className="p-5 border-b border-[#EFECE6] flex items-center justify-between bg-white">
+              <h3 className="text-lg font-bold text-[#1A1615]">Add Custom Segment</h3>
+              <button onClick={() => setShowCustomSegmentModal(false)} className="text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 flex-1 overflow-y-auto bg-white">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Segment Name</label>
                   <input
                     type="text"
-                    value={cond.value}
-                    onChange={(e) => updateCondition(cond.id, 'value', e.target.value)}
-                    className="w-full sm:flex-1 text-xs font-bold px-3 py-2 bg-white border border-[#E5E0D8] rounded-lg text-[#1A1615]"
+                    placeholder="e.g. High Value Churn Risk"
+                    value={customSegmentName}
+                    onChange={(e) => setCustomSegmentName(e.target.value)}
+                    className="w-full bg-[#FAF8F5] border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
                   />
-
-                  {/* Remove */}
-                  <button
-                    type="button"
-                    onClick={() => removeCondition(cond.id)}
-                    className="p-2 text-[#9E9A93] hover:text-red-600 rounded-lg hover:bg-white transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Conditions (Rule Builder)</label>
+                  <div className="p-4 border border-dashed border-[#D1CDC7] rounded-xl text-center bg-[#F5F4F2]">
+                    <p className="text-sm text-[#9E9A93] font-medium">Rule builder will go here</p>
+                    <button className="mt-2 text-[#D4A753] text-xs font-bold hover:underline cursor-pointer">+ Add Rule</button>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={addCondition}
-            className="w-full py-2.5 rounded-lg border border-dashed border-[#E5E0D8] hover:border-[#D4A753] text-xs font-semibold text-[#9E782F] hover:bg-[#FAF8F5] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" /> Add Condition Rule Block
-          </button>
-
-          {/* Delivery Trigger Channel */}
-          <div className="pt-4 border-t border-[#E5E0D8]">
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">
-              Delivery Push Mechanism
-            </label>
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => setChannel('wallet')}
-                className={`p-2.5 rounded-lg border font-semibold text-center transition-colors cursor-pointer ${
-                  channel === 'wallet'
-                    ? 'border-[#D4A753] bg-[#FDF8EB] text-[#9E782F]'
-                    : 'border-[#E5E0D8] text-[#6E6A66]'
-                }`}
-              >
-                Apple/Google Pass Push
+            </div>
+            <div className="p-4 border-t border-[#EFECE6] bg-[#FAF8F5] flex justify-end gap-3 rounded-b-2xl">
+              <button onClick={() => setShowCustomSegmentModal(false)} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer">
+                Cancel
               </button>
-              <button
-                type="button"
-                onClick={() => setChannel('sms')}
-                className={`p-2.5 rounded-lg border font-semibold text-center transition-colors cursor-pointer ${
-                  channel === 'sms'
-                    ? 'border-[#D4A753] bg-[#FDF8EB] text-[#9E782F]'
-                    : 'border-[#E5E0D8] text-[#6E6A66]'
-                }`}
-              >
-                Direct SMS Broadcast
-              </button>
-              <button
-                type="button"
-                onClick={() => setChannel('push')}
-                className={`p-2.5 rounded-lg border font-semibold text-center transition-colors cursor-pointer ${
-                  channel === 'push'
-                    ? 'border-[#D4A753] bg-[#FDF8EB] text-[#9E782F]'
-                    : 'border-[#E5E0D8] text-[#6E6A66]'
-                }`}
-              >
-                In-App Beacon Banner
+              <button onClick={() => {
+                setShowCustomSegmentModal(false);
+                setCustomSegmentName('');
+              }} className="px-4 py-2 bg-[#1A1615] text-white text-sm font-bold rounded-lg hover:bg-black transition-colors shadow-md cursor-pointer">
+                Create Segment
               </button>
             </div>
           </div>
         </div>
+      )}
 
-        {/* Right Sidebar: Audience Impact Live Calculator (5 cols) */}
-        <div className="lg:col-span-5 sticky top-20 space-y-4">
-          <div className="bg-white border border-[#E5E0D8] rounded-xl p-5 shadow-sm space-y-5">
-            <div className="border-b border-[#E5E0D8] pb-3">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                LIVE CALCULATOR
-              </span>
-              <h3 className="text-base font-bold text-[#1A1615]">Audience Impact Forecast</h3>
-              <p className="text-[11px] text-[#6E6A66]">Calculated against your 3 active store networks</p>
-            </div>
-
-            {/* Impact Metric Cards */}
-            <div className="space-y-3">
-              <div className="p-3 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-[#9E9A93] tracking-wider">
-                    QUALIFYING REACH
-                  </span>
-                  <div className="text-xl font-bold tracking-tight text-[#1A1615] mt-0.5">
-                    {qualifyingReach} Members
-                  </div>
-                </div>
-                <div className="w-8 h-8 rounded-lg bg-[#E6F4ED] text-[#0D7A53] flex items-center justify-center font-bold">
-                  <Users className="w-4 h-4" />
-                </div>
-              </div>
-
-              <div className="p-3 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-[#9E9A93] tracking-wider">
-                    EXPECTED VISITS
-                  </span>
-                  <div className="text-xl font-bold tracking-tight text-[#1A1615] mt-0.5">
-                    +{expectedVisits} Store Visits
-                  </div>
-                </div>
-                <div className="w-8 h-8 rounded-lg bg-[#FDF8EB] text-[#9E782F] flex items-center justify-center font-bold">
-                  <TrendingUp className="w-4 h-4" />
-                </div>
-              </div>
-
-              <div className="p-3 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-[#9E9A93] tracking-wider">
-                    PROJECTED GMV LIFT
-                  </span>
-                  <div className="text-xl font-bold tracking-tight text-[#0D7A53] mt-0.5">
-                    +${projectedGMV}
-                  </div>
-                </div>
-                <div className="w-8 h-8 rounded-lg bg-[#E6F4ED] text-[#0D7A53] flex items-center justify-center font-bold">
-                  <DollarSign className="w-4 h-4" />
-                </div>
-              </div>
-            </div>
-
-            {/* Live Member Pass Push Notification Simulation */}
-            <div className="pt-2">
-              <span className="text-[10px] uppercase font-bold text-[#9E9A93] tracking-wider block mb-2">
-                MOBILE WALLET PUSH PREVIEW
-              </span>
-              <div className="p-3.5 bg-neutral-900 text-white rounded-xl shadow-lg border border-neutral-800 space-y-1.5">
-                <div className="flex items-center justify-between text-[10px] text-neutral-400">
-                  <span className="flex items-center gap-1 font-semibold text-[#D4A753]">
-                    <Bell className="w-3 h-3" /> REVIA PASS • NOW
-                  </span>
-                  <span>Flagship Beacon Trigger</span>
-                </div>
-                <div className="text-xs font-bold text-white">Autumn Geisha Velocity Boost</div>
-                <p className="text-[11px] text-neutral-300 leading-snug">
-                  Julian, your loyalty pass unlocked a complimentary Geisha Flight voucher at Downtown Flagship today!
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

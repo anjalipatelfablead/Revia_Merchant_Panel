@@ -130,17 +130,24 @@ export interface OutletsData {
   };
 }
 
-export type NavRoute = 
+export type NavRoute =
+  | '/'
+  | '/about'
+  | '/contact'
+  | '/privacy'
+  | '/terms'
   | '/dashboard'
+  | '/atelier'
   | '/branches'
   | '/branches/new'
   | '/staff'
   | '/loyalty'
   | '/qr-codes'
+  | '/item-catalog'
   | '/catalog'
   | '/orders'
   | '/invoices'
-  | '/customers'
+  | '/customerlist'
   | '/transactions'
   | '/campaigns'
   | '/campaigns/new'
@@ -153,5 +160,11 @@ export type NavRoute =
   | '/settings/branding'
   | '/login'
   | '/onboarding'
-  | '/customer-landing';
+  | '/customer'
+  | '/customer/landing'
+  | '/customer/identify'
+  | '/customer/onboarding'
+  | '/customer/curate-experience'
+  | '/customer-onboarding'
+  | '/rewards/new';
 
