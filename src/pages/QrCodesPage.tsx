@@ -436,7 +436,7 @@ export const QrCodesPage: React.FC = () => {
                       {/* Center Brand Emblem */}
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div className="w-8 h-8 bg-white rounded flex items-center justify-center border border-[#1A1615]">
-                          <span className="font-serif font-bold text-lg text-[#1A1615]">R</span>
+                          <span className="font-sans font-bold text-lg text-[#1A1615]">R</span>
                         </div>
                       </div>
                     </div>

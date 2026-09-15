@@ -108,10 +108,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Award className="w-4 h-4 text-white" />
           </div>
           <div className="leading-tight">
-            <div className="text-[13px] font-bold tracking-wider text-[#1A1615] font-serif">
+            <div className="text-sm font-extrabold tracking-wider text-[#1A1615] font-sans">
               REVIA
             </div>
-            <div className="text-[8px] uppercase tracking-widest text-[#8C827A] font-semibold">
+            <div className="text-[9px] uppercase tracking-widest text-[#8C827A] font-bold font-sans">
               MERCHANT SUITE
             </div>
           </div>
@@ -123,31 +123,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {navigationGroups.map((group) => (
           <React.Fragment key={group.label}>
             {group.items.map((item) => {
-                const Icon = item.icon;
-                const isActive =
-                  currentRoute === item.route ||
-                  (item.route === '/branches' && currentRoute === '/branches/new') ||
-                  (item.route === '/campaigns/new' && currentRoute === '/campaigns');
+              const Icon = item.icon;
+              const isActive =
+                currentRoute === item.route ||
+                (item.route === '/branches' && currentRoute === '/branches/new') ||
+                (item.route === '/campaigns/new' && currentRoute === '/campaigns');
 
-                return (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      onRouteChange(item.route);
-                      if (onMobileClose) onMobileClose();
-                    }}
-                    className={`w-full flex items-center px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer whitespace-nowrap ${isActive
-                        ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs'
-                        : 'text-[#3D3732] hover:bg-[#FAF8F5] hover:text-[#1A1615]'
-                      }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
-                      <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />
-                      <span className="whitespace-nowrap tracking-tight">{item.name}</span>
-                    </div>
-                  </button>
-                );
-              })}
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    onRouteChange(item.route);
+                    if (onMobileClose) onMobileClose();
+                  }}
+                  className={`w-full flex items-center px-3 py-2 rounded-lg text-[13px] transition-all duration-150 cursor-pointer whitespace-nowrap ${
+                    isActive
+                      ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs'
+                      : 'bg-transparent text-[#4A433D] hover:bg-[#FAF8F5] hover:text-[#1A1615] font-medium'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />
+                    <span className="whitespace-nowrap tracking-tight font-sans">{item.name}</span>
+                  </div>
+                </button>
+              );
+            })}
           </React.Fragment>
         ))}
       </div>

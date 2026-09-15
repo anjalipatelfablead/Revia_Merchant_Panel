@@ -207,7 +207,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           <button
             onClick={handleProvisionBranch}
             disabled={isSubmitting}
-            className="px-4 py-2 rounded-lg bg-[#A37837] hover:bg-[#8F662A] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer disabled:opacity-50"
           >
             <Plus className="w-3.5 h-3.5 text-white" />
             <span>Provision &amp; Launch Branch</span>

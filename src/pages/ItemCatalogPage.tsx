@@ -244,9 +244,9 @@ export const ItemCatalogPage: React.FC = () => {
           </button>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 text-[13px] font-bold text-white bg-[#B38637] hover:bg-[#966D29] rounded-xl transition-colors shadow-md cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2.5 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-xl transition-all shadow-md cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-white" />
             Add New Item
           </button>
         </div>
@@ -631,8 +631,8 @@ export const ItemCatalogPage: React.FC = () => {
 
             {/* Footer Actions */}
             <div className="px-5 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-between gap-3">
-              <button onClick={handleUpdateItem} className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-[#B38637] hover:bg-[#966D29] text-white text-[13px] font-bold rounded-xl transition-colors shadow-md cursor-pointer">
-                <Upload className="w-4 h-4" />
+              <button onClick={handleUpdateItem} className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold rounded-xl transition-all shadow-md cursor-pointer">
+                <Upload className="w-4 h-4 text-white" />
                 Save & Publish to POS
               </button>
             </div>
@@ -811,8 +811,8 @@ export const ItemCatalogPage: React.FC = () => {
               >
                 Cancel
               </button>
-              <button onClick={handleAddItem} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#B38637] hover:bg-[#966D29] text-white text-sm font-bold rounded-xl transition-colors shadow-md cursor-pointer">
-                <Plus className="w-4 h-4" />
+              <button onClick={handleAddItem} className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-sm font-bold rounded-xl transition-all shadow-md cursor-pointer">
+                <Plus className="w-4 h-4 text-white" />
                 Add Item to Catalog
               </button>
             </div>

@@ -349,7 +349,7 @@ export const StaffPage: React.FC = () => {
 
           <button
             onClick={() => setIsInviteModalOpen(true)}
-            className="px-4 py-2 rounded-lg bg-[#B38637] hover:bg-[#A37837] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
             <UserPlus className="w-4 h-4 text-white" />
             <span>Invite Team Member</span>
@@ -969,7 +969,7 @@ export const StaffPage: React.FC = () => {
 
               <button
                 onClick={() => showToast(`Saved permissions for ${selectedStaff.name}. Syncing mesh nodes...`)}
-                className="px-4 py-2 rounded-lg bg-[#B38637] hover:bg-[#A37837] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
               >
                 Save Changes
               </button>
@@ -1006,7 +1006,7 @@ export const StaffPage: React.FC = () => {
                   placeholder="e.g. Liam Vance"
                   value={inviteName}
                   onChange={(e) => setInviteName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
                 />
               </div>
 
@@ -1020,7 +1020,7 @@ export const StaffPage: React.FC = () => {
                   placeholder="e.g. liam.v@revia.co"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637]"
+                  className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
                 />
               </div>
 
@@ -1032,7 +1032,7 @@ export const StaffPage: React.FC = () => {
                   <select
                     value={inviteRole}
                     onChange={(e) => setInviteRole(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#D4A753]"
                   >
                     <option value="Manager">Manager</option>
                     <option value="Barista">Barista</option>
@@ -1047,7 +1047,7 @@ export const StaffPage: React.FC = () => {
                   <select
                     value={inviteBranch}
                     onChange={(e) => setInviteBranch(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#D4A753]"
                   >
                     <option value="Downtown Flagship">Downtown Flagship</option>
                     <option value="Northside Mall">Northside Mall</option>
@@ -1076,7 +1076,7 @@ export const StaffPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-xs"
+                  className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
                 >
                   Send Invitation
                 </button>
@@ -1133,7 +1133,7 @@ export const StaffPage: React.FC = () => {
                   setIsEditTemplatesOpen(false);
                   showToast('Role templates updated and dispatched to mesh registers.');
                 }}
-                className="px-4 py-2 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
+                className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
               >
                 Save Role Templates
               </button>

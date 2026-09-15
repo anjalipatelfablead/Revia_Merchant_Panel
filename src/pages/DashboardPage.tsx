@@ -31,6 +31,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const [timeframe, setTimeframe] = useState<'Daily' | 'Weekly' | 'Monthly'>('Daily');
   const [activeDateRange, setActiveDateRange] = useState('Last 30 Days (Oct 1 - Oct 31, 2024)');
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
+  const [exportToast, setExportToast] = useState(false);
   const [expandedBranch, setExpandedBranch] = useState<string | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<{
     date: string;
@@ -134,9 +135,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const areaPath = chartPoints.length > 0 ? `${stampsPath} L ${chartPoints[chartPoints.length - 1].x} 190 L ${chartPoints[0].x} 190 Z` : '';
 
   return (
-    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5 relative">
+      {/* Export Toast Notification */}
+      {exportToast && (
+        <div className="fixed top-20 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-2xl shadow-2xl border border-[#D4A753]/40 flex items-center gap-3 animate-in slide-in-from-top-4 duration-300">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white shrink-0 shadow-md">
+            <Share2 className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-white">Report Export Triggered ✓</p>
+            <p className="text-[10px] text-[#A8A29E]">Downloading merchant intelligence report (CSV / PDF)...</p>
+          </div>
+        </div>
+      )}
+
       {/* 1. Header Overview Row */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
@@ -151,17 +165,17 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           </p>
         </div>
 
-        {/* Top Right Action Controls */}
-        <div className="flex items-center gap-2.5 flex-wrap self-start lg:self-auto">
+        {/* Top Right Action Controls — Single Line */}
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap shrink-0 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar">
           {/* Date Picker Dropdown */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-              className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+              className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap"
             >
-              <Calendar className="w-3.5 h-3.5 text-white" />
+              <Calendar className="w-3.5 h-3.5 text-white shrink-0" />
               <span>{activeDateRange}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-white/80" />
+              <ChevronDown className="w-3.5 h-3.5 text-white/80 shrink-0" />
             </button>
 
             {dateDropdownOpen && (
@@ -190,19 +204,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
           {/* Export Report Button */}
           <button
-            onClick={() => alert('Exporting complete merchant intelligence report (CSV / PDF)...')}
-            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+            onClick={() => {
+              setExportToast(true);
+              setTimeout(() => setExportToast(false), 3000);
+            }}
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Share2 className="w-3.5 h-3.5 text-white" />
+            <Share2 className="w-3.5 h-3.5 text-white shrink-0" />
             <span>Export Report</span>
           </button>
 
           {/* Create Campaign Primary Button */}
           <button
             onClick={() => onNavigate('/campaigns/new')}
-            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4 text-white" />
+            <Plus className="w-4 h-4 text-white shrink-0" />
             <span>Create Campaign</span>
           </button>
         </div>
