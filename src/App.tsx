@@ -128,9 +128,7 @@ export default function App() {
     return <TermsOfServicePage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  if (currentRoute === '/customer/landing') {
-    return <CustomerOnboardingPage onComplete={() => handleNavigate('/customer/curate-experience')} />;
-  }
+
 
 
 
