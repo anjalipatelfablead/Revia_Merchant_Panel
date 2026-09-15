@@ -159,16 +159,16 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
   ];
 
   return (
-    <div className="min-h-full flex flex-col bg-[#FAF8F5]">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col min-h-full bg-[#FAF8F5] w-full">
       {/* Page Header */}
-      <div className="px-4 md:px-6 pt-6 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           {/* <div className="flex items-center text-sm text-[#8C827A] mb-1">
             <span className="hover:text-[#1A1615] cursor-pointer">Downtown Flagship</span>
             <ChevronRight className="w-4 h-4 mx-1" />
             <span className="font-medium text-[#1A1615]">Operations</span>
           </div> */}
-          <h1 className="text-2xl font-bold text-[#1A1615] font-serif tracking-tight">Order Queue</h1>
+          <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Order Queue</h1>
         </div>
 
         <div className="flex items-center gap-6">
@@ -210,7 +210,7 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
         </div>
       </div>
 
-      <div className="px-4 md:px-6 pb-6 flex-1 flex flex-col gap-4 md:gap-6 overflow-hidden">
+      <div className="px-4 md:px-0 pb-6 flex-1 flex flex-col gap-4 md:gap-6 overflow-hidden">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
           {[
@@ -376,7 +376,7 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
       {isManualModalOpen && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
-            <div className="px-6 py-4 border-b border-[#EAE6E1] flex justify-between items-center bg-[#FAF8F5]">
+            <div className="px-4 py-4 border-b border-[#EAE6E1] flex justify-between items-center bg-[#FAF8F5]">
               <h2 className="text-xl font-bold text-[#1A1615] font-serif">Manual Order Entry</h2>
               <button
                 onClick={() => setIsManualModalOpen(false)}

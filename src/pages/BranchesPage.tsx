@@ -189,7 +189,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
+          <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
             Branch &amp; Outlets Management
           </h1>
         </div>

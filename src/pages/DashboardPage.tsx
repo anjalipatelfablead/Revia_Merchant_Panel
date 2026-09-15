@@ -153,7 +153,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
               Dashboard Overview
             </h1>
             <span className="bg-[#EBF7F0] text-[#15803D] text-[11px] font-semibold px-2.5 py-0.5 rounded-md border border-[#CEEBD9] inline-flex items-center gap-1">
@@ -166,7 +166,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         </div>
 
         {/* Top Right Action Controls — Single Line */}
-        <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap shrink-0 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 shrink-0 pb-1 sm:pb-0 relative z-10">
           {/* Date Picker Dropdown */}
           <div className="relative shrink-0">
             <button

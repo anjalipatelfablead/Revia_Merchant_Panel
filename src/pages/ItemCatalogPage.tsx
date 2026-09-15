@@ -225,12 +225,12 @@ export const ItemCatalogPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col h-full font-sans">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col h-full font-sans">
 
       {/* HEADER SECTION */}
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
         <div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] mb-1.5">
+          <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] mb-1.5">
             Item & Product Catalog
           </h1>
           <p className="text-[13px] text-[#6E6A66] max-w-2xl leading-relaxed">

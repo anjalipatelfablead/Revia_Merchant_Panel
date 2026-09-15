@@ -23,6 +23,7 @@ export const QrCodesPage: React.FC = () => {
   const [activeAsset, setActiveAsset] = useState<string>('asset-1');
   const [activeTab, setActiveTab] = useState<'front' | 'back'>('front');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
   const showToast = (msg: string) => {
@@ -200,7 +201,7 @@ export const QrCodesPage: React.FC = () => {
 
   return (
     <>
-      <div className="p-4 sm:p-6 bg-[#FAF8F5] min-h-[calc(100vh-4rem)] space-y-6">
+      <div className="p-4 lg:p-6 bg-[#FAF8F5] min-h-[calc(100vh-4rem)] space-y-6 max-w-[1600px] mx-auto w-full">
         {/* Bottom Toast Feedback */}
         {feedbackToast && (
           <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
@@ -320,13 +321,20 @@ export const QrCodesPage: React.FC = () => {
                     className="w-full pl-9 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753]/20 transition-all text-[#1A1615] font-semibold"
                   />
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer shrink-0">
+                <button 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer shrink-0 rounded-lg border ${
+                    showFilters 
+                      ? 'bg-[#FAF8F5] border-[#D4A753] text-[#D4A753]' 
+                      : 'bg-white border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615]'
+                  }`}>
                   <Filter className="w-4 h-4" />
                   More Filters
                 </button>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#EFECE6]">
+              {showFilters && (
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#EFECE6]">
                 <div className="flex flex-wrap items-center gap-2">
                   <DropdownSelect
                     id="venue"
@@ -351,6 +359,7 @@ export const QrCodesPage: React.FC = () => {
                   Showing {filteredAssets.length} of {assets.length}
                 </div>
               </div>
+              )}
             </div>
 
             {/* Asset List Cards */}
@@ -480,12 +489,12 @@ export const QrCodesPage: React.FC = () => {
                     <div className="text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 z-10">• {selectedAssetDetails.title.split(' • ')[0].toUpperCase()}</div>
                     <div className="text-xs font-bold tracking-widest text-[#D4A753] uppercase mb-4 z-10">PRIVE MEMBER ACCESS</div>
 
-                    <h4 className="text-center text-[15px] font-black text-[#1A1615] leading-tight px-6 z-10">
+                    {/* <h4 className="text-center text-[15px] font-black text-[#1A1615] leading-tight px-6 z-10">
                       {activeTab === 'front' ? 'SCAN TO JOIN REVIA PRIVÉ' : 'REVIA PRIVÉ MEMBER PERKS'}
-                    </h4>
-                    <p className="text-center text-[10px] font-semibold text-[#6E6A66] px-8 mt-2 mb-6 z-10 leading-snug">
+                    </h4> */}
+                    {/* <p className="text-center text-[10px] font-semibold text-[#6E6A66] px-8 mt-2 mb-6 z-10 leading-snug">
                       {activeTab === 'front' ? 'Unlock complimentary artisanal pour-over on your next reservation.' : 'Tap or scan to access your digital wallet pass and current tier benefits.'}
-                    </p>
+                    </p> */}
 
                     {/* Vector QR Code Core */}
                     <div className="w-32 h-32 bg-white border border-[#EFECE6] rounded-lg p-2 shadow-sm mb-4 z-10 relative flex items-center justify-center">

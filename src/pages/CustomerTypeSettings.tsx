@@ -154,7 +154,7 @@ export const CustomerTypeSettings: React.FC = () => {
       <div className="w-full">
 
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-[#1A1615] tracking-tight">Customer Tiers</h1>
+          <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Customer Tiers</h1>
           <p className="text-sm text-[#7C746C] mt-1">Configure automated loyalty levels based on patron spending habits.</p>
         </div>
 

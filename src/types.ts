@@ -165,5 +165,6 @@ export type NavRoute =
   | '/customer/identify'
   | '/customer/onboarding'
   | '/customer/curate-experience'
-  | '/customer-onboarding';
+  | '/customer-onboarding'
+  | '/rewards/new';
 
