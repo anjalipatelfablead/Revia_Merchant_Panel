@@ -15,7 +15,8 @@ import {
   Wifi,
   Zap,
   Coffee,
-  Check
+  Check,
+  X
 } from 'lucide-react';
 
 export const TransactionsPage: React.FC = () => {
@@ -25,6 +26,7 @@ export const TransactionsPage: React.FC = () => {
   const [paymentFilter, setPaymentFilter] = useState('Payment: All');
   const [statusFilter, setStatusFilter] = useState('Status: All');
   const [expandedTxId, setExpandedTxId] = useState<string | null>(null);
+  const [receiptModalTx, setReceiptModalTx] = useState<any>(null);
 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
@@ -422,8 +424,8 @@ export const TransactionsPage: React.FC = () => {
                           {openDropdown === tx.id && (
                             <>
                               <div className="fixed inset-0 z-[50]" onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); }} />
-                              <div className="absolute right-0 top-full mt-1 w-40 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-[60] overflow-hidden text-left">
-                                <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Viewing receipt...'); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5]">View Receipt</button>
+                              <div className={`absolute right-0 w-40 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-[60] overflow-hidden text-left ${idx >= currentTransactions.length - 2 && currentTransactions.length > 2 ? 'bottom-full mb-1' : 'top-full mt-1'}`}>
+                                <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); setReceiptModalTx(tx); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5]">View Receipt</button>
                                 <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Refunding transaction...'); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2]">Refund</button>
                               </div>
                             </>
@@ -500,7 +502,7 @@ export const TransactionsPage: React.FC = () => {
                             </div>
                           </div>
                           <div className="col-span-2 pt-2 border-t border-[#EFECE6] flex justify-end gap-2 mt-2">
-                            <button onClick={(e) => { e.stopPropagation(); showToast('Viewing receipt...'); }} className="px-4 py-2 text-xs font-semibold text-[#1A1615] bg-white border border-[#EFECE6] rounded-lg shadow-sm hover:bg-[#FAF8F5]">View Receipt</button>
+                            <button onClick={(e) => { e.stopPropagation(); setReceiptModalTx(tx); }} className="px-4 py-2 text-xs font-semibold text-[#1A1615] bg-white border border-[#EFECE6] rounded-lg shadow-sm hover:bg-[#FAF8F5]">View Receipt</button>
                             <button onClick={(e) => { e.stopPropagation(); showToast('Refunding transaction...'); }} className="px-4 py-2 text-xs font-semibold text-[#DC2626] bg-[#FEE2E2] border border-[#FECACA] rounded-lg shadow-sm hover:bg-[#FCA5A5]">Refund</button>
                           </div>
                         </div>
@@ -802,6 +804,60 @@ export const TransactionsPage: React.FC = () => {
                 className="w-full py-2.5 bg-[#1A1615] hover:bg-black text-white rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer"
               >
                 Acknowledge & Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Receipt Modal */}
+      {receiptModalTx && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setReceiptModalTx(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <div className="p-5 border-b border-[#EFECE6] flex justify-between items-center bg-[#FAF8F5]">
+              <h2 className="text-[15px] font-bold text-[#1A1615]">Transaction Receipt</h2>
+              <button onClick={() => setReceiptModalTx(null)} className="p-1 text-[#9E9A93] hover:text-[#1A1615] rounded transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <div className="text-2xl font-bold text-[#1A1615]">{receiptModalTx.amount}</div>
+                <div className="text-xs font-mono text-[#6E6A66] mt-1">{receiptModalTx.id}</div>
+                <div className={`text-[10px] font-bold mt-2 inline-block px-2 py-1 rounded uppercase tracking-wider ${receiptModalTx.status === 'Completed' ? 'bg-[#E6F4ED] text-[#0D7A53]' : 'bg-[#E0F2FE] text-[#0369A1]'}`}>
+                  {receiptModalTx.status}
+                </div>
+              </div>
+
+              <div className="space-y-4 text-sm">
+                <div className="flex justify-between border-b border-[#EFECE6] pb-2">
+                  <span className="text-[#6E6A66] font-semibold">Guest</span>
+                  <span className="text-[#1A1615] font-bold">{receiptModalTx.guestName}</span>
+                </div>
+                <div className="flex justify-between border-b border-[#EFECE6] pb-2">
+                  <span className="text-[#6E6A66] font-semibold">Type</span>
+                  <span className="text-[#1A1615] font-bold text-right">{receiptModalTx.type}</span>
+                </div>
+                <div className="flex justify-between border-b border-[#EFECE6] pb-2">
+                  <span className="text-[#6E6A66] font-semibold">Items</span>
+                  <span className="text-[#1A1615] font-bold text-right max-w-[60%]">{receiptModalTx.items}</span>
+                </div>
+                <div className="flex justify-between border-b border-[#EFECE6] pb-2">
+                  <span className="text-[#6E6A66] font-semibold">Terminal</span>
+                  <span className="text-[#1A1615] font-bold text-right">{receiptModalTx.channel}</span>
+                </div>
+                <div className="flex justify-between border-b border-[#EFECE6] pb-2">
+                  <span className="text-[#6E6A66] font-semibold">Time</span>
+                  <span className="text-[#1A1615] font-bold">{receiptModalTx.time}</span>
+                </div>
+                <div className="flex justify-between pt-2">
+                  <span className="text-[#6E6A66] font-semibold">Stamps Applied</span>
+                  <span className={`font-bold ${receiptModalTx.stamps.includes('+') ? 'text-[#D4A753]' : receiptModalTx.stamps.includes('-') ? 'text-[#0D7A53]' : 'text-[#1A1615]'}`}>
+                    {receiptModalTx.stamps}
+                  </span>
+                </div>
+              </div>
+              
+              <button onClick={() => { setReceiptModalTx(null); showToast('Receipt printed'); }} className="w-full mt-6 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-[#EFECE6] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer">
+                Print Receipt
               </button>
             </div>
           </div>

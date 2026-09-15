@@ -224,16 +224,16 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
 
           {/* 4. LEFT SECTION: CUSTOMER DATA TABLE */}
-          <div className="xl:col-span-7 2xl:col-span-8 bg-white rounded-xl border border-[#EAE6E1] shadow-2xs flex flex-col overflow-hidden">
+          <div className="xl:col-span-8 bg-white rounded-xl border border-[#EAE6E1] shadow-2xs flex flex-col overflow-hidden">
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[700px]">
+              <table className="w-full text-left border-collapse min-w-full lg:min-w-[600px]">
                 <thead>
                   <tr className="bg-[#FAF8F5] border-b border-[#EAE6E1]">
-                    <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C] w-2/5">Member</th>
+                    <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C] w-[30%]">Member</th>
                     <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Phone / Contact</th>
                     <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-[#7C746C]">Tier</th>
-                    <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C] w-1/4">Loyalty Stamps</th>
+                    <th className="py-3 px-5 text-xs font-bold uppercase tracking-wider text-[#7C746C] w-[25%]">Loyalty Stamps</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#EAE6E1]">
@@ -272,8 +272,8 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
                           {getTierBadge(cust.tier)}
                         </td>
                         <td className="py-3 px-5">
-                          <div className="flex items-center gap-3">
-                            <div className="flex-1">
+                          <div className="flex items-center gap-2 lg:gap-3">
+                            <div className="w-16 sm:w-20">
                               <div className="w-full h-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-full overflow-hidden">
                                 <div
                                   className="h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-full transition-all duration-500 ease-out"
@@ -392,7 +392,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
           {/* 5. RIGHT SECTION: CUSTOMER PROFILE SIDE DRAWER / PANEL */}
           {selectedCustomer && (
-            <div className="xl:col-span-5 2xl:col-span-4 bg-white rounded-xl border border-[#EAE6E1] shadow-md sticky top-[90px] flex flex-col max-h-[calc(100vh-120px)] overflow-hidden">
+            <div className="xl:col-span-4 bg-white rounded-xl border border-[#EAE6E1] shadow-md sticky top-[90px] flex flex-col max-h-[calc(100vh-120px)] overflow-hidden">
 
               {/* Panel Header */}
               <div className="px-5 py-4 border-b border-[#EAE6E1] flex items-center justify-between bg-white shrink-0">
