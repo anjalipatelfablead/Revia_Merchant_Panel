@@ -21,8 +21,8 @@ import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
 
 import { MarketingLandingPage } from './pages/MarketingLandingPage';
-import { CustomerOnboardingPage } from './pages/CustomerOnboardingPage';
-import { CustomerPanel } from './Customer/CustomerPanel';
+import { CustomerOnboardingPage } from './Customer/screens/pre-auth/CustomerOnboardingPage';
+import { CustomerRouter } from './Customer/CustomerRouter';
 import { CatalogPage } from './pages/CatalogPage';
 import { LoyaltyPage } from './pages/LoyaltyPage';
 import { CampaignBuilderPage } from './pages/CampaignBuilderPage';
@@ -50,12 +50,9 @@ const VALID_ROUTES = [
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
-  '/customer', '/customer-onboarding', '/',
+  '/customer/landing', '/customer', '/customer/onboarding', '/',
   '/about', '/contact', '/privacy', '/terms'
 ];
-
-
-
 
 export default function App() {
   const [currentRoute, setCurrentRouteState] = useState<NavRoute>(() => {
@@ -132,18 +129,20 @@ export default function App() {
     return <TermsOfServicePage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
+  if (currentRoute === '/customer/landing') {
+    return <CustomerOnboardingPage onComplete={() => handleNavigate('/customer/curate-experience')} />;
+  }
 
-
-  if (currentRoute === '/customer-onboarding') {
+  if (currentRoute === '/customer/onboarding') {
     return (
       <CustomerOnboardingPage
-        onComplete={() => handleNavigate('/customer')}
+        onComplete={() => handleNavigate('/customer/curate-experience')}
       />
     );
   }
 
   if (currentRoute === '/customer' || currentRoute.startsWith('/customer/')) {
-    return <CustomerPanel currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
+    return <CustomerRouter currentRoute={currentRoute} onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
   // Render auth and onboarding pages directly as standalone
@@ -155,7 +154,7 @@ export default function App() {
             handleNavigate(role as NavRoute);
           } else if (role === 'customer') {
             // Navigate to onboarding after successful customer login
-            handleNavigate('/customer-onboarding');
+            handleNavigate('/customer/onboarding');
           } else {
             handleNavigate('/dashboard');
           }

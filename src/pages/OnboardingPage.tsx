@@ -11,8 +11,6 @@ import {
   ShieldCheck,
   Coffee,
   CheckCircle2,
-  ArrowRight,
-  Info,
   Sparkles,
   Zap,
   Lock,
@@ -28,7 +26,7 @@ interface OnboardingPageProps {
 export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCancel }) => {
   const [isRegistered, setIsRegistered] = useState(true);
   const [activeStep, setActiveStep] = useState<number>(1);
-  
+
   // M-01 Registration
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -88,7 +86,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
         <div className="bg-white border border-[#E5E0D8] rounded-xl p-4 sm:p-5 mb-6 shadow-xs">
           <div className="flex items-center justify-between relative">
             <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#E5E0D8] -translate-y-1/2 z-0 hidden md:block" />
-            
+
             {steps.map((step) => {
               const isPast = step.id < activeStep;
               const isCurrent = step.id === activeStep;
@@ -101,25 +99,23 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   className="relative z-10 flex flex-col items-center group cursor-pointer"
                 >
                   <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-xs font-bold ${
-                      isPast
+                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-xs font-bold ${isPast
                         ? 'bg-[#0D7A53] text-white ring-4 ring-[#E6F4ED]'
                         : isCurrent
-                        ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md ring-4 ring-[#FDF8EB]'
-                        : 'bg-white border-2 border-[#E5E0D8] text-[#9E9A93] group-hover:border-[#9E9A93]'
-                    }`}
+                          ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md ring-4 ring-[#FDF8EB]'
+                          : 'bg-white border-2 border-[#E5E0D8] text-[#9E9A93] group-hover:border-[#9E9A93]'
+                      }`}
                   >
                     {isPast ? <Check className="w-4 h-4 text-white" /> : <span>{step.id}</span>}
                   </div>
                   <div className="mt-2 text-center">
                     <span
-                      className={`text-xs font-semibold block ${
-                        isCurrent
+                      className={`text-xs font-semibold block ${isCurrent
                           ? 'text-[#1A1615] font-bold'
                           : isPast
-                          ? 'text-[#0D7A53]'
-                          : 'text-[#9E9A93]'
-                      }`}
+                            ? 'text-[#0D7A53]'
+                            : 'text-[#9E9A93]'
+                        }`}
                     >
                       {step.name}
                     </span>
@@ -205,160 +201,157 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   {/* Branch Details */}
                   <div className="space-y-4">
                     <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                    Official Branch Name
-                  </label>
-                  <input
-                    type="text"
-                    value={branchName}
-                    onChange={(e) => setBranchName(e.target.value)}
-                    className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                    Physical Address & GPS Pin
-                  </label>
-                  <div className="relative">
-                    <MapPin className="w-4 h-4 text-[#9E782F] absolute left-3 top-3" />
-                    <input
-                      type="text"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
-                    />
-                  </div>
-                </div>
-
-                {/* Mock Map Preview Box */}
-                <div className="h-32 rounded-lg border border-[#E5E0D8] bg-[#F5F4F0] relative overflow-hidden flex items-center justify-center">
-                  <div
-                    className="absolute inset-0 opacity-40 bg-cover bg-center"
-                    style={{
-                      backgroundImage:
-                        'radial-gradient(#D4A753 1px, transparent 1px), radial-gradient(#9E782F 1px, #FAF8F5 1px)',
-                      backgroundSize: '20px 20px',
-                      backgroundPosition: '0 0, 10px 10px',
-                    }}
-                  />
-                  <div className="relative z-10 bg-white/95 border border-[#E5E0D8] px-3.5 py-2 rounded-lg shadow-sm flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#0D7A53] animate-ping" />
-                    <span className="text-xs font-bold text-[#1A1615]">Montgomery Flagship Beacon Verified</span>
-                    <span className="text-[10px] text-[#0D7A53] font-semibold bg-[#E6F4ED] px-1.5 py-0.5 rounded">
-                      ±1.2m Accuracy
-                    </span>
-                  </div>
-                </div>
-
-                {/* Timezone & Operating Hours */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                      Store Timezone
-                    </label>
-                    <input
-                      type="text"
-                      value={timezone}
-                      onChange={(e) => setTimezone(e.target.value)}
-                      className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                      Daily Operating Hours
-                    </label>
-                    <input
-                      type="text"
-                      value={hours}
-                      onChange={(e) => setHours(e.target.value)}
-                      className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615]"
-                    />
-                  </div>
-                </div>
-
-                {/* Selection Cards: Primary Register Architecture */}
-                <div className="pt-4 border-t border-[#E5E0D8]">
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1">
-                    Primary Register Architecture
-                  </label>
-                  <p className="text-[11px] text-[#9E9A93] mb-3">
-                    Select your counter interaction flow to optimize POS scanning speed and receipt printing.
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {/* Option 1 */}
-                    <div
-                      onClick={() => setRegisterType('counter')}
-                      className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-                        registerType === 'counter'
-                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
-                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
-                          <Coffee className="w-4 h-4" />
-                        </div>
-                        {registerType === 'counter' && (
-                          <div className="w-4 h-4 rounded-full bg-[#9E782F] text-white flex items-center justify-center text-[10px]">
-                            ✓
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-xs font-bold text-[#1A1615]">Counter Barista</div>
-                      <div className="text-[10px] text-[#6E6A66] mt-0.5">High-volume pour-over bar, dual customer display scanner.</div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
+                        Official Branch Name
+                      </label>
+                      <input
+                        type="text"
+                        value={branchName}
+                        onChange={(e) => setBranchName(e.target.value)}
+                        className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
+                      />
                     </div>
 
-                    {/* Option 2 */}
-                    <div
-                      onClick={() => setRegisterType('salon')}
-                      className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-                        registerType === 'salon'
-                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
-                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
-                          <Store className="w-4 h-4" />
-                        </div>
-                        {registerType === 'salon' && (
-                          <div className="w-4 h-4 rounded-full bg-[#9E782F] text-white flex items-center justify-center text-[10px]">
-                            ✓
-                          </div>
-                        )}
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
+                        Physical Address & GPS Pin
+                      </label>
+                      <div className="relative">
+                        <MapPin className="w-4 h-4 text-[#9E782F] absolute left-3 top-3" />
+                        <input
+                          type="text"
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                          className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-9 pr-3.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
+                        />
                       </div>
-                      <div className="text-xs font-bold text-[#1A1615]">Tasting Salon</div>
-                      <div className="text-[10px] text-[#6E6A66] mt-0.5">Table-side sensory service, mobile wallet NFC checkout.</div>
                     </div>
 
-                    {/* Option 3 */}
-                    <div
-                      onClick={() => setRegisterType('express')}
-                      className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-                        registerType === 'express'
-                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
-                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
-                          <Zap className="w-4 h-4" />
-                        </div>
-                        {registerType === 'express' && (
-                          <div className="w-4 h-4 rounded-full bg-[#9E782F] text-white flex items-center justify-center text-[10px]">
-                            ✓
-                          </div>
-                        )}
+                    {/* Mock Map Preview Box */}
+                    <div className="h-32 rounded-lg border border-[#E5E0D8] bg-[#F5F4F0] relative overflow-hidden flex items-center justify-center">
+                      <div
+                        className="absolute inset-0 opacity-40 bg-cover bg-center"
+                        style={{
+                          backgroundImage:
+                            'radial-gradient(#D4A753 1px, transparent 1px), radial-gradient(#9E782F 1px, #FAF8F5 1px)',
+                          backgroundSize: '20px 20px',
+                          backgroundPosition: '0 0, 10px 10px',
+                        }}
+                      />
+                      <div className="relative z-10 bg-white/95 border border-[#E5E0D8] px-3.5 py-2 rounded-lg shadow-sm flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-[#0D7A53] animate-ping" />
+                        <span className="text-xs font-bold text-[#1A1615]">Montgomery Flagship Beacon Verified</span>
+                        <span className="text-[10px] text-[#0D7A53] font-semibold bg-[#E6F4ED] px-1.5 py-0.5 rounded">
+                          ±1.2m Accuracy
+                        </span>
                       </div>
-                      <div className="text-xs font-bold text-[#1A1615]">Express Window</div>
-                      <div className="text-[10px] text-[#6E6A66] mt-0.5">Sub-20s tap & go scan, automated loyalty stamp batching.</div>
+                    </div>
+
+                    {/* Timezone & Operating Hours */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
+                          Store Timezone
+                        </label>
+                        <input
+                          type="text"
+                          value={timezone}
+                          onChange={(e) => setTimezone(e.target.value)}
+                          className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
+                          Daily Operating Hours
+                        </label>
+                        <input
+                          type="text"
+                          value={hours}
+                          onChange={(e) => setHours(e.target.value)}
+                          className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-medium text-[#1A1615]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Selection Cards: Primary Register Architecture */}
+                    <div className="pt-4 border-t border-[#E5E0D8]">
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1">
+                        Primary Register Architecture
+                      </label>
+                      <p className="text-[11px] text-[#9E9A93] mb-3">
+                        Select your counter interaction flow to optimize POS scanning speed and receipt printing.
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {/* Option 1 */}
+                        <div
+                          onClick={() => setRegisterType('counter')}
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'counter'
+                              ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
+                              : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
+                            }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
+                              <Coffee className="w-4 h-4" />
+                            </div>
+                            {registerType === 'counter' && (
+                              <div className="w-4 h-4 rounded-full bg-[#9E782F] text-white flex items-center justify-center text-[10px]">
+                                ✓
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-xs font-bold text-[#1A1615]">Counter Barista</div>
+                          <div className="text-[10px] text-[#6E6A66] mt-0.5">High-volume pour-over bar, dual customer display scanner.</div>
+                        </div>
+
+                        {/* Option 2 */}
+                        <div
+                          onClick={() => setRegisterType('salon')}
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'salon'
+                              ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
+                              : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
+                            }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
+                              <Store className="w-4 h-4" />
+                            </div>
+                            {registerType === 'salon' && (
+                              <div className="w-4 h-4 rounded-full bg-[#9E782F] text-white flex items-center justify-center text-[10px]">
+                                ✓
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-xs font-bold text-[#1A1615]">Tasting Salon</div>
+                          <div className="text-[10px] text-[#6E6A66] mt-0.5">Table-side sensory service, mobile wallet NFC checkout.</div>
+                        </div>
+
+                        {/* Option 3 */}
+                        <div
+                          onClick={() => setRegisterType('express')}
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'express'
+                              ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
+                              : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
+                            }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
+                              <Zap className="w-4 h-4" />
+                            </div>
+                            {registerType === 'express' && (
+                              <div className="w-4 h-4 rounded-full bg-[#9E782F] text-white flex items-center justify-center text-[10px]">
+                                ✓
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-xs font-bold text-[#1A1615]">Express Window</div>
+                          <div className="text-[10px] text-[#6E6A66] mt-0.5">Sub-20s tap & go scan, automated loyalty stamp batching.</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              </>
+                </>
               )}
 
               {activeStep === 4 && (
@@ -374,16 +367,15 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       Select the tier that best fits your business needs.
                     </p>
                   </div>
-                  
+
                   <div className="space-y-4">
                     {/* Plan Options */}
                     <div
                       onClick={() => setSelectedPlan('starter')}
-                      className={`p-4 rounded-xl border transition-all cursor-pointer ${
-                        selectedPlan === 'starter'
+                      className={`p-4 rounded-xl border transition-all cursor-pointer ${selectedPlan === 'starter'
                           ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                           : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
@@ -398,11 +390,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
                     <div
                       onClick={() => setSelectedPlan('pro')}
-                      className={`p-4 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
-                        selectedPlan === 'pro'
+                      className={`p-4 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${selectedPlan === 'pro'
                           ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                           : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                      }`}
+                        }`}
                     >
                       <div className="absolute top-0 right-0 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg">RECOMMENDED</div>
                       <div className="flex items-center justify-between">
@@ -418,11 +409,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
                     <div
                       onClick={() => setSelectedPlan('enterprise')}
-                      className={`p-4 rounded-xl border transition-all cursor-pointer ${
-                        selectedPlan === 'enterprise'
+                      className={`p-4 rounded-xl border transition-all cursor-pointer ${selectedPlan === 'enterprise'
                           ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                           : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
@@ -451,7 +441,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       Enter your payment information to finalize your {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan subscription.
                     </p>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-4 flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
@@ -466,7 +456,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                         </div>
                       </div>
                     </div>
-                    
+
                     {selectedPlan !== 'enterprise' ? (
                       <>
                         <div>
@@ -554,7 +544,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 {steps.map((step) => {
                   const isDone = activeStep > step.id;
                   const isCurrent = activeStep === step.id;
-                  
+
                   return (
                     <div key={step.id} className={`flex items-center justify-between ${isDone ? 'text-[#0D7A53]' : isCurrent ? 'text-[#1A1615] font-semibold' : 'text-[#9E9A93]'}`}>
                       <span className="flex items-center gap-2 font-medium">

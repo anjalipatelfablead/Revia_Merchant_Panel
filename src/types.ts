@@ -160,5 +160,8 @@ export type NavRoute =
   | '/login'
   | '/onboarding'
   | '/customer'
+  | '/customer/landing'
+  | '/customer/onboarding'
+  | '/customer/curate-experience'
   | '/customer-onboarding';
 
