@@ -235,7 +235,9 @@ export const QrCodesPage: React.FC = () => {
               <Download className="w-4 h-4" />
               Download Print PDF Pack
             </button>
-            <button className="flex items-center gap-2 px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-xl hover:opacity-95 transition-all shadow-xs cursor-pointer">
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-xl hover:opacity-95 transition-all shadow-xs cursor-pointer">
               <Plus className="w-4 h-4 text-white" />
               Create Dynamic Stand
             </button>
@@ -662,7 +664,7 @@ export const QrCodesPage: React.FC = () => {
             className="bg-white rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl animate-in zoom-in-95 flex flex-col max-h-[90vh]"
             onClick={e => e.stopPropagation()}
           >
-            {/* Drawer Header */}
+            {/* Modal Header */}
             <div className="px-6 py-5 border-b border-[#EFECE6] bg-[#FAF8F5] flex justify-between items-center shrink-0">
               <div>
                 <h2 className="text-[17px] font-bold text-[#1A1615]">Create Dynamic Stand</h2>

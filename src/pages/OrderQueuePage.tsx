@@ -201,9 +201,9 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
             </button>
             <button
               onClick={() => setIsManualModalOpen(true)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-[#1A1615] text-white text-sm sm:text-base font-semibold rounded-xl hover:bg-[#2A2422] transition-colors shadow-md whitespace-nowrap"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-sm sm:text-base font-bold rounded-xl hover:opacity-95 transition-all shadow-sm whitespace-nowrap cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 text-white" />
               Manual Order
             </button>
           </div>
@@ -242,9 +242,9 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
             <button
               key={f}
               onClick={() => setActiveFilter(f as OrderStatus | 'All')}
-              className={`px-4 py-2 rounded-xl text-sm font-bold border transition-colors whitespace-nowrap ${activeFilter === f
-                ? 'bg-[#1A1615] text-white border-[#1A1615] shadow-sm'
-                : 'bg-white text-[#8C827A] border-[#EAE6E1] hover:bg-[#F2EFE9] hover:text-[#1A1615]'
+              className={`px-4 py-2 rounded-xl text-sm font-bold border transition-colors whitespace-nowrap cursor-pointer ${activeFilter === f
+                ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white border-transparent shadow-sm'
+                : 'bg-white text-[#4A433D] border-[#EAE6E1] hover:bg-[#FAF8F5] hover:text-[#1A1615]'
                 }`}
             >
               {f === 'Ready' ? 'Ready / Served' : f}
@@ -327,7 +327,7 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
                       {order.status === 'Incoming' && (
                         <>
                           <button onClick={() => moveOrder(order.id, 'Settled')} className="px-3 py-1.5 text-sm font-bold text-[#8C827A] bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors">Decline</button>
-                          <button onClick={() => moveOrder(order.id, 'Queued')} className="px-3 py-1.5 text-sm font-bold text-white bg-[#1A1615] rounded-lg hover:bg-[#2A2422] transition-colors shadow-sm">Accept</button>
+                          <button onClick={() => moveOrder(order.id, 'Queued')} className="px-3 py-1.5 text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-lg hover:opacity-90 transition-opacity shadow-sm cursor-pointer">Accept</button>
                         </>
                       )}
                       {order.status === 'Queued' && (
@@ -430,9 +430,9 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-3 bg-[#1A1615] text-white font-bold rounded-xl hover:bg-[#2A2422] transition-colors shadow-md flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-3 bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-sm flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4 text-white" />
                   Add Order
                 </button>
               </div>
