@@ -223,7 +223,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           <div className="bg-white border border-[#EAE6E1] rounded-2xl shadow-2xs overflow-hidden border-l-4 border-l-[#B38637]">
             <div className="p-6 space-y-6">
               {/* Card Header with Phase Pill and Code Pill */}
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                 <div>
                   <span className="inline-block bg-[#FAF6EE] text-[#9E782F] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase mb-1">
                     PHASE 01
@@ -504,7 +504,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           <div className="bg-white border border-[#EAE6E1] rounded-2xl shadow-2xs overflow-hidden border-l-4 border-l-[#15803D]">
             <div className="p-6 space-y-6">
               {/* Card Header with Phase Pill and Mesh Ready Pill */}
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                 <div>
                   <span className="inline-block bg-[#FAF6EE] text-[#9E782F] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase mb-1">
                     PHASE 02
