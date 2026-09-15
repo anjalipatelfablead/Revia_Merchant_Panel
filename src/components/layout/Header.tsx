@@ -136,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {notificationsOpen && (
-            <div className="absolute right-0 mt-2 w-80 bg-white border border-[#EAE6E1] rounded-xl shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute right-[-50px] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white border border-[#EAE6E1] rounded-xl shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-2 border-b border-[#EAE6E1]">
                 <div className="text-xs font-bold text-[#1A1615] flex items-center gap-1.5">
                   <Bell className="w-3.5 h-3.5 text-[#A37837]" /> Notifications (3 active)
