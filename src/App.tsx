@@ -273,8 +273,12 @@ export default function App() {
             <TransactionsPage />
           )}
 
-          {(currentRoute === '/campaigns' || currentRoute === '/campaigns/new') && (
-            <CampaignBuilderPage initialViewMode={currentRoute === '/campaigns/new' ? 'builder' : 'dashboard'} />
+          {currentRoute === '/campaigns' && (
+            <CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} />
+          )}
+
+          {currentRoute === '/campaigns/new' && (
+            <CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} />
           )}
 
           {currentRoute === '/rewards' && (

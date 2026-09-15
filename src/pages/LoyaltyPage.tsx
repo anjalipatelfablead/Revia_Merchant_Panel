@@ -37,7 +37,7 @@ const initialTiers: Tier[] = [
 export const LoyaltyPage: React.FC = () => {
   // State for forms
   const [passBrandName, setPassBrandName] = useState('Revia Artisanal Stamp Pass');
-  const [qualificationRule, setQualificationRule] = useState('Spend at least $6.00 per visit');
+  const [qualificationRule, setQualificationRule] = useState('Spend at least ₹6.00 per visit');
   const [stampsToComplete, setStampsToComplete] = useState<number>(10);
   const [selectedReward, setSelectedReward] = useState<string>('flight');
   const [expirationWindow, setExpirationWindow] = useState('Voucher valid for 30 days post completion');
@@ -97,13 +97,13 @@ export const LoyaltyPage: React.FC = () => {
     {
       id: 'flight',
       title: 'Signature Flight',
-      desc: 'Free Specialty Beverage or 3-Pour Flight (up to $14 value)',
+      desc: 'Free Specialty Beverage or 3-Pour Flight (up to ₹14 value)',
       icon: Coffee
     },
     {
       id: 'voucher',
       title: 'Fixed Voucher',
-      desc: '$15.00 off entire guest tab, including pastry cases',
+      desc: '₹15.00 off entire guest tab, including pastry cases',
       icon: Ticket
     },
     {
@@ -215,9 +215,9 @@ export const LoyaltyPage: React.FC = () => {
                     onChange={(e) => setQualificationRule(e.target.value)}
                     className="w-full appearance-none px-3.5 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753]/20 transition-all cursor-pointer pr-10"
                   >
-                    <option value="Spend at least $6.00 per visit">Spend at least $6.00 per visit</option>
+                    <option value="Spend at least ₹6.00 per visit">Spend at least ₹6.00 per visit</option>
                     <option value="Buy any 1 specialty drink">Buy any 1 specialty drink</option>
-                    <option value="Any transaction > $0.00">Any transaction &gt; $0.00</option>
+                    <option value="Any transaction > ₹0.00">Any transaction &gt; ₹0.00</option>
                   </select>
                   <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
                 </div>
@@ -671,9 +671,9 @@ export const LoyaltyPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div className="bg-[#FAF8F5] rounded-xl p-4 border border-[#EFECE6]">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-[#9E9A93] mb-1">Est. Cost Per Stamp</div>
-                <div className="text-xl font-bold text-[#1A1615] mb-1">$0.42 <span className="text-xs text-[#6E6A66] font-semibold">/ purchase</span></div>
+                <div className="text-xl font-bold text-[#1A1615] mb-1">₹0.42 <span className="text-xs text-[#6E6A66] font-semibold">/ purchase</span></div>
                 <div className="text-[11px] text-[#6E6A66] leading-tight">
-                  6.8% reward allowance based on $6.20 average cup.
+                  6.8% reward allowance based on ₹6.20 average cup.
                 </div>
               </div>
               <div className="bg-[#FAF8F5] rounded-xl p-4 border border-[#EFECE6]">
@@ -690,7 +690,7 @@ export const LoyaltyPage: React.FC = () => {
             <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-[#1A1615] to-[#2D2624] text-white shadow-inner relative overflow-hidden">
               <div className="relative z-10">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-white/70 mb-1">Net Incremental Revenue</div>
-                <div className="text-2xl font-bold text-[#D4A753]">+$3,420 <span className="text-sm text-white/70">/ branch / mo</span></div>
+                <div className="text-2xl font-bold text-[#D4A753]">+₹3,420 <span className="text-sm text-white/70">/ branch / mo</span></div>
               </div>
 
               {/* Subtle upward trend micro-chart line in background */}

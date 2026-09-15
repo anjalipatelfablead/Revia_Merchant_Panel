@@ -22,11 +22,11 @@ interface NotificationItem {
 
 const INITIAL_NOTIFICATIONS: NotificationItem[] = [
 	{ id: 'redeemed-reward', title: 'Reward redeemed', description: 'Aisha Rahman redeemed a free cold brew at Downtown Flagship.', time: '2 min ago', location: 'Downtown Flagship', kind: 'reward', read: false },
-	{ id: 'daily-sales', title: 'Daily sales target reached', description: 'Downtown Flagship crossed today\'s sales target of $2,500.', time: '18 min ago', location: 'Downtown Flagship', kind: 'success', read: false },
+	{ id: 'daily-sales', title: 'Daily sales target reached', description: 'Downtown Flagship crossed today\'s sales target of ₹2,500.', time: '18 min ago', location: 'Downtown Flagship', kind: 'success', read: false },
 	{ id: 'new-member', title: 'New loyalty member joined', description: 'Welcome Maya Chen, who joined through the in-store QR code.', time: '42 min ago', location: 'Northside Mall', kind: 'customer', read: false },
 	{ id: 'stock-warning', title: 'Inventory running low', description: 'Ethiopia Yirgacheffe is down to 8 units. Review your catalog stock.', time: '1 hr ago', location: 'Roastery Reserve', kind: 'warning', read: true },
 	{ id: 'campaign-live', title: 'Campaign completed', description: 'The Weekend Double Stamps campaign reached 1,248 customers.', time: '3 hrs ago', location: 'All branches', kind: 'campaign', read: true },
-	{ id: 'payment-settled', title: 'Payment settlement received', description: 'Your $8,420.50 settlement has been deposited successfully.', time: 'Yesterday', location: 'Merchant account', kind: 'success', read: true },
+	{ id: 'payment-settled', title: 'Payment settlement received', description: 'Your ₹8,420.50 settlement has been deposited successfully.', time: 'Yesterday', location: 'Merchant account', kind: 'success', read: true },
 	{ id: 'branch-online', title: 'Branch back online', description: 'The West End Kiosk scanner is online and accepting check-ins.', time: 'Yesterday', location: 'West End Kiosk', kind: 'success', read: true },
 ];
 

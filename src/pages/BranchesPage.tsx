@@ -135,10 +135,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
       managerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       terminalsActive: 2,
       membersLinked: '1,200 Linked',
-      volume30d: '$18,400',
+      volume30d: '₹18,400',
       hours: 'Mon–Sat 7:00 AM – 7:00 PM',
       timezone: 'PST (America/Los_Angeles)',
-      currency: 'USD ($)',
+      currency: 'INR ($)',
       taxProfile: 'CA State + LA City (9.5%)',
       hardware: [
         {
@@ -284,10 +284,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           </div>
           <div className="mt-2">
             <div className="text-3xl font-bold text-[#1A1615] tracking-tight">
-              $184,920
+              ₹184,920
             </div>
             <div className="mt-3 pt-2.5 border-t border-[#F5F2EC] flex items-center justify-between text-[11px]">
-              <span className="text-[#7C746C]">Avg. $61,640 / outlet</span>
+              <span className="text-[#7C746C]">Avg. ₹61,640 / outlet</span>
               <span className="font-bold text-[#1A1615]">30D Window</span>
             </div>
           </div>
