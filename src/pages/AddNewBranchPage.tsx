@@ -157,7 +157,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
   };
 
   return (
-    <div className="p-4 lg:p-8 max-w-[1440px] mx-auto space-y-6">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6">
       {/* Toast feedback for PDF kit download */}
       {showDownloadToast && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl border border-neutral-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-5">
@@ -185,7 +185,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
 
           {/* Page Title with Staging Tier Badge */}
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-[#1A1615]">
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
               Add New Branch / Outlet
             </h1>
             <span className="bg-[#FAF6EE] border border-[#E5D7BE] text-[#9E782F] text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">

@@ -61,7 +61,7 @@ export const RewardsPage: React.FC = () => {
   };
 
   return (
-    <div className="p-4 lg:p-8 max-w-[1400px] mx-auto space-y-6">
+    <div className="p-4 lg:p-6 max-w-[1400px] mx-auto space-y-6">
       {feedbackToast && (
         <div className="fixed bottom-4 right-4 bg-[#1A1615] text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50 animate-in fade-in slide-in-from-bottom-4">
           <div className="w-8 h-8 rounded-full bg-[#0D7A53]/20 flex items-center justify-center text-[#0D7A53]">
@@ -86,7 +86,7 @@ export const RewardsPage: React.FC = () => {
             <span className="text-[#9E9A93] text-[10px] font-bold uppercase tracking-widest">• Engine v4.2</span>
           </div> */}
 
-          <h1 className="text-[28px] font-bold tracking-tight text-[#1A1615] leading-tight">
+          <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] leading-tight">
             Rewards Catalog & Tier Perks Manager
           </h1>
           <p className="text-sm text-[#6E6A66] mt-1 font-medium">

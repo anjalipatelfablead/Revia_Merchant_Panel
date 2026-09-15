@@ -141,7 +141,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615]">
-      <div className="p-4 sm:p-6 space-y-6 flex-1">
+      <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
         {/* MAIN SECTION HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>

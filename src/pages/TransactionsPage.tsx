@@ -221,7 +221,7 @@ export const TransactionsPage: React.FC = () => {
           </div>
         )}
 
-        <div className="p-4 sm:p-6 space-y-6 flex-1">
+        <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
 
           {/* MAIN SECTION HEADER & TOP METRICS */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

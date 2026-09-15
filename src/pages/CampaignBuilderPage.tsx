@@ -2497,7 +2497,7 @@ export const CampaignBuilderPage: React.FC = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">Campaign Builder</h1>
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Campaign Builder</h1>
             <p className="text-xs text-[#7C746C]">Audit parameters, preview the live guest pass token, and deploy the campaign across roastery registers.</p>
           </div>
         </div>
@@ -2527,7 +2527,7 @@ export const CampaignBuilderPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="p-2 sm:p-4 space-y-5 flex-1 max-w-[1600px] mx-auto w-full">
+      <div className="p-4 lg:p-6 space-y-5 flex-1 max-w-[1600px] mx-auto w-full">
 
         {/* Stepper Indicator */}
         <div className="lg:hidden flex justify-between items-center mb-4 px-1">
