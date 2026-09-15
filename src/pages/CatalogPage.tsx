@@ -155,7 +155,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ catalog, onUpdateItem,
             Panama Geisha Flight
           </div>
           <span className="text-[11px] text-[#9E782F] font-semibold mt-1 block">
-            $24.00 Price • 70.0% Margin
+            ₹24.00 Price • 70.0% Margin
           </span>
         </div>
 

@@ -8,7 +8,7 @@ export const MerchantPlatformSettings: React.FC = () => {
 
   const getSymbol = () => {
     switch (currency) {
-      case 'USD': return '$';
+      case 'INR': return '$';
       case 'GBP': return '£';
       case 'EUR': return '€';
       case 'INR': default: return '₹';
@@ -22,9 +22,9 @@ export const MerchantPlatformSettings: React.FC = () => {
   };
 
   return (
-    <div className="w-full font-sans bg-white p-6">
+    <div className="w-full font-sans bg-white p-3 sm:p-6">
       <div className="w-full">
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Platform Settings</h1>
           <p className="text-sm text-[#7C746C] mt-1">Manage global preferences for your Revia merchant instance.</p>
         </div>
@@ -52,7 +52,7 @@ export const MerchantPlatformSettings: React.FC = () => {
                     className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer pr-10 transition-colors hover:border-[#D1CDC7]"
                   >
                     <option value="INR">INR — Indian Rupee (₹)</option>
-                    <option value="USD">USD — US Dollar ($)</option>
+                    <option value="INR">INR — US Dollar ($)</option>
                     <option value="GBP">GBP — British Pound (£)</option>
                     <option value="EUR">EUR — Euro (€)</option>
                   </select>
@@ -77,7 +77,7 @@ export const MerchantPlatformSettings: React.FC = () => {
           </div>
 
           {/* CARD 2: Communication Channels */}
-          <div className="flex-1 bg-white rounded-[16px] border border-[#EFECE6] p-6 lg:p-8 shadow-sm">
+          <div className="flex-1 bg-white rounded-[16px] border border-[#EFECE6] p-4 lg:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#B8862E]">
                 <MessageCircle className="w-5 h-5" />
@@ -90,13 +90,13 @@ export const MerchantPlatformSettings: React.FC = () => {
 
             <div className="space-y-4">
               {/* WhatsApp Row */}
-              <div className="flex items-start sm:items-center justify-between gap-4 p-5 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] hover:border-[#D1CDC7] transition-colors">
-                <div className="flex items-start gap-4">
+              <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4 p-3 sm:p-5 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] hover:border-[#D1CDC7] transition-colors">
+                <div className="flex items-start gap-3 sm:gap-4 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center text-[#0D7A53] shrink-0 shadow-sm">
                     <MessageCircle className="w-5 h-5" />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="min-w-0">
+                    <div className="flex items-center flex-wrap gap-2 mb-1">
                       <h3 className="text-[14px] font-bold text-[#1A1615]">WhatsApp</h3>
                       {whatsappEnabled ? (
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#E6F4ED] text-[#0D7A53] border border-[#BCE3D1]">
@@ -129,13 +129,13 @@ export const MerchantPlatformSettings: React.FC = () => {
               </div>
 
               {/* SMS Row */}
-              <div className="flex items-start sm:items-center justify-between gap-4 p-5 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] hover:border-[#D1CDC7] transition-colors">
-                <div className="flex items-start gap-4">
+              <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4 p-3 sm:p-5 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] hover:border-[#D1CDC7] transition-colors">
+                <div className="flex items-start gap-3 sm:gap-4 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-white border border-[#EFECE6] flex items-center justify-center text-[#1A1615] shrink-0 shadow-sm">
                     <Smartphone className="w-5 h-5" />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="min-w-0">
+                    <div className="flex items-center flex-wrap gap-2 mb-1">
                       <h3 className="text-[14px] font-bold text-[#1A1615]">SMS</h3>
                       {smsEnabled ? (
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#E6F4ED] text-[#0D7A53] border border-[#BCE3D1]">

@@ -383,7 +383,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           <div className="text-[11px] text-[#6E6A66]">Essential tools for single-location shops.</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-sm font-bold text-[#1A1615]">$49<span className="text-[10px] text-[#9E9A93] font-normal">/mo</span></div>
+                          <div className="text-sm font-bold text-[#1A1615]">₹49<span className="text-[10px] text-[#9E9A93] font-normal">/mo</span></div>
                         </div>
                       </div>
                     </div>
@@ -402,7 +402,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           <div className="text-[11px] text-[#6E6A66]">Advanced loyalty and multi-branch support.</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-sm font-bold text-[#1A1615]">$99<span className="text-[10px] text-[#9E9A93] font-normal">/mo</span></div>
+                          <div className="text-sm font-bold text-[#1A1615]">₹99<span className="text-[10px] text-[#9E9A93] font-normal">/mo</span></div>
                         </div>
                       </div>
                     </div>
@@ -451,7 +451,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                         <div>
                           <div className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider">Total Due Today</div>
                           <div className="text-sm font-bold text-[#1A1615]">
-                            {selectedPlan === 'starter' ? '$49.00' : selectedPlan === 'pro' ? '$99.00' : 'Contact Sales'}
+                            {selectedPlan === 'starter' ? '₹49.00' : selectedPlan === 'pro' ? '₹99.00' : 'Contact Sales'}
                           </div>
                         </div>
                       </div>

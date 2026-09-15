@@ -141,7 +141,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
 
    const faqs = [
       { q: "Does my customer need to download an app?", a: "No. Customers simply scan your QR code with their phone camera and join instantly via a mobile web browser." },
-      { q: "How much does Revia cost?", a: "We offer plans starting from $49/mo, with a 14-day free trial. See our pricing section for detailed information." },
+      { q: "How much does Revia cost?", a: "We offer plans starting from ₹49/mo, with a 14-day free trial. See our pricing section for detailed information." },
       { q: "Can I run it across multiple branches?", a: "Yes! The Growth and Enterprise plans support multi-branch management from a single unified dashboard." },
       { q: "How long does setup take?", a: "Under 10 minutes. Create an account, set your loyalty rules, print your QR code, and you are ready to go." },
       { q: "Can I create custom campaigns and discounts?", a: "Absolutely. You can create BOGO offers, double stamp days, and targeted discounts for specific customer segments." },

@@ -292,7 +292,7 @@ export const ItemCatalogPage: React.FC = () => {
             </div>
             <div className="flex items-baseline gap-2 mb-4">
               <span className="text-[22px] font-black text-[#1A1615] tracking-tight">Panama Geisha</span>
-              <span className="text-[13px] font-bold text-[#B38637]">$8.4k</span>
+              <span className="text-[13px] font-bold text-[#B38637]">₹8.4k</span>
             </div>
           </div>
           <div className="pt-3 border-t border-[#EAE6E1] flex items-center justify-between text-xs">

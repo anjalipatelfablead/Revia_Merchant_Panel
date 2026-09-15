@@ -274,7 +274,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({ cartItems, updat
               {[
                 { id: 'upi', label: 'UPI / GPay / PhonePe', desc: 'Instant QR / Mobile Pay', icon: QrCode },
                 { id: 'card', label: 'Credit / Debit Card', desc: 'Visa, Mastercard, Amex', icon: CreditCard },
-                { id: 'wallet', label: 'Revia Wallet ($45.50)', desc: 'Pay instantly with wallet balance', icon: Wallet },
+                { id: 'wallet', label: 'Revia Wallet (₹45.50)', desc: 'Pay instantly with wallet balance', icon: Wallet },
                 { id: 'counter', label: 'Pay at Counter / Cash', desc: 'Pay directly when ready', icon: Utensils }
               ].map(method => {
                 const isSelected = paymentMethod === method.id;

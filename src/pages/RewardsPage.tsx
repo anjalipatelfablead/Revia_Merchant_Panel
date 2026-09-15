@@ -230,7 +230,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               <span className="text-[28px] font-bold text-[#1A1615] leading-none">1,420</span>
               <span className="text-[13px] font-bold text-[#6E6A66]">Vouchers</span>
             </div>
-            <span className="text-[14px] font-bold text-[#0D7A53]">$14,850</span>
+            <span className="text-[14px] font-bold text-[#0D7A53]">₹14,850</span>
           </div>
           <div className="flex justify-between items-center text-[11px] font-bold text-[#9E9A93]">
             <span>Total redeemed</span>
@@ -261,13 +261,13 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           </div>
           <div className="flex justify-between items-end mb-2">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-[28px] font-bold text-[#1A1615] leading-none">$4,120</span>
+              <span className="text-[28px] font-bold text-[#1A1615] leading-none">₹4,120</span>
               <span className="text-[13px] font-bold text-[#6E6A66]">Escrow</span>
             </div>
           </div>
           <div className="flex justify-between items-center text-[11px] font-bold text-[#9E9A93]">
             <span>Avg cost / unlock</span>
-            <span className="text-[#1A1615]">$2.90</span>
+            <span className="text-[#1A1615]">₹2.90</span>
           </div>
         </div>
       </div>
@@ -452,7 +452,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           )}
 
           {/* Card 2 */}
-          {isVisible('#REV-108', '$10 Off Any Roasted Bean Bag (250g)', ['Silver Tier', 'Gold Tier', 'Black Tier', 'Obsidian VIP'], 'Merchandise', 'Active', ['Vouchers & Items (10)', 'All Rewards (18)']) && (
+          {isVisible('#REV-108', '₹10 Off Any Roasted Bean Bag (250g)', ['Silver Tier', 'Gold Tier', 'Black Tier', 'Obsidian VIP'], 'Merchandise', 'Active', ['Vouchers & Items (10)', 'All Rewards (18)']) && (
             <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col md:flex-row gap-5 shadow-sm hover:border-[#D1CDC7] transition-colors group">
               <div className="w-full md:w-[160px] h-[120px] rounded-lg relative overflow-hidden shrink-0 bg-[#FAF8F5] flex items-center justify-center border border-[#EFECE6]">
                 <div className="absolute top-2 left-2 bg-[#1A1615]/80 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/20 z-10">#REV-108</div>
@@ -472,7 +472,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                   </div>
                 </div>
 
-                <h3 className="text-lg font-bold text-[#1A1615] mb-1">$10 Off Any Roasted Bean Bag (250g)</h3>
+                <h3 className="text-lg font-bold text-[#1A1615] mb-1">₹10 Off Any Roasted Bean Bag (250g)</h3>
                 <p className="text-xs text-[#6E6A66] mb-3 leading-relaxed">
                   Single-Origin Micro-lots or Reserve Geisha. In-store POS barcode scan or pre-order.
                 </p>
@@ -493,7 +493,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <button onClick={() => setShowQRPreview('#REV-108')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
                       <QrCode className="w-3 h-3" /> QR Preview
                     </button>
-                    <button onClick={() => setShowEdit('$10 Off Any Roasted Bean Bag (250g)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => setShowEdit('₹10 Off Any Roasted Bean Bag (250g)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-108'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </div>
@@ -726,7 +726,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span>
                     <span className="text-xs font-bold text-[#D4A753]">Obsidian VIP</span>
                   </div>
-                  <span className="text-[9px] font-bold text-[#D4A753] uppercase tracking-widest">$2.5K / Invite</span>
+                  <span className="text-[9px] font-bold text-[#D4A753] uppercase tracking-widest">₹2.5K / Invite</span>
                 </div>
                 <ul className="space-y-1.5 text-[11px] text-[#D1CDC7] font-medium ml-4 relative z-10">
                   <li>Private cupping with Master Roaster</li>
@@ -761,7 +761,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
 
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-[#1A1615]">PIN Override ({'>'}$25)</div>
+                  <div className="text-xs font-bold text-[#1A1615]">PIN Override ({'>'}₹25)</div>
                   <div className="text-[10px] text-[#9E9A93]">Supervisor PIN required for rare lots.</div>
                 </div>
                 <button
