@@ -208,12 +208,12 @@ export const NotificationPage: React.FC = () => {
 						</p>
 					</div>
 
-					<div className="flex items-center gap-2 flex-wrap">
+					<div className="flex items-center gap-2 shrink-0">
 						<button
 							type="button"
 							onClick={markAllRead}
 							disabled={unreadCount === 0}
-							className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40 cursor-pointer"
+							className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40 cursor-pointer whitespace-nowrap shrink-0"
 						>
 							<CheckCheck className="h-4 w-4" />
 							Mark all as read
@@ -223,7 +223,7 @@ export const NotificationPage: React.FC = () => {
 							<button
 								type="button"
 								onClick={restoreDefaults}
-								className="flex items-center gap-1.5 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2.5 text-xs font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer"
+								className="flex items-center gap-1.5 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2.5 text-xs font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer whitespace-nowrap shrink-0"
 								title="Reset mock notifications"
 							>
 								<RotateCcw className="h-3.5 w-3.5" />
