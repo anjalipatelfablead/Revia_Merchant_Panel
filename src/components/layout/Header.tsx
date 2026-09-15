@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Search, Bell, Menu, ChevronDown, X, Radio } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -17,6 +17,23 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    if (profileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileDropdownOpen]);
 
   // Dynamic breadcrumb matching current route and Figma specs
   const getBreadcrumbs = () => {
@@ -168,7 +185,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* User Profile Card: Elena Rostova, Regional Director (matching Figma design) */}
-        <div className="relative">
+        <div className="relative" ref={profileDropdownRef}>
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
             className="flex items-center gap-2 pl-1 py-1 pr-1.5 hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
