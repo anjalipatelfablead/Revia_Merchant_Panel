@@ -14,7 +14,8 @@ import {
   ShieldCheck,
   Award,
   Plus,
-  Package
+  Package,
+  ClipboardList
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -64,6 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'CATALOG & ORDERS',
       items: [
         { name: 'Item Catalog', route: '/item-catalog', icon: Package },
+        { name: 'Order Queue', route: '/orders', icon: ClipboardList },
       ],
     },
     {

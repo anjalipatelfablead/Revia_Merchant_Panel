@@ -49,7 +49,21 @@ export const QrCodesPage: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const assets = [
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    standName: '',
+    venue: '',
+    assetType: 'Acrylic',
+    locationPlacement: 'Table',
+    materialFinish: '',
+    destination: '',
+    qrNfcType: '',
+    patternDensity: '',
+    errorCorrection: '',
+    status: 'Active'
+  });
+
+  const [assets, setAssets] = useState([
     {
       id: 'asset-1',
       title: 'Downtown Flagship • Tabletop Acrylic #01 to #08',
@@ -94,7 +108,48 @@ export const QrCodesPage: React.FC = () => {
       scans: '4,110',
       tag: 'Geo-Fenced Beacon',
     }
-  ];
+  ]);
+
+  const handleCreateAsset = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!createForm.standName || !createForm.venue) {
+      showToast('Please fill all required fields');
+      return;
+    }
+
+    const newId = `asset-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newAsset = {
+      id: newId,
+      title: `${createForm.venue} • ${createForm.standName}`,
+      status: createForm.status,
+      inspecting: false,
+      location: createForm.locationPlacement,
+      material: createForm.materialFinish || createForm.assetType,
+      destination: createForm.destination || 'Default Routing',
+      scans: '0',
+      tag: createForm.qrNfcType || 'QR Only',
+    };
+
+    setAssets([newAsset, ...assets]);
+    setActiveAsset(newId);
+    setIsCreateModalOpen(false);
+
+    // Reset form
+    setCreateForm({
+      standName: '',
+      venue: '',
+      assetType: 'Acrylic',
+      locationPlacement: 'Table',
+      materialFinish: '',
+      destination: '',
+      qrNfcType: '',
+      patternDensity: '',
+      errorCorrection: '',
+      status: 'Active'
+    });
+
+    showToast('New Dynamic Stand created successfully!');
+  };
 
   const filteredAssets = assets.filter(a => {
     const searchMatch = a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -180,7 +235,9 @@ export const QrCodesPage: React.FC = () => {
               <Download className="w-4 h-4" />
               Download Print PDF Pack
             </button>
-            <button className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] rounded-xl hover:opacity-90 transition-opacity shadow-sm cursor-pointer">
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] rounded-xl hover:opacity-90 transition-opacity shadow-sm cursor-pointer">
               <Plus className="w-4 h-4" />
               Create Dynamic Stand
             </button>
@@ -595,6 +652,128 @@ export const QrCodesPage: React.FC = () => {
               </button>
               <button onClick={() => { setIsDownloadModalOpen(false); showToast(`Downloading ${selectedActionAsset.title} as PNG...`); }} className="w-full py-2.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm flex items-center justify-center gap-2 transition-colors">
                 <Download className="w-4 h-4" /> Download Web PNG
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Create Dynamic Stand Modal */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={() => setIsCreateModalOpen(false)}>
+          <div
+            className="bg-white rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl animate-in zoom-in-95 flex flex-col max-h-[90vh]"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Drawer Header */}
+            <div className="px-6 py-5 border-b border-[#EFECE6] bg-[#FAF8F5] flex justify-between items-center shrink-0">
+              <div>
+                <h2 className="text-[17px] font-bold text-[#1A1615]">Create Dynamic Stand</h2>
+                <p className="text-xs font-medium text-[#6E6A66] mt-1">Configure new physical asset and cloud routing.</p>
+              </div>
+              <button
+                onClick={() => setIsCreateModalOpen(false)}
+                className="text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Drawer Body - Form */}
+            <div className="flex-1 overflow-y-auto p-6 bg-[#FAF8F5]">
+              <form id="create-stand-form" onSubmit={handleCreateAsset} className="space-y-4">
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Stand Name <span className="text-[#D4A753]">*</span></label>
+                  <input required type="text" value={createForm.standName} onChange={e => setCreateForm({ ...createForm, standName: e.target.value })} placeholder="e.g. Tabletop 01" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Venue / Branch <span className="text-[#D4A753]">*</span></label>
+                  <input required type="text" value={createForm.venue} onChange={e => setCreateForm({ ...createForm, venue: e.target.value })} placeholder="e.g. Downtown Flagship" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Asset Type</label>
+                    <div className="relative">
+                      <select value={createForm.assetType} onChange={e => setCreateForm({ ...createForm, assetType: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer appearance-none">
+                        <option value="Acrylic">Acrylic</option>
+                        <option value="Brass">Brass</option>
+                        <option value="NFC Puck">NFC Puck</option>
+                        <option value="Sticker">Sticker</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Location / Placement</label>
+                    <div className="relative">
+                      <select value={createForm.locationPlacement} onChange={e => setCreateForm({ ...createForm, locationPlacement: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer appearance-none">
+                        <option value="Table">Table</option>
+                        <option value="Counter">Counter</option>
+                        <option value="Garden">Garden</option>
+                        <option value="Window">Window</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Material / Finish</label>
+                  <input type="text" value={createForm.materialFinish} onChange={e => setCreateForm({ ...createForm, materialFinish: e.target.value })} placeholder="e.g. Walnut Base Acrylic" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                </div>
+
+                <div className="space-y-1.5 pt-2">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Destination / Routing Target</label>
+                  <input type="text" value={createForm.destination} onChange={e => setCreateForm({ ...createForm, destination: e.target.value })} placeholder="e.g. Loyalty App Install" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">QR / NFC Type</label>
+                  <input type="text" value={createForm.qrNfcType} onChange={e => setCreateForm({ ...createForm, qrNfcType: e.target.value })} placeholder="e.g. NFC + QR" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Pattern Density</label>
+                    <input type="text" value={createForm.patternDensity} onChange={e => setCreateForm({ ...createForm, patternDensity: e.target.value })} placeholder="e.g. Micro-Data" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Error Correction</label>
+                    <input type="text" value={createForm.errorCorrection} onChange={e => setCreateForm({ ...createForm, errorCorrection: e.target.value })} placeholder="e.g. Level H" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 pt-2">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Status</label>
+                  <div className="relative">
+                    <select value={createForm.status} onChange={e => setCreateForm({ ...createForm, status: e.target.value })} className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] cursor-pointer appearance-none">
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                  </div>
+                </div>
+
+              </form>
+            </div>
+
+            {/* Drawer Footer Actions */}
+            <div className="p-5 border-t border-[#EFECE6] bg-white flex items-center gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsCreateModalOpen(false)}
+                className="flex-1 py-2.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615] rounded-xl text-sm font-bold shadow-sm transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="create-stand-form"
+                className="flex-1 py-2.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 text-white rounded-xl text-sm font-bold shadow-sm transition-opacity cursor-pointer"
+              >
+                Create Dynamic Stand
               </button>
             </div>
           </div>

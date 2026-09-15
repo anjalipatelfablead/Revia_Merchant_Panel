@@ -33,6 +33,7 @@ import { AuditLogPage } from './pages/AuditLogPage';
 import { StaffPage } from './pages/StaffPage';
 import { QrCodesPage } from './pages/QrCodesPage';
 import { ItemCatalogPage } from './pages/ItemCatalogPage';
+import { OrderQueuePage } from './pages/OrderQueuePage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
@@ -246,6 +247,10 @@ export default function App() {
 
           {currentRoute === '/item-catalog' && (
             <ItemCatalogPage />
+          )}
+
+          {currentRoute === '/orders' && (
+            <OrderQueuePage onNavigate={handleNavigate} />
           )}
 
           {currentRoute === '/customerlist' && (
