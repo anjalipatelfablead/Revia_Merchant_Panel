@@ -62,7 +62,7 @@ export const TransactionsPage: React.FC = () => {
       items: '2x Panama Geisha Pour-Over',
       channel: 'POS-01 (Barista Counter)',
       time: '2m ago',
-      amount: '$18.50',
+      amount: '₹18.50',
       stamps: '+2 Stamps',
       status: 'Completed',
     },
@@ -88,7 +88,7 @@ export const TransactionsPage: React.FC = () => {
       items: 'Counter Scan [Cold Brew Growler]',
       channel: 'POS-02 (Roastery Bar)',
       time: '14m ago',
-      amount: '$24.00',
+      amount: '₹24.00',
       stamps: '+1 Stamp',
       status: 'Completed',
     },
@@ -101,7 +101,7 @@ export const TransactionsPage: React.FC = () => {
       items: '3-Varietal Cup Tasting + Beans',
       channel: 'POS-01 (Barista Counter)',
       time: '22m ago',
-      amount: '$36.50',
+      amount: '₹36.50',
       stamps: '+3 Stamps',
       status: 'Completed',
     },
@@ -114,7 +114,7 @@ export const TransactionsPage: React.FC = () => {
       items: 'Direct POS Register Entry',
       channel: 'POS-03 (Takeaway Window)',
       time: '31m ago',
-      amount: '$11.20',
+      amount: '₹11.20',
       stamps: '0 Stamps',
       status: 'Completed',
     },
@@ -261,7 +261,7 @@ export const TransactionsPage: React.FC = () => {
                   <TrendingUp className="w-3 h-3" /> +18% vs avg
                 </span>
               </div>
-              <div className="text-[26px] font-bold text-[#1A1615] mb-1">$8,420</div>
+              <div className="text-[26px] font-bold text-[#1A1615] mb-1">₹8,420</div>
               <div className="text-[11px] font-semibold text-[#6E6A66]">142 total register events</div>
             </div>
 
@@ -280,7 +280,7 @@ export const TransactionsPage: React.FC = () => {
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Redemptions Completed</div>
                 <span className="px-2 py-0.5 text-[10px] font-bold bg-[#F5F4F0] text-[#6E6A66] rounded">
-                  $410 value claimed
+                  ₹410 value claimed
                 </span>
               </div>
               <div className="text-[26px] font-bold text-[#1A1615] mb-1">28</div>
@@ -648,9 +648,9 @@ export const TransactionsPage: React.FC = () => {
                   {/* Section 3: Order Value */}
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2">Order Value (Optional Sync)</div>
-                    <input type="text" defaultValue="$ 18.50" className="w-full px-4 py-3 bg-white border border-[#EFECE6] rounded-xl text-xl font-bold font-mono text-[#1A1615] focus:outline-none shadow-inner mb-2" />
+                    <input type="text" defaultValue="₹ 18.50" className="w-full px-4 py-3 bg-white border border-[#EFECE6] rounded-xl text-xl font-bold font-mono text-[#1A1615] focus:outline-none shadow-inner mb-2" />
                     <div className="grid grid-cols-4 gap-2">
-                      {['$5', '$10', '$25', '$50'].map((val) => (
+                      {['₹5', '₹10', '₹25', '₹50'].map((val) => (
                         <button key={val} className="py-1.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg text-xs font-bold text-[#6E6A66] transition-colors cursor-pointer">
                           {val}
                         </button>

@@ -494,7 +494,7 @@ export const BrandingPage: React.FC = () => {
                                           </div>
                                           <div className="text-[9px] text-[#8C827A] mt-0.5 leading-tight mb-2">Notes of Jasmine, Bergamot & White Peach</div>
                                           <div className="flex items-center justify-between">
-                                             <div className="text-[13px] font-bold text-[#1A1615]">$8.50</div>
+                                             <div className="text-[13px] font-bold text-[#1A1615]">₹8.50</div>
                                              <button className="px-3 py-1 bg-[#FAF8F5] border border-[#EAE6E1] rounded-full text-[10px] font-bold text-[#1A1615]">Order Ahead</button>
                                           </div>
                                        </div>

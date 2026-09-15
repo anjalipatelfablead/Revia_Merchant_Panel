@@ -135,9 +135,41 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
   const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
   const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
 
+  // Delivery Timing & Branch Eligibility state
+  const [triggerEvent, setTriggerEvent] = useState<string>('qr_scan');
+  const [startDate, setStartDate] = useState<string>('2024-11-01');
+  const [endDate, setEndDate] = useState<string>('2024-11-30');
+  const [branches, setBranches] = useState<Array<{ id: string; name: string; selected: boolean }>>([
+    { id: '1', name: 'Downtown Flagship', selected: true },
+    { id: '2', name: 'Northside Mall', selected: true },
+    { id: '3', name: 'West End Kiosk', selected: true }
+  ]);
+  const [isAddingLocation, setIsAddingLocation] = useState<boolean>(false);
+  const [newLocationName, setNewLocationName] = useState<string>('');
+
+  const calcDaysDuration = () => {
+    if (!startDate || !endDate) return 'Custom Window';
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = end.getTime() - start.getTime();
+    if (isNaN(diffTime) || diffTime < 0) return 'Invalid Range';
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return `${diffDays} Days`;
+  };
+
+  const handleAddLocation = () => {
+    if (!newLocationName.trim()) return;
+    setBranches([
+      ...branches,
+      { id: Date.now().toString(), name: newLocationName.trim(), selected: true }
+    ]);
+    setNewLocationName('');
+    setIsAddingLocation(false);
+  };
+
   const [rules, setRules] = useState<RuleNode[]>([
     {
-      id: 'r1', type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '$ 250.00'
+      id: 'r1', type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '₹ 250.00'
     },
     {
       id: 'r2', type: 'condition', field: 'Last Visit Date', operator: 'is within the last', value: '14 days'
@@ -359,44 +391,124 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Trigger Event Selector */}
             <div>
               <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-2">TRIGGER EVENT</label>
-              <div className="flex items-center gap-3 px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl cursor-pointer">
-                <Zap className="w-5 h-5 text-[#9E782F] shrink-0" />
-                <div className="flex-1 text-[13px] font-bold text-[#1A1615] truncate">On QR Stand Scan at Count</div>
-                <ChevronDown className="w-4 h-4 text-[#9E9A93] shrink-0" />
+              <div className="relative">
+                <div className="flex items-center gap-3 px-3.5 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl focus-within:border-[#D4A753] transition-colors">
+                  <Zap className="w-5 h-5 text-[#9E782F] shrink-0" />
+                  <select
+                    value={triggerEvent}
+                    onChange={e => setTriggerEvent(e.target.value)}
+                    className="w-full bg-transparent text-[13px] font-bold text-[#1A1615] focus:outline-none cursor-pointer pr-4"
+                  >
+                    <option value="qr_scan">On QR Stand Scan at Counter</option>
+                    <option value="pos_billing">On POS Billing / Receipt Scan</option>
+                    <option value="app_signup">On Revia App Sign-up / Check-in</option>
+                    <option value="whatsapp_click">On WhatsApp Special Offer Link Click</option>
+                  </select>
+                </div>
               </div>
-              <p className="mt-2 text-[11px] text-[#6E6A66] leading-relaxed pr-4">Triggers automatically when qualified guest scans NFC/QR point of service.</p>
+              <p className="mt-2 text-[11px] text-[#6E6A66] leading-relaxed pr-4">
+                {triggerEvent === 'qr_scan' && 'Triggers automatically when qualified guest scans NFC/QR point of service.'}
+                {triggerEvent === 'pos_billing' && 'Triggers when POS clerk enters customer billing transaction.'}
+                {triggerEvent === 'app_signup' && 'Triggers instantly when customer downloads Revia App and registers.'}
+                {triggerEvent === 'whatsapp_click' && 'Triggers when customer opens WhatsApp campaign link.'}
+              </p>
             </div>
 
+            {/* Campaign Runtime Window Date Pickers */}
             <div>
-              <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-2">CAMPAIGN RUNTIME WINDOW</label>
-              <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl cursor-pointer">
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-[#9E782F] shrink-0" />
-                  <div className="text-[12px] sm:text-[13px] font-bold text-[#1A1615]">Nov 1, 2024 — Nov 30, 2024</div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66]">CAMPAIGN RUNTIME WINDOW</label>
+                <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold uppercase tracking-widest rounded shadow-2xs">
+                  {calcDaysDuration()}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] font-semibold text-[#7C746C] block mb-1">Start Date</span>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={e => setStartDate(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[12px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  />
                 </div>
-                <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold uppercase tracking-widest rounded shadow-sm">30 Days</span>
+                <div>
+                  <span className="text-[10px] font-semibold text-[#7C746C] block mb-1">End Date</span>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={e => setEndDate(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[12px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  />
+                </div>
               </div>
               <p className="mt-2 text-[11px] text-[#6E6A66] leading-relaxed">Configured in merchant home timezone (PST - Pacific Standard).</p>
             </div>
           </div>
 
+          {/* Active Branches Selector & Add Location */}
           <div>
-            <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-3">ACTIVE BRANCHES (3 SELECTED)</label>
-            <div className="flex flex-wrap gap-2">
-              <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Downtown Flagship <Check className="w-3 h-3 text-[#6E6A66]" />
-              </span>
-              <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Northside Mall <Check className="w-3 h-3 text-[#6E6A66]" />
-              </span>
-              <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> West End Kiosk <Check className="w-3 h-3 text-[#6E6A66]" />
-              </span>
-              <button className="px-3 py-1.5 bg-[#FAF8F5] border border-[#D1CDC7] text-[#9E782F] text-[12px] font-bold rounded-full flex items-center gap-1.5 hover:bg-[#FDF8EB] transition-colors">
-                <Plus className="w-3 h-3" /> Add Location
-              </button>
+            <div className="flex items-center justify-between mb-3">
+              <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66]">
+                ACTIVE BRANCHES ({branches.filter(b => b.selected).length} OF {branches.length} SELECTED)
+              </label>
+            </div>
+
+            <div className="flex flex-wrap gap-2 items-center">
+              {branches.map(branch => (
+                <button
+                  key={branch.id}
+                  type="button"
+                  onClick={() => setBranches(branches.map(b => b.id === branch.id ? { ...b, selected: !b.selected } : b))}
+                  className={`px-3 py-1.5 border text-[12px] font-bold rounded-full flex items-center gap-2 transition-all cursor-pointer ${branch.selected
+                      ? 'bg-[#FDF8EB] border-[#D4A753] text-[#1A1615] shadow-2xs'
+                      : 'bg-[#F5F4F2] border-[#E2DED9] text-[#9E9A93] hover:text-[#1A1615]'
+                    }`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${branch.selected ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'}`}></span>
+                  {branch.name}
+                  {branch.selected && <Check className="w-3 h-3 text-[#0D7A53]" />}
+                </button>
+              ))}
+
+              {!isAddingLocation ? (
+                <button
+                  type="button"
+                  onClick={() => setIsAddingLocation(true)}
+                  className="px-3 py-1.5 bg-[#FAF8F5] border border-[#D1CDC7] text-[#9E782F] text-[12px] font-bold rounded-full flex items-center gap-1.5 hover:bg-[#FDF8EB] transition-colors cursor-pointer"
+                >
+                  <Plus className="w-3 h-3" /> Add Location
+                </button>
+              ) : (
+                <div className="flex items-center gap-2 bg-[#FAF8F5] border border-[#D4A753] px-3 py-1 rounded-full shadow-2xs">
+                  <input
+                    type="text"
+                    value={newLocationName}
+                    onChange={e => setNewLocationName(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleAddLocation()}
+                    placeholder="Enter branch name..."
+                    autoFocus
+                    className="bg-transparent text-[12px] font-bold text-[#1A1615] focus:outline-none w-36"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddLocation}
+                    className="text-[11px] font-bold text-[#0D7A53] hover:underline cursor-pointer"
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setIsAddingLocation(false); setNewLocationName(''); }}
+                    className="text-[11px] font-bold text-[#6E6A66] hover:text-[#1A1615] cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -437,7 +549,7 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
             </div>
             <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3">
               <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-1">PROJECTED<br />GMV</div>
-              <div className="text-[15px] font-bold text-[#9E782F]">+$28,400</div>
+              <div className="text-[15px] font-bold text-[#9E782F]">+₹28,400</div>
               <div className="text-[10px] font-medium text-[#6E6A66] mt-1">Estimated lift</div>
             </div>
           </div>
@@ -551,6 +663,10 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
   const [freeItem, setFreeItem] = useState<string>('Single Origin Geisha (250g Whole Bean)');
 
   const [maxRedemptions, setMaxRedemptions] = useState<number>(1);
+  const [totalBudgetCap, setTotalBudgetCap] = useState<number>(500);
+  const [coolingPeriodHours, setCoolingPeriodHours] = useState<number>(6);
+  const [applicableBranches, setApplicableBranches] = useState<string>('all');
+  const [autoRevokeOnRefund, setAutoRevokeOnRefund] = useState<boolean>(true);
   const [stackable, setStackable] = useState<boolean>(false);
 
   const [expiryType, setExpiryType] = useState<'Days' | 'Date'>('Days');
@@ -743,7 +859,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
           )}
         </div>
 
-        {/* 2. Usage Limits & Rules */}
+        {/* 2. Usage Limits, Budget Caps & Security Policies */}
         <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
           <h4 className="text-[11px] font-bold text-[#9E782F] uppercase tracking-widest">USAGE LIMITS &amp; CO-EXECUTIVE POLICIES</h4>
 
@@ -759,10 +875,54 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
               />
             </div>
 
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#7C746C] block mb-2">TOTAL CAMPAIGN BUDGET / REDEMPTIONS CAP</label>
+              <input
+                type="number"
+                value={totalBudgetCap || ''}
+                onChange={e => setTotalBudgetCap(Number(e.target.value))}
+                className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+                placeholder="500 (Leave empty for unlimited)"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#7C746C] block mb-2">VISIT COOLING PERIOD (HOURS)</label>
+              <select
+                value={coolingPeriodHours}
+                onChange={e => setCoolingPeriodHours(Number(e.target.value))}
+                className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+              >
+                <option value={0}>Instant (No Cooling Period)</option>
+                <option value={4}>4 Hours between visits</option>
+                <option value={6}>6 Hours between visits (Recommended)</option>
+                <option value={12}>12 Hours between visits</option>
+                <option value={24}>24 Hours (Max 1 Visit per day)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-[#7C746C] block mb-2">APPLICABLE STORE LOCATION / BRANCH</label>
+              <select
+                value={applicableBranches}
+                onChange={e => setApplicableBranches(e.target.value)}
+                className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+              >
+                <option value="all">All Outlets &amp; Branches</option>
+                <option value="indiranagar">Indiranagar Flagship Outlet</option>
+                <option value="mg_road">MG Road Espresso Bar</option>
+                <option value="koramangala">Koramangala Roastery</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <div className="flex items-center justify-between p-3.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl">
               <div>
                 <div className="text-[13px] font-bold text-[#1A1615]">Stackable with Other Perks</div>
-                <div className="text-[11px] text-[#7C746C] font-medium">Allow alongside existing offers</div>
+                <div className="text-[11px] text-[#7C746C] font-medium font-mono">Allow alongside existing offers</div>
               </div>
               <button
                 type="button"
@@ -771,6 +931,22 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                   }`}
               >
                 <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${stackable ? 'left-[22px]' : 'left-0.5'
+                  }`} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between p-3.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl">
+              <div>
+                <div className="text-[13px] font-bold text-[#1A1615]">POS Refund Protection</div>
+                <div className="text-[11px] text-[#7C746C] font-medium font-mono">Auto-revoke stamps if bill refunded</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAutoRevokeOnRefund(v => !v)}
+                className={`relative w-11 h-6 rounded-full border transition-all cursor-pointer shrink-0 ${autoRevokeOnRefund ? 'bg-[#15803D] border-[#15803D]' : 'bg-[#EFECE6] border-[#D1CDC7]'
+                  }`}
+              >
+                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${autoRevokeOnRefund ? 'left-[22px]' : 'left-0.5'
                   }`} />
               </button>
             </div>
@@ -886,9 +1062,10 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
 
 export interface CampaignBuilderPageProps {
   initialViewMode?: 'dashboard' | 'builder';
+  onNavigate?: (route: string) => void;
 }
 
-export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard' }) => {
+export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard', onNavigate }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   // Scroll to top when stepping through campaign wizard
@@ -897,6 +1074,30 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
   }, [currentStep]);
+
+  const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
+
+  // Sync viewMode whenever initialViewMode prop changes (e.g. route change)
+  React.useEffect(() => {
+    setViewMode(initialViewMode);
+  }, [initialViewMode]);
+
+  const handleOpenBuilder = () => {
+    if (onNavigate) {
+      onNavigate('/campaigns/new');
+    } else {
+      setViewMode('builder');
+    }
+    setCurrentStep(1);
+  };
+
+  const handleGoToDashboard = () => {
+    if (onNavigate) {
+      onNavigate('/campaigns');
+    } else {
+      setViewMode('dashboard');
+    }
+  };
 
   const [selectedCampaignType, setSelectedCampaignType] = useState<string>('Loyalty Boost');
   const [isAddLocationOpen, setIsAddLocationOpen] = useState<boolean>(false);
@@ -922,8 +1123,6 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   // Custom Segment Modal state
   const [showCustomSegmentModal, setShowCustomSegmentModal] = useState(false);
   const [customSegmentName, setCustomSegmentName] = useState('');
-
-  const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
@@ -1753,7 +1952,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 className="w-full bg-[#FAF8F5] border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] appearance-none cursor-pointer"
               >
                 <option value="INR (₹)">INR (₹)</option>
-                <option value="USD ($)">USD ($)</option>
+                <option value="INR ($)">INR ($)</option>
                 <option value="EUR (€)">EUR (€)</option>
                 <option value="GBP (£)">GBP (£)</option>
               </select>
@@ -2133,7 +2332,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <div className="flex justify-between items-center bg-[#FAF8F5] border border-[#EFECE6] p-4 rounded-xl">
                 <div>
                   <div className="text-[11px] font-medium text-[#6E6A66] mb-0.5">Projected Gross GMV</div>
-                  <div className="text-[15px] font-bold text-[#0D7A53]">+$19,800</div>
+                  <div className="text-[15px] font-bold text-[#0D7A53]">+₹19,800</div>
                 </div>
                 <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#9E782F] rounded-full text-[11px] font-bold uppercase border border-[#F3E5C8]">High ROI</span>
               </div>
@@ -2141,7 +2340,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <div className="flex justify-between items-center bg-white border border-[#EFECE6] p-4 rounded-xl">
                 <div>
                   <div className="text-[11px] font-medium text-[#6E6A66] mb-0.5">Estimated Incentive Cost</div>
-                  <div className="text-[15px] font-bold text-[#1A1615]">$2,860 – $3,320</div>
+                  <div className="text-[15px] font-bold text-[#1A1615]">₹2,860 – ₹3,320</div>
                 </div>
                 <span className="text-[12px] font-medium text-[#6E6A66]">Within Budget</span>
               </div>
@@ -2365,7 +2564,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <div className="space-y-4 md:space-y-2 pl-4 border-l-2 border-[#EFECE6]">
               <div className="bg-white border border-[#EFECE6] rounded-lg p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615]">
-                  <span className="text-[#D4A753] break-all">Customer.LifetimeSpend</span> <span className="text-[#6E6A66]">≥</span> <span>$250.00</span>
+                  <span className="text-[#D4A753] break-all">Customer.LifetimeSpend</span> <span className="text-[#6E6A66]">≥</span> <span>₹250.00</span>
                   <span className="text-[#6E6A66] px-1 md:px-2 text-[10px] font-sans">AND</span>
                   <span className="text-[#D4A753] break-all">Customer.LastVisit</span> <span className="text-[#6E6A66]">≤</span> <span className="whitespace-nowrap">14 days</span>
                 </div>
@@ -2434,12 +2633,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                   <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold tracking-widest uppercase border border-[#BCE3D1]">100% WAIVED</span>
                 </div>
                 <h4 className="text-[14px] font-bold text-[#1A1615]">1x Complimentary Single Origin Geisha (250g Whole Bean)</h4>
-                <p className="text-[11px] font-medium text-[#6E6A66] mt-0.5">$0.00 patron co-pay at point of checkout.</p>
+                <p className="text-[11px] font-medium text-[#6E6A66] mt-0.5">₹0.00 patron co-pay at point of checkout.</p>
               </div>
             </div>
             <div className="text-right">
               <div className="text-[9px] uppercase font-bold tracking-widest text-[#9E9A93] mb-1">WHOLESALE UNIT VALUE</div>
-              <div className="text-[16px] font-bold text-[#1A1615] leading-none">$28.00 <span className="text-[11px] font-medium text-[#6E6A66]">retail</span></div>
+              <div className="text-[16px] font-bold text-[#1A1615] leading-none">₹28.00 <span className="text-[11px] font-medium text-[#6E6A66]">retail</span></div>
             </div>
           </div>
 
@@ -2452,7 +2651,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <ul className="space-y-2 text-[11px] font-medium text-[#1A1615]">
                 <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Strictly limited to 1 time redemption per loyalty profile.</li>
                 <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Campaign hard velocity cap: <span className="font-bold">500 claims maximum</span>.</li>
-                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Hard financial ceiling: <span className="font-bold">$3,500 incentive budget cap</span>.</li>
+                <li className="flex items-start gap-2 before:content-['•'] before:text-[#9E9A93]">Hard financial ceiling: <span className="font-bold">₹3,500 incentive budget cap</span>.</li>
               </ul>
             </div>
 
@@ -2488,12 +2687,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             </div>
             <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
               <span className="text-[12px] font-medium text-[#6E6A66]">Projected Net<br />GMV</span>
-              <span className="text-[16px] font-bold text-[#0D7A53]">+$16,400.00</span>
+              <span className="text-[16px] font-bold text-[#0D7A53]">+₹16,400.00</span>
             </div>
             <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
               <span className="text-[12px] font-medium text-[#6E6A66]">Incentive Budget<br />Allocated</span>
               <div className="text-right">
-                <div className="text-[13px] font-bold text-[#1A1615]">$1,950 / $3,500 cap</div>
+                <div className="text-[13px] font-bold text-[#1A1615]">₹1,950 / ₹3,500 cap</div>
                 <div className="text-[9px] font-medium text-[#9E9A93] mt-0.5">55.7% max financial exposure</div>
               </div>
             </div>
@@ -2592,7 +2791,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Campaign &amp; Loyalty Management</h1>
             <p className="text-xs sm:text-sm text-[#7C746C] mt-1">Create, monitor, and optimize your customer engagement programs.</p>
           </div>
-          <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl px-4.5 py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto">
+          <button onClick={handleOpenBuilder} className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl px-4.5 py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto">
             <Plus className="w-4 h-4 text-white" /> Create New Campaign
           </button>
         </div>
@@ -2684,7 +2883,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
                     </td>
                     <td className="py-4 px-5 text-right space-x-2 flex justify-end">
-                      <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
+                      <button onClick={handleOpenBuilder} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
                       <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
                       <button className="p-1.5 text-[#6E6A66] hover:text-[#EF4444] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
                     </td>
@@ -2760,7 +2959,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
 
                       <div className="flex items-center gap-2 pt-2 border-t border-[#EFECE6]">
-                        <button onClick={() => { setViewMode('builder'); setCurrentStep(1); }} className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                        <button onClick={handleOpenBuilder} className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Edit2 className="w-3.5 h-3.5" /> Edit
                         </button>
                         <button className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
@@ -2827,7 +3026,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
       <div className="hidden lg:flex bg-white border border-[#EAE6E1] rounded-xl px-4 sm:px-6 py-4 flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs mb-4">
         <div className="flex items-center gap-3">
-          <button onClick={() => setViewMode('dashboard')} className="p-2 bg-[#FAF8F5] text-[#1A1615] hover:bg-[#FAF6EE] border border-[#EAE6E1] rounded-lg transition-colors cursor-pointer" title="Back to Dashboard">
+          <button onClick={handleGoToDashboard} className="p-2 bg-[#FAF8F5] text-[#1A1615] hover:bg-[#FAF6EE] border border-[#EAE6E1] rounded-lg transition-colors cursor-pointer" title="Back to Dashboard">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
@@ -2855,7 +3054,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             </div>
             <div>
               <div className="text-[9px] uppercase font-bold tracking-wider text-[#7C746C]">EST. LIFETIME GMV</div>
-              <div className="text-base font-bold text-[#15803D] leading-tight">+$16,400</div>
+              <div className="text-base font-bold text-[#15803D] leading-tight">+₹16,400</div>
             </div>
           </div>
         </div>

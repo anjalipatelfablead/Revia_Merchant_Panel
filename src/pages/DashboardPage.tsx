@@ -353,10 +353,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               </span>
             </div>
             <div className="text-3xl font-bold tracking-tight text-[#1A1615] mt-1.5">
-              $142,650
+              ₹142,650
             </div>
             <div className="flex items-center justify-between text-[11px] text-[#7C746C] mt-1">
-              <span>$34.12 avg spend with stamp</span>
+              <span>₹34.12 avg spend with stamp</span>
               <span className="text-[11px] text-[#7C746C]">ROI 8.4x</span>
             </div>
           </div>
@@ -364,7 +364,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           <div className="pt-3 mt-3 border-t border-[#F5F2EC] flex items-center justify-between">
             <span className="text-[11px] text-[#5C554E] flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1A1615]" />
-              +$18.7k lift vs baseline
+              +₹18.7k lift vs baseline
             </span>
             {/* Dark Charcoal Sparkline */}
             <svg className="w-20 h-5" viewBox="0 0 80 20" fill="none">

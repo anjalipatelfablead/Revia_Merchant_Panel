@@ -8,7 +8,7 @@ export const MerchantPlatformSettings: React.FC = () => {
 
   const getSymbol = () => {
     switch (currency) {
-      case 'USD': return '$';
+      case 'INR': return '$';
       case 'GBP': return '£';
       case 'EUR': return '€';
       case 'INR': default: return '₹';
@@ -52,7 +52,7 @@ export const MerchantPlatformSettings: React.FC = () => {
                     className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer pr-10 transition-colors hover:border-[#D1CDC7]"
                   >
                     <option value="INR">INR — Indian Rupee (₹)</option>
-                    <option value="USD">USD — US Dollar ($)</option>
+                    <option value="INR">INR — US Dollar ($)</option>
                     <option value="GBP">GBP — British Pound (£)</option>
                     <option value="EUR">EUR — Euro (€)</option>
                   </select>

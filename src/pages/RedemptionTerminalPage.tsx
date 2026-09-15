@@ -169,7 +169,7 @@ export const RedemptionTerminalPage = () => {
                 Complimentary Specialty Tasting Flight & Artisanal Brioche
               </h2>
               <div className="flex flex-wrap items-center gap-3">
-                <span className="text-[28px] font-black text-[#1A1615]">$24.00</span>
+                <span className="text-[28px] font-black text-[#1A1615]">₹24.00</span>
                 <span className="px-3 py-1 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#6E6A66]">0 Point Surcharge</span>
                 <span className="flex items-center gap-1 text-[12px] font-bold text-[#1C8A54] whitespace-nowrap">
                   <CheckCircle2 className="w-4 h-4" /> 100% Counter Comp
@@ -259,9 +259,9 @@ export const RedemptionTerminalPage = () => {
 
             <div className="space-y-2">
               {[
-                { id: '01', item: 'Artisanal Oat Cortado & Financier', guest: "Clara O'Donnell", vch: 'REV-7712', amount: '$11.50', time: '14:22' },
-                { id: '02', item: 'Whole Bean 250g Panama Gesha bag', guest: 'Julian Hayes', vch: 'REV-6490', amount: '$38.00', time: '13:58' },
-                { id: '03', item: 'Cascara Fizz Mocktail', guest: 'Chloe Bennett', vch: 'REV-5901', amount: '$9.00', time: '13:14' },
+                { id: '01', item: 'Artisanal Oat Cortado & Financier', guest: "Clara O'Donnell", vch: 'REV-7712', amount: '₹11.50', time: '14:22' },
+                { id: '02', item: 'Whole Bean 250g Panama Gesha bag', guest: 'Julian Hayes', vch: 'REV-6490', amount: '₹38.00', time: '13:58' },
+                { id: '03', item: 'Cascara Fizz Mocktail', guest: 'Chloe Bennett', vch: 'REV-5901', amount: '₹9.00', time: '13:14' },
               ].map(log => (
                 <div key={log.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] hover:bg-white transition-colors cursor-pointer gap-2 sm:gap-0">
                   <div className="flex items-start sm:items-center gap-3">

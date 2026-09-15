@@ -3,9 +3,9 @@ import { CreditCard, CheckCircle2, Zap, ShieldCheck, ArrowRight, ReceiptText, Se
 
 const MobileBillingPage: React.FC = () => {
   const invoices = [
-    ['Nov 1, 2024', '$429.00', 'Enterprise + 2 POS Node Add-on'],
-    ['Oct 1, 2024', '$429.00', 'Enterprise + 2 POS Node Add-on'],
-    ['Sep 1, 2024', '$389.00', 'Enterprise Base Subscription'],
+    ['Nov 1, 2024', '₹429.00', 'Enterprise + 2 POS Node Add-on'],
+    ['Oct 1, 2024', '₹429.00', 'Enterprise + 2 POS Node Add-on'],
+    ['Sep 1, 2024', '₹389.00', 'Enterprise Base Subscription'],
   ];
 
   return (
@@ -19,7 +19,7 @@ const MobileBillingPage: React.FC = () => {
         <div className="pt-3"><div className="flex items-center justify-between gap-2"><div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#756D65]">Administration &amp; Quotas</div><span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#B9F1CF] px-3 py-1 text-[11px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Active</span></div><div className="mt-2 flex items-center justify-between gap-3"><h1 className="min-w-0 whitespace-nowrap text-2xl sm:text-[28px] font-bold leading-none tracking-tight text-[#1A1615]">Subscription &amp; Billing</h1><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F8EEDC] text-[#98701F]"><ShieldCheck className="h-5 w-5" /></span></div><p className="mt-1 text-[14px] text-[#756D65]">Downtown Flagship &amp; Unified Venues</p></div>
 
         <section className="mt-5 grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Current Plan</span><CreditCard className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">$389<span className="ml-1 text-[12px] font-normal tracking-normal text-[#756D65]">/mo</span></div><div className="mt-1 text-[11px] font-bold text-[#A8761C]">Enterprise Atelier</div></div>
+          <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Current Plan</span><CreditCard className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">₹389<span className="ml-1 text-[12px] font-normal tracking-normal text-[#756D65]">/mo</span></div><div className="mt-1 text-[11px] font-bold text-[#A8761C]">Enterprise Atelier</div></div>
           <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Next Cycle</span><CalendarDays className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-4 text-2xl font-bold tracking-tight">Dec 1, 2025</div><div className="mt-1 text-[11px] text-[#756D65]"><span className="text-[#087B55]">✓</span> Auto-pay enabled</div></div>
           <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Licensed Venues</span><Building2 className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">3<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 5 nodes</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div></div>
           <div className="rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex justify-between text-xs font-medium text-[#7C746C]"><span>Scan Volume</span><Zap className="h-4 w-4 text-[#C99B42]" /></div><div className="mt-3 text-2xl font-bold leading-none tracking-tight">14.2k<span className="ml-1 text-[12px] font-normal text-[#756D65]">/ 25k</span></div><div className="mt-2 h-1.5 rounded-full bg-[#EEE7DF]"><div className="h-full w-[57%] rounded-full bg-[#087B55]" /></div></div>
@@ -46,11 +46,11 @@ export const BillingPage: React.FC = () => {
   ]);
 
   const invoiceRows = [
-    { invoiceId: '#REV-INV-2024', date: 'Nov 1, 2024', plan: 'Enterprise Atelier +2 POS add-ons', amount: '$429.00', status: 'Paid' as const },
-    { invoiceId: '#REV-INV-2023', date: 'Oct 1, 2024', plan: 'Enterprise Atelier +2 POS add-ons', amount: '$429.00', status: 'Paid' as const },
-    { invoiceId: '#REV-INV-2022', date: 'Sep 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '$389.00', status: 'Paid' as const },
-    { invoiceId: '#REV-INV-2021', date: 'Aug 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '$389.00', status: 'Paid' as const },
-    { invoiceId: '#REV-INV-2020', date: 'Jul 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '$389.00', status: 'Upcoming' as const },
+    { invoiceId: '#REV-INV-2024', date: 'Nov 1, 2024', plan: 'Enterprise Atelier +2 POS add-ons', amount: '₹429.00', status: 'Paid' as const },
+    { invoiceId: '#REV-INV-2023', date: 'Oct 1, 2024', plan: 'Enterprise Atelier +2 POS add-ons', amount: '₹429.00', status: 'Paid' as const },
+    { invoiceId: '#REV-INV-2022', date: 'Sep 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '₹389.00', status: 'Paid' as const },
+    { invoiceId: '#REV-INV-2021', date: 'Aug 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '₹389.00', status: 'Paid' as const },
+    { invoiceId: '#REV-INV-2020', date: 'Jul 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '₹389.00', status: 'Upcoming' as const },
   ];
 
   const filteredInvoiceRows = invoiceRows.filter((row) => activeInvoiceTab === 'All Invoices' || row.status === activeInvoiceTab);
@@ -68,7 +68,7 @@ export const BillingPage: React.FC = () => {
       ['Billing Recipient', 'Elena Vance'],
       ['Dispatch Email', 'billing@revia.hospitality.com'],
       ['Current Plan', 'Enterprise Atelier'],
-      ['Billing Cycle', '$389.00 due Dec 1'],
+      ['Billing Cycle', '₹389.00 due Dec 1'],
       ['Download Type', 'Tax Dossier'],
     ];
 
@@ -165,7 +165,7 @@ export const BillingPage: React.FC = () => {
         <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
           <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Current Plan</span><span className="rounded-full bg-[#CFF6DF] px-2 py-1 text-[9px] font-bold text-[#16804A]">● Active • Tier 3</span></div>
           <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">Enterprise Atelier</div>
-          <p className="mt-0.5 text-[10px] text-[#81776E]">$389/mo • Billed annually<br />($4,668/yr)</p>
+          <p className="mt-0.5 text-[10px] text-[#81776E]">₹389/mo • Billed annually<br />(₹4,668/yr)</p>
           <div className="mt-2 flex items-center justify-between text-[10px] font-semibold text-[#B7842C]">Includes 5 venue licenses <ArrowRight className="h-4 w-4" /></div>
         </div>
 
@@ -179,7 +179,7 @@ export const BillingPage: React.FC = () => {
 
         <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
           <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Billing Cycle</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#81776E]">Net 0</span></div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">$389.00 due Dec 1</div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">₹389.00 due Dec 1</div>
           <p className="mt-0.5 text-[10px] text-[#81776E]">Next auto-charge via Mastercard<br />•••• 8814</p>
           <div className="mt-2 flex items-center gap-1.5 text-[10px] font-semibold text-[#16804A]"><ShieldCheck className="h-4 w-4" /> Auto-pay configured &amp; guaranteed</div>
         </div>
@@ -256,7 +256,7 @@ export const BillingPage: React.FC = () => {
               URL.revokeObjectURL(url);
             }} className="mt-3 w-full rounded-lg bg-[#F1EDE7] py-2 text-[9px] font-semibold text-[#4F4842]"><CreditCard className="mr-1 inline h-3 w-3" /> + Add Payment Method</button>
           </section>
-          <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Plan Quota Add-ons</h2><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[8px] text-[#81776E]">Self-Serve</span></div><p className="mt-2 text-[9px] leading-relaxed text-[#81776E]">Expand capacity on demand. Add-ons are prorated automatically to your current monthly cycle.</p>{[['POS Hardware Node','+$20.00 / mo per terminal','2'],['SMS VIP Trunk (10k)','+$45.00 / mo per block','0'],['Branch Venue Slot','+$95.00 / mo per branch','0']].map(([title,detail,count]) => <div key={title} className="mt-2 flex items-center justify-between border-b border-[#F0EBE4] pb-2"><div><div className="text-[10px] font-semibold text-[#1A1615]">{title}</div><div className="text-[9px] text-[#81776E]">{detail}</div></div><button type="button" className="rounded border border-[#E5E0D8] px-2 py-1 text-[9px] text-[#4F4842]">− {count} &nbsp; +</button></div>)}</section>
+          <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Plan Quota Add-ons</h2><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[8px] text-[#81776E]">Self-Serve</span></div><p className="mt-2 text-[9px] leading-relaxed text-[#81776E]">Expand capacity on demand. Add-ons are prorated automatically to your current monthly cycle.</p>{[['POS Hardware Node','+₹20.00 / mo per terminal','2'],['SMS VIP Trunk (10k)','+₹45.00 / mo per block','0'],['Branch Venue Slot','+₹95.00 / mo per branch','0']].map(([title,detail,count]) => <div key={title} className="mt-2 flex items-center justify-between border-b border-[#F0EBE4] pb-2"><div><div className="text-[10px] font-semibold text-[#1A1615]">{title}</div><div className="text-[9px] text-[#81776E]">{detail}</div></div><button type="button" className="rounded border border-[#E5E0D8] px-2 py-1 text-[9px] text-[#4F4842]">− {count} &nbsp; +</button></div>)}</section>
           <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Tax &amp; Legal Entity</h2><button type="button" className="text-[9px] font-semibold text-[#B7842C]">Edit Details</button></div><div className="mt-3 space-y-2 text-[9px] text-[#81776E]"><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Legal Entity</b><span className="text-[#4F4842]">Revia Hospitality Atelier Group LLC</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Tax Identification</b><span className="text-[#4F4842]">US-EIN: 27-4196482</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Registered Atelier Address</b><span className="text-[#4F4842]">482 Broadway, SoHo<br />New York, NY 10013, United States</span></div></div><div className="mt-3 rounded-md bg-[#FAF8F5] p-2 text-[9px] text-[#81776E]"><FileText className="mr-1 inline h-3 w-3 text-[#B7842C]" /> W-9 &amp; Tax Residency forms on file (Verified 2024).</div></section>
         </aside>
       </div>
