@@ -159,7 +159,6 @@ export type NavRoute =
   | '/settings/branding'
   | '/login'
   | '/onboarding'
-  | '/customer-landing'
   | '/customer'
   | '/customer-onboarding';
 

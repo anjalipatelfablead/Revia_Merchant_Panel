@@ -131,8 +131,14 @@ export const StaggerTestimonials: React.FC<{ testimonials?: typeof defaultTestim
 
   useEffect(() => {
     const updateSize = () => {
-      const { matches } = window.matchMedia("(min-width: 640px)");
-      setCardSize(matches ? 365 : 290);
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setCardSize(365);
+      } else if (width >= 768) {
+        setCardSize(320);
+      } else {
+        setCardSize(290);
+      }
     };
 
     updateSize();

@@ -19,7 +19,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
-import { CustomerLandingPage } from './Customer/CustomerLandingPage';
+
 import { MarketingLandingPage } from './pages/MarketingLandingPage';
 import { CustomerOnboardingPage } from './pages/CustomerOnboardingPage';
 import { CustomerPanel } from './Customer/CustomerPanel';
@@ -50,7 +50,7 @@ const VALID_ROUTES = [
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
-  '/customer-landing', '/customer', '/customer-onboarding', '/',
+  '/customer', '/customer-onboarding', '/',
   '/about', '/contact', '/privacy', '/terms'
 ];
 
@@ -132,9 +132,7 @@ export default function App() {
     return <TermsOfServicePage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
 
-  if (currentRoute === '/customer-landing') {
-    return <CustomerLandingPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
-  }
+
 
   if (currentRoute === '/customer-onboarding') {
     return (

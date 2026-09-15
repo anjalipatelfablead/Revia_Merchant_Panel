@@ -27,7 +27,7 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
             <Menu className="w-5 h-5" />
           </button>
         )}
-        <button onClick={() => onNavigate?.('/customer-landing')} className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+        <button onClick={() => onNavigate?.('/')} className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="w-7 h-7 bg-[#C89B3C] rounded-lg flex items-center justify-center shadow-md">
             <span className="text-white font-black text-base leading-none">R</span>
           </div>

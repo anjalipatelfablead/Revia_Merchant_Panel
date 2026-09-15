@@ -18,7 +18,7 @@ export const MarketingFooter: React.FC<Props> = ({ onNavigate }) => {
                <div className="absolute -top-4 -right-4 w-16 h-6 bg-[#D9A94E] rotate-12 rounded-sm opacity-90 shadow-sm" />
                <div className="absolute -top-3 -right-6 w-12 h-6 bg-[#D9A94E] rotate-[45deg] rounded-sm opacity-90 shadow-sm" />
 
-               <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16 mb-7">
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-7">
                   
                   {/* Column 1: Brand */}
                   <div className="md:col-span-1">
