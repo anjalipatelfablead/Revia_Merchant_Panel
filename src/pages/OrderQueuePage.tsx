@@ -204,7 +204,7 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-sm sm:text-base font-bold rounded-xl hover:opacity-95 transition-all shadow-sm whitespace-nowrap cursor-pointer"
             >
               <Plus className="w-4 h-4 text-white" />
-              Manual Order
+              Manual Order Entry
             </button>
           </div>
         </div>
@@ -260,46 +260,50 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
               const column = columns.find(c => c.title === order.status) || columns[0];
               return (
                 <div key={order.id} className="bg-white p-4 rounded-xl border border-[#EAE6E1] shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-xs font-bold text-[#8C827A] bg-[#FAF8F5] px-2 py-0.5 rounded-md border border-[#EAE6E1]">{order.id}</span>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-md flex items-center gap-1 border ${order.status === 'Incoming' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                          order.status === 'Queued' ? 'bg-orange-50 text-orange-700 border-orange-200' :
-                            order.status === 'Brewing' ? 'bg-[#FBF8F3] text-[#B38637] border-[#F0E6D2]' :
-                              order.status === 'Ready' ? 'bg-green-50 text-green-700 border-green-200' :
-                                'bg-[#FAF8F5] text-[#8C827A] border-[#EAE6E1]'
-                          }`}>
-                          <Clock className="w-3 h-3" />
-                          {getElapsedTime(order.createdAt)}
-                        </span>
-                      </div>
-                      <h4 className="font-bold text-[#1A1615] text-lg">{order.customerName}</h4>
-                      {order.assignedStaff && (
-                        <div className="text-xs font-medium text-blue-600 mt-0.5 flex items-center gap-1">
-                          <Users className="w-3 h-3" />
-                          {order.assignedStaff}
-                        </div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-bold text-[#9E9A93] tracking-widest">{order.id}</span>
+                    <div className="shrink-0">
+                      {order.assignedStaff ? (
+                        <button
+                          onClick={() => assignStaff(order.id, '')}
+                          className="text-[10px] font-bold tracking-wider uppercase text-[#8C827A] hover:text-red-600 transition-colors underline"
+                        >
+                          Unassign
+                        </button>
+                      ) : (
+                        <select
+                          className="text-[10px] font-bold tracking-wider bg-white border border-[#EAE6E1] rounded px-1.5 py-1 outline-none focus:border-[#D4A753] cursor-pointer text-[#1A1615]"
+                          value=""
+                          onChange={(e) => assignStaff(order.id, e.target.value)}
+                        >
+                          <option value="" disabled>Assign Staff...</option>
+                          <option value="Elena Rostova">Elena Rostova</option>
+                          <option value="John Doe">John Doe</option>
+                          <option value="Sarah Smith">Sarah Smith</option>
+                        </select>
                       )}
                     </div>
-                    {order.assignedStaff ? (
-                      <button
-                        onClick={() => assignStaff(order.id, '')}
-                        className="text-xs text-[#8C827A] hover:text-red-600 transition-colors underline"
-                      >
-                        Unassign
-                      </button>
-                    ) : (
-                      <select
-                        className="text-xs bg-[#FAF8F5] border border-[#EAE6E1] rounded-md px-2 py-1 outline-none focus:border-[#B38637] cursor-pointer"
-                        value=""
-                        onChange={(e) => assignStaff(order.id, e.target.value)}
-                      >
-                        <option value="" disabled>Assign Staff...</option>
-                        <option value="Elena Rostova">Elena Rostova</option>
-                        <option value="John Doe">John Doe</option>
-                        <option value="Sarah Smith">Sarah Smith</option>
-                      </select>
+                  </div>
+
+                  <div className="mb-2">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded inline-flex items-center gap-1 border ${order.status === 'Incoming' ? 'bg-white text-blue-500 border-blue-200' :
+                      order.status === 'Queued' ? 'bg-white text-orange-500 border-orange-200' :
+                        order.status === 'Brewing' ? 'bg-white text-[#D4A753] border-[#F0E6D2]' :
+                          order.status === 'Ready' ? 'bg-white text-green-500 border-green-200' :
+                            'bg-white text-[#8C827A] border-[#EAE6E1]'
+                      }`}>
+                      <Clock className="w-3 h-3" />
+                      {getElapsedTime(order.createdAt)}
+                    </span>
+                  </div>
+
+                  <div className="mb-3">
+                    <h4 className="font-bold text-[#1A1615] text-[15px]">{order.customerName}</h4>
+                    {order.assignedStaff && (
+                      <div className="text-[10px] font-bold text-blue-600 mt-1 flex items-center gap-1 uppercase tracking-wider">
+                        <Users className="w-3 h-3" />
+                        {order.assignedStaff}
+                      </div>
                     )}
                   </div>
 

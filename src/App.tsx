@@ -274,7 +274,7 @@ export default function App() {
           )}
 
           {(currentRoute === '/campaigns' || currentRoute === '/campaigns/new') && (
-            <CampaignBuilderPage />
+            <CampaignBuilderPage initialViewMode={currentRoute === '/campaigns/new' ? 'builder' : 'dashboard'} />
           )}
 
           {currentRoute === '/rewards' && (
