@@ -597,7 +597,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
     <div className="max-w-[1024px] mx-auto w-full flex flex-col lg:flex-row gap-6 items-start">
       {/* Left Main Config Column */}
       <div className="flex-1 w-full space-y-6">
-        
+
         {/* Header Banner */}
         <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs">
           <div className="flex items-center gap-3 mb-2">
@@ -630,24 +630,21 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                   key={opt.id}
                   type="button"
                   onClick={() => setRewardType(opt.id)}
-                  className={`p-4 rounded-xl border transition-all cursor-pointer text-left flex items-start gap-3.5 relative ${
-                    isSelected
+                  className={`p-4 rounded-xl border transition-all cursor-pointer text-left flex items-start gap-3.5 relative ${isSelected
                       ? 'bg-[#FDF8EB] border-[#D4A753] ring-2 ring-[#D4A753]/20 shadow-xs'
                       : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-white'
-                  }`}
+                    }`}
                 >
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                    isSelected ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-white border border-[#EFECE6] text-[#7C746C]'
-                  }`}>
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${isSelected ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-white border border-[#EFECE6] text-[#7C746C]'
+                    }`}>
                     <IconComponent className="w-4.5 h-4.5" />
                   </div>
                   <div className="flex-1 min-w-0 pr-6">
                     <div className="font-bold text-[14px] text-[#1A1615] leading-tight mb-1">{opt.title}</div>
                     <div className="text-[11px] font-medium text-[#7C746C] leading-normal">{opt.desc}</div>
                   </div>
-                  <div className={`absolute top-4 right-4 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                    isSelected ? 'border-[#D4A753]' : 'border-[#D1CDC7]'
-                  }`}>
+                  <div className={`absolute top-4 right-4 w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-[#D4A753]' : 'border-[#D1CDC7]'
+                    }`}>
                     {isSelected && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
                   </div>
                 </button>
@@ -682,11 +679,10 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                       key={t}
                       type="button"
                       onClick={() => setDiscountType(t)}
-                      className={`px-4 py-1.5 rounded-lg text-[12px] font-bold transition-all cursor-pointer ${
-                        discountType === t
+                      className={`px-4 py-1.5 rounded-lg text-[12px] font-bold transition-all cursor-pointer ${discountType === t
                           ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-2xs'
                           : 'text-[#7C746C] hover:text-[#1A1615]'
-                      }`}
+                        }`}
                     >
                       {t} Amount
                     </button>
@@ -734,9 +730,8 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                 value={freeItem}
                 onChange={e => setFreeItem(e.target.value)}
                 disabled={campaignType === 'existing_stamp' && !!ruleConfig?.stampItem}
-                className={`w-full px-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs ${
-                  campaignType === 'existing_stamp' && !!ruleConfig?.stampItem ? 'opacity-70 cursor-not-allowed' : ''
-                }`}
+                className={`w-full px-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs ${campaignType === 'existing_stamp' && !!ruleConfig?.stampItem ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
                 placeholder="e.g. Single Origin Geisha 250g Whole Bean"
               />
               {campaignType === 'existing_stamp' && !!ruleConfig?.stampItem && (
@@ -772,13 +767,11 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
               <button
                 type="button"
                 onClick={() => setStackable(v => !v)}
-                className={`relative w-11 h-6 rounded-full border transition-all cursor-pointer shrink-0 ${
-                  stackable ? 'bg-[#15803D] border-[#15803D]' : 'bg-[#EFECE6] border-[#D1CDC7]'
-                }`}
+                className={`relative w-11 h-6 rounded-full border transition-all cursor-pointer shrink-0 ${stackable ? 'bg-[#15803D] border-[#15803D]' : 'bg-[#EFECE6] border-[#D1CDC7]'
+                  }`}
               >
-                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${
-                  stackable ? 'left-[22px]' : 'left-0.5'
-                }`} />
+                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${stackable ? 'left-[22px]' : 'left-0.5'
+                  }`} />
               </button>
             </div>
           </div>
@@ -790,9 +783,8 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
 
           <div className="space-y-4">
             <label className="flex items-center gap-3 cursor-pointer group">
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                expiryType === 'Days' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]'
-              }`}>
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${expiryType === 'Days' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]'
+                }`}>
                 {expiryType === 'Days' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
               </div>
               <input
@@ -818,9 +810,8 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
             )}
 
             <label className="flex items-center gap-3 cursor-pointer group pt-1">
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                expiryType === 'Date' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]'
-              }`}>
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${expiryType === 'Date' ? 'border-[#D4A753]' : 'border-[#D1CDC7] group-hover:border-[#D4A753]'
+                }`}>
                 {expiryType === 'Date' && <div className="w-2 h-2 rounded-full bg-[#D4A753]" />}
               </div>
               <input
@@ -893,7 +884,11 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
   );
 };
 
-export const CampaignBuilderPage: React.FC = () => {
+export interface CampaignBuilderPageProps {
+  initialViewMode?: 'dashboard' | 'builder';
+}
+
+export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard' }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   // Scroll to top when stepping through campaign wizard
@@ -928,7 +923,7 @@ export const CampaignBuilderPage: React.FC = () => {
   const [showCustomSegmentModal, setShowCustomSegmentModal] = useState(false);
   const [customSegmentName, setCustomSegmentName] = useState('');
 
-  const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>('dashboard');
+  const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
