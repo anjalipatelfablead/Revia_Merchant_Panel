@@ -43,7 +43,7 @@ export const BrandingPage: React.FC = () => {
             {/* Page Title Section */}
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-8">
                <div>
-                  <div className="flex items-center gap-3 mb-4">
+                  {/* <div className="flex items-center gap-3 mb-4">
                      <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#A37837] rounded border border-[#F3E5C8] text-[9px] uppercase font-bold tracking-widest flex items-center gap-1.5">
                         ORGANIZATION CONFIG <span className="text-[#A37837]">•</span> BRAND IDENTITY
                      </span>
@@ -51,7 +51,7 @@ export const BrandingPage: React.FC = () => {
                         <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
                         Sync: 3 Roasteries Synced • Edge CDN Warm
                      </span>
-                  </div>
+                  </div> */}
                   <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] mb-2 leading-none font-sans">Business Profile &amp; Branding</h1>
                   <p className="text-[14px] text-[#6E6A66] max-w-2xl">
                      Curate your maison's visual identity, token architecture, stamp marks, and real-time member portal experience across all physical tasting salons.
@@ -59,10 +59,10 @@ export const BrandingPage: React.FC = () => {
                </div>
 
                <div className="flex flex-col items-end gap-3">
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#8C827A]">
+                  {/* <div className="flex items-center gap-1.5 text-[11px] text-[#8C827A]">
                      <Clock className="w-3.5 h-3.5" />
                      Last published 14m ago by <span className="font-bold text-[#1A1615]">E. Vance</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-3">
                      <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors">
                         <RotateCcw className="w-4 h-4" /> Discard Changes
