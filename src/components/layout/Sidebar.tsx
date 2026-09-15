@@ -14,7 +14,8 @@ import {
   ShieldCheck,
   Award,
   Plus,
-  Package
+  Package,
+  ScanLine
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -72,6 +73,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Customers', route: '/customerlist', icon: Users },
         { name: 'Transactions', route: '/transactions', icon: Receipt },
         { name: 'Campaigns', route: '/campaigns/new', icon: Megaphone },
+        { name: 'Redemption Terminal', route: '/terminal', icon: ScanLine },
         { name: 'Rewards', route: '/rewards', icon: Award },
       ],
     },
