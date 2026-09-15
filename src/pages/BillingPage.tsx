@@ -40,6 +40,16 @@ const MobileBillingPage: React.FC = () => {
 export const BillingPage: React.FC = () => {
   const [activeInvoiceTab, setActiveInvoiceTab] = useState<'All Invoices' | 'Paid' | 'Upcoming'>('All Invoices');
   const [searchInvoice, setSearchInvoice] = useState('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [addons, setAddons] = useState({ pos: 2, sms: 0, branch: 0 });
+
+  const handleAddonUpdate = (key: keyof typeof addons, increment: boolean) => {
+    setAddons((prev) => ({
+      ...prev,
+      [key]: Math.max(0, prev[key] + (increment ? 1 : -1))
+    }));
+  };
+
   const [paymentMethods, setPaymentMethods] = useState([
     { label: 'Mastercard', digits: '•••• 8814', meta: 'Expires 08/27 • Elena Vance', default: true, kind: 'MC', detail: 'Revia Hospitality LLC', className: 'bg-[#FAF0E3]' },
     { label: 'Chase Commercial', digits: '•••• 4109', meta: 'Business Checking • Direct Debit', default: false, kind: 'ACH', detail: 'Auto-follower backup', className: 'bg-[#FAF8F5]' },
@@ -150,7 +160,7 @@ export const BillingPage: React.FC = () => {
       </div>
       */}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-start sm:gap-8 md:max-lg:flex-col md:max-lg:gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8 md:max-lg:flex-col md:max-lg:gap-3 md:max-lg:items-start">
         <div className="md:max-lg:w-full md:max-lg:flex-none">
           <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] md:max-lg:text-[18px]">Subscription &amp; Billing Management</h1>
           <p className="mt-1 max-w-[600px] text-[14px] font-normal leading-relaxed text-[#7C746C] md:max-lg:max-w-[600px] md:max-lg:text-[12px]">Manage your hospitality atelier subscription plan, connected branch licensing, POS seat quotas, and tax invoice history.</p>
@@ -162,34 +172,46 @@ export const BillingPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-        <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Current Plan</span><span className="rounded-full bg-[#CFF6DF] px-2 py-1 text-[9px] font-bold text-[#16804A]">● Active • Tier 3</span></div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">Enterprise Atelier</div>
-          <p className="mt-0.5 text-[10px] text-[#81776E]">$389/mo • Billed annually<br />($4,668/yr)</p>
-          <div className="mt-2 flex items-center justify-between text-[10px] font-semibold text-[#B7842C]">Includes 5 venue licenses <ArrowRight className="h-4 w-4" /></div>
+        <div className="flex min-h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+          <div>
+            <div className="flex items-center justify-between text-[11px] font-medium text-[#7C746C]"><span>Current Plan</span><span className="rounded-full bg-[#CFF6DF] px-2 py-1 text-[9px] font-bold text-[#16804A]">● Active • Tier 3</span></div>
+            <div className="mt-2 text-[22px] font-bold tracking-tight text-[#1A1615]">Enterprise Atelier</div>
+            <p className="mt-1 text-[11px] text-[#81776E] leading-relaxed">$389/mo • Billed annually<br />($4,668/yr)</p>
+          </div>
+          <div className="mt-3 flex items-center justify-between text-[11px] font-semibold text-[#B7842C]">Includes 5 venue licenses <ArrowRight className="h-4 w-4" /></div>
         </div>
 
-        <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Active Venues &amp; POS</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#4F4842]">75% Cap</span></div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">3 of 5 Venues Active</div>
-          <p className="mt-0.5 text-[10px] text-[#81776E]">12 of 16 POS terminals active</p>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-3/4 rounded-full bg-[#C99B42]" /></div>
-          <div className="mt-1 flex justify-between text-[10px] text-[#81776E]"><span className="font-semibold">Mesh Sync Healthy</span><span>4 Seats Available</span></div>
+        <div className="flex min-h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+          <div>
+            <div className="flex items-center justify-between text-[11px] font-medium text-[#7C746C]"><span>Active Venues</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#4F4842]">75% Cap</span></div>
+            <div className="mt-2 text-[22px] font-bold tracking-tight text-[#1A1615]">3 of 5 Venues</div>
+            <p className="mt-1 text-[11px] text-[#81776E]">12 of 16 POS terminals active</p>
+          </div>
+          <div className="mt-3">
+            <div className="h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-3/4 rounded-full bg-[#C99B42]" /></div>
+            <div className="mt-2 flex justify-between text-[10px] text-[#81776E]"><span className="font-semibold">Mesh Sync Healthy</span><span>4 Seats Available</span></div>
+          </div>
         </div>
 
-        <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Billing Cycle</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#81776E]">Net 0</span></div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">$389.00 due Dec 1</div>
-          <p className="mt-0.5 text-[10px] text-[#81776E]">Next auto-charge via Mastercard<br />•••• 8814</p>
-          <div className="mt-2 flex items-center gap-1.5 text-[10px] font-semibold text-[#16804A]"><ShieldCheck className="h-4 w-4" /> Auto-pay configured &amp; guaranteed</div>
+        <div className="flex min-h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+          <div>
+            <div className="flex items-center justify-between text-[11px] font-medium text-[#7C746C]"><span>Billing Cycle</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#81776E]">Net 0</span></div>
+            <div className="mt-2 text-[22px] font-bold tracking-tight text-[#1A1615]">$389.00 due</div>
+            <p className="mt-1 text-[11px] text-[#81776E] leading-relaxed">Dec 1 charge via Mastercard<br />•••• 8814</p>
+          </div>
+          <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-[#16804A]"><ShieldCheck className="h-4 w-4 shrink-0" /> Auto-pay configured</div>
         </div>
 
-        <div className="h-[162px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-xs font-medium text-[#7C746C]"><span>Loyalty Volume Quota</span><span className="rounded-full bg-[#FFE0A2] px-2 py-1 text-[9px] font-bold text-[#4F4842]">56.8% Used</span></div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-[#1A1615]">14.2k / 25k Scans</div>
-          <p className="mt-0.5 text-[10px] text-[#81776E]">Overage protection is ON<br />(capped)</p>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-[57%] rounded-full bg-[#80611D]" /></div>
-          <div className="mt-1 text-[10px] font-semibold text-[#81776E]">10,760 scans left <span className="text-[#B7842C]">Resets in 11 days</span></div>
+        <div className="flex min-h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
+          <div>
+            <div className="flex items-center justify-between text-[11px] font-medium text-[#7C746C]"><span>Loyalty Quota</span><span className="rounded-full bg-[#FFE0A2] px-2 py-1 text-[9px] font-bold text-[#4F4842]">56.8% Used</span></div>
+            <div className="mt-2 text-[22px] font-bold tracking-tight text-[#1A1615]">14.2k / 25k</div>
+            <p className="mt-1 text-[11px] text-[#81776E] leading-relaxed">Overage protection is ON (capped)</p>
+          </div>
+          <div className="mt-3">
+            <div className="h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-[57%] rounded-full bg-[#80611D]" /></div>
+            <div className="mt-2 flex justify-between items-center text-[10px] text-[#81776E]"><span className="font-semibold">10.7k left</span><span className="text-[#B7842C] font-semibold">Resets in 11d</span></div>
+          </div>
         </div>
       </div>
 
@@ -198,7 +220,7 @@ export const BillingPage: React.FC = () => {
           <section id="subscription-allocation" className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div><span className="text-[9px] font-bold uppercase tracking-wider text-[#B7842C]">Allocations &amp; Entitlements</span><h2 className="text-[16px] font-bold text-[#1A1615]">Subscription Tier &amp; Entitlement Allocation</h2></div>
-              <div className="flex gap-1.5"><button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2 py-1 text-[9px] font-semibold text-[#4F4842]">Manage Venue Licenses</button><button type="button" className="rounded-md bg-[#C99B42] px-2 py-1 text-[9px] font-bold text-white">Change Tier</button></div>
+              <div className="flex gap-1.5"><button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2 py-1 text-[9px] font-semibold text-[#4F4842] cursor-pointer hover:bg-gray-50">Manage Venue Licenses</button><button type="button" className="rounded-md bg-[#C99B42] hover:bg-[#A37D32] transition-colors cursor-pointer px-2 py-1 text-[9px] font-bold text-white">Change Tier</button></div>
             </div>
             <div className="mt-3 flex flex-col gap-3 rounded-lg bg-[#FAF3E8] p-3 sm:flex-row sm:items-center sm:justify-between"><div><div className="text-[11px] font-bold text-[#1A1615]">Enterprise Atelier Architecture <span className="ml-1 rounded bg-white px-1.5 py-0.5 text-[8px] font-normal text-[#81776E]">v3.4 Dedicated Ledger</span></div><p className="mt-1 max-w-[520px] text-[10px] leading-relaxed text-[#81776E]">Designed for luxury coffee houses, tasting rooms, and boutique hospitality chains. Includes SOC-2 audit compliance and hardware mesh routing.</p></div><div className="flex min-w-[150px] items-center gap-2 rounded-lg bg-[#FFF2E3] px-3 py-2"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#B7842C]"><ShieldCheck className="h-4 w-4" /></span><span><strong className="block text-[10px] text-[#4F4842]">Concierge Support</strong><small className="block text-[9px] text-[#81776E]">15m SLA Response</small></span></div></div>
             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -214,13 +236,13 @@ export const BillingPage: React.FC = () => {
           </section>
 
           <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-            <div className="flex flex-wrap items-end justify-between gap-2"><div><span className="text-[9px] font-bold uppercase tracking-wider text-[#B7842C]">Accounting &amp; Tax Audits</span><h2 className="text-[16px] font-bold text-[#1A1615]">Invoice History &amp; Receipts Ledger</h2></div><div className="flex items-center gap-1"><div className="flex w-[190px] items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] text-[#81776E]"><Search className="h-3 w-3" /><input aria-label="Search by invoice number" value={searchInvoice} onChange={(event) => setSearchInvoice(event.target.value)} placeholder="Search by invoice #..." className="w-full border-0 bg-transparent text-[9px] text-[#81776E] outline-none placeholder:text-[#81776E]" /></div><button type="button" aria-label="Download invoice ledger" onClick={downloadInvoiceLedger} className="rounded-md border border-[#E5E0D8] bg-white p-1.5 text-[#81776E] hover:bg-[#F5F1EA]"><Download className="h-3 w-3" /></button></div></div>
+            <div className="flex flex-wrap items-end justify-between gap-2"><div><span className="text-[9px] font-bold uppercase tracking-wider text-[#B7842C]">Accounting &amp; Tax Audits</span><h2 className="text-[16px] font-bold text-[#1A1615]">Invoice History &amp; Receipts Ledger</h2></div><div className="flex items-center gap-1"><div className="flex w-[190px] items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] text-[#81776E]"><Search className="h-3 w-3" /><input aria-label="Search by invoice number" value={searchInvoice} onChange={(event) => setSearchInvoice(event.target.value)} placeholder="Search by invoice #..." className="w-full border-0 bg-transparent text-[9px] text-[#81776E] outline-none placeholder:text-[#81776E]" /></div><button type="button" aria-label="Download invoice ledger" onClick={downloadInvoiceLedger} className="rounded-md border border-[#E5E0D8] bg-white p-1.5 text-[#81776E] hover:bg-[#F5F1EA] cursor-pointer"><Download className="h-3 w-3" /></button></div></div>
             <div className="mt-3 inline-flex rounded-md bg-[#F1EDE7] p-0.5 text-[9px] font-semibold text-[#81776E]">
               {(['All Invoices', 'Paid', 'Upcoming'] as Array<'All Invoices' | 'Paid' | 'Upcoming'>).map((tab) => (
-                <button key={tab} type="button" onClick={() => setActiveInvoiceTab(tab)} className={`rounded px-2.5 py-1 ${activeInvoiceTab === tab ? 'bg-white text-[#4F4842] shadow-2xs' : 'text-[#81776E] hover:text-[#4F4842]'}`}>{tab} ({invoiceTabCounts[tab]})</button>
+                <button key={tab} type="button" onClick={() => setActiveInvoiceTab(tab)} className={`cursor-pointer rounded px-2.5 py-1 ${activeInvoiceTab === tab ? 'bg-white text-[#4F4842] shadow-2xs' : 'text-[#81776E] hover:text-[#4F4842]'}`}>{tab} ({invoiceTabCounts[tab]})</button>
               ))}
             </div>
-            <div className="mt-3 overflow-x-auto"><table className="w-full min-w-[600px] text-left text-[9px]"><thead className="border-b border-[#E8E1D9] text-[8px] uppercase tracking-wider text-[#81776E]"><tr><th className="pb-2">Invoice ID</th><th className="pb-2">Date</th><th className="pb-2">Plan &amp; Add-ons</th><th className="pb-2">Amount</th><th className="pb-2">Status</th><th className="pb-2">Actions</th></tr></thead><tbody className="divide-y divide-[#F0EBE4]">{filteredInvoiceRows.filter((row) => row.invoiceId.toLowerCase().includes(searchInvoice.toLowerCase())).map((row) => <tr key={row.invoiceId}><td className="py-2 font-semibold text-[#1A1615]">{row.invoiceId}</td><td className="py-2 text-[#81776E]">{row.date}</td><td className="py-2 text-[#4F4842]">{row.plan}</td><td className="py-2 font-semibold text-[#1A1615]">{row.amount}</td><td className="py-2"><span className="rounded-full bg-[#CFF6DF] px-2 py-1 font-bold text-[#16804A]">{row.status}</span></td><td className="py-2"><button type="button" onClick={() => downloadInvoiceReceipt(row)} className="inline-flex items-center gap-1 rounded border border-[#E5E0D8] px-1.5 py-1 text-[8px] text-[#4F4842]"><Download className="h-3 w-3" /> Receipt</button></td></tr>)}</tbody></table></div>
+            <div className="mt-3 overflow-x-auto"><table className="w-full min-w-[600px] text-left text-[9px]"><thead className="border-b border-[#E8E1D9] text-[8px] uppercase tracking-wider text-[#81776E]"><tr><th className="pb-2">Invoice ID</th><th className="pb-2">Date</th><th className="pb-2">Plan &amp; Add-ons</th><th className="pb-2">Amount</th><th className="pb-2">Status</th><th className="pb-2">Actions</th></tr></thead><tbody className="divide-y divide-[#F0EBE4]">{filteredInvoiceRows.filter((row) => row.invoiceId.toLowerCase().includes(searchInvoice.toLowerCase())).map((row) => <tr key={row.invoiceId}><td className="py-2 font-semibold text-[#1A1615]">{row.invoiceId}</td><td className="py-2 text-[#81776E]">{row.date}</td><td className="py-2 text-[#4F4842]">{row.plan}</td><td className="py-2 font-semibold text-[#1A1615]">{row.amount}</td><td className="py-2"><span className="rounded-full bg-[#CFF6DF] px-2 py-1 font-bold text-[#16804A]">{row.status}</span></td><td className="py-2"><button type="button" onClick={() => downloadInvoiceReceipt(row)} className="inline-flex items-center gap-1 rounded border border-[#E5E0D8] px-1.5 py-1 text-[8px] text-[#4F4842] cursor-pointer hover:bg-gray-50"><Download className="h-3 w-3" /> Receipt</button></td></tr>)}</tbody></table></div>
             <div className="mt-3 flex items-center gap-2 rounded-md bg-[#FAF8F5] p-2 text-[9px] text-[#81776E]"><LockKeyhole className="h-3.5 w-3.5 text-[#B7842C]" /> Cryptographic Ledger Seal: <span className="font-mono text-[#4F4842]">sha256:7f4a...912e8b</span><span className="ml-auto hidden sm:inline">Compliant with US GAAP &amp; EU VAT cross-border directive</span></div>
           </section>
         </div>
@@ -232,36 +254,54 @@ export const BillingPage: React.FC = () => {
               {paymentMethods.map((method, index) => (
                 <div key={`${method.label}-${method.digits}`} className={`rounded-lg p-2.5 ${method.className}`}>
                   <div className="flex items-start gap-2"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#1A1615] text-[8px] font-bold text-white">{method.kind}</span><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-1 text-[10px] font-bold"><span>{method.label} {method.digits}</span>{method.default ? <span className="rounded-full bg-[#FFE0A2] px-1.5 py-0.5 text-[8px]">Default</span> : <span className="rounded-full bg-[#CFF6DF] px-1.5 py-0.5 text-[8px] text-[#16804A]">Verified</span>}</div><div className="text-[9px] leading-tight text-[#81776E]">{method.meta}</div></div></div>
-                  <div className="mt-2 flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>{method.detail}</span><button type="button">{method.default ? 'Edit' : 'Set Default'}</button></div>
+                  <div className="mt-2 flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>{method.detail}</span><button type="button" className="cursor-pointer hover:underline">{method.default ? 'Edit' : 'Set Default'}</button></div>
                 </div>
               ))}
             </div>
-            <button type="button" onClick={() => {
-              const addedMethod = { label: 'Chase Commercial', digits: '•••• 4109', meta: 'Business Checking • Direct Debit', default: false, kind: 'ACH', detail: 'Auto-follower backup', className: 'bg-[#FAF8F5]' };
-              setPaymentMethods((current) => {
-                const next = current.some((method) => method.label === addedMethod.label && method.digits === addedMethod.digits)
-                  ? current
-                  : [...current, addedMethod];
-                return next;
-              });
-              const link = document.createElement('a');
-              const rows = [['Payment Method', 'Chase Commercial •••• 4109'], ['Status', 'Added'], ['Download Type', 'Payment Method']];
-              const csv = rows.map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
-              const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-              link.href = url;
-              link.download = 'revia-payment-method-added.csv';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              URL.revokeObjectURL(url);
-            }} className="mt-3 w-full rounded-lg bg-[#F1EDE7] py-2 text-[9px] font-semibold text-[#4F4842]"><CreditCard className="mr-1 inline h-3 w-3" /> + Add Payment Method</button>
+            <button type="button" onClick={() => setShowPaymentModal(true)} className="mt-3 w-full rounded-lg bg-[#F1EDE7] py-2 text-[9px] font-semibold text-[#4F4842] hover:bg-[#EAE4DB] transition-colors cursor-pointer"><CreditCard className="mr-1 inline h-3 w-3" /> + Add Payment Method</button>
           </section>
-          <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Plan Quota Add-ons</h2><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[8px] text-[#81776E]">Self-Serve</span></div><p className="mt-2 text-[9px] leading-relaxed text-[#81776E]">Expand capacity on demand. Add-ons are prorated automatically to your current monthly cycle.</p>{[['POS Hardware Node','+$20.00 / mo per terminal','2'],['SMS VIP Trunk (10k)','+$45.00 / mo per block','0'],['Branch Venue Slot','+$95.00 / mo per branch','0']].map(([title,detail,count]) => <div key={title} className="mt-2 flex items-center justify-between border-b border-[#F0EBE4] pb-2"><div><div className="text-[10px] font-semibold text-[#1A1615]">{title}</div><div className="text-[9px] text-[#81776E]">{detail}</div></div><button type="button" className="rounded border border-[#E5E0D8] px-2 py-1 text-[9px] text-[#4F4842]">− {count} &nbsp; +</button></div>)}</section>
-          <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Tax &amp; Legal Entity</h2><button type="button" className="text-[9px] font-semibold text-[#B7842C]">Edit Details</button></div><div className="mt-3 space-y-2 text-[9px] text-[#81776E]"><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Legal Entity</b><span className="text-[#4F4842]">Revia Hospitality Atelier Group LLC</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Tax Identification</b><span className="text-[#4F4842]">US-EIN: 27-4196482</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Registered Atelier Address</b><span className="text-[#4F4842]">482 Broadway, SoHo<br />New York, NY 10013, United States</span></div></div><div className="mt-3 rounded-md bg-[#FAF8F5] p-2 text-[9px] text-[#81776E]"><FileText className="mr-1 inline h-3 w-3 text-[#B7842C]" /> W-9 &amp; Tax Residency forms on file (Verified 2024).</div></section>
+          <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Plan Quota Add-ons</h2><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[8px] text-[#81776E]">Self-Serve</span></div><p className="mt-2 text-[9px] leading-relaxed text-[#81776E]">Expand capacity on demand. Add-ons are prorated automatically to your current monthly cycle.</p>{([['POS Hardware Node','+$20.00 / mo per terminal',addons.pos,'pos'],['SMS VIP Trunk (10k)','+$45.00 / mo per block',addons.sms,'sms'],['Branch Venue Slot','+$95.00 / mo per branch',addons.branch,'branch']] as const).map(([title,detail,count,key]) => <div key={title} className="mt-2 flex items-center justify-between border-b border-[#F0EBE4] pb-2"><div><div className="text-[10px] font-semibold text-[#1A1615]">{title}</div><div className="text-[9px] text-[#81776E]">{detail}</div></div><div className="flex items-center gap-2 rounded border border-[#E5E0D8] px-2 py-1 text-[9px] text-[#4F4842]"><button type="button" onClick={() => handleAddonUpdate(key, false)} className="hover:text-black cursor-pointer">−</button><span className="w-3 text-center">{count}</span><button type="button" onClick={() => handleAddonUpdate(key, true)} className="hover:text-black cursor-pointer">+</button></div></div>)}</section>
+          <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Tax &amp; Legal Entity</h2><button type="button" className="text-[9px] font-semibold text-[#B7842C] hover:underline cursor-pointer">Edit Details</button></div><div className="mt-3 space-y-2 text-[9px] text-[#81776E]"><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Legal Entity</b><span className="text-[#4F4842]">Revia Hospitality Atelier Group LLC</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Tax Identification</b><span className="text-[#4F4842]">US-EIN: 27-4196482</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Registered Atelier Address</b><span className="text-[#4F4842]">482 Broadway, SoHo<br />New York, NY 10013, United States</span></div></div><div className="mt-3 rounded-md bg-[#FAF8F5] p-2 text-[9px] text-[#81776E]"><FileText className="mr-1 inline h-3 w-3 text-[#B7842C]" /> W-9 &amp; Tax Residency forms on file (Verified 2024).</div></section>
         </aside>
       </div>
     </div>
       </div>
+
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-md animate-in zoom-in-95 rounded-3xl bg-white p-8 shadow-2xl duration-200">
+            <button onClick={() => setShowPaymentModal(false)} className="absolute right-4 top-4 cursor-pointer text-[#9E9A93] transition-colors hover:text-[#1A1615]">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+            </button>
+            <h3 className="mb-2 flex items-center gap-2 text-xl font-bold text-[#1A1615]"><CreditCard className="h-5 w-5 text-[#D4A753]" /> Add Payment Method</h3>
+            <p className="mb-6 text-[13px] text-[#6E6A66]">Connect a new card or bank account for billing.</p>
+            <div className="mb-6 space-y-4">
+              <div>
+                <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Card Number</label>
+                <input type="text" placeholder="0000 0000 0000 0000" className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-4 py-3 text-[14px] font-bold text-[#1A1615] focus:border-[#D4A753] focus:outline-none" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Expiry Date</label>
+                  <input type="text" placeholder="MM/YY" className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-4 py-3 text-[14px] font-bold text-[#1A1615] focus:border-[#D4A753] focus:outline-none" />
+                </div>
+                <div>
+                  <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">CVC</label>
+                  <input type="text" placeholder="123" className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-4 py-3 text-[14px] font-bold text-[#1A1615] focus:border-[#D4A753] focus:outline-none" />
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setShowPaymentModal(false)} className="cursor-pointer flex-1 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] py-3.5 text-[14px] font-bold text-[#1A1615] transition-colors hover:bg-[#EFECE6]">Cancel</button>
+              <button onClick={() => {
+                const addedMethod = { label: 'Visa Corporate', digits: '•••• 1234', meta: 'Expires 12/28 • Main Account', default: false, kind: 'VISA', detail: 'Secondary backup', className: 'bg-[#F4F0EC]' };
+                setPaymentMethods(prev => [...prev, addedMethod]);
+                setShowPaymentModal(false);
+              }} className="cursor-pointer flex-1 rounded-xl bg-[#D4A753] py-3.5 text-[14px] font-bold text-white shadow-sm transition-colors hover:bg-[#C29541]">Save Card</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
