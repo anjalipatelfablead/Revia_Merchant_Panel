@@ -13,7 +13,7 @@ import { useCustomer } from '../../CustomerContext';
 export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
   const { cartItems, addItem } = useCustomer();
   const [step, setStep] = useState(1);
-  const totalSteps = 9;
+  const totalSteps = 6;
 
   const [mobile, setMobile] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -362,16 +362,16 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
 
                     <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-3">Phone Number</label>
                     <div className="flex gap-3 mb-8">
-                      <div className="flex items-center gap-2 bg-white rounded-2xl px-5 py-5 w-28 shrink-0 justify-center shadow-sm">
-                        <span className="text-2xl">🇮🇳</span><span className="text-base font-bold text-[#111]">+91</span>
+                      <div className="flex items-center gap-2 bg-white rounded-md px-4 py-3 w-24 shrink-0 justify-center shadow-sm border border-[#EAE3D9]">
+                        <span className="text-xl">🇮🇳</span><span className="text-sm font-bold text-[#111]">+91</span>
                       </div>
-                      <div className="flex-1 bg-white rounded-2xl px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-[#9A7436]/20 transition-all">
-                        <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} placeholder="98765 43210" className="w-full bg-transparent outline-none text-xl font-bold text-[#111] placeholder:text-[#ccc]" />
+                      <div className="flex-1 bg-white rounded-md px-4 py-3 shadow-sm border border-[#EAE3D9] focus-within:ring-2 focus-within:ring-[#9A7436]/20 focus-within:border-[#9A7436] transition-all">
+                        <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} placeholder="98765 43210" className="w-full bg-transparent outline-none text-lg font-bold text-[#111] placeholder:text-[#ccc]" />
                       </div>
                     </div>
 
-                    <button onClick={goNext} disabled={mobile.replace(/\s/g, '').length < 10} className="w-full h-16 bg-[#9A7436] text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#886630] shadow-lg shadow-[#9A7436]/20 transition-all group">
-                      Send Passcode <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <button onClick={goNext} disabled={mobile.replace(/\s/g, '').length < 10} className="w-full h-12 bg-[#9A7436] text-white rounded-md font-black text-[14px] flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#886630] shadow-md shadow-[#9A7436]/20 transition-all group">
+                      Send Passcode <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
 
                     <div className="mt-8 grid grid-cols-3 gap-4">
@@ -420,12 +420,12 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                       {otp.map((digit, i) => (
                         <input key={i} id={`otp-${i}`} type="text" inputMode="numeric" maxLength={1} value={digit}
                           onChange={e => handleOtpChange(e.target.value, i)} onKeyDown={e => handleOtpKey(e, i)}
-                          className="w-full h-16 sm:h-20 bg-white rounded-2xl text-center text-3xl font-black text-[#111] focus:ring-2 focus:ring-[#9A7436]/30 transition-all outline-none shadow-sm" />
+                          className="w-full h-12 sm:h-14 bg-white rounded-md border border-[#EAE3D9] text-center text-2xl font-black text-[#111] focus:ring-2 focus:ring-[#9A7436]/30 focus:border-[#9A7436] transition-all outline-none shadow-sm" />
                       ))}
                     </div>
 
-                    <button onClick={verifyOtp} disabled={otp.join('').length < 6 || isVerifying} className="w-full h-16 bg-[#9A7436] text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 disabled:opacity-50 shadow-lg shadow-[#9A7436]/20 transition-all mb-6">
-                      {isVerifying ? <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Authenticating...</> : 'Verify & Continue'}
+                    <button onClick={verifyOtp} disabled={otp.join('').length < 6 || isVerifying} className="w-full h-12 bg-[#9A7436] text-white rounded-md font-black text-[14px] flex items-center justify-center gap-3 disabled:opacity-50 shadow-md shadow-[#9A7436]/20 transition-all mb-6">
+                      {isVerifying ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Authenticating...</> : 'Verify & Continue'}
                     </button>
                     <p className="text-center text-[13px] text-[#666]">
                       {otpTimer > 0 ? <>Resend in <span className="font-bold text-[#111]">00:{String(otpTimer).padStart(2, '0')}</span></> : <button className="text-[#9A7436] font-bold hover:underline">Resend Code</button>}
@@ -454,22 +454,32 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">First Name *</label>
-                          <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Sarah" className="w-full bg-white rounded-2xl px-5 py-5 text-[#111] text-lg font-bold focus:ring-2 focus:ring-[#9A7436]/20 outline-none transition-all placeholder:text-[#ccc] shadow-sm" />
+                          <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Sarah" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all placeholder:text-[#ccc] shadow-sm" />
                         </div>
                         <div>
                           <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Last Name</label>
-                          <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Jenkins" className="w-full bg-white rounded-2xl px-5 py-5 text-[#111] text-lg font-bold focus:ring-2 focus:ring-[#9A7436]/20 outline-none transition-all placeholder:text-[#ccc] shadow-sm" />
+                          <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Jenkins" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all placeholder:text-[#ccc] shadow-sm" />
                         </div>
                       </div>
                       <div>
                         <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Email Address</label>
-                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="sarah@example.com" className="w-full bg-white rounded-2xl px-5 py-5 text-[#111] text-lg font-bold focus:ring-2 focus:ring-[#9A7436]/20 outline-none transition-all placeholder:text-[#ccc] shadow-sm" />
+                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="sarah@example.com" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all placeholder:text-[#ccc] shadow-sm" />
                         <p className="text-[11px] text-[#999] mt-2">We'll send order confirmations and exclusive offers here.</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">ZIP Code (Optional)</label>
+                          <input type="text" placeholder="10001" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all placeholder:text-[#ccc] shadow-sm" />
+                        </div>
+                        <div>
+                          <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Company (Optional)</label>
+                          <input type="text" placeholder="Acme Corp" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all placeholder:text-[#ccc] shadow-sm" />
+                        </div>
                       </div>
                     </div>
 
-                    <button onClick={goNext} disabled={!firstName} className="w-full md:w-auto md:px-16 h-16 bg-[#9A7436] text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 disabled:opacity-50 hover:bg-[#886630] shadow-lg shadow-[#9A7436]/20 transition-all group">
-                      Continue <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <button onClick={goNext} disabled={!firstName} className="w-full md:w-auto md:px-12 h-12 bg-[#9A7436] text-white rounded-md font-black text-[14px] flex items-center justify-center gap-3 disabled:opacity-50 hover:bg-[#886630] shadow-md shadow-[#9A7436]/20 transition-all group">
+                      Continue <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
 
@@ -496,20 +506,23 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                       <span className="text-[#ddd]">·</span>
                       <p className="text-[10px] font-bold text-[#999] uppercase tracking-widest">Optional</p>
                     </div>
-                    <h2 className="text-4xl font-black text-[#111] mb-4 tracking-tight">Birthday & <span className="text-[#9A7436]">Preferences</span></h2>
-                    <p className="text-[15px] text-[#666] leading-relaxed mb-10 max-w-lg">
-                      Share your birthday to receive a complimentary dessert and special rewards. Gold-tier members unlock a birthday brunch experience.
+                    <h2 className="text-4xl font-black text-[#111] mb-4 tracking-tight">Demographics & <span className="text-[#9A7436]">Address</span></h2>
+                    <p className="text-[15px] text-[#666] leading-relaxed mb-8 max-w-lg">
+                      Share these details to receive personalized offers, physical birthday gifts, and specialized rewards.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                       <div>
                         <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Date of Birth</label>
-                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-white rounded-2xl px-5 py-5 text-[#111] text-lg font-bold focus:ring-2 focus:ring-[#9A7436]/20 outline-none transition-all shadow-sm" />
-                        <p className="text-[11px] text-[#999] mt-2">🎂 Free dessert on your birthday!</p>
+                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all shadow-sm" />
                       </div>
                       <div>
-                        <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Gender (Optional)</label>
-                        <select value={gender} onChange={e => setGender(e.target.value)} className="w-full bg-white rounded-2xl px-5 py-5 text-[#111] text-lg font-bold focus:ring-2 focus:ring-[#9A7436]/20 outline-none transition-all shadow-sm appearance-none cursor-pointer">
+                        <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Age</label>
+                        <input type="number" placeholder="e.g. 28" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all shadow-sm" />
+                      </div>
+                      <div>
+                        <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Gender</label>
+                        <select value={gender} onChange={e => setGender(e.target.value)} className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all shadow-sm appearance-none cursor-pointer">
                           <option value="prefer-not">Prefer not to say</option>
                           <option value="female">Female</option>
                           <option value="male">Male</option>
@@ -518,10 +531,30 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                       </div>
                     </div>
 
+                    <div className="mb-5">
+                      <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Address</label>
+                      <input type="text" placeholder="123 Main St, Apt 4B" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all shadow-sm" />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+                      <div>
+                        <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">City</label>
+                        <input type="text" placeholder="New York" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all shadow-sm" />
+                      </div>
+                      <div>
+                        <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">State</label>
+                        <input type="text" placeholder="NY" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all shadow-sm" />
+                      </div>
+                      <div>
+                        <label className="block text-[12px] font-black uppercase tracking-wider text-[#999] mb-2">Pincode</label>
+                        <input type="text" placeholder="10001" className="w-full bg-white rounded-md border border-[#EAE3D9] px-4 py-3 text-[#111] text-base font-bold focus:ring-2 focus:ring-[#9A7436]/20 focus:border-[#9A7436] outline-none transition-all shadow-sm" />
+                      </div>
+                    </div>
+
                     <div className="flex gap-4">
-                      <button onClick={() => setStep(step - 1)} className="px-8 h-16 bg-white text-[#666] font-bold rounded-2xl hover:bg-[#EAE3D9]/50 transition-colors shadow-sm">← Back</button>
-                      <button onClick={goNext} className="flex-1 md:flex-none md:px-16 h-16 bg-[#9A7436] text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 hover:bg-[#886630] shadow-lg shadow-[#9A7436]/20 transition-all group">
-                        Continue <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <button onClick={() => setStep(step - 1)} className="px-6 h-12 bg-white border border-[#EAE3D9] text-[#666] font-bold rounded-md hover:bg-[#EAE3D9]/50 transition-colors shadow-sm">← Back</button>
+                      <button onClick={goNext} className="flex-1 md:flex-none md:px-12 h-12 bg-[#9A7436] text-white rounded-md font-black text-[14px] flex items-center justify-center gap-3 hover:bg-[#886630] shadow-md shadow-[#9A7436]/20 transition-all group">
+                        Continue <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
                   </div>
@@ -536,282 +569,6 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                       ))}
                     </div>
                     <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&q=90&w=800" alt="Birthday cake" className="w-full h-[200px] rounded-md md:rounded-3xl object-cover shadow-sm" />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ═══════════════ STEP 7: TASTE PROFILE — With Food Imagery ═══════════════ */}
-            {step === 7 && (
-              <div className="max-w-[1400px] mx-auto px-4 md:px-12 py-4 md:py-10">
-                {/* Hero Banner */}
-                <div className="relative w-full h-[200px] md:h-[260px] rounded-md md:rounded-3xl overflow-hidden mb-10 shadow-sm">
-                  <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=90&w=1400" alt="Coffee art" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent flex items-center p-10 md:p-14">
-                    <div>
-                      <p className="text-[10px] font-black text-[#B89454] uppercase tracking-widest mb-2">Step 5 of 6 · Taste Profile</p>
-                      <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2">Your Taste DNA</h2>
-                      <p className="text-[14px] text-white/70 max-w-md">Help our AI sommelier understand your palate for perfect dish pairings.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col lg:flex-row gap-6 lg:gap-16">
-                  <div className="flex-1 space-y-10">
-                    <div>
-                      <h3 className="text-xl font-black text-[#111] mb-2">☕ Signature Beverage</h3>
-                      <p className="text-[13px] text-[#666] mb-5">Select your go-to — we'll have it ready when you arrive.</p>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {[
-                          { name: 'Espresso', img: 'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=200&auto=format&fit=crop&q=80' },
-                          { name: 'Pour Over', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&auto=format&fit=crop&q=80' },
-                          { name: 'Matcha', img: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=200&auto=format&fit=crop&q=80' },
-                          { name: 'Cold Brew', img: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=200&auto=format&fit=crop&q=80' }
-                        ].map(drink => (
-                          <button key={drink.name} onClick={() => setFavoriteDrink(drink.name)} className={`rounded-2xl overflow-hidden transition-all ${favoriteDrink === drink.name ? 'ring-3 ring-[#9A7436] shadow-lg' : 'shadow-sm hover:shadow-md'}`}>
-                            <img src={drink.img} alt={drink.name} className="w-full h-28 object-cover" />
-                            <div className={`p-3 text-center ${favoriteDrink === drink.name ? 'bg-[#9A7436] text-white' : 'bg-white text-[#111]'}`}>
-                              <span className="text-[13px] font-bold">{drink.name}</span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-xl font-black text-[#111] mb-2">⚠️ Dietary & Allergies</h3>
-                      <p className="text-[13px] text-[#666] mb-5">Our kitchen team will flag these to ensure a safe experience.</p>
-                      <div className="flex flex-wrap gap-3">
-                        {['Dairy', 'Nuts', 'Gluten', 'Soy', 'Vegan', 'Vegetarian'].map(allergy => {
-                          const sel = allergies.includes(allergy);
-                          return (
-                            <button key={allergy} onClick={() => toggleAllergy(allergy)} className={`flex items-center gap-2 px-6 py-3.5 rounded-full text-[14px] font-bold transition-all ${sel ? 'bg-[#1C8A54] text-white shadow-sm' : 'bg-white text-[#666] shadow-sm hover:shadow-md'}`}>
-                              {sel && <Check className="w-4 h-4" />} {allergy}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                      <button onClick={() => setStep(step - 1)} className="px-8 h-16 bg-white text-[#666] font-bold rounded-2xl hover:bg-[#EAE3D9]/50 transition-colors shadow-sm">← Back</button>
-                      <button onClick={goNext} className="flex-1 md:flex-none md:px-16 h-16 bg-[#9A7436] text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 hover:bg-[#886630] shadow-lg shadow-[#9A7436]/20 transition-all group">
-                        Continue <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="hidden lg:block lg:w-[380px] shrink-0 space-y-6">
-                    <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-6 shadow-sm">
-                      <Sparkles className="w-6 h-6 text-[#9A7436] mb-3" />
-                      <h4 className="text-sm font-black text-[#111] mb-2">AI-Powered Pairings</h4>
-                      <p className="text-[12px] text-[#666] leading-relaxed">Our engine analyzes your taste profile across 50+ flavor dimensions for perfect food & drink pairings.</p>
-                    </div>
-                    <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-6 shadow-sm">
-                      <ShieldCheck className="w-6 h-6 text-[#1C8A54] mb-3" />
-                      <h4 className="text-sm font-black text-[#111] mb-2">Allergy Safety</h4>
-                      <p className="text-[12px] text-[#666] leading-relaxed">Kitchen staff are automatically alerted. Every dish is cross-checked before preparation.</p>
-                    </div>
-                    <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-6 shadow-sm">
-                      <Heart className="w-6 h-6 text-[#E74C3C] mb-3" />
-                      <h4 className="text-sm font-black text-[#111] mb-2">Evolving Preferences</h4>
-                      <p className="text-[12px] text-[#666] leading-relaxed">Your taste profile evolves with every visit. The more you order, the better our suggestions.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ═══════════════ STEP 8: CURATE EXPERIENCE — Full Menu ═══════════════ */}
-            {step === 8 && (
-              <div className="max-w-[1400px] mx-auto px-4 md:px-12 py-4 md:py-10 space-y-10">
-                {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] font-black text-[#9A7436] uppercase tracking-widest mb-2">Step 6 of 6 · Final Step</p>
-                    <h2 className="text-4xl font-black text-[#111] tracking-tight">Curate Your <span className="text-[#9A7436]">Experience</span></h2>
-                    <p className="text-[15px] text-[#666] mt-2 max-w-lg">Pre-order from our menu, customize add-ons, and set your visit preferences.</p>
-                  </div>
-                  <div className="flex items-center gap-3 bg-[#9A7436]/10 rounded-2xl px-5 py-3">
-                    <Award className="w-7 h-7 text-[#9A7436]" />
-                    <div><p className="text-[14px] font-black text-[#111]">+100 Points</p><p className="text-[11px] text-[#666]">For completing profile</p></div>
-                  </div>
-                </div>
-
-                {/* Party & Pacing */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-8 shadow-sm">
-                    <h3 className="text-lg font-black text-[#111] mb-5 flex items-center gap-2"><User className="w-5 h-5 text-[#9A7436]" /> Party Size</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {[{ id: 'solo', label: 'Just Me', emoji: '👤' }, { id: 'party-2', label: 'Table for 2', emoji: '👫' }, { id: 'party-4', label: '3-4 Guests', emoji: '👨‍👩‍👧' }, { id: 'salon-6', label: 'Group 5+', emoji: '👥' }].map(opt => (
-                        <button key={opt.id} onClick={() => setPartySize(opt.id)} className={`py-3 rounded-2xl text-center transition-all ${partySize === opt.id ? 'bg-[#9A7436] text-white shadow-md' : 'bg-[#F8F6F0] text-[#666] hover:bg-[#EAE3D9]'}`}>
-                          <span className="text-xl block mb-2">{opt.emoji}</span>
-                          <span className="text-[13px] font-bold">{opt.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-8 shadow-sm">
-                    <h3 className="text-lg font-black text-[#111] mb-5 flex items-center gap-2"><Clock className="w-5 h-5 text-[#9A7436]" /> Service Pace</h3>
-                    <div className="flex flex-col gap-4">
-                      {[{ id: 'classic', title: '🕐 Leisurely', desc: 'Multi-course with perfect timing between dishes.' }, { id: 'executive', title: '⚡ Express', desc: 'All courses within 45 minutes.' }].map(opt => (
-                        <button key={opt.id} onClick={() => setPacing(opt.id)} className={`p-3 rounded-2xl text-left transition-all ${pacing === opt.id ? 'bg-[#9A7436] text-white shadow-md' : 'bg-[#F8F6F0] hover:bg-[#EAE3D9]'}`}>
-                          <span className={`text-[15px] font-bold block mb-1 ${pacing === opt.id ? '' : 'text-[#111]'}`}>{opt.title}</span>
-                          <span className={`text-[12px] ${pacing === opt.id ? 'text-white/70' : 'text-[#666]'}`}>{opt.desc}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-4">
-                  <button onClick={() => setStep(9)} className="px-10 h-16 bg-[#9A7436] text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 hover:bg-[#886630] shadow-lg shadow-[#9A7436]/20 transition-all group">
-                    Continue to Menu <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ═══════════════ STEP 9: MENU & ADD-ONS ═══════════════ */}
-            {step === 9 && (
-              <div className="max-w-[1400px] mx-auto px-4 md:px-12 py-4 md:py-10 space-y-10">
-                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] font-black text-[#9A7436] uppercase tracking-widest mb-2">Step 7 of 7 · Dining Choices</p>
-                    <h2 className="text-4xl font-black text-[#111] tracking-tight">Pre-order <span className="text-[#9A7436]">Menu</span></h2>
-                  </div>
-                </div>
-
-                {/* Full Menu */}
-                <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-8 shadow-sm">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                    <div>
-                      <h3 className="text-xl font-black text-[#111] flex items-center gap-2"><Coffee className="w-5 h-5 text-[#9A7436]" /> Pre-order from Menu</h3>
-                      <p className="text-[13px] text-[#666] mt-1">Have your favorites ready at your table — skip the wait.</p>
-                    </div>
-                    {selectedProducts.length > 0 && (
-                      <div className="bg-[#9A7436]/10 rounded-xl px-4 py-2 text-[13px] font-bold text-[#9A7436]">
-                        {selectedProducts.length} item{selectedProducts.length > 1 ? 's' : ''} selected
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Category Tabs */}
-                  <div className="flex gap-2 mb-6 overflow-x-auto pb-2 hide-scrollbar">
-                    {menuCategories.map(cat => (
-                      <button key={cat} onClick={() => setActiveMenuCategory(cat)} className={`px-5 py-2.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-all ${activeMenuCategory === cat ? 'bg-[#9A7436] text-white shadow-sm' : 'bg-[#F8F6F0] text-[#666] hover:bg-[#EAE3D9]'}`}>
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Menu Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {filteredItems.map(item => {
-                      const sel = selectedProducts.includes(item.id);
-                      return (
-                        <button key={item.id} onClick={() => { toggleProduct(item.id); addItem(item); }} className={`rounded-2xl overflow-hidden text-left transition-all group ${sel ? 'ring-2 ring-[#9A7436] shadow-lg' : 'shadow-sm hover:shadow-md'}`}>
-                          <div className="relative h-44 overflow-hidden">
-                            <img src={item.image || ''} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                            {sel && (
-                              <div className="absolute top-3 right-3 w-8 h-8 bg-[#9A7436] rounded-full flex items-center justify-center shadow-md">
-                                <Check className="w-4 h-4 text-white" />
-                              </div>
-                            )}
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                              <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">{item.category}</span>
-                            </div>
-                          </div>
-                          <div className={`p-4 ${sel ? 'bg-[#9A7436]/5' : 'bg-white'}`}>
-                            <h4 className="text-[14px] font-bold text-[#111] mb-1 line-clamp-1">{item.title}</h4>
-                            <p className="text-[11px] text-[#999] mb-2 line-clamp-1">{item.cuppingNotes}</p>
-                            <div className="flex items-center justify-between">
-                              <span className="text-[16px] font-black text-[#9A7436]">${item.price.toFixed(2)}</span>
-                              <span className="text-[10px] font-bold text-[#1C8A54] bg-[#1C8A54]/10 px-2 py-1 rounded-full">+{item.stampsAwarded} pts</span>
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Add-ons & Notes */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-8 shadow-sm">
-                    <h3 className="text-lg font-black text-[#111] mb-5 flex items-center gap-2"><Sparkles className="w-5 h-5 text-[#9A7436]" /> Customize Add-ons</h3>
-                    <div className="space-y-3">
-                      {[
-                        { name: 'Extra Shot', emoji: '☕', price: '+$0.50' },
-                        { name: 'Oat Milk', emoji: '🥛', price: '+$0.75' },
-                        { name: 'Gift Wrap', emoji: '🎁', price: '+$2.00' },
-                        { name: 'Ice', emoji: '🧊', price: 'Free' },
-                        { name: 'Whipped Cream', emoji: '🍦', price: '+$0.50' },
-                        { name: 'Honey Drizzle', emoji: '🍯', price: '+$0.30' }
-                      ].map(addon => {
-                        const sel = selectedAddOns.includes(addon.name);
-                        return (
-                          <button key={addon.name} onClick={() => toggleAddOn(addon.name)} className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all text-left ${sel ? 'bg-[#1C8A54] text-white shadow-sm' : 'bg-[#F8F6F0] hover:bg-[#EAE3D9]'}`}>
-                            <span className="text-2xl">{addon.emoji}</span>
-                            <div className="flex-1">
-                              <span className={`text-[14px] font-bold block ${sel ? '' : 'text-[#111]'}`}>{addon.name}</span>
-                              <span className={`text-[11px] ${sel ? 'text-white/70' : 'text-[#999]'}`}>{addon.price}</span>
-                            </div>
-                            {sel ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5 text-[#999]" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="space-y-8">
-                    <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-8 shadow-sm">
-                      <h3 className="text-lg font-black text-[#111] mb-5 flex items-center gap-2"><Heart className="w-5 h-5 text-[#9A7436]" /> Special Requests</h3>
-                      <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g. Window seat, celebrating anniversary, high chair needed..." className="w-full bg-[#F8F6F0] rounded-2xl p-5 outline-none text-[14px] text-[#111] placeholder:text-[#999] resize-none h-36 focus:ring-2 focus:ring-[#9A7436]/20 transition-all" />
-                      <p className="text-[11px] text-[#999] mt-3">Our concierge team will do their best to accommodate.</p>
-                    </div>
-
-                    {/* Order Summary */}
-                    {(selectedProducts.length > 0 || selectedAddOns.length > 0) && (
-                      <div className="bg-[#9A7436]/5 rounded-md md:rounded-3xl p-4 md:p-8">
-                        <h3 className="text-lg font-black text-[#111] mb-4">Pre-order Summary</h3>
-                        {selectedProducts.map(id => {
-                          const item = MOCK_CATALOG_ITEMS.find(i => i.id === id);
-                          if (!item) return null;
-                          return (
-                            <div key={id} className="flex items-center gap-3 py-2">
-                              <img src={item.image || ''} alt={item.title} className="w-10 h-10 rounded-lg object-cover" />
-                              <span className="text-[13px] font-bold text-[#111] flex-1 truncate">{item.title}</span>
-                              <span className="text-[13px] font-black text-[#9A7436]">${item.price.toFixed(2)}</span>
-                            </div>
-                          );
-                        })}
-                        {selectedAddOns.length > 0 && (
-                          <div className="mt-3 pt-3 border-t border-[#EAE3D9]">
-                            <p className="text-[11px] font-black text-[#999] uppercase tracking-wider mb-2">Add-ons</p>
-                            <p className="text-[13px] text-[#666]">{selectedAddOns.join(', ')}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Final CTA */}
-                <div className="bg-white rounded-md md:rounded-3xl p-4 md:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-[#1C8A54]/10 flex items-center justify-center"><Check className="w-7 h-7 text-[#1C8A54]" /></div>
-                    <div>
-                      <p className="text-[16px] font-black text-[#111]">Your Concierge Profile is Ready</p>
-                      <p className="text-[13px] text-[#666]">Enter the exclusive member area and start your experience.</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4 w-full md:w-auto">
-                    <button onClick={() => setStep(step - 1)} className="px-8 h-16 bg-[#F8F6F0] text-[#666] font-bold rounded-2xl hover:bg-[#EAE3D9]/50 transition-colors shadow-sm shrink-0">← Back</button>
-                    <button onClick={goNext} className="flex-1 md:flex-none md:px-16 h-16 bg-[#9A7436] text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 hover:bg-[#886630] shadow-lg shadow-[#9A7436]/20 transition-all group">
-                      Enter Concierge <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </button>
                   </div>
                 </div>
               </div>

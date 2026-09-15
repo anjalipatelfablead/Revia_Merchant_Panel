@@ -33,9 +33,9 @@ interface Props {
 import { MainTab } from './types';
 
 const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
-  const { 
-    isAuthenticated, setIsAuthenticated, 
-    mobile, setMobile, 
+  const {
+    isAuthenticated, setIsAuthenticated,
+    mobile, setMobile,
     isExistingMember,
     cartItems, addItem, updateQuantity, subtotal, tax, total,
     selectedOffer, setSelectedOffer,
@@ -44,7 +44,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
   } = useCustomer();
 
   const subRoute = currentRoute.split('/').filter(Boolean)[1] || 'identify';
-  
+
   const navigateTo = (path: string) => {
     onNavigate('/customer/' + path);
   };
@@ -60,7 +60,12 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
   }, [isPostAuthRoute, isAuthenticated, setIsAuthenticated]);
 
   if (!isPostAuthRoute) {
+
     return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />;
+
+    // return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('menu'); }} />;
+
+    // return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('menu'); }} />;
   }
 
   const activeTab = subRoute as MainTab;
@@ -89,7 +94,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
     <CustomerLayout
       tab={activeTab}
       setTab={(t) => {
-        setSelectedOffer(null); 
+        setSelectedOffer(null);
         setSelectedReward(null);
         navigateTo(t);
       }}
@@ -110,7 +115,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
       ) : activeTab === 'scan' ? (
         <CustomerScanScreen />
       ) : activeTab === 'menu' ? (
-        <CustomerMenuScreen 
+        <CustomerMenuScreen
           setTab={navigateTo as any}
           cartItems={cartItems}
           addItem={addItem}
@@ -118,7 +123,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
           onProductClick={(id) => { setSelectedProduct(id); navigateTo('product'); }}
         />
       ) : activeTab === 'product' && selectedProduct ? (
-        <ProductDetailScreen 
+        <ProductDetailScreen
           productId={selectedProduct}
           onBack={() => { setSelectedProduct(null); navigateTo('menu'); }}
           addItem={addItem}
@@ -136,12 +141,12 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
       ) : activeTab === 'profile' ? (
         <ProfileScreen onPrivacy={() => navigateTo('privacy')} onNavigateApp={onNavigate} />
       ) : activeTab === 'checkout' ? (
-        <CheckoutScreen 
-          cartItems={cartItems} 
-          updateQuantity={updateQuantity} 
-          subtotal={subtotal} 
-          tax={tax} 
-          total={total} 
+        <CheckoutScreen
+          cartItems={cartItems}
+          updateQuantity={updateQuantity}
+          subtotal={subtotal}
+          tax={tax}
+          total={total}
           onSuccess={() => {
             cartItems.forEach(item => updateQuantity(item.id, -item.quantity));
             navigateTo('orders');
