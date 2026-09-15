@@ -51,353 +51,464 @@ import {
 
 interface CampaignRulesStepProps {
   campaignType: string;
+  currency: string;
   onContinue: (config: any) => void;
   onBack: () => void;
 }
 
-const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, onContinue, onBack }) => {
-  const [visitCount, setVisitCount] = useState(5);
-  const [visitMinBill, setVisitMinBill] = useState(1000);
+type RuleCondition = {
+  id: string;
+  type: 'condition';
+  field: string;
+  operator: string;
+  value: any;
+};
 
-  const [billingPeriod, setBillingPeriod] = useState<'One-Time' | 'Monthly' | 'Quarterly'>('One-Time');
-  const [billingTarget, setBillingTarget] = useState(10000);
+type RuleGroup = {
+  id: string;
+  type: 'group';
+  matchType: 'ALL' | 'ANY';
+  rules: RuleCondition[];
+};
 
-  const [stampItem, setStampItem] = useState('');
-  const [stampCount, setStampCount] = useState(10);
+type RuleNode = RuleCondition | RuleGroup;
 
-  const [happyStart, setHappyStart] = useState('14:00');
-  const [happyEnd, setHappyEnd] = useState('16:00');
-  const [happyDays, setHappyDays] = useState(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);
-  const [happyExcludeHolidays, setHappyExcludeHolidays] = useState(true);
-  const [happyItem, setHappyItem] = useState('');
-  const [happyQty, setHappyQty] = useState(2);
+const RULE_FIELDS = [
+  { value: 'Customer Lifetime', label: 'Customer Lifetime', icon: Wallet },
+  { value: 'Last Visit Date', label: 'Last Visit Date', icon: Calendar },
+  { value: 'Current Tier', label: 'Current Tier', icon: Trophy },
+  { value: 'Total Stamp Cyc', label: 'Total Stamp Cyc', icon: FileText },
+];
 
-  const handleContinue = () => {
-    let config = {};
-    if (campaignType === 'existing_visit') config = { visitCount, visitMinBill };
-    else if (campaignType === 'existing_billing') config = { billingPeriod, billingTarget };
-    else if (campaignType === 'existing_stamp') config = { stampItem, stampCount };
-    else if (campaignType === 'happy_hours') config = { happyStart, happyEnd, happyDays, happyExcludeHolidays, happyItem, happyQty };
-    onContinue(config);
-  };
+const RULE_OPERATORS = [
+  { value: 'is greater than or equal to', label: 'is greater than or equal to' },
+  { value: 'is within the last', label: 'is within the last' },
+  { value: 'is one of', label: 'is one of' },
+  { value: 'is greater than', label: 'is greater than' },
+];
 
-  const toggleHappyDay = (day: string) => {
-    setHappyDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
-  };
-
-  const formatTime = (time: string) => {
-    const [h, m] = time.split(':').map(Number);
-    const period = h >= 12 ? 'PM' : 'AM';
-    const hour = h % 12 || 12;
-    return `${hour}:${m.toString().padStart(2, '0')} ${period}`;
-  };
-
-  let isValid = false;
-  if (campaignType === 'new_customer') isValid = true;
-  if (campaignType === 'existing_visit') isValid = visitCount > 0 && visitMinBill >= 0;
-  if (campaignType === 'existing_billing') isValid = billingTarget > 0;
-  if (campaignType === 'existing_stamp') isValid = stampItem.trim().length > 0 && stampCount > 0;
-  if (campaignType === 'happy_hours') isValid = happyStart < happyEnd && happyDays.length > 0 && happyItem.trim().length > 0 && happyQty > 0;
-
-  const renderContent = () => {
-    switch (campaignType) {
-      case 'new_customer':
-        return (
-          <div className="bg-[#FFFBF0] border border-[#F3E5C8] rounded-2xl p-6 shadow-sm flex gap-4">
-            <div className="w-10 h-10 shrink-0 bg-[#D4A753]/20 rounded-xl flex items-center justify-center mt-0.5">
-              <Sparkles className="w-5 h-5 text-[#9E782F]" />
-            </div>
-            <div>
-              <h4 className="text-[15px] font-bold text-[#1A1615] mb-2">Auto-Trigger on First Transaction</h4>
-              <p className="text-[13px] text-[#6E6A66] leading-relaxed">
-                This campaign automatically triggers on a customer's first qualifying transaction
-                with your business. <strong className="text-[#1A1615]">No conditions needed.</strong> Once redeemed,
-                this reward locks — it cannot be issued again to the same customer.
-              </p>
-            </div>
-          </div>
-        );
-      case 'existing_visit':
-        return (
-          <div className="space-y-6">
-            <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
-              <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider flex items-center gap-2">
-                <Activity className="w-4 h-4 text-[#D4A753]" /> Visit Type Configuration
-              </h4>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Number of Qualifying Visits</label>
-                <input
-                  type="number"
-                  value={visitCount}
-                  onChange={e => setVisitCount(Number(e.target.value))}
-                  className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-                />
-              </div>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Minimum Billing Per Visit</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">₹</span>
-                  <input
-                    type="number"
-                    value={visitMinBill}
-                    onChange={e => setVisitMinBill(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-                  />
-                </div>
-                <p className="mt-1.5 text-[11px] text-[#9E9A93] font-medium">A visit only counts toward the target if its bill meets or exceeds this minimum.</p>
-              </div>
-            </div>
-            <div className="bg-[#F5F4F2] border border-[#E2DED9] rounded-xl px-5 py-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] block mb-1">LIVE PREVIEW</span>
-              <p className="text-[14px] font-semibold text-[#3D3730] leading-relaxed">
-                Visit the business <strong className="text-[#9E782F]">{visitCount}</strong> time{visitCount !== 1 ? 's' : ''} with a minimum bill of <strong className="text-[#9E782F]">₹{visitMinBill.toLocaleString('en-IN')}</strong> on each visit to receive a reward.
-              </p>
-            </div>
-          </div>
-        );
-      case 'existing_billing':
-        return (
-          <div className="space-y-6">
-            <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
-              <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-[#D4A753]" /> Billing Type Configuration
-              </h4>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Billing Period</label>
-                <div className="inline-flex bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-1 gap-1">
-                  {(['One-Time', 'Monthly', 'Quarterly'] as const).map(p => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => { setBillingPeriod(p); setBillingTarget(p === 'One-Time' ? 10000 : p === 'Monthly' ? 100000 : 1000000); }}
-                      className={`px-5 py-2 rounded-lg text-[13px] font-bold transition-all cursor-pointer ${billingPeriod === p
-                        ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-sm'
-                        : 'text-[#6E6A66] hover:text-[#1A1615]'
-                        }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Target Cumulative Amount</label>
-                <div className="relative max-w-[260px]">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">₹</span>
-                  <input
-                    type="number"
-                    value={billingTarget}
-                    min={0}
-                    placeholder={billingPeriod === 'One-Time' ? '10000' : billingPeriod === 'Monthly' ? '100000' : '1000000'}
-                    onChange={e => setBillingTarget(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-                  />
-                </div>
-                <p className="mt-1.5 text-[11px] text-[#9E9A93] font-medium">The system totals all qualifying transactions within the selected period and compares against this target.</p>
-              </div>
-            </div>
-            <div className="bg-[#F5F4F2] border border-[#E2DED9] rounded-xl px-5 py-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] block mb-1">LIVE PREVIEW</span>
-              <p className="text-[14px] font-semibold text-[#3D3730] leading-relaxed">
-                Spend a total of <strong className="text-[#9E782F]">₹{billingTarget.toLocaleString('en-IN')}</strong> {billingPeriod === 'One-Time' ? 'during the campaign period' : billingPeriod === 'Monthly' ? 'in a calendar month' : 'in a calendar quarter'} to receive a reward.
-              </p>
-            </div>
-          </div>
-        );
-      case 'existing_stamp':
-        return (
-          <div className="space-y-6">
-            <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
-              <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#D4A753]" /> Stamp Type Configuration
-              </h4>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Qualifying Item</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={stampItem}
-                    onChange={e => setStampItem(e.target.value)}
-                    placeholder="e.g. Coffee"
-                    className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] placeholder:text-[#B0ABA5] focus:outline-none focus:border-[#D4A753] transition-colors"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Target Stamp Count</label>
-                <input
-                  type="number"
-                  value={stampCount}
-                  onChange={e => setStampCount(Number(e.target.value))}
-                  className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-                />
-              </div>
-              <div className="flex items-start gap-3 bg-[#FFFBF0] border border-[#F3E5C8] rounded-xl p-4">
-                <AlertCircle className="w-5 h-5 text-[#D4A753] shrink-0 mt-0.5" />
-                <p className="text-[12px] font-semibold text-[#7A5C1E] leading-relaxed">
-                  Only purchases of the selected item count toward this campaign. All other items are ignored, even in the same transaction.
-                </p>
-              </div>
-            </div>
-            <div className="bg-[#F5F4F2] border border-[#E2DED9] rounded-xl px-5 py-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] block mb-1">LIVE PREVIEW</span>
-              <p className="text-[14px] font-semibold text-[#3D3730] leading-relaxed">
-                Purchase <strong className="text-[#9E782F]">{stampItem || '(item)'}</strong> <strong className="text-[#9E782F]">{stampCount}</strong> time{stampCount !== 1 ? 's' : ''} to receive the {stampCount + 1}{stampCount === 10 ? 'th' : stampCount % 10 === 1 && stampCount !== 11 ? 'st' : stampCount % 10 === 2 && stampCount !== 12 ? 'nd' : stampCount % 10 === 3 && stampCount !== 13 ? 'rd' : 'th'} {stampItem || '(item)'} free.
-              </p>
-            </div>
-          </div>
-        );
-      case 'happy_hours':
-        return (
-          <div className="space-y-6">
-            <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm space-y-5">
-              <h4 className="text-[13px] font-bold text-[#1A1615] uppercase tracking-wider flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#D4A753]" /> Happy Hours Configuration
-              </h4>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Time Range</label>
-                <div className="grid grid-cols-2 gap-4 max-w-sm">
-                  <div>
-                    <span className="text-[10px] font-bold text-[#9E9A93] block mb-1">Start Time</span>
-                    <input
-                      type="time"
-                      value={happyStart}
-                      onChange={e => setHappyStart(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-[#9E9A93] block mb-1">End Time</span>
-                    <input
-                      type="time"
-                      value={happyEnd}
-                      onChange={e => setHappyEnd(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Applicable Days</label>
-                <div className="flex flex-wrap gap-2">
-                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                    <button
-                      key={day}
-                      type="button"
-                      onClick={() => toggleHappyDay(day)}
-                      className={`w-12 h-10 rounded-xl text-[12px] font-bold border-2 transition-all cursor-pointer ${happyDays.includes(day)
-                        ? 'bg-[#1A1615] border-[#1A1615] text-white'
-                        : 'bg-white border-[#EFECE6] text-[#6E6A66] hover:border-[#D4A753]/60'
-                        }`}
-                    >
-                      {day}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center justify-between py-3 border-t border-[#EFECE6]">
-                <div>
-                  <div className="text-[13px] font-bold text-[#1A1615]">Exclude Holidays</div>
-                  <div className="text-[11px] text-[#9E9A93] font-medium mt-0.5">Campaign will not apply on configured holiday dates</div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setHappyExcludeHolidays(v => !v)}
-                  className={`relative w-11 h-6 rounded-full border-2 transition-all cursor-pointer ${happyExcludeHolidays ? 'bg-[#D4A753] border-[#9E782F]' : 'bg-[#EFECE6] border-[#D1CDC7]'
-                    }`}
-                >
-                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${happyExcludeHolidays ? 'left-[22px]' : 'left-0.5'
-                    }`} />
-                </button>
-              </div>
-              <div>
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Qualifying Item & Quantity</label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    value={happyItem}
-                    onChange={e => setHappyItem(e.target.value)}
-                    placeholder="e.g. Coffee"
-                    className="flex-1 px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-semibold text-[#1A1615] placeholder:text-[#B0ABA5] focus:outline-none focus:border-[#D4A753] transition-colors"
-                  />
-                  <span className="text-[#9E9A93] font-bold text-sm">×</span>
-                  <input
-                    type="number"
-                    value={happyQty}
-                    onChange={e => setHappyQty(Number(e.target.value))}
-                    className="w-20 px-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-center text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="bg-[#F5F4F2] border border-[#E2DED9] rounded-xl px-5 py-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] block mb-1">LIVE PREVIEW</span>
-              <p className="text-[14px] font-semibold text-[#3D3730] leading-relaxed">
-                Between <strong className="text-[#9E782F]">{formatTime(happyStart)}</strong> and <strong className="text-[#9E782F]">{formatTime(happyEnd)}</strong> on <strong className="text-[#9E782F]">{happyDays.length > 0 ? happyDays.join(', ') : '(no days selected)'}</strong>, buy <strong className="text-[#9E782F]">{happyQty}</strong> <strong className="text-[#9E782F]">{happyItem || '(item)'}(s)</strong> to receive the configured reward.
-              </p>
-            </div>
-          </div>
-        );
-      default:
-        return (
-          <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm flex items-center justify-center py-12">
-            <p className="text-[14px] font-medium text-[#6E6A66]">Please select a valid campaign type in Step 1.</p>
-          </div>
-        );
-    }
-  };
-
-  const typeLabels: Record<string, string> = {
-    new_customer: 'New Customer',
-    existing_visit: 'Visit Type',
-    existing_billing: 'Billing Type',
-    existing_stamp: 'Stamp Type',
-    happy_hours: 'Happy Hours',
-  };
+const RuleDropdown = ({ value, options, onChange, placeholder, minWidth = '160px', className = '' }: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const selected = options.find((o: any) => o.value === value);
+  const Icon = selected?.icon;
 
   return (
-    <div className="max-w-[700px] mx-auto w-full">
-      <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-sm mb-6">
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 bg-[#FDF8EB] rounded-xl flex items-center justify-center border border-[#F3E5C8]">
-            <SlidersHorizontal className="w-5 h-5 text-[#D4A753]" />
+    <div className={`relative shrink-0 ${className.includes('w-full') ? 'w-full' : ''} ${className.includes('flex-1') ? 'flex-1' : ''}`} style={{ minWidth: className.includes('w-full') || className.includes('flex-1') ? 'auto' : minWidth }}>
+      <div 
+        onClick={() => setIsOpen(!isOpen)} 
+        className={`flex items-center gap-2 px-3 py-2 border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] cursor-pointer ${className || 'bg-[#FAF8F5]'}`}
+      >
+        {Icon && <Icon className="w-4 h-4 text-[#D4A753]" />} 
+        {selected ? selected.label : placeholder}
+        <ChevronDown className="w-4 h-4 text-[#9E9A93] ml-auto" />
+      </div>
+      
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
+          <div className="absolute top-full left-0 mt-1 w-[200px] max-h-60 overflow-y-auto bg-white border border-[#EFECE6] rounded-lg shadow-lg z-50 py-1">
+            {options.map((opt: any) => (
+              <div 
+                key={opt.value} 
+                onClick={() => { onChange(opt.value); setIsOpen(false); }}
+                className="flex items-center gap-2 px-3 py-2 text-[13px] font-medium text-[#1A1615] hover:bg-[#FAF8F5] cursor-pointer"
+              >
+                {opt.icon && <opt.icon className="w-4 h-4 text-[#D4A753]" />}
+                {opt.label}
+              </div>
+            ))}
           </div>
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">CONFIG 3/5</span>
-            <h3 className="text-[20px] font-bold text-[#1A1615] leading-tight">Conditions & Rules</h3>
-          </div>
-          {campaignType && (
-            <span className="ml-auto px-2.5 py-1 bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F] text-[10px] font-bold rounded uppercase tracking-wider">
-              {typeLabels[campaignType] || 'Campaign'}
-            </span>
-          )}
-        </div>
-        <p className="text-[13px] text-[#6E6A66] mt-2 font-medium">
-          Define exactly what a customer must do to qualify for this campaign's reward.
-        </p>
+        </>
+      )}
+    </div>
+  );
+};
+
+const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, currency, onContinue, onBack }) => {
+  const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
+  const [matchType, setMatchType] = useState<'ALL' | 'ANY'>('ALL');
+  
+  const [rules, setRules] = useState<RuleNode[]>([
+    {
+      id: 'r1', type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '$ 250.00'
+    },
+    {
+      id: 'r2', type: 'condition', field: 'Last Visit Date', operator: 'is within the last', value: '14 days'
+    },
+    {
+      id: 'g1', type: 'group', matchType: 'ANY', rules: [
+        { id: 'sr1', type: 'condition', field: 'Current Tier', operator: 'is one of', value: 'Obsidian VIP, Gold Reserve' },
+        { id: 'sr2', type: 'condition', field: 'Total Stamp Cyc', operator: 'is greater than', value: '' }
+      ]
+    }
+  ]);
+
+  const addRule = () => {
+    setRules([...rules, { id: Date.now().toString(), type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }]);
+  };
+
+  const addGroup = () => {
+    setRules([...rules, { id: Date.now().toString(), type: 'group', matchType: 'ANY', rules: [
+      { id: Date.now().toString() + 'sub', type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }
+    ] }]);
+  };
+
+  const addSubRule = (groupId: string) => {
+    setRules(rules.map(r => {
+      if (r.id === groupId && r.type === 'group') {
+        return { ...r, rules: [...r.rules, { id: Date.now().toString(), type: 'condition', field: 'Customer Lifetime', operator: 'is greater than or equal to', value: '' }] };
+      }
+      return r;
+    }));
+  };
+
+  const updateRule = (ruleId: string, field: string, value: any, groupId?: string) => {
+    setRules(rules.map(r => {
+      if (groupId && r.id === groupId && r.type === 'group') {
+        return { ...r, rules: r.rules.map(sr => sr.id === ruleId ? { ...sr, [field]: value } : sr) };
+      }
+      if (!groupId && r.id === ruleId && r.type === 'condition') {
+        return { ...r, [field]: value };
+      }
+      return r;
+    }));
+  };
+
+  const removeRule = (ruleId: string, groupId?: string) => {
+    if (groupId) {
+      setRules(rules.map(r => {
+        if (r.id === groupId && r.type === 'group') {
+          return { ...r, rules: r.rules.filter(sr => sr.id !== ruleId) };
+        }
+        return r;
+      }));
+    } else {
+      setRules(rules.filter(r => r.id !== ruleId));
+    }
+  };
+  
+  const handleContinue = () => {
+    onContinue({});
+  };
+
+  const renderCondition = (rule: RuleCondition, groupId?: string, idx?: number) => (
+    <div key={rule.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] sm:bg-white border border-[#EFECE6] rounded-xl p-3 sm:p-2 shadow-sm group hover:border-[#D1CDC7] transition-colors">
+      
+      {/* Mobile Header (hidden on desktop) */}
+      <div className="flex items-center justify-between sm:hidden mb-1">
+        <span className="text-[10px] font-bold text-[#9E782F] tracking-widest uppercase">
+          {groupId ? `Criteria ${String.fromCharCode(65 + (idx || 0))}` : `Metric Rule 0${(idx || 0) + 1}`}
+        </span>
+        <button onClick={() => removeRule(rule.id, groupId)} className="p-1 text-[#9E9A93] hover:text-[#1A1615] transition-colors">
+          <X className="w-4 h-4" />
+        </button>
       </div>
 
-      {renderContent()}
+      <div className="hidden sm:block px-1 text-[#D1CDC7] cursor-grab"><GripVertical className="w-4 h-4" /></div>
+      
+      <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-2">
+        <RuleDropdown 
+          value={rule.field} 
+          options={RULE_FIELDS} 
+          onChange={(v: any) => updateRule(rule.id, 'field', v, groupId)} 
+          placeholder="Select Field"
+          minWidth="180px"
+          className="w-full sm:w-auto bg-white sm:bg-[#FAF8F5]"
+        />
+        
+        <div className="flex gap-2 w-full sm:w-auto flex-1">
+          <RuleDropdown 
+            value={rule.operator} 
+            options={RULE_OPERATORS} 
+            onChange={(v: any) => updateRule(rule.id, 'operator', v, groupId)} 
+            placeholder="Select Operator"
+            minWidth="120px"
+            className="flex-1 sm:w-auto sm:flex-none bg-[#EFECE6]/40 sm:bg-[#FAF8F5]"
+          />
 
-      <div className="flex items-center gap-3 pt-6 mt-4">
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#EFECE6] text-[#1A1615] text-sm font-bold rounded-full hover:border-[#D4A753]/60 hover:bg-[#FAF8F5] transition-all cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back
-        </button>
-        <button
-          type="button"
-          disabled={!isValid}
-          onClick={() => isValid && handleContinue()}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold transition-all ${isValid
-            ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
-            : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
-            }`}
-        >
-          Continue to Reward Definition <ArrowRight className="w-4 h-4" />
-        </button>
+          <div className="flex items-center gap-2 px-3 py-2 bg-white sm:bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] w-[100px] sm:w-auto sm:flex-1">
+            <input 
+              type="text" 
+              value={rule.value} 
+              onChange={e => updateRule(rule.id, 'value', e.target.value, groupId)}
+              className="w-full bg-transparent focus:outline-none placeholder:text-[#9E9A93]"
+              placeholder="Value..."
+            />
+          </div>
+        </div>
+      </div>
+      
+      <button onClick={() => removeRule(rule.id, groupId)} className="hidden sm:block p-2 text-[#9E9A93] hover:text-[#1A1615] transition-colors rounded-lg hover:bg-[#FAF8F5]">
+        <X className="w-4 h-4" />
+      </button>
+    </div>
+  );
+  
+  return (
+    <div className="max-w-[1024px] mx-auto w-full flex flex-col lg:flex-row gap-6 items-start">
+      <div className="flex-1 w-full space-y-6 max-w-[700px]">
+      
+      {/* Trigger & Qualification Rules */}
+      <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6]">
+                <Network className="w-5 h-5 text-[#D4A753]" />
+              </div>
+              <h3 className="text-[18px] font-bold text-[#1A1615] leading-tight">Trigger & Qualification<br/>Rules</h3>
+            </div>
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[9px] uppercase font-bold tracking-widest text-[#6E6A66] flex items-center gap-1"><Info className="w-3.5 h-3.5" /> EVALUATION<br/>ENGINE:</span>
+              <span className="px-3 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg shadow-sm">Real-time</span>
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-2 mb-6">
+            <span className="text-[12px] font-bold text-[#1A1615] ml-2 hidden sm:block">Match</span>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <span className="text-[10px] uppercase font-bold text-[#6E6A66] sm:hidden flex-1 pl-1">Logic<br/>Conjunction:</span>
+              <div className="flex items-center p-1 bg-white border border-[#EFECE6] rounded-lg shadow-sm flex-1 sm:flex-none">
+                <button 
+                  onClick={() => setMatchType('ALL')}
+                  className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[11px] font-bold transition-colors ${matchType === 'ALL' ? 'bg-[#1A1615] sm:bg-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#FAF8F5]'}`}
+                >Match ALL [AND]</button>
+                <button 
+                  onClick={() => setMatchType('ANY')}
+                  className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[11px] font-bold transition-colors ${matchType === 'ANY' ? 'bg-[#1A1615] sm:bg-[#9E782F] text-white shadow-sm' : 'text-[#6E6A66] hover:bg-[#FAF8F5]'}`}
+                >ANY [OR]</button>
+              </div>
+            </div>
+            <span className="text-[12px] text-[#6E6A66] ml-2 font-medium hidden sm:block">of the following condition criteria:</span>
+          </div>
+
+          <div className="space-y-3 relative">
+            {rules.map((rule, idx) => {
+              if (rule.type === 'condition') {
+                return (
+                  <React.Fragment key={rule.id}>
+                    {renderCondition(rule, undefined, idx)}
+                    {idx < rules.length - 1 && <div className="hidden sm:block absolute left-6 w-0.5 bg-[#EFECE6] z-0" style={{ top: `${(idx * 60) + 30}px`, height: '30px' }}></div>}
+                  </React.Fragment>
+                );
+              } else {
+                return (
+                  <div key={rule.id} className="relative sm:pl-8 mt-4 sm:mt-0">
+                    <div className="hidden sm:block absolute left-6 top-6 w-2 h-0.5 bg-[#EFECE6]"></div>
+                    
+                    <div className="bg-[#FAF8F5] border-2 border-[#EFECE6] sm:border-l-[#D4A753] rounded-xl p-4 shadow-sm">
+                      <div className="flex flex-row items-center justify-between mb-4 gap-2">
+                        <div className="flex items-center gap-2 text-[11px] font-medium text-[#1A1615]">
+                          <span className="px-2 py-0.5 bg-[#D4A753] text-white font-bold rounded uppercase tracking-wider shrink-0">OR GROUP</span>
+                          <span className="hidden sm:inline">Customer satisfies AT LEAST ONE criteria below:</span>
+                          <span className="sm:hidden">Satisfies AT LEAST ONE:</span>
+                        </div>
+                        <button onClick={() => removeRule(rule.id)} className="flex items-center gap-1.5 text-[11px] font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors shrink-0">
+                          <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Remove Group</span>
+                        </button>
+                      </div>
+
+                      <div className="space-y-3 relative">
+                        {rule.rules.map((subRule, subIdx) => renderCondition(subRule, rule.id, subIdx))}
+                      </div>
+
+                      <button onClick={() => addSubRule(rule.id)} className="mt-4 flex items-center gap-1.5 text-[12px] font-bold text-[#D4A753] hover:text-[#9E782F] transition-colors">
+                        <Plus className="w-4 h-4" /> Add condition inside this OR block
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+            })}
+          </div>
+        </div>
+
+        <div className="bg-[#FAF8F5] sm:bg-white sm:border-t sm:border-[#EFECE6] p-0 sm:p-4 mt-6 sm:mt-0 flex flex-row items-center gap-2 sm:gap-3">
+          <button onClick={addRule} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2.5 sm:py-2 bg-[#EFECE6]/50 sm:bg-white sm:border sm:border-[#D1CDC7] text-[#1A1615] text-[11px] sm:text-[12px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+            <Plus className="w-3.5 h-3.5 text-[#9E782F] sm:text-[#D4A753]" /> <span className="hidden sm:inline">Add Condition</span> Rule
+          </button>
+          <button onClick={addGroup} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2.5 sm:py-2 bg-[#EFECE6]/50 sm:bg-white sm:border sm:border-[#D1CDC7] text-[#1A1615] text-[11px] sm:text-[12px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+            <Network className="w-3.5 h-3.5 text-[#9E782F] sm:text-[#D4A753]" /> Add Nested <span className="hidden sm:inline">Condition</span> Group
+          </button>
+        </div>
+      </div>
+
+      {/* Delivery Timing & Branch Eligibility */}
+      <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm p-6 space-y-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 bg-[#FAF8F5] rounded-xl flex items-center justify-center border border-[#EFECE6] shrink-0">
+            <Store className="w-5 h-5 text-[#D4A753]" />
+          </div>
+          <h3 className="text-[18px] font-bold text-[#1A1615] leading-tight">Delivery Timing & Branch Eligibility</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-2">TRIGGER EVENT</label>
+            <div className="flex items-center gap-3 px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl cursor-pointer">
+              <Zap className="w-5 h-5 text-[#9E782F] shrink-0" />
+              <div className="flex-1 text-[13px] font-bold text-[#1A1615] truncate">On QR Stand Scan at Count</div>
+              <ChevronDown className="w-4 h-4 text-[#9E9A93] shrink-0" />
+            </div>
+            <p className="mt-2 text-[11px] text-[#6E6A66] leading-relaxed pr-4">Triggers automatically when qualified guest scans NFC/QR point of service.</p>
+          </div>
+          
+          <div>
+            <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-2">CAMPAIGN RUNTIME WINDOW</label>
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl cursor-pointer">
+              <div className="flex items-center gap-3">
+                <Calendar className="w-5 h-5 text-[#9E782F] shrink-0" />
+                <div className="text-[12px] sm:text-[13px] font-bold text-[#1A1615]">Nov 1, 2024 — Nov 30, 2024</div>
+              </div>
+              <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold uppercase tracking-widest rounded shadow-sm">30 Days</span>
+            </div>
+            <p className="mt-2 text-[11px] text-[#6E6A66] leading-relaxed">Configured in merchant home timezone (PST - Pacific Standard).</p>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-[10px] uppercase font-bold tracking-widest text-[#6E6A66] block mb-3">ACTIVE BRANCHES (3 SELECTED)</label>
+          <div className="flex flex-wrap gap-2">
+            <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Downtown Flagship <Check className="w-3 h-3 text-[#6E6A66]" />
+            </span>
+            <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Northside Mall <Check className="w-3 h-3 text-[#6E6A66]" />
+            </span>
+            <span className="px-3 py-1.5 bg-[#F5F4F2] border border-[#E2DED9] text-[#1A1615] text-[12px] font-bold rounded-full flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> West End Kiosk <Check className="w-3 h-3 text-[#6E6A66]" />
+            </span>
+            <button className="px-3 py-1.5 bg-[#FAF8F5] border border-[#D1CDC7] text-[#9E782F] text-[12px] font-bold rounded-full flex items-center gap-1.5 hover:bg-[#FDF8EB] transition-colors">
+              <Plus className="w-3 h-3" /> Add Location
+            </button>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      {/* Right side panels */}
+      <div className="w-full lg:w-[320px] shrink-0 space-y-6">
+        
+        {/* Audience Impact Panel */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm p-6">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#D4A753]" />
+              <h3 className="text-[15px] font-bold text-[#1A1615] leading-tight">Audience<br/>Impact</h3>
+            </div>
+            <span className="px-2.5 py-1 bg-[#E0F9ED] text-[#0D7A53] text-[10px] font-bold rounded-full leading-tight text-center">Dynamic<br/>Cohort</span>
+          </div>
+
+          <div className="mb-6">
+            <div className="flex justify-between items-end mb-1">
+              <span className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase">QUALIFYING CUSTOMERS</span>
+              <span className="text-[10px] font-bold text-[#0D7A53]">16.6% Reach</span>
+            </div>
+            <div className="flex items-baseline gap-2 mb-2">
+              <span className="text-[28px] font-bold text-[#1A1615] tracking-tight">4,120</span>
+              <span className="text-[12px] font-medium text-[#9E9A93]">of 24,850 members</span>
+            </div>
+            <div className="w-full h-2 bg-[#F5F4F2] rounded-full overflow-hidden">
+              <div className="h-full bg-[#D4A753] rounded-full" style={{ width: '16.6%' }}></div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3">
+              <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-1">EXPECTED<br/>VISITS</div>
+              <div className="text-[15px] font-bold text-[#1A1615]">680 - 820</div>
+              <div className="text-[10px] font-bold text-[#0D7A53] mt-1">~18% claim<br/>rate</div>
+            </div>
+            <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3">
+              <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-1">PROJECTED<br/>GMV</div>
+              <div className="text-[15px] font-bold text-[#9E782F]">+$28,400</div>
+              <div className="text-[10px] font-medium text-[#6E6A66] mt-1">Estimated lift</div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-3">TIER DISTRIBUTION</div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center text-[11px]">
+                <div className="flex items-center gap-1.5 font-bold text-[#1A1615]"><span className="w-1.5 h-1.5 bg-[#1A1615] rounded-full"></span> Obsidian VIP</div>
+                <div className="font-bold text-[#1A1615]">1,840 (44.6%)</div>
+              </div>
+              <div className="flex justify-between items-center text-[11px]">
+                <div className="flex items-center gap-1.5 font-bold text-[#1A1615]"><span className="w-1.5 h-1.5 bg-[#D4A753] rounded-full"></span> Gold Reserve</div>
+                <div className="font-bold text-[#1A1615]">2,280 (55.4%)</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-[9px] font-bold text-[#9E9A93] tracking-widest uppercase mb-2">QUALIFICATION VELOCITY (LAST 14 DAYS)</div>
+            <div className="h-12 bg-[#FAF8F5] rounded-lg border border-[#EFECE6] relative overflow-hidden">
+               {/* Decorative line mimicking chart */}
+               <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full text-[#D4A753]">
+                 <path d="M0,25 Q20,22 40,20 T70,10 T100,8 L100,30 L0,30 Z" fill="currentColor" fillOpacity="0.1" />
+                 <path d="M0,25 Q20,22 40,20 T70,10 T100,8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+               </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Guest Experience Preview Panel */}
+        <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Smartphone className="w-4 h-4 text-[#D4A753]" />
+              <h3 className="text-[15px] font-bold text-[#1A1615] leading-tight">Guest<br/>Experience<br/>Preview</h3>
+            </div>
+            <span className="px-2.5 py-1 bg-[#FAF8F5] text-[#6E6A66] text-[10px] font-bold rounded-lg border border-[#EFECE6] leading-tight text-center">iOS /<br/>Android</span>
+          </div>
+
+          <p className="text-[11px] text-[#6E6A66] leading-relaxed mb-6">
+            Live simulation of the privileged push card rendered on the member's passbook wallet when conditions match.
+          </p>
+
+          {/* Wallet Card Mockup */}
+          <div className="bg-[#1A1615] rounded-xl overflow-hidden shadow-md border border-[#3D3730] mb-6">
+            <div className="p-3 border-b border-[#3D3730] flex items-center justify-between">
+               <div className="flex items-center gap-2">
+                 <div className="w-5 h-5 rounded-full bg-[#9E782F] text-[#1A1615] flex items-center justify-center font-black text-[10px]">R</div>
+                 <span className="text-[9px] font-bold tracking-widest text-[#9E9A93]">BLUE BOTTLE - REVIA PASS</span>
+               </div>
+               <span className="text-[9px] font-bold text-[#9E9A93]">Now</span>
+            </div>
+            <div className="p-4 flex gap-4">
+              <div className="w-[60px] h-[60px] rounded-lg bg-[#3D3730] shrink-0 overflow-hidden">
+                 <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=150&q=80" className="w-full h-full object-cover" alt="Coffee pour over" />
+              </div>
+              <div>
+                 <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#D4A753] text-[#1A1615] text-[9px] font-bold rounded mb-1.5">
+                   <span className="w-1 h-1 rounded-full bg-[#1A1615]"></span> FLASH PRIVILEGE
+                 </div>
+                 <h4 className="text-[13px] font-bold text-white leading-tight mb-1">Double Stamp<br/>on Pour-Over</h4>
+                 <p className="text-[9px] text-[#9E9A93] leading-relaxed">Valid today only at<br/>Downtown Flagship...</p>
+              </div>
+            </div>
+            <div className="p-3 bg-[#000000]/40 flex items-center justify-between border-t border-[#3D3730]">
+              <div className="flex items-center gap-1.5 text-[#D4A753]">
+                <Clock className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold leading-tight">Expires in 11h<br/>42m</span>
+              </div>
+              <button className="px-3 py-1.5 bg-white text-[#1A1615] text-[10px] font-bold rounded-lg leading-tight">
+                Redeem at<br/>POS
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-[10px] font-bold text-[#6E6A66]">
+            <button className="flex items-center gap-1.5 hover:text-[#D4A753] transition-colors text-center leading-tight">
+              <RefreshCw className="w-3 h-3" /> Regenerate<br/>Sample Member
+            </button>
+            <div className="w-1 h-1 rounded-full bg-[#D1CDC7]"></div>
+            <button className="hover:text-[#D4A753] transition-colors text-center leading-tight">
+              Test Push to<br/>Device
+            </button>
+          </div>
+
+        </div>
       </div>
     </div>
   );
@@ -406,11 +517,13 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, onC
 interface CampaignRewardStepProps {
   campaignType: string;
   ruleConfig: any;
+  currency: string;
   onContinue: (config: any) => void;
   onBack: () => void;
 }
 
-const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, ruleConfig, onContinue, onBack }) => {
+const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, ruleConfig, currency, onContinue, onBack }) => {
+  const currSymbol = currency.match(/\((.*?)\)/)?.[1] || '₹';
   const [rewardType, setRewardType] = useState<string>('');
   const [cashbackAmount, setCashbackAmount] = useState<number>(0);
 
@@ -571,7 +684,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
           <div className="mt-4 pt-4 border-t border-[#EFECE6]">
             <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Cashback Amount</label>
             <div className="relative max-w-[260px]">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">₹</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">{currSymbol}</span>
               <input
                 type="number"
                 value={cashbackAmount || ''}
@@ -606,7 +719,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
             <div>
               <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Discount Value</label>
               <div className="relative max-w-[260px]">
-                {discountType === 'Fixed' && <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">₹</span>}
+                {discountType === 'Fixed' && <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E6A66] font-bold text-[15px]">{currSymbol}</span>}
                 <input
                   type="number"
                   value={discountValue || ''}
@@ -741,26 +854,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
         </div>
       </div>
 
-      <div className="flex items-center gap-3 pt-6 mt-4">
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#EFECE6] text-[#1A1615] text-sm font-bold rounded-full hover:border-[#D4A753]/60 hover:bg-[#FAF8F5] transition-all cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back
-        </button>
-        <button
-          type="button"
-          disabled={!isValid()}
-          onClick={() => isValid() && handleContinue()}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold transition-all ${isValid()
-            ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
-            : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
-            }`}
-        >
-          Continue to Review & Launch <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
+
     </div>
   );
 };
@@ -779,6 +873,11 @@ export const CampaignBuilderPage: React.FC = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [statusDraft, setStatusDraft] = useState(true);
+  const [currency, setCurrency] = useState('INR (₹)');
+
+  // Custom Segment Modal state
+  const [showCustomSegmentModal, setShowCustomSegmentModal] = useState(false);
+  const [customSegmentName, setCustomSegmentName] = useState('');
 
   const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
@@ -1140,20 +1239,20 @@ export const CampaignBuilderPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Start Date</label>
+              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Start Date & Time</label>
               <input
                 id="start-date-input"
-                type="date"
+                type="datetime-local"
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
                 className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-sm"
               />
             </div>
             <div>
-              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">End Date</label>
+              <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">End Date & Time</label>
               <input
                 id="end-date-input"
-                type="date"
+                type="datetime-local"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
                 className="w-full bg-white border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-sm"
@@ -1239,35 +1338,63 @@ export const CampaignBuilderPage: React.FC = () => {
           </div>
         </div>
 
-        {/* ── PRIORITY ── */}
-        <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-0 lg:border-none lg:shadow-none lg:bg-transparent">
-          <div className="hidden lg:block">
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Priority Level</label>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="flex items-center bg-[#FAF8F5] border border-[#EFECE6] rounded-lg">
-                <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-l-lg cursor-pointer">-</button>
-                <span className="px-4 py-1.5 text-xs font-bold text-[#1A1615] border-x border-[#EFECE6] w-[60px] text-center">{priorityLevel} (P{priorityLevel})</span>
-                <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="px-3 py-1.5 text-[#1A1615] font-bold hover:bg-[#EFECE6] transition-colors rounded-r-lg cursor-pointer">+</button>
+        {/* ── SETTINGS: PRIORITY & CURRENCY ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+          {/* ── PRIORITY ── */}
+          <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-4 lg:border lg:border-[#EFECE6] lg:shadow-sm">
+            <div className="hidden lg:block">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Priority Level</label>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center bg-[#FAF8F5] border border-[#EFECE6] rounded-lg h-[42px]">
+                  <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="w-[42px] h-full flex items-center justify-center text-[#1A1615] font-medium hover:bg-[#EFECE6] transition-colors rounded-l-lg cursor-pointer text-lg">-</button>
+                  <div className="px-4 h-full flex items-center justify-center text-sm font-bold text-[#1A1615] border-x border-[#EFECE6] min-w-[90px] whitespace-nowrap bg-white">
+                    {priorityLevel} <span className="text-[#9E9A93] font-semibold text-[11px] ml-1">(P{priorityLevel})</span>
+                  </div>
+                  <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="w-[42px] h-full flex items-center justify-center text-[#1A1615] font-medium hover:bg-[#EFECE6] transition-colors rounded-r-lg cursor-pointer text-lg">+</button>
+                </div>
+              </div>
+              <p className="text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
+                Tier {priorityLevel} Override Active: Highest arbitration queue. Higher priority wins if a transaction qualifies for multiple active campaigns.
+              </p>
+            </div>
+            {/* Mobile priority */}
+            <div className="lg:hidden bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between">
+              <div>
+                <div className="text-xs font-bold text-[#1A1615] mb-1">Priority Queue Level</div>
+                <div className="text-[10px] text-[#6E6A66] max-w-[120px]">Defines precedence over competing discounts</div>
+              </div>
+              <div className="flex items-center bg-white border border-[#EFECE6] rounded-full px-2 py-1 shadow-sm">
+                <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="w-6 h-6 flex items-center justify-center text-[#9E9A93] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">-</button>
+                <div className="px-3 text-center">
+                  <div className="text-sm font-bold text-[#D4A753]">{priorityLevel}</div>
+                  <div className="text-[10px] font-bold text-[#1A1615]">(P{priorityLevel})</div>
+                </div>
+                <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="w-6 h-6 flex items-center justify-center text-[#1A1615] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">+</button>
               </div>
             </div>
-            <p className="text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
-              Tier {priorityLevel} Override Active: Highest arbitration queue. Higher priority wins if a transaction qualifies for multiple active campaigns.
-            </p>
           </div>
-          {/* Mobile priority */}
-          <div className="lg:hidden bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-4 flex items-center justify-between">
-            <div>
-              <div className="text-xs font-bold text-[#1A1615] mb-1">Priority Queue Level</div>
-              <div className="text-[10px] text-[#6E6A66] max-w-[120px]">Defines precedence over competing discounts</div>
-            </div>
-            <div className="flex items-center bg-white border border-[#EFECE6] rounded-full px-2 py-1 shadow-sm">
-              <button onClick={() => setPriorityLevel(Math.max(1, priorityLevel - 1))} className="w-6 h-6 flex items-center justify-center text-[#9E9A93] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">-</button>
-              <div className="px-3 text-center">
-                <div className="text-sm font-bold text-[#D4A753]">{priorityLevel}</div>
-                <div className="text-[10px] font-bold text-[#1A1615]">(P{priorityLevel})</div>
+
+          {/* ── CURRENCY ── */}
+          <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-4 lg:border lg:border-[#EFECE6] lg:shadow-sm">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Currency</label>
+            <div className="relative mb-1">
+              <select
+                value={currency}
+                onChange={e => setCurrency(e.target.value)}
+                className="w-full bg-[#FAF8F5] border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] appearance-none cursor-pointer"
+              >
+                <option value="INR (₹)">INR (₹)</option>
+                <option value="USD ($)">USD ($)</option>
+                <option value="EUR (€)">EUR (€)</option>
+                <option value="GBP (£)">GBP (£)</option>
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <ChevronDown className="w-4 h-4 text-[#9E9A93]" />
               </div>
-              <button onClick={() => setPriorityLevel(priorityLevel + 1)} className="w-6 h-6 flex items-center justify-center text-[#1A1615] bg-[#FAF8F5] rounded-full cursor-pointer hover:bg-[#EFECE6]">+</button>
             </div>
+            <p className="mt-1.5 text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
+              Read from merchant/system configuration. Base currency for all campaign targets and calculations.
+            </p>
           </div>
         </div>
 
@@ -1283,20 +1410,6 @@ export const CampaignBuilderPage: React.FC = () => {
             <span className="px-2 py-0.5 bg-black/50 text-[#D4A753] border border-[#D4A753]/30 rounded text-[9px] font-bold tracking-widest uppercase backdrop-blur-sm">EXCLUSIVE</span>
           </div>
         </div>
-
-        {/* Continue Button */}
-        <button
-          id="step1-continue"
-          type="button"
-          disabled={!step1Valid}
-          onClick={() => step1Valid && setCurrentStep(2)}
-          className={`w-full py-3.5 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-all ${step1Valid
-            ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
-            : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
-            }`}
-        >
-          Continue to Audience <ArrowRight className="w-4 h-4" />
-        </button>
       </div>
 
       {/* ── RIGHT COLUMN – Live Preview ── */}
@@ -1322,7 +1435,7 @@ export const CampaignBuilderPage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
                 <Calendar className="w-3.5 h-3.5 text-[#D4A753]" />
-                {startDate && endDate ? `${startDate} – ${endDate}` : 'No dates set'}
+                {startDate && endDate ? `${startDate.replace('T', ' ')} – ${endDate.replace('T', ' ')}` : 'No dates set'}
               </div>
               <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" />
@@ -1440,7 +1553,7 @@ export const CampaignBuilderPage: React.FC = () => {
               </div>
             </div>
           )}
-          <button onClick={() => showToast('Custom segment builder will open.')} className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FAF8F5] text-[#9E782F] border border-[#EFECE6] rounded-full text-[12px] font-bold hover:bg-[#FDF8EB] transition-colors mt-1 cursor-pointer">
+          <button onClick={() => setShowCustomSegmentModal(true)} className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#FAF8F5] text-[#9E782F] border border-[#EFECE6] rounded-full text-[12px] font-bold hover:bg-[#FDF8EB] transition-colors mt-1 cursor-pointer">
             <Plus className="w-3 h-3" /> Add Custom Segment
           </button>
         </div>
@@ -1537,10 +1650,10 @@ export const CampaignBuilderPage: React.FC = () => {
                     max="80"
                     value={minAge}
                     onChange={(e) => setMinAge(Math.min(maxAge - 1, Number(e.target.value)))}
-                    className="absolute w-full top-1/2 -translate-y-1/2 opacity-0 cursor-pointer pointer-events-auto"
+                    className="absolute w-full top-1/2 -translate-y-1/2 opacity-0 cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto z-20"
                   />
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm pointer-events-none"
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm pointer-events-none z-10"
                     style={{ left: `${((minAge - 18) / (80 - 18)) * 100}%` }}
                   ></div>
 
@@ -1550,10 +1663,10 @@ export const CampaignBuilderPage: React.FC = () => {
                     max="80"
                     value={maxAge}
                     onChange={(e) => setMaxAge(Math.max(minAge + 1, Number(e.target.value)))}
-                    className="absolute w-full top-1/2 -translate-y-1/2 opacity-0 cursor-pointer pointer-events-auto"
+                    className="absolute w-full top-1/2 -translate-y-1/2 opacity-0 cursor-pointer pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto z-30"
                   />
                   <div
-                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm pointer-events-none"
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-[#D4A753] rounded-full shadow-sm pointer-events-none z-10"
                     style={{ left: `${((maxAge - 18) / (80 - 18)) * 100}%` }}
                   ></div>
                 </div>
@@ -1695,6 +1808,7 @@ export const CampaignBuilderPage: React.FC = () => {
   const renderStep3 = () => (
     <CampaignRulesStep
       campaignType={fullCampaignType}
+      currency={currency}
       onContinue={(config) => {
         setRuleConfig(config);
         console.log('Step 3 Config:', config);
@@ -1708,6 +1822,7 @@ export const CampaignBuilderPage: React.FC = () => {
     <CampaignRewardStep
       campaignType={fullCampaignType}
       ruleConfig={ruleConfig}
+      currency={currency}
       onContinue={(config) => {
         setRewardConfig(config);
         console.log('Step 4 Config:', config);
@@ -1722,8 +1837,8 @@ export const CampaignBuilderPage: React.FC = () => {
       <div className="lg:col-span-8 space-y-6">
 
         {/* Auto-validation Alert */}
-        <div className="bg-white border-l-4 border-l-[#0D7A53] border-y border-r border-[#EFECE6] rounded-r-xl p-5 shadow-sm flex items-start justify-between relative overflow-hidden">
-          <div className="flex items-start gap-4">
+        <div className="bg-white border-l-4 border-l-[#0D7A53] border-y border-r border-[#EFECE6] rounded-r-xl p-5 shadow-sm flex flex-col xl:flex-row xl:items-start justify-between gap-4 relative overflow-hidden">
+          <div className="flex items-start gap-3 sm:gap-4">
             <div className="w-8 h-8 rounded-full bg-[#E0F9ED] flex items-center justify-center shrink-0 mt-0.5">
               <Check className="w-5 h-5 text-[#0D7A53]" />
             </div>
@@ -1732,9 +1847,9 @@ export const CampaignBuilderPage: React.FC = () => {
               <p className="text-[11px] font-medium text-[#6E6A66]">All cryptographic token envelopes are pre-compiled and ready for instantaneous sync.</p>
             </div>
           </div>
-          <div className="flex flex-col gap-2 items-end shrink-0 ml-4">
+          <div className="flex flex-col gap-2 items-start xl:items-end shrink-0 pl-11 xl:pl-0">
             <span className="px-2.5 py-1 bg-[#E0F9ED] border border-[#BCE3D1] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> POS MESH READY</span>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <span className="px-2 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded text-[9px] font-bold uppercase tracking-widest">NO BUDGET CONFLICT</span>
               <span className="px-2 py-1 bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] rounded text-[9px] font-bold uppercase tracking-widest">SECURITY POLICY VERIFIED</span>
             </div>
@@ -1878,35 +1993,39 @@ export const CampaignBuilderPage: React.FC = () => {
               <span className="text-[11px] font-medium text-[#6E6A66]">Parent root evaluation container</span>
             </div>
 
-            <div className="space-y-2 pl-4 border-l-2 border-[#EFECE6]">
-              <div className="bg-white border border-[#EFECE6] rounded-lg p-3 flex items-center justify-between shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
-                <div className="flex items-center gap-3 text-[12px] font-mono font-bold text-[#1A1615]">
-                  <span className="text-[#D4A753]">Customer.LifetimeSpend</span> <span className="text-[#6E6A66]">≥</span> <span>$250.00</span>
-                  <span className="text-[#6E6A66] px-2 text-[10px] font-sans">AND</span>
-                  <span className="text-[#D4A753]">Customer.LastVisit</span> <span className="text-[#6E6A66]">≤</span> <span>14 days</span>
+            <div className="space-y-4 md:space-y-2 pl-4 border-l-2 border-[#EFECE6]">
+              <div className="bg-white border border-[#EFECE6] rounded-lg p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615]">
+                  <span className="text-[#D4A753] break-all">Customer.LifetimeSpend</span> <span className="text-[#6E6A66]">≥</span> <span>$250.00</span>
+                  <span className="text-[#6E6A66] px-1 md:px-2 text-[10px] font-sans">AND</span>
+                  <span className="text-[#D4A753] break-all">Customer.LastVisit</span> <span className="text-[#6E6A66]">≤</span> <span className="whitespace-nowrap">14 days</span>
                 </div>
-                <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest">VALIDATED</span>
+                <div className="self-start md:self-auto">
+                  <span className="px-2 py-0.5 bg-[#E0F9ED] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest">VALIDATED</span>
+                </div>
               </div>
 
-              <div className="bg-[#E6F4ED] border border-[#BCE3D1] rounded-lg p-3 flex items-center justify-between shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
-                <div className="flex items-center gap-3">
-                  <span className="px-2 py-0.5 bg-[#0D7A53] text-white rounded text-[9px] font-bold tracking-widest uppercase">BOGO TRIGGER</span>
-                  <div className="text-[12px] font-mono font-bold text-[#1A1615]">
-                    <span className="text-[#0D7A53]">Basket.ItemCount</span><span>("Single Origin Geisha 250g")</span> <span className="text-[#6E6A66]">≥</span> <span>2</span>
+              <div className="bg-[#E6F4ED] border border-[#BCE3D1] rounded-lg p-3 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+                  <span className="self-start md:self-auto px-2 py-0.5 bg-[#0D7A53] text-white rounded text-[9px] font-bold tracking-widest uppercase">BOGO TRIGGER</span>
+                  <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615]">
+                    <span className="text-[#0D7A53] break-all">Basket.ItemCount</span><span>("Single Origin Geisha 250g")</span> <span className="text-[#6E6A66]">≥</span> <span>2</span>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold text-[#6E6A66] text-right leading-tight">Qty ≥ 2<br />Required</span>
+                <div className="self-start md:self-auto text-[10px] font-bold text-[#6E6A66] md:text-right leading-tight">
+                  Qty ≥ 2<br className="hidden md:block" />Required
+                </div>
               </div>
 
               <div className="bg-white border border-[#EFECE6] rounded-lg p-3 shadow-sm relative before:content-[''] before:absolute before:-left-4 before:top-1/2 before:w-4 before:h-[2px] before:bg-[#EFECE6]">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 mb-2">
                   <span className="text-[10px] font-bold tracking-widest uppercase text-[#1A1615]">OR SUB-GROUP</span>
                   <span className="text-[10px] font-medium text-[#9E9A93] italic">Any condition satisfies eligibility</span>
                 </div>
-                <div className="text-[12px] font-mono font-bold text-[#1A1615] pl-2 border-l-2 border-[#D4A753]">
-                  <span className="text-[#9E782F] font-sans text-[10px]">Option A:</span> <span className="text-[#D4A753]">Patron.Tier</span> <span className="text-[#6E6A66]">==</span> <span>"Obsidian VIP"</span>
-                  <span className="text-[#6E6A66] px-3">||</span>
-                  <span className="text-[#9E782F] font-sans text-[10px]">Option B:</span> <span className="text-[#D4A753]">Patron.CurrentStampCycle</span> <span className="text-[#6E6A66]">≥</span> <span>8 stamps</span>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-mono font-bold text-[#1A1615] pl-2 border-l-2 border-[#D4A753]">
+                  <span className="text-[#9E782F] font-sans text-[10px] whitespace-nowrap">Option A:</span> <span className="text-[#D4A753] break-all">Patron.Tier</span> <span className="text-[#6E6A66]">==</span> <span className="whitespace-nowrap">"Obsidian VIP"</span>
+                  <span className="text-[#6E6A66] px-1 md:px-3">||</span>
+                  <span className="text-[#9E782F] font-sans text-[10px] whitespace-nowrap">Option B:</span> <span className="text-[#D4A753] break-all">Patron.CurrentStampCycle</span> <span className="text-[#6E6A66]">≥</span> <span className="whitespace-nowrap">8 stamps</span>
                 </div>
               </div>
             </div>
@@ -2097,7 +2216,7 @@ export const CampaignBuilderPage: React.FC = () => {
   );
 
   const renderDashboard = () => (
-    <div className="min-h-screen bg-[#FAF8F5] p-6 lg:p-10 font-sans text-[#1A1615]">
+    <div className=" bg-[#FAF8F5] p-6 lg:p-10 font-sans text-[#1A1615]">
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
@@ -2428,7 +2547,7 @@ export const CampaignBuilderPage: React.FC = () => {
           </div>
         )}
         {currentStep === 5 ? (
-          <div className="flex items-center gap-3 w-full max-w-[1600px] mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-3 w-full max-w-[1600px] mx-auto">
             <div className="flex items-center gap-3 flex-1">
               <div className="w-2 h-2 rounded-full bg-[#0D7A53] animate-pulse"></div>
               <div>
@@ -2436,14 +2555,14 @@ export const CampaignBuilderPage: React.FC = () => {
                 <div className="text-[11px] font-medium text-[#6E6A66]">All 5 steps validated • Zero conflict warnings</div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button onClick={() => setCurrentStep(4)} className="px-5 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm">
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-3 w-full md:w-auto">
+              <button onClick={() => setCurrentStep(4)} className="flex-1 md:flex-none px-2 md:px-5 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm whitespace-nowrap text-center">
                 Back to Reward Def
               </button>
-              <button className="px-5 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm">
+              <button className="flex-1 md:flex-none px-2 md:px-5 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm whitespace-nowrap text-center">
                 Save Draft
               </button>
-              <button className="px-6 py-2.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl text-[12px] font-bold shadow-md transition-opacity flex items-center gap-2">
+              <button className="w-full md:w-auto px-4 md:px-6 py-2.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl text-[12px] font-bold shadow-md transition-opacity flex items-center justify-center gap-2">
                 <Zap className="w-3.5 h-3.5" /> Deploy &amp; Publish Campaign <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -2482,6 +2601,53 @@ export const CampaignBuilderPage: React.FC = () => {
         <div className="fixed bottom-6 right-6 z-[100] bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-fade-in-up border border-[#332e2d]">
           <CheckCircle2 className="w-5 h-5 text-[#D4A753]" />
           <span className="text-sm font-bold">{feedbackToast}</span>
+        </div>
+      )}
+
+      {/* Custom Segment Modal */}
+      {showCustomSegmentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#1A1615]/40 backdrop-blur-sm" onClick={() => setShowCustomSegmentModal(false)}></div>
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col relative z-10">
+            <div className="p-5 border-b border-[#EFECE6] flex items-center justify-between bg-white">
+              <h3 className="text-lg font-bold text-[#1A1615]">Add Custom Segment</h3>
+              <button onClick={() => setShowCustomSegmentModal(false)} className="text-[#9E9A93] hover:text-[#1A1615] transition-colors cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 flex-1 overflow-y-auto bg-white">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Segment Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. High Value Churn Risk"
+                    value={customSegmentName}
+                    onChange={(e) => setCustomSegmentName(e.target.value)}
+                    className="w-full bg-[#FAF8F5] border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Conditions (Rule Builder)</label>
+                  <div className="p-4 border border-dashed border-[#D1CDC7] rounded-xl text-center bg-[#F5F4F2]">
+                    <p className="text-sm text-[#9E9A93] font-medium">Rule builder will go here</p>
+                    <button className="mt-2 text-[#D4A753] text-xs font-bold hover:underline cursor-pointer">+ Add Rule</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 border-t border-[#EFECE6] bg-[#FAF8F5] flex justify-end gap-3 rounded-b-2xl">
+              <button onClick={() => setShowCustomSegmentModal(false)} className="px-4 py-2 text-sm font-bold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer">
+                Cancel
+              </button>
+              <button onClick={() => {
+                setShowCustomSegmentModal(false);
+                setCustomSegmentName('');
+              }} className="px-4 py-2 bg-[#1A1615] text-white text-sm font-bold rounded-lg hover:bg-black transition-colors shadow-md cursor-pointer">
+                Create Segment
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
