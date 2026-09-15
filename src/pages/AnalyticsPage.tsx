@@ -615,11 +615,6 @@ export const AnalyticsPage: React.FC = () => {
 
               </aside>
             </div>
-
-            <footer className="mt-3 flex flex-col gap-2 border-t border-[#E8E1D8] py-2 text-[8px] text-[#8C847A] sm:flex-row sm:items-center sm:justify-between">
-              <span>Revia Merchant Intelligence Engine • Confidential Roastery Telemetry</span>
-              <span>Retention Model Methodology <span className="px-1 text-[#C8BFB4]">•</span> Privacy &amp; Pseudonymization Log</span>
-            </footer>
           </div>
         </div>
       </div>
