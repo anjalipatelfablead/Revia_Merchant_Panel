@@ -10,9 +10,10 @@ interface Props {
   activeTab?: MainTab;
   setTab?: (t: MainTab) => void;
   cartCount?: number;
+  onNotificationsClick?: () => void;
 }
 
-export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuClick, tabs = [], activeTab, setTab, cartCount }) => {
+export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuClick, tabs = [], activeTab, setTab, cartCount, onNotificationsClick }) => {
   // Separate primary tabs from secondary ("More") tabs
   const primaryTabs = tabs.slice(0, 4);
   const moreTabs = tabs.slice(4);
@@ -54,7 +55,10 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
           )}
         </button>
 
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#666] transition-colors relative">
+        <button 
+          onClick={onNotificationsClick}
+          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#666] transition-colors relative"
+        >
           <Bell className="w-5 h-5" />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#D32F2F] rounded-full border border-white" />
         </button>
