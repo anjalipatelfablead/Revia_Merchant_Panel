@@ -3,15 +3,17 @@ import {
   Scan, Camera, ArrowRight, ShieldCheck, Smartphone,
   User, Calendar, Coffee, HeartPulse, Check, Star, Award,
   Sparkles, Crown, Gift, Clock, MapPin, Phone, Lock, Zap, Heart,
-  Plus, Minus, ChevronRight
+  Plus, Minus, ChevronRight, ShoppingBag
 } from 'lucide-react';
 import { CustomerHeader } from '../../components/shared/CustomerHeader';
 import { MOCK_BUSINESS } from '../../data/mockData';
 import { MOCK_CATALOG_ITEMS } from '../../../data/mockData';
+import { useCustomer } from '../../CustomerContext';
 
 export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
+  const { cartItems, addItem } = useCustomer();
   const [step, setStep] = useState(1);
-  const totalSteps = 8;
+  const totalSteps = 9;
 
   const [mobile, setMobile] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -95,9 +97,28 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
   const filteredItems = activeMenuCategory === 'All' ? MOCK_CATALOG_ITEMS : MOCK_CATALOG_ITEMS.filter(i => i.category === activeMenuCategory);
 
   return (
-    <div className="flex flex-col min-h-[100dvh] bg-[#F8F6F0] font-sans relative overflow-x-hidden overflow-y-auto">
+    <div className="flex flex-col min-h-[100dvh] bg-[#F8F6F0] font-sans relative">
       <div className="relative z-10 flex flex-col min-h-[100dvh]">
-        <CustomerHeader mode="light" bgColor="bg-white/80 backdrop-blur-md" position="sticky" transparentOnTop={false} borderClass="border-b border-[#EAE3D9]" />
+        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#EAE3D9] h-[80px] flex items-center px-4 lg:px-12">
+          <div className="max-w-[1400px] w-full mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-[#B89454] rounded-lg flex items-center justify-center shadow-md shrink-0">
+                <span className="text-white font-black text-lg md:text-xl">R</span>
+              </div>
+              <span className="text-xl md:text-2xl font-black tracking-[0.2em] md:tracking-[0.25em] uppercase text-[#222]">REVIA</span>
+            </div>
+
+            {/* Cart Indicator */}
+            <div className="relative p-2 cursor-pointer hover:bg-[#F8F6F0] rounded-xl transition-colors group">
+              <ShoppingBag className="w-6 h-6 text-[#222] group-hover:scale-110 transition-transform" />
+              {cartItems.length > 0 && (
+                <div className="absolute top-0 right-0 w-5 h-5 bg-[#9A7436] rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                  <span className="text-[10px] font-black text-white">{cartItems.reduce((acc, item) => acc + item.quantity, 0)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
 
         <main className="flex-1 w-full">
           <div className="w-full animate-in fade-in duration-500">
@@ -623,8 +644,8 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                     <h3 className="text-lg font-black text-[#111] mb-5 flex items-center gap-2"><User className="w-5 h-5 text-[#9A7436]" /> Party Size</h3>
                     <div className="grid grid-cols-2 gap-4">
                       {[{ id: 'solo', label: 'Just Me', emoji: '👤' }, { id: 'party-2', label: 'Table for 2', emoji: '👫' }, { id: 'party-4', label: '3-4 Guests', emoji: '👨‍👩‍👧' }, { id: 'salon-6', label: 'Group 5+', emoji: '👥' }].map(opt => (
-                        <button key={opt.id} onClick={() => setPartySize(opt.id)} className={`py-5 rounded-2xl text-center transition-all ${partySize === opt.id ? 'bg-[#9A7436] text-white shadow-md' : 'bg-[#F8F6F0] text-[#666] hover:bg-[#EAE3D9]'}`}>
-                          <span className="text-2xl block mb-2">{opt.emoji}</span>
+                        <button key={opt.id} onClick={() => setPartySize(opt.id)} className={`py-3 rounded-2xl text-center transition-all ${partySize === opt.id ? 'bg-[#9A7436] text-white shadow-md' : 'bg-[#F8F6F0] text-[#666] hover:bg-[#EAE3D9]'}`}>
+                          <span className="text-xl block mb-2">{opt.emoji}</span>
                           <span className="text-[13px] font-bold">{opt.label}</span>
                         </button>
                       ))}
@@ -635,12 +656,30 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                     <h3 className="text-lg font-black text-[#111] mb-5 flex items-center gap-2"><Clock className="w-5 h-5 text-[#9A7436]" /> Service Pace</h3>
                     <div className="flex flex-col gap-4">
                       {[{ id: 'classic', title: '🕐 Leisurely', desc: 'Multi-course with perfect timing between dishes.' }, { id: 'executive', title: '⚡ Express', desc: 'All courses within 45 minutes.' }].map(opt => (
-                        <button key={opt.id} onClick={() => setPacing(opt.id)} className={`p-5 rounded-2xl text-left transition-all ${pacing === opt.id ? 'bg-[#9A7436] text-white shadow-md' : 'bg-[#F8F6F0] hover:bg-[#EAE3D9]'}`}>
+                        <button key={opt.id} onClick={() => setPacing(opt.id)} className={`p-3 rounded-2xl text-left transition-all ${pacing === opt.id ? 'bg-[#9A7436] text-white shadow-md' : 'bg-[#F8F6F0] hover:bg-[#EAE3D9]'}`}>
                           <span className={`text-[15px] font-bold block mb-1 ${pacing === opt.id ? '' : 'text-[#111]'}`}>{opt.title}</span>
                           <span className={`text-[12px] ${pacing === opt.id ? 'text-white/70' : 'text-[#666]'}`}>{opt.desc}</span>
                         </button>
                       ))}
                     </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-4">
+                  <button onClick={() => setStep(9)} className="px-10 h-16 bg-[#9A7436] text-white rounded-2xl font-black text-[15px] flex items-center justify-center gap-3 hover:bg-[#886630] shadow-lg shadow-[#9A7436]/20 transition-all group">
+                    Continue to Menu <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ═══════════════ STEP 9: MENU & ADD-ONS ═══════════════ */}
+            {step === 9 && (
+              <div className="max-w-[1400px] mx-auto px-4 md:px-12 py-4 md:py-10 space-y-10">
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-black text-[#9A7436] uppercase tracking-widest mb-2">Step 7 of 7 · Dining Choices</p>
+                    <h2 className="text-4xl font-black text-[#111] tracking-tight">Pre-order <span className="text-[#9A7436]">Menu</span></h2>
                   </div>
                 </div>
 
@@ -672,7 +711,7 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                     {filteredItems.map(item => {
                       const sel = selectedProducts.includes(item.id);
                       return (
-                        <button key={item.id} onClick={() => toggleProduct(item.id)} className={`rounded-2xl overflow-hidden text-left transition-all group ${sel ? 'ring-2 ring-[#9A7436] shadow-lg' : 'shadow-sm hover:shadow-md'}`}>
+                        <button key={item.id} onClick={() => { toggleProduct(item.id); addItem(item); }} className={`rounded-2xl overflow-hidden text-left transition-all group ${sel ? 'ring-2 ring-[#9A7436] shadow-lg' : 'shadow-sm hover:shadow-md'}`}>
                           <div className="relative h-44 overflow-hidden">
                             <img src={item.image || ''} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             {sel && (
