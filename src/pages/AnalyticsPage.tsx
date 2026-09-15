@@ -65,7 +65,7 @@ const MobileAnalyticsView: React.FC = () => {
         <section className="mt-4 grid grid-cols-2 gap-2">
           {[
             { label: '30D Retention', value: '74.8%', detail: '+6.2% vs avg', icon: Timer, positive: true },
-            { label: 'Obsidian LTV', value: '$1,480', detail: '$38.90 AOV baseline', icon: Award },
+            { label: 'Obsidian LTV', value: '₹1,480', detail: '₹38.90 AOV baseline', icon: Award },
             { label: 'Stamp Velocity', value: '12.4 Days', detail: 'To 10th stamp reward', icon: Timer },
             { label: 'Churn Risk', value: '4.2%', detail: '18 rescued this wk', icon: ShieldCheck, positive: true },
           ].map(({ label, value, detail, icon: Icon, positive }) => (
@@ -117,9 +117,9 @@ export const AnalyticsPage: React.FC = () => {
       },
       {
         label: 'Obsidian VIP LTV',
-        value: '$1,480.00',
+        value: '₹1,480.00',
         detail: 'Avg 3.8 visits/week',
-        note: '$38.90 AVG',
+        note: '₹38.90 AVG',
         accent: 'bg-[#C9A24F]',
         tone: 'gold',
       },
@@ -268,9 +268,9 @@ export const AnalyticsPage: React.FC = () => {
           <text key={`month-${point.label}`} x={(index / (data.length - 1)) * (width - 30) + 15} y={height - 1} textAnchor="middle" fill="#8C847A" fontSize="8">{point.label}</text>
         ))}
 
-        <text x={width - 16} y="20" textAnchor="end" fill="#B5ADA3" fontSize="8">$1,500</text>
-        <text x={width - 16} y="65" textAnchor="end" fill="#B5ADA3" fontSize="8">$1,000</text>
-        <text x={width - 16} y="110" textAnchor="end" fill="#B5ADA3" fontSize="8">$500</text>
+        <text x={width - 16} y="20" textAnchor="end" fill="#B5ADA3" fontSize="8">₹1,500</text>
+        <text x={width - 16} y="65" textAnchor="end" fill="#B5ADA3" fontSize="8">₹1,000</text>
+        <text x={width - 16} y="110" textAnchor="end" fill="#B5ADA3" fontSize="8">₹500</text>
 
         {data.map((point, index) => {
           const x = (index / (data.length - 1)) * (width - 30) + 15;
@@ -293,7 +293,7 @@ export const AnalyticsPage: React.FC = () => {
       <div className="hidden md:block">
         <div className="min-h-0 bg-[#F6F3EE] px-3 pb-2 pt-4 sm:px-5 lg:px-6">
           <div className="mx-auto w-full max-w-[1400px]">
-            <header className="relative z-30 bg-[#F6F3EE] pb-2 pt-1">
+            <header className="relative z-30 bg-[#F6F3EE]  pt-3">
               {/*
           <div className="mb-4 flex items-center justify-between pb-2 text-[9px] font-bold uppercase tracking-[0.12em] text-[#8C847A]">
             <div className="flex items-center gap-2">
@@ -508,10 +508,10 @@ export const AnalyticsPage: React.FC = () => {
 
                   <div className="mt-2 grid gap-2 sm:grid-cols-4">
                     {[
-                      { name: 'Obsidian VIP', value: '$1,480.00', color: 'bg-[#9E782F]' },
-                      { name: 'Black Tier', value: '$820.00', color: 'bg-[#B29E8F]' },
-                      { name: 'Prime Member', value: '$410.00', color: 'bg-[#1A1615]' },
-                      { name: 'Guest Scan', value: '$95.00', color: 'bg-[#D8C7A2]' },
+                      { name: 'Obsidian VIP', value: '₹1,480.00', color: 'bg-[#9E782F]' },
+                      { name: 'Black Tier', value: '₹820.00', color: 'bg-[#B29E8F]' },
+                      { name: 'Prime Member', value: '₹410.00', color: 'bg-[#1A1615]' },
+                      { name: 'Guest Scan', value: '₹95.00', color: 'bg-[#D8C7A2]' },
                     ].map((item) => (
                       <div key={item.name} className="rounded-[7px] border border-[#EAE3D9] bg-[#FAF8F5] p-2">
                         <div className="mb-1 flex items-center gap-1.5">

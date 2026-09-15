@@ -11,10 +11,10 @@ export const INITIAL_OUTLETS: OutletsData[] = [
     managerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     terminalsActive: 4,
     membersLinked: '12,410 Linked',
-    volume30d: '$92,400',
+    volume30d: '₹92,400',
     hours: 'Mon–Sun 7:00 AM – 8:00 PM',
     timezone: 'PST (America/Los_Angeles)',
-    currency: 'USD ($)',
+    currency: 'INR ($)',
     taxProfile: 'CA State + LA City (9.5%)',
     hardware: [
       {
@@ -55,10 +55,10 @@ export const INITIAL_OUTLETS: OutletsData[] = [
     managerAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
     terminalsActive: 2,
     membersLinked: '8,140 Linked',
-    volume30d: '$64,210',
+    volume30d: '₹64,210',
     hours: 'Mon–Sun 9:00 AM – 9:00 PM',
     timezone: 'PST (America/Los_Angeles)',
-    currency: 'USD ($)',
+    currency: 'INR ($)',
     taxProfile: 'CA State + LA City (9.5%)',
     hardware: [
       {
@@ -99,10 +99,10 @@ export const INITIAL_OUTLETS: OutletsData[] = [
     managerAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     terminalsActive: 1,
     membersLinked: '4,300 Linked',
-    volume30d: '$28,310',
+    volume30d: '₹28,310',
     hours: 'Mon–Sat 6:30 AM – 5:00 PM',
     timezone: 'PST (America/Los_Angeles)',
-    currency: 'USD ($)',
+    currency: 'INR ($)',
     taxProfile: 'CA State + Santa Monica (10.25%)',
     hardware: [
       {

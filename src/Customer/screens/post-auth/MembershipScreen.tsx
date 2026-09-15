@@ -5,7 +5,7 @@ import { MOCK_MEMBERSHIP } from '../../data/mockData';
 const TIER_BENEFITS = [
   {
     tier: 'Silver Member',
-    minSpend: '$0',
+    minSpend: '₹0',
     multiplier: '1x Points',
     benefits: ['Free welcome drink on registration', 'Standard stamp card rewards', 'Digital Wallet Pass'],
     color: 'bg-white border-[#E6E6E6] text-[#222]',
@@ -13,7 +13,7 @@ const TIER_BENEFITS = [
   },
   {
     tier: 'Gold Tier',
-    minSpend: '$250',
+    minSpend: '₹250',
     multiplier: '1.5x Points',
     benefits: ['1.5x point multiplier on all orders', 'Free pastry with any large drink', 'Birthday special treat', 'Priority table seating'],
     color: 'bg-gradient-to-br from-[#FFF8ED] to-[#FFF0D6] border-[#C89B3C] text-[#222] ring-2 ring-[#C89B3C]/30',
@@ -22,7 +22,7 @@ const TIER_BENEFITS = [
   },
   {
     tier: 'VIP Platinum',
-    minSpend: '$1,000',
+    minSpend: '₹1,000',
     multiplier: '2x Points',
     benefits: ['2x point multiplier on all orders', 'Unlimited filter coffee refilling', 'Exclusive tasting event invitations', 'Dedicated concierge support'],
     color: 'bg-[#1A1A1A] text-white border-transparent shadow-xl',

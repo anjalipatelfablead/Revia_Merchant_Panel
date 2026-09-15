@@ -8,7 +8,7 @@ export const MOCK_OFFERS = [
 ];
 
 export const MOCK_COUPONS = [
-  { id: 'c1', type: 'Welcome Coupon', title: '$10 Off Your Next Meal', desc: 'Get $10 off when you spend $50 or more on your next visit.', value: '$10 OFF', validity: 'Valid 30 Days', branch: 'All Branches', status: 'active' as const },
+  { id: 'c1', type: 'Welcome Coupon', title: '₹10 Off Your Next Meal', desc: 'Get ₹10 off when you spend ₹50 or more on your next visit.', value: '₹10 OFF', validity: 'Valid 30 Days', branch: 'All Branches', status: 'active' as const },
   { id: 'c2', type: 'Birthday Coupon', title: 'Free Dessert', desc: 'Celebrate your birthday with a free dessert of your choice.', value: 'FREE', validity: 'Expires 15 Oct', branch: 'Downtown Branch', status: 'active' as const },
 ];
 export const MOCK_ADDONS = [

@@ -41,36 +41,21 @@ export const BrandingPage: React.FC = () => {
 
          <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
             {/* Page Title Section */}
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                <div>
-                  {/* <div className="flex items-center gap-3 mb-4">
-                     <span className="px-2.5 py-1 bg-[#FDF8EB] text-[#A37837] rounded border border-[#F3E5C8] text-[9px] uppercase font-bold tracking-widest flex items-center gap-1.5">
-                        ORGANIZATION CONFIG <span className="text-[#A37837]">•</span> BRAND IDENTITY
-                     </span>
-                     <span className="text-[11px] font-medium text-[#6E6A66] flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
-                        Sync: 3 Roasteries Synced • Edge CDN Warm
-                     </span>
-                  </div> */}
-                  <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] mb-2 leading-none font-sans">Business Profile &amp; Branding</h1>
+                  <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] mb-1 leading-none font-sans">Business Profile &amp; Branding</h1>
                   <p className="text-[14px] text-[#6E6A66] max-w-2xl">
                      Curate your maison's visual identity, token architecture, stamp marks, and real-time member portal experience across all physical tasting salons.
                   </p>
                </div>
 
-               <div className="flex flex-col items-end gap-3">
-                  {/* <div className="flex items-center gap-1.5 text-[11px] text-[#8C827A]">
-                     <Clock className="w-3.5 h-3.5" />
-                     Last published 14m ago by <span className="font-bold text-[#1A1615]">E. Vance</span>
-                  </div> */}
-                  <div className="flex items-center gap-3">
-                     <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors">
-                        <RotateCcw className="w-4 h-4" /> Discard Changes
-                     </button>
-                     <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors">
-                        <Sparkles className="w-4 h-4" /> Publish Brand Tokens (⌘S)
-                     </button>
-                  </div>
+               <div className="flex items-center gap-3 shrink-0">
+                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+                     <RotateCcw className="w-4 h-4" /> Discard Changes
+                  </button>
+                  <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens (⌘S)
+                  </button>
                </div>
             </div>
 
@@ -494,7 +479,7 @@ export const BrandingPage: React.FC = () => {
                                           </div>
                                           <div className="text-[9px] text-[#8C827A] mt-0.5 leading-tight mb-2">Notes of Jasmine, Bergamot & White Peach</div>
                                           <div className="flex items-center justify-between">
-                                             <div className="text-[13px] font-bold text-[#1A1615]">$8.50</div>
+                                             <div className="text-[13px] font-bold text-[#1A1615]">₹8.50</div>
                                              <button className="px-3 py-1 bg-[#FAF8F5] border border-[#EAE6E1] rounded-full text-[10px] font-bold text-[#1A1615]">Order Ahead</button>
                                           </div>
                                        </div>

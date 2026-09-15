@@ -538,20 +538,20 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               <div className="flex min-w-full items-center gap-0.5">
                 <button
                   onClick={() => setActiveTab('general_brand')}
-                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[10px] sm:text-[11px] ${activeTab === 'general_brand' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'general_brand' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
                   type="button"
                 >
                   General & Brand
                 </button>
                 <button
-                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[10px] sm:text-[11px] ${activeTab === 'pos_hardware' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'pos_hardware' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
                   type="button"
                   onClick={() => setActiveTab('pos_hardware')}
                 >
                   POS & Hardware
                 </button>
                 <button
-                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[10px] sm:text-[11px] ${activeTab === 'api_keys_webhooks' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'api_keys_webhooks' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
                   type="button"
                   onClick={() => setActiveTab('api_keys_webhooks')}
                 >
@@ -559,20 +559,20 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 </button>
                 <button
                   onClick={() => setActiveTab('audit')}
-                  className={`min-w-max flex-1 rounded-md px-3 py-1.5 text-[10px] sm:text-[11px] ${activeTab === 'audit' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  className={`min-w-max flex-1 rounded-md px-3 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'audit' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
                   type="button"
                 >
                   Security & SOC-2 Audit Stream
                 </button>
                 <button
                   onClick={() => setActiveTab('customer_tiers')}
-                  className={`min-w-max flex-1 rounded-md px-3 py-1.5 text-[10px] sm:text-[11px] ${activeTab === 'customer_tiers' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  className={`min-w-max flex-1 rounded-md px-3 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'customer_tiers' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
                   type="button"
                 >
                   Customer Tiers
                 </button>
                 <button
-                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[10px] sm:text-[11px] ${activeTab === 'access_control' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                  className={`min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'access_control' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
                   type="button"
                   onClick={() => setActiveTab('access_control')}
                 >
