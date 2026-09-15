@@ -13,7 +13,8 @@ import {
   Bell,
   ShieldCheck,
   Award,
-  Plus
+  Plus,
+  Package
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -57,6 +58,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Staff & RBAC', route: '/staff', icon: ShieldCheck },
         { name: 'Loyalty Program', route: '/loyalty', icon: Gift },
         { name: 'QR Codes', route: '/qr-codes', icon: QrCode },
+      ],
+    },
+    {
+      label: 'CATALOG & ORDERS',
+      items: [
+        { name: 'Item Catalog', route: '/item-catalog', icon: Package },
       ],
     },
     {
