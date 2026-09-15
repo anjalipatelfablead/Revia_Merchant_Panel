@@ -33,6 +33,7 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 import { AuditLogPage } from './pages/AuditLogPage';
 import { StaffPage } from './pages/StaffPage';
 import { QrCodesPage } from './pages/QrCodesPage';
+import { ItemCatalogPage } from './pages/ItemCatalogPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
 import { BillingPage } from './pages/BillingPage';
@@ -46,7 +47,7 @@ import { TermsOfServicePage } from './pages/TermsOfServicePage';
 
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
-  '/loyalty', '/qr-codes', '/catalog', '/orders', '/invoices',
+  '/loyalty', '/qr-codes', '/item-catalog', '/catalog', '/orders', '/invoices',
   '/customerlist', '/transactions', '/campaigns', '/campaigns/new',
   '/terminal', '/rewards', '/analytics', '/billing', '/notifications',
   '/settings/audit', '/settings/branding', '/login', '/onboarding',
@@ -212,7 +213,7 @@ export default function App() {
         />
 
         {/* Dynamic Page Routing Area */}
-        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-12'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
+        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
           {currentRoute === '/dashboard' && (
             <DashboardPage
               onNavigate={handleNavigate}
@@ -250,6 +251,10 @@ export default function App() {
 
           {currentRoute === '/qr-codes' && (
             <QrCodesPage />
+          )}
+
+          {currentRoute === '/item-catalog' && (
+            <ItemCatalogPage />
           )}
 
           {currentRoute === '/customerlist' && (

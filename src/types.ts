@@ -143,6 +143,7 @@ export type NavRoute =
   | '/staff'
   | '/loyalty'
   | '/qr-codes'
+  | '/item-catalog'
   | '/catalog'
   | '/orders'
   | '/invoices'
