@@ -5,23 +5,12 @@ import { MOCK_BUSINESS } from './data/mockData';
 
 // Shared Components
 import { CustomerLayout } from './components/shared/CustomerLayout';
-import { CustomerHeader } from './components/shared/CustomerHeader';
-import { CustomerFooter } from './components/shared/CustomerFooter';
 import { ErrorState } from './components/ui/States';
 // Additional imports for cart functionality
 import { useCart } from './hooks/useCart';
-import { CustomerCartOverlay } from './components/shared/CustomerCartOverlay';
 
 // Pre-auth Screens
-import { QRScreen } from './screens/pre-auth/QRScreen';
-import { QRLoadingScreen } from './screens/pre-auth/QRLoadingScreen';
-import { WelcomeScreen } from './screens/pre-auth/WelcomeScreen';
-import { MobileScreen } from './screens/pre-auth/MobileScreen';
-import { OTPScreen } from './screens/pre-auth/OTPScreen';
-import { MemberStatusScreen } from './screens/pre-auth/MemberStatusScreen';
-import { ProfileFormScreen } from './screens/pre-auth/ProfileFormScreen';
-import { CurateExperienceScreen } from './screens/pre-auth/CurateExperienceScreen';
-import { JoinLoyaltyScreen } from './screens/pre-auth/JoinLoyaltyScreen';
+import { CustomerWizard } from './screens/pre-auth/CustomerWizard';
 
 // Post-auth Screens
 import { HomeScreen } from './screens/post-auth/HomeScreen';
@@ -34,6 +23,7 @@ import { RedemptionScreen } from './screens/post-auth/RedemptionScreen';
 import { RedemptionSuccessScreen } from './screens/post-auth/RedemptionSuccessScreen';
 import { MembershipScreen } from './screens/post-auth/MembershipScreen';
 import { HistoryScreen } from './screens/post-auth/HistoryScreen';
+import { OrdersScreen } from './screens/post-auth/OrdersScreen';
 import { CheckoutScreen } from './screens/post-auth/CheckoutScreen';
 import { PrivacyScreen } from './screens/post-auth/PrivacyScreen';
 import { ProfileScreen } from './screens/post-auth/ProfileScreen';
@@ -44,7 +34,7 @@ interface Props {
   onNavigate?: (route: string) => void;
 }
 
-type PreScreen = 'qr' | 'qr-loading' | 'qr-error' | 'welcome' | 'mobile' | 'otp' | 'curate-experience' | 'member-status' | 'profile-form' | 'join-loyalty';
+type PreScreen = 'qr' | 'qr-loading' | 'qr-error' | 'mobile' | 'otp' | 'curate-experience' | 'member-status' | 'profile-form' | 'join-loyalty';
 
 export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => {
   // Parse initial route
@@ -94,27 +84,10 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
 
   // Pre-auth flow
   if (!isAuthenticated) {
-    const renderPreScreen = () => {
-      if (preScreen === 'qr') return <QRScreen onNext={() => handleSetPreScreen('qr-loading')} />;
-      if (preScreen === 'qr-loading') return <QRLoadingScreen onDone={() => handleSetPreScreen('mobile')} />;
-      if (preScreen === 'qr-error') return (
-        <div className="min-h-screen bg-[#F8F8F6] md:bg-[#EBEBEB] flex items-center justify-center md:p-6">
-          <div className="w-full max-w-[400px] bg-[#F8F8F6] min-h-screen md:min-h-0 md:h-[800px] md:rounded-[40px] md:shadow-2xl flex flex-col items-center justify-center p-6 text-center overflow-hidden relative">
-            <ErrorState title="QR Code Unavailable" desc="This QR code is no longer active. Please try a different code." onRetry={() => handleSetPreScreen('qr')} />
-          </div>
-        </div>
-      );
-      if (preScreen === 'welcome') return <WelcomeScreen onJoin={() => handleSetPreScreen('mobile')} />;
-      if (preScreen === 'mobile') return <MobileScreen onNext={m => { setMobile(m); handleSetPreScreen('otp'); }} />;
-      if (preScreen === 'otp') return <OTPScreen mobile={mobile} onVerify={() => onNavigate?.('/customer-onboarding')} onBack={() => handleSetPreScreen('mobile')} />;
-      if (preScreen === 'curate-experience') return <CurateExperienceScreen onConfirm={() => handleSetPreScreen('dashboard')} />;
-      return null;
-    };
-
     return (
       <div className="min-h-screen flex flex-col">
         <div className="flex-1 flex flex-col">
-          {renderPreScreen()}
+          <CustomerWizard onComplete={() => { setIsAuthenticated(true); handleSetActiveTab('dashboard'); }} />
         </div>
       </div>
     );
@@ -125,25 +98,14 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
     return <RedemptionSuccessScreen rewardId={selectedReward} onDone={() => { setShowRedemptionSuccess(false); setSelectedReward(null); handleSetActiveTab('history'); }} />;
   }
 
-  if (showRedemption && selectedReward) {
-    return <RedemptionScreen rewardId={selectedReward} onClose={() => setShowRedemption(false)} onRedeemed={() => { setShowRedemption(false); setShowRedemptionSuccess(true); }} />;
-  }
 
-  // Reward detail (full-screen over main)
-  if (selectedReward && activeTab === 'rewards') {
-    return (
-      <CustomerLayout tab={activeTab} setTab={t => { handleSetActiveTab(t); setSelectedReward(null); }} title="Reward Detail" showBack onBack={() => setSelectedReward(null)}>
-        <RewardDetailScreen rewardId={selectedReward} onBack={() => setSelectedReward(null)} onShowQR={() => setShowRedemption(true)} />
-      </CustomerLayout>
-    );
-  }
 
   // Post-auth main tabs
   const getTitle = () => {
     if (showPrivacy) return 'Privacy & Data';
     if (activeTab === 'offers' && selectedOffer) return 'Offer Detail';
     if ((activeTab as string) === 'product' && selectedProduct) return 'Item Details';
-    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'Coupons', membership: 'Membership Cards', offers: 'Offers', rewards: 'Rewards Wallet', history: 'Activity', profile: 'My Profile', checkout: 'Checkout' };
+    const titles: Record<string, string> = { dashboard: MOCK_BUSINESS.name, scan: 'Scan QR', menu: 'Menu / Order', orders: 'My Orders', coupons: 'My Rewards', membership: 'Membership Cards', offers: 'Offers', rewards: 'Rewards Wallet', history: 'Activity', profile: 'My Profile', checkout: 'Checkout' };
     return titles[activeTab] || 'Revia';
   };
 
@@ -177,13 +139,15 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
           onBack={() => { setSelectedProduct(null); handleSetActiveTab('menu'); }}
           addItem={addItem}
         />
-      ) : activeTab === 'offers' || activeTab === 'coupons' ? (
-        <OffersScreen type={activeTab} selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+      ) : activeTab === 'offers' ? (
+        <OffersScreen type="offers" selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+      ) : activeTab === 'coupons' || activeTab === 'rewards' ? (
+        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
       ) : activeTab === 'membership' ? (
         <MembershipScreen />
-      ) : activeTab === 'rewards' ? (
-        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
-      ) : activeTab === 'history' || activeTab === 'orders' ? (
+      ) : activeTab === 'orders' ? (
+        <OrdersScreen />
+      ) : activeTab === 'history' ? (
         <HistoryScreen />
       ) : activeTab === 'profile' ? (
         <ProfileScreen onPrivacy={() => setShowPrivacy(true)} onNavigateApp={onNavigate} />
