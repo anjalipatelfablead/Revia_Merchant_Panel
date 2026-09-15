@@ -60,7 +60,11 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
   }, [isPostAuthRoute, isAuthenticated, setIsAuthenticated]);
 
   if (!isPostAuthRoute) {
+<<<<<<< HEAD
     return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />;
+=======
+    return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('menu'); }} />;
+>>>>>>> df875fdd4d574f23cb9c710df7991b046ff0ea58
   }
 
   const activeTab = subRoute as MainTab;
