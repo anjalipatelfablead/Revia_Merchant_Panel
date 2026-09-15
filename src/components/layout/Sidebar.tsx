@@ -17,8 +17,7 @@ import {
   Package,
   ClipboardList,
   ScanLine,
-  X,
-  ChevronDown
+  X
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -122,18 +121,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Branch Switcher Pill */}
-      <div className="px-3 pt-3">
-        <div className="relative">
-          <div className="w-full flex items-center justify-between px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs font-semibold text-[#1A1615]">
-            <div className="flex items-center gap-2 truncate">
-              <Store className="w-3.5 h-3.5 text-[#D4A753] shrink-0" />
-              <span className="truncate">{activeBranch}</span>
-            </div>
-            <ChevronDown className="w-3.5 h-3.5 text-[#6E6A66] shrink-0" />
-          </div>
-        </div>
-      </div>
 
       {/* Navigation Links Area */}
       <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5">
