@@ -138,18 +138,18 @@ export const LoyaltyPage: React.FC = () => {
           <button className="hidden md:block flex-none px-4 py-2 text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
             Discard Changes
           </button>
-          <button className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer whitespace-nowrap">
+          <button className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer whitespace-nowrap">
             <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Save Draft
           </button>
           <button
             onClick={handlePublish}
             disabled={publishStatus !== 'idle'}
-            className={`flex items-center justify-center gap-2 px-3 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white rounded-lg transition-all shadow-sm ${publishStatus === 'published'
-              ? 'bg-[#0D7A53] cursor-default'
+            className={`flex items-center justify-center gap-2 px-3 sm:px-5 py-2 text-xs sm:text-sm font-bold text-white rounded-lg transition-all shadow-xs ${publishStatus === 'published'
+              ? 'bg-[#15803D] cursor-default'
               : publishStatus === 'publishing'
                 ? 'bg-[#1A1615] opacity-80 cursor-wait'
-                : 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 cursor-pointer'
+                : 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 cursor-pointer'
               }`}
           >
             {publishStatus === 'idle' && <><Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Publish Program Changes</span><span className="sm:hidden">Publish</span></>}

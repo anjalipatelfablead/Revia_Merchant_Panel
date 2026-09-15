@@ -231,14 +231,12 @@ export const QrCodesPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-sm cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-xs cursor-pointer">
               <Download className="w-4 h-4" />
               Download Print PDF Pack
             </button>
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] rounded-xl hover:opacity-90 transition-opacity shadow-sm cursor-pointer">
-              <Plus className="w-4 h-4" />
+            <button className="flex items-center gap-2 px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-xl hover:opacity-95 transition-all shadow-xs cursor-pointer">
+              <Plus className="w-4 h-4 text-white" />
               Create Dynamic Stand
             </button>
           </div>
@@ -493,7 +491,7 @@ export const QrCodesPage: React.FC = () => {
                       {/* Center Brand Emblem */}
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div className="w-8 h-8 bg-white rounded flex items-center justify-center border border-[#1A1615]">
-                          <span className="font-serif font-bold text-lg text-[#1A1615]">R</span>
+                          <span className="font-sans font-bold text-lg text-[#1A1615]">R</span>
                         </div>
                       </div>
                     </div>

@@ -31,6 +31,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const [timeframe, setTimeframe] = useState<'Daily' | 'Weekly' | 'Monthly'>('Daily');
   const [activeDateRange, setActiveDateRange] = useState('Last 30 Days (Oct 1 - Oct 31, 2024)');
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
+  const [exportToast, setExportToast] = useState(false);
   const [expandedBranch, setExpandedBranch] = useState<string | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<{
     date: string;
@@ -134,9 +135,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const areaPath = chartPoints.length > 0 ? `${stampsPath} L ${chartPoints[chartPoints.length - 1].x} 190 L ${chartPoints[0].x} 190 Z` : '';
 
   return (
-    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5 relative">
+      {/* Export Toast Notification */}
+      {exportToast && (
+        <div className="fixed top-20 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-2xl shadow-2xl border border-[#D4A753]/40 flex items-center gap-3 animate-in slide-in-from-top-4 duration-300">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white shrink-0 shadow-md">
+            <Share2 className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-white">Report Export Triggered ✓</p>
+            <p className="text-[10px] text-[#A8A29E]">Downloading merchant intelligence report (CSV / PDF)...</p>
+          </div>
+        </div>
+      )}
+
       {/* 1. Header Overview Row */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">
@@ -151,17 +165,17 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           </p>
         </div>
 
-        {/* Top Right Action Controls */}
-        <div className="flex items-center gap-2.5 flex-wrap self-start lg:self-auto">
+        {/* Top Right Action Controls — Single Line */}
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap shrink-0 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar">
           {/* Date Picker Dropdown */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-              className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-semibold text-[#1A1615] flex items-center gap-2 shadow-2xs transition-colors cursor-pointer"
+              className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap"
             >
-              <Calendar className="w-3.5 h-3.5 text-[#7C746C]" />
+              <Calendar className="w-3.5 h-3.5 text-white shrink-0" />
               <span>{activeDateRange}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#7C746C]" />
+              <ChevronDown className="w-3.5 h-3.5 text-white/80 shrink-0" />
             </button>
 
             {dateDropdownOpen && (
@@ -178,7 +192,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                       setActiveDateRange(range);
                       setDateDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-3 py-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${range === activeDateRange ? 'font-bold text-[#A37837] bg-[#FAF6EE]' : 'text-[#1A1615]'
+                    className={`w-full text-left px-3 py-2 hover:bg-[#FAF8F5] transition-colors cursor-pointer ${range === activeDateRange ? 'font-bold text-[#9E782F] bg-[#FAF6EE]' : 'text-[#1A1615]'
                       }`}
                   >
                     {range}
@@ -190,19 +204,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
           {/* Export Report Button */}
           <button
-            onClick={() => alert('Exporting complete merchant intelligence report (CSV / PDF)...')}
-            className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+            onClick={() => {
+              setExportToast(true);
+              setTimeout(() => setExportToast(false), 3000);
+            }}
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Share2 className="w-3.5 h-3.5 text-[#7C746C]" />
+            <Share2 className="w-3.5 h-3.5 text-white shrink-0" />
             <span>Export Report</span>
           </button>
 
           {/* Create Campaign Primary Button */}
           <button
             onClick={() => onNavigate('/campaigns/new')}
-            className="bg-[#B38637] hover:bg-[#A37837] text-white rounded-lg px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Plus className="w-4 h-4 text-white" />
+            <Plus className="w-4 h-4 text-white shrink-0" />
             <span>Create Campaign</span>
           </button>
         </div>
@@ -389,7 +406,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                     key={t}
                     onClick={() => setTimeframe(t)}
                     className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${timeframe === t
-                      ? 'bg-[#B38637] text-white shadow-2xs'
+                      ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs font-bold'
                       : 'text-[#7C746C] hover:text-[#1A1615]'
                       }`}
                   >
@@ -666,54 +683,48 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               {/* Action 1 */}
               <button
                 onClick={() => onNavigate('/qr-codes')}
-                className="w-full text-left bg-[#B38637] hover:bg-[#A37837] border border-[#A37837] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-xs h-24 cursor-pointer group"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
                 <QrCode className="w-5 h-5 text-white mb-2" />
                 <div>
                   <div className="text-xs font-bold text-white mb-0.5">Scan & Verify</div>
-                  <div className="text-[10px] text-[#FDF8EB] opacity-90 line-clamp-1">Counter camera launch</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Counter camera launch</div>
                 </div>
               </button>
 
               {/* Action 2 */}
               <button
                 onClick={() => onNavigate('/qr-codes')}
-                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
-                  <Share2 className="w-4 h-4" />
-                </div>
+                <Share2 className="w-5 h-5 text-white mb-2" />
                 <div>
-                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">QR Pack Print</div>
-                  <div className="text-[10px] text-[#7C746C] line-clamp-1">Table stand templates</div>
+                  <div className="text-xs font-bold text-white mb-0.5">QR Pack Print</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Table stand templates</div>
                 </div>
               </button>
 
               {/* Action 3 */}
               <button
                 onClick={() => onNavigate('/staff')}
-                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
-                  <UserPlus className="w-4 h-4" />
-                </div>
+                <UserPlus className="w-5 h-5 text-white mb-2" />
                 <div>
-                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">Shift Staff</div>
-                  <div className="text-[10px] text-[#7C746C] line-clamp-1">4 baristas logged in</div>
+                  <div className="text-xs font-bold text-white mb-0.5">Shift Staff</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">4 baristas logged in</div>
                 </div>
               </button>
 
               {/* Action 4 */}
               <button
                 onClick={() => onNavigate('/loyalty')}
-                className="w-full text-left bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3 flex flex-col justify-between transition-colors shadow-2xs h-24 cursor-pointer group"
+                className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#FAF6EE] text-[#B38637] flex items-center justify-center mb-2">
-                  <Zap className="w-4 h-4" />
-                </div>
+                <Zap className="w-5 h-5 text-white mb-2" />
                 <div>
-                  <div className="text-xs font-bold text-[#1A1615] mb-0.5">Double-Stamp</div>
-                  <div className="text-[10px] text-[#7C746C] line-clamp-1">Trigger flash hour boost</div>
+                  <div className="text-xs font-bold text-white mb-0.5">Double-Stamp</div>
+                  <div className="text-[10px] text-white/90 line-clamp-1">Trigger flash hour boost</div>
                 </div>
               </button>
             </div>

@@ -204,7 +204,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
             <span>Export Ledger</span>
           </button>
 
-          {/* + Add New Branch button (warm gold) */}
+          {/* + Add New Branch button (brand gold gradient) */}
           <button
             onClick={() => {
               if (onNavigate) {
@@ -213,7 +213,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 setIsAddModalOpen(true);
               }
             }}
-            className="bg-[#B38637] hover:bg-[#A37837] text-white rounded-lg px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white" />
             <span>Add New Branch</span>

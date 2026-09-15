@@ -52,7 +52,7 @@ export const BrandingPage: React.FC = () => {
                         Sync: 3 Roasteries Synced • Edge CDN Warm
                      </span>
                   </div>
-                  <h1 className="text-[32px] font-light tracking-tight text-[#1A1615] mb-2 leading-none font-serif">Business Profile & Branding</h1>
+                  <h1 className="text-[32px] font-extrabold tracking-tight text-[#1A1615] mb-2 leading-none font-sans">Business Profile & Branding</h1>
                   <p className="text-[14px] text-[#6E6A66] max-w-2xl">
                      Curate your maison's visual identity, token architecture, stamp marks, and real-time member portal experience across all physical tasting salons.
                   </p>
@@ -140,8 +140,8 @@ export const BrandingPage: React.FC = () => {
 
                            <div className="flex-1 flex flex-col items-center justify-center py-4 mb-4">
                               <div className="bg-white border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-xs">
-                                 <div className="w-6 h-6 bg-[#1A1615] rounded text-[#A37837] flex items-center justify-center font-serif font-bold text-[10px]">R</div>
-                                 <div className="w-4 h-4 bg-[#A37837] rounded-sm text-white flex items-center justify-center font-serif font-bold text-[8px]">R</div>
+                                 <div className="w-6 h-6 bg-[#1A1615] rounded text-[#A37837] flex items-center justify-center font-sans font-bold text-[10px]">R</div>
+                                 <div className="w-4 h-4 bg-[#A37837] rounded-sm text-white flex items-center justify-center font-sans font-bold text-[8px]">R</div>
                               </div>
                               <div className="text-[9px] text-[#8C827A] mt-3">16px • 32px • 180px</div>
                            </div>

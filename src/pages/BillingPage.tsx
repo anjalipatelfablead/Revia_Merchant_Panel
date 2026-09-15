@@ -156,8 +156,8 @@ export const BillingPage: React.FC = () => {
           <p className="mt-1 max-w-[600px] text-[14px] font-normal leading-relaxed text-[#7C746C] md:max-lg:max-w-[600px] md:max-lg:text-[12px]">Manage your hospitality atelier subscription plan, connected branch licensing, POS seat quotas, and tax invoice history.</p>
         </div>
         <div className="mt-1 flex shrink-0 items-center gap-2 md:max-lg:gap-1.5">
-          <button type="button" onClick={exportTaxDossier} className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-3 py-2 text-xs font-semibold text-[#4F4842] shadow-2xs hover:bg-[#F5F1EA] md:max-lg:px-2 md:max-lg:text-[10px]"><ReceiptText className="h-3.5 w-3.5 text-[#9E782F]" /> Download Tax Dossier (PDF)</button>
-          <button type="button" onClick={() => document.getElementById('subscription-allocation')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex items-center gap-1.5 rounded-lg bg-[#B7842C] px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#9E782F] md:max-lg:px-2 md:max-lg:text-[10px]"><Zap className="h-3.5 w-3.5" /> Upgrade Plan Quota</button>
+          <button type="button" onClick={exportTaxDossier} className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-3 py-2 text-xs font-semibold text-[#4F4842] shadow-2xs hover:bg-[#F5F1EA] cursor-pointer md:max-lg:px-2 md:max-lg:text-[10px]"><ReceiptText className="h-3.5 w-3.5 text-[#9E782F]" /> Download Tax Dossier (PDF)</button>
+          <button type="button" onClick={() => document.getElementById('subscription-allocation')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:opacity-95 cursor-pointer md:max-lg:px-2 md:max-lg:text-[10px]"><Zap className="h-3.5 w-3.5" /> Upgrade Plan Quota</button>
         </div>
       </div>
 

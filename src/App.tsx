@@ -36,6 +36,7 @@ import { ItemCatalogPage } from './pages/ItemCatalogPage';
 import { OrderQueuePage } from './pages/OrderQueuePage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { RewardsPage } from './pages/RewardsPage';
+import { RedemptionTerminalPage } from './pages/RedemptionTerminalPage';
 import { BillingPage } from './pages/BillingPage';
 import { NotificationPage } from './pages/NotificationPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -277,6 +278,10 @@ export default function App() {
 
           {currentRoute === '/rewards' && (
             <RewardsPage />
+          )}
+
+          {currentRoute === '/terminal' && (
+            <RedemptionTerminalPage />
           )}
 
           {currentRoute === '/analytics' && (
