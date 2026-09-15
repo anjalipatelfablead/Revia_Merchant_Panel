@@ -5,15 +5,7 @@ import { CustomerProvider, useCustomer } from './CustomerContext';
 import { CustomerLayout } from './components/shared/CustomerLayout';
 import { ErrorState } from './components/ui/States';
 
-// Pre-auth Screens
-import { QRScreen } from './screens/pre-auth/QRScreen';
-import { QRLoadingScreen } from './screens/pre-auth/QRLoadingScreen';
-import { MobileScreen } from './screens/pre-auth/MobileScreen';
-import { OTPScreen } from './screens/pre-auth/OTPScreen';
-import { MemberStatusScreen } from './screens/pre-auth/MemberStatusScreen';
-import { ProfileFormScreen } from './screens/pre-auth/ProfileFormScreen';
-import { CurateExperienceScreen } from './screens/pre-auth/CurateExperienceScreen';
-import { JoinLoyaltyScreen } from './screens/pre-auth/JoinLoyaltyScreen';
+import { CustomerWizard } from './screens/pre-auth/CustomerWizard';
 
 // Post-auth Screens
 import { HomeScreen } from './screens/post-auth/HomeScreen';
@@ -51,7 +43,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
     selectedProduct, setSelectedProduct
   } = useCustomer();
 
-  const subRoute = currentRoute.split('/').filter(Boolean)[1] || 'qr';
+  const subRoute = currentRoute.split('/').filter(Boolean)[1] || 'identify';
   
   const navigateTo = (path: string) => {
     onNavigate('/customer/' + path);
@@ -67,24 +59,8 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
     }
   }, [isPostAuthRoute, isAuthenticated, setIsAuthenticated]);
 
-  if (!isAuthenticated && !isPostAuthRoute) {
-    if (subRoute === 'qr') return <QRScreen onNext={() => navigateTo('qr-loading')} />;
-    if (subRoute === 'qr-loading') return <QRLoadingScreen onDone={() => navigateTo('mobile')} />;
-    if (subRoute === 'qr-error') return (
-      <div className="min-h-screen bg-[#F8F8F6] md:bg-[#EBEBEB] flex items-center justify-center md:p-6">
-        <div className="w-full max-w-[400px] bg-[#F8F8F6] min-h-screen md:min-h-0 md:h-[800px] md:rounded-[40px] md:shadow-2xl flex flex-col items-center justify-center p-6 text-center overflow-hidden relative">
-          <ErrorState title="QR Code Unavailable" desc="This QR code is no longer active. Please try a different code." onRetry={() => navigateTo('qr')} />
-        </div>
-      </div>
-    );
-    if (subRoute === 'mobile') return <MobileScreen onNext={m => { setMobile(m); navigateTo('otp'); }} />;
-    if (subRoute === 'otp') return <OTPScreen mobile={mobile} onVerify={() => onNavigate('/customer/onboarding')} onBack={() => navigateTo('mobile')} />;
-    if (subRoute === 'curate-experience') return <CurateExperienceScreen onConfirm={() => navigateTo('dashboard')} />;
-    if (subRoute === 'profile-form') return <ProfileFormScreen isNew={!isExistingMember} onContinue={() => { if (isExistingMember) { setIsAuthenticated(true); navigateTo('dashboard'); } else navigateTo('join-loyalty'); }} />;
-    if (subRoute === 'join-loyalty') return <JoinLoyaltyScreen onJoined={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />;
-    
-    // Default fallback
-    return <QRScreen onNext={() => navigateTo('qr-loading')} />;
+  if (!isPostAuthRoute) {
+    return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />;
   }
 
   const activeTab = subRoute as MainTab;

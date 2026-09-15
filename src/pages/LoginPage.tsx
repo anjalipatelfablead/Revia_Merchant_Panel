@@ -295,7 +295,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
               Login as Merchant
             </button>
             <button
-              onClick={() => onLoginSuccess('/customer/qr')}
+              onClick={() => onLoginSuccess('/customer/identify')}
               className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
             >
               Login as Customer

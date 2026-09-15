@@ -5,22 +5,12 @@ import { MOCK_BUSINESS } from './data/mockData';
 
 // Shared Components
 import { CustomerLayout } from './components/shared/CustomerLayout';
-import { CustomerHeader } from './components/shared/CustomerHeader';
-import { CustomerFooter } from './components/shared/CustomerFooter';
 import { ErrorState } from './components/ui/States';
 // Additional imports for cart functionality
 import { useCart } from './hooks/useCart';
-import { CustomerCartOverlay } from './components/shared/CustomerCartOverlay';
 
 // Pre-auth Screens
-import { QRScreen } from './screens/pre-auth/QRScreen';
-import { QRLoadingScreen } from './screens/pre-auth/QRLoadingScreen';
-import { MobileScreen } from './screens/pre-auth/MobileScreen';
-import { OTPScreen } from './screens/pre-auth/OTPScreen';
-import { MemberStatusScreen } from './screens/pre-auth/MemberStatusScreen';
-import { ProfileFormScreen } from './screens/pre-auth/ProfileFormScreen';
-import { CurateExperienceScreen } from './screens/pre-auth/CurateExperienceScreen';
-import { JoinLoyaltyScreen } from './screens/pre-auth/JoinLoyaltyScreen';
+import { CustomerWizard } from './screens/pre-auth/CustomerWizard';
 
 // Post-auth Screens
 import { HomeScreen } from './screens/post-auth/HomeScreen';
@@ -113,10 +103,12 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
     return (
       <div className="min-h-screen flex flex-col">
         <div className="flex-1 flex flex-col">
-          {renderPreScreen()}
+          <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />
         </div>
       </div>
     );
+
+
   }
 
   // Redemption overlay
