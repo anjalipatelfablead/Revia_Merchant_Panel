@@ -43,6 +43,13 @@ import {
   Edit2,
   AlertCircle,
   Hourglass,
+  MessageSquare,
+  Send,
+  ShieldCheck,
+  QrCode,
+  Package,
+  Printer,
+  Box,
   BellRing,
   Bookmark,
   ChevronRight,
@@ -898,8 +905,15 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   // Step 1 – Basics state
   const [campaignName, setCampaignName] = useState('');
-  const [topLevelType, setTopLevelType] = useState<'new_customer' | 'existing_customer' | 'happy_hours' | ''>('');
-  const [existingSubType, setExistingSubType] = useState<'existing_visit' | 'existing_billing' | 'existing_stamp' | ''>('');
+  const [topLevelType, setTopLevelType] = useState<'new_customer' | 'existing_customer' | 'direct_customer' | 'product_qr' | ''>('');
+  const [existingSubType, setExistingSubType] = useState<'existing_visit' | 'existing_billing' | 'existing_stamp' | 'new_welcome' | 'new_first_visit' | 'new_first_billing' | ''>('');
+  const [directCustomerName, setDirectCustomerName] = useState<string>('Elena Rostova');
+  const [directCustomerMobile, setDirectCustomerMobile] = useState<string>('+91 98765 43210');
+  const [directCustomerBillNo, setDirectCustomerBillNo] = useState<string>('INV-88219');
+  const [directRedemptionMode, setDirectRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
+  const [productQrName, setProductQrName] = useState<string>('Single Origin Geisha (250g Whole Bean)');
+  const [productQrQuantity, setProductQrQuantity] = useState<number>(100);
+  const [productQrRedemptionMode, setProductQrRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [statusDraft, setStatusDraft] = useState(true);
@@ -1031,7 +1045,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   // Derived full campaign type key for Step 3 routing
   const fullCampaignType =
-    topLevelType === 'existing_customer' && existingSubType
+    (topLevelType === 'existing_customer' || topLevelType === 'new_customer') && existingSubType
       ? existingSubType
       : topLevelType;
 
@@ -1093,13 +1107,18 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               Campaign Type <span className="text-[#B7362F] ml-0.5">*</span>
             </label>
 
-            {/* Level 1 – 3 top-level cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-2">
+            {/* Level 1 – 4 top-level cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-2">
               {/* New Customer */}
               <button
                 id="type-new-customer"
                 type="button"
-                onClick={() => { setTopLevelType('new_customer'); setExistingSubType(''); }}
+                onClick={() => {
+                  setTopLevelType('new_customer');
+                  if (!['new_welcome', 'new_first_visit', 'new_first_billing'].includes(existingSubType)) {
+                    setExistingSubType('new_welcome');
+                  }
+                }}
                 className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'new_customer'
                   ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
                   : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
@@ -1123,7 +1142,12 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <button
                 id="type-existing-customer"
                 type="button"
-                onClick={() => setTopLevelType('existing_customer')}
+                onClick={() => {
+                  setTopLevelType('existing_customer');
+                  if (!['existing_visit', 'existing_billing', 'existing_stamp'].includes(existingSubType)) {
+                    setExistingSubType('existing_visit');
+                  }
+                }}
                 className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'existing_customer'
                   ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
                   : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
@@ -1143,32 +1167,347 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <div className="text-[11px] text-[#6E6A66] leading-tight">Reward repeat customers</div>
               </button>
 
-              {/* Happy Hours */}
+              {/* Direct Special Offer */}
               <button
-                id="type-happy-hours"
+                id="type-direct-customer"
                 type="button"
-                onClick={() => { setTopLevelType('happy_hours'); setExistingSubType(''); }}
-                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'happy_hours'
+                onClick={() => { setTopLevelType('direct_customer'); setExistingSubType(''); }}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'direct_customer'
                   ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
                   : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
                   }`}
               >
-                {topLevelType === 'happy_hours' && (
+                {topLevelType === 'direct_customer' && (
                   <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
                     <Check className="w-2.5 h-2.5 text-white" />
                   </span>
                 )}
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'happy_hours' ? 'bg-[#D4A753]/20' : 'bg-[#F3EDE6]'
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'direct_customer' ? 'bg-[#25D366]/20' : 'bg-[#F3EDE6]'
                   }`}>
-                  <Clock className={`w-5 h-5 ${topLevelType === 'happy_hours' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                  <MessageSquare className={`w-5 h-5 ${topLevelType === 'direct_customer' ? 'text-[#128C7E]' : 'text-[#9E9A93]'}`} />
                 </div>
-                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'happy_hours' ? 'text-[#9E782F]' : 'text-[#1A1615]'
-                  }`}>Happy Hours</div>
-                <div className="text-[11px] text-[#6E6A66] leading-tight">Time &amp; day-based offers</div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'direct_customer' ? 'text-[#128C7E]' : 'text-[#1A1615]'
+                  }`}>Direct Special Offer</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">WhatsApp link for targeted customer</div>
+              </button>
+
+              {/* Product Batch QR */}
+              <button
+                id="type-product-qr"
+                type="button"
+                onClick={() => { setTopLevelType('product_qr'); setExistingSubType(''); }}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all cursor-pointer ${topLevelType === 'product_qr'
+                  ? 'bg-[#FDF8EB] border-[#D4A753] shadow-md'
+                  : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-[#FAF8F5]'
+                  }`}
+              >
+                {topLevelType === 'product_qr' && (
+                  <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-[#D4A753] rounded-full flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5 text-white" />
+                  </span>
+                )}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${topLevelType === 'product_qr' ? 'bg-[#D4A753]/20' : 'bg-[#F3EDE6]'
+                  }`}>
+                  <QrCode className={`w-5 h-5 ${topLevelType === 'product_qr' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                </div>
+                <div className={`text-[13px] font-bold mb-0.5 ${topLevelType === 'product_qr' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                  }`}>Product Batch QR</div>
+                <div className="text-[11px] text-[#6E6A66] leading-tight">Batch QR stickers for N product pieces</div>
               </button>
             </div>
 
-            {/* Level 2 – Existing Customer sub-types */}
+            {/* Sub-config panel for Direct Special Offer */}
+            {topLevelType === 'direct_customer' && (
+              <div className="mt-3 p-5 bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl space-y-4">
+                <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-[#25D366]" />
+                    <span className="text-[13px] font-bold text-[#1A1615]">Target Customer Details &amp; WhatsApp Dispatch</span>
+                  </div>
+                  <span className="px-2.5 py-0.5 bg-[#25D366]/10 text-[#128C7E] rounded-full text-[10px] font-bold uppercase tracking-wider">WhatsApp &amp; SMS</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Customer Name</label>
+                    <input
+                      type="text"
+                      value={directCustomerName}
+                      onChange={e => setDirectCustomerName(e.target.value)}
+                      placeholder="e.g. Elena Rostova"
+                      className="w-full px-3.5 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Mobile Number (WhatsApp)</label>
+                    <input
+                      type="text"
+                      value={directCustomerMobile}
+                      onChange={e => setDirectCustomerMobile(e.target.value)}
+                      placeholder="e.g. +91 98765 43210"
+                      className="w-full px-3.5 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Bill / Reference No.</label>
+                    <input
+                      type="text"
+                      value={directCustomerBillNo}
+                      onChange={e => setDirectCustomerBillNo(e.target.value)}
+                      placeholder="e.g. INV-88219"
+                      className="w-full px-3.5 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                    />
+                  </div>
+                </div>
+
+                {/* Redemption Protocol Selector */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider block mb-2">Redemption Protocol</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Auto Redeem */}
+                    <button
+                      type="button"
+                      onClick={() => setDirectRedemptionMode('auto')}
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
+                        directRedemptionMode === 'auto'
+                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        directRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                      }`}>
+                        <Zap className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-bold text-[#1A1615]">⚡ Auto Redeem</div>
+                        <div className="text-[10px] text-[#6E6A66] leading-snug">Instant redemption automatically upon customer clicking the WhatsApp offer link.</div>
+                      </div>
+                    </button>
+
+                    {/* Merchant Approval Required */}
+                    <button
+                      type="button"
+                      onClick={() => setDirectRedemptionMode('merchant_approval')}
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
+                        directRedemptionMode === 'merchant_approval'
+                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        directRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                      }`}>
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-bold text-[#1A1615]">🛡️ Merchant Approval Required</div>
+                        <div className="text-[10px] text-[#6E6A66] leading-snug">Customer sends request via link; merchant accepts on POS terminal to complete redemption.</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Live WhatsApp Dispatch Preview */}
+                <div className="bg-[#E7F8E9] border border-[#25D366]/30 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-start gap-2.5">
+                    <MessageSquare className="w-5 h-5 text-[#25D366] shrink-0 mt-0.5" />
+                    <div className="text-[11px] text-[#128C7E] leading-snug">
+                      <span className="font-bold block">WhatsApp Message Dispatch Preview:</span>
+                      "Hi {directCustomerName || 'Customer'}, here is your special offer for Bill #{directCustomerBillNo || 'INV-001'}: <span className="underline font-bold">https://revia.app/r/offer-{directCustomerBillNo || '001'}</span> ({directRedemptionMode === 'auto' ? 'Auto-Redeem' : 'Requires Merchant Acceptance'})"
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => showToast('Test WhatsApp Offer Link generated!')} className="px-3.5 py-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold text-[11px] rounded-lg shadow-sm transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer">
+                    <Send className="w-3.5 h-3.5" /> Send WhatsApp Link
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Sub-config panel for Product Batch QR Offer */}
+            {topLevelType === 'product_qr' && (
+              <div className="mt-3 p-5 bg-[#FAF8F5] border border-[#EFECE6] rounded-2xl space-y-4">
+                <div className="flex items-center justify-between border-b border-[#EFECE6] pb-3">
+                  <div className="flex items-center gap-2">
+                    <Package className="w-4.5 h-4.5 text-[#D4A753]" />
+                    <span className="text-[13px] font-bold text-[#1A1615]">Physical Product Inventory &amp; Batch QR Generation</span>
+                  </div>
+                  <span className="px-2.5 py-0.5 bg-[#FDF8EB] text-[#9E782F] border border-[#F3E5C8] rounded-full text-[10px] font-bold uppercase tracking-wider">Product Asset Batch</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Target Specific Product / Item</label>
+                    <input
+                      type="text"
+                      value={productQrName}
+                      onChange={e => setProductQrName(e.target.value)}
+                      placeholder="e.g. Single Origin Geisha 250g Whole Bean"
+                      className="w-full px-3.5 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Total Batch Inventory (Piece Count)</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={productQrQuantity || ''}
+                        onChange={e => setProductQrQuantity(Number(e.target.value))}
+                        placeholder="100"
+                        className="w-full px-3.5 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                      />
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-bold text-[#9E782F]">PIECES / UNITS</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Redemption Protocol Selector for Physical Product QR */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider block mb-2">Select Product QR Redemption Protocol</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Auto Redeem */}
+                    <button
+                      type="button"
+                      onClick={() => setProductQrRedemptionMode('auto')}
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
+                        productQrRedemptionMode === 'auto'
+                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        productQrRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                      }`}>
+                        <Zap className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-bold text-[#1A1615]">⚡ Auto Redeem</div>
+                        <div className="text-[10px] text-[#6E6A66] leading-snug">Customer scans physical product QR sticker; reward auto-redeems immediately.</div>
+                      </div>
+                    </button>
+
+                    {/* Merchant Approval Required */}
+                    <button
+                      type="button"
+                      onClick={() => setProductQrRedemptionMode('merchant_approval')}
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
+                        productQrRedemptionMode === 'merchant_approval'
+                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                    >
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        productQrRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                      }`}>
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-bold text-[#1A1615]">🛡️ Merchant Approval Required</div>
+                        <div className="text-[10px] text-[#6E6A66] leading-snug">Customer scans QR sticker; merchant receives request on POS terminal &amp; accepts to validate redemption.</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Batch Printable Stickers Preview & Download */}
+                <div className="bg-white border border-[#EFECE6] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#FDF8EB] border border-[#F3E5C8] rounded-xl flex items-center justify-center text-[#9E782F] shrink-0">
+                      <QrCode className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-[12px] font-bold text-[#1A1615]">Batch #{productQrQuantity || 100} Unique QR Sticker Envelopes</div>
+                      <div className="text-[10px] font-medium text-[#7C746C]">Pre-generated tokens for "{productQrName || 'Selected Product'}" ({productQrRedemptionMode === 'auto' ? 'Auto-Redeem' : 'Requires POS Merchant Acceptance'})</div>
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => showToast(`Generated batch of ${productQrQuantity || 100} QR Sticker PDF Sheet`)} className="px-3.5 py-2 bg-[#1A1615] hover:bg-black text-white font-bold text-[11px] rounded-lg shadow-sm transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer">
+                    <Printer className="w-3.5 h-3.5" /> Download {productQrQuantity || 100} Print-Ready Stickers
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Level 2 – Customer Reward Triggers */}
+            {topLevelType === 'new_customer' && (
+              <div className="mt-2 ml-0 sm:ml-2 pl-3 border-l-2 border-[#D4A753]/40">
+                <p className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider mb-2">Select Reward Trigger</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Welcome Bonus */}
+                  <button
+                    id="subtype-welcome"
+                    type="button"
+                    onClick={() => setExistingSubType('new_welcome')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'new_welcome'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'new_welcome' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'new_welcome' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <Gift className={`w-4 h-4 ${existingSubType === 'new_welcome' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'new_welcome' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>Welcome Bonus</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Instant reward upon account sign-up</div>
+                  </button>
+
+                  {/* First Visit */}
+                  <button
+                    id="subtype-first-visit"
+                    type="button"
+                    onClick={() => setExistingSubType('new_first_visit')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'new_first_visit'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'new_first_visit' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'new_first_visit' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <UserPlus className={`w-4 h-4 ${existingSubType === 'new_first_visit' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'new_first_visit' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>First Visit</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward upon initial guest check-in</div>
+                  </button>
+
+                  {/* First Purchase */}
+                  <button
+                    id="subtype-first-billing"
+                    type="button"
+                    onClick={() => setExistingSubType('new_first_billing')}
+                    className={`relative text-left p-3.5 rounded-xl border-2 transition-all cursor-pointer ${existingSubType === 'new_first_billing'
+                      ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50'
+                      }`}
+                  >
+                    {existingSubType === 'new_first_billing' && (
+                      <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-[#D4A753] rounded-full flex items-center justify-center">
+                        <Check className="w-2 h-2 text-white" />
+                      </span>
+                    )}
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${existingSubType === 'new_first_billing' ? 'bg-[#D4A753]/20' : 'bg-white border border-[#EFECE6]'
+                      }`}>
+                      <DollarSign className={`w-4 h-4 ${existingSubType === 'new_first_billing' ? 'text-[#9E782F]' : 'text-[#9E9A93]'}`} />
+                    </div>
+                    <div className={`text-[12px] font-bold mb-0.5 ${existingSubType === 'new_first_billing' ? 'text-[#9E782F]' : 'text-[#1A1615]'
+                      }`}>First Purchase</div>
+                    <div className="text-[10px] text-[#6E6A66] leading-tight">Reward on first checkout transaction</div>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {topLevelType === 'existing_customer' && (
               <div className="mt-2 ml-0 sm:ml-2 pl-3 border-l-2 border-[#D4A753]/40">
                 <p className="text-[11px] font-bold text-[#9E782F] uppercase tracking-wider mb-2">Select Reward Trigger</p>
