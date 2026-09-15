@@ -72,7 +72,7 @@ const MobileAnalyticsView: React.FC = () => {
 
         <div className="mt-4 flex gap-2 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {['Last 30D', 'Last 90D', 'YTD', 'All Branches'].map((period, index) => (
-            <button key={period} type="button" className={`shrink-0 rounded-full px-4 py-2.5 text-[12px] font-semibold ${index === 1 ? 'bg-[#C99B42] text-white shadow-sm' : 'bg-[#F3E9DF] text-[#3D3732]'}`}>{period}</button>
+            <button key={period} type="button" className={`shrink-0 rounded-full px-4 py-2 text-[12px] font-bold cursor-pointer transition-all ${index === 1 ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-[#F3E9DF] text-[#3D3732] hover:bg-[#EAE1D7]'}`}>{period}</button>
           ))}
         </div>
 
