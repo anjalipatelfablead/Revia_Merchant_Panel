@@ -1388,6 +1388,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     { id: 3, name: 'Morning Happy Hour', type: 'Happy Hours', status: 'Active', target: 'Gold', startDate: 'Oct 15, 2024', endDate: 'Ongoing', progress: 42, reward: '10% Discount' },
   ]);
 
+  React.useEffect(() => {
+    campaigns.forEach(c => {
+      const img = new window.Image();
+      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`;
+    });
+  }, [campaigns]);
+
   const [priorityLevel, setPriorityLevel] = useState<number>(1);
   const [selectedTiers, setSelectedTiers] = useState<string[]>(['Obsidian VIP', 'Gold Reserve']);
   const [lifecycleType, setLifecycleType] = useState<string>('Both');
@@ -3363,7 +3370,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
                     </td>
                     <td className="py-4 px-5 text-right space-x-2 flex justify-end">
-                      <button onClick={() => setQrModalCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
+                      <button onClick={() => setQrModalCampaign(c)} onMouseEnter={() => { const img = new Image(); img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`; }} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
                       <button onClick={() => handleDownload(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
                       <button onClick={handleOpenBuilder} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
                       <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
@@ -3441,7 +3448,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#EFECE6]">
-                        <button onClick={() => setQrModalCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                        <button onClick={() => setQrModalCampaign(c)} onMouseEnter={() => { const img = new Image(); img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`; }} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Eye className="w-3.5 h-3.5" /> View
                         </button>
                         <button onClick={() => handleDownload(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
@@ -3485,7 +3492,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <h3 className="text-lg font-bold text-[#1A1615] mb-2">{qrModalCampaign.name}</h3>
               <p className="text-xs text-[#7C746C] mb-6">Scan this QR code to join the campaign.</p>
               <div className="w-48 h-48 bg-white border-2 border-[#EFECE6] rounded-xl flex items-center justify-center mb-6 shadow-sm overflow-hidden">
-                 <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${qrModalCampaign.id || 'promo'}`} alt="QR Code" className="w-full h-full object-contain p-2" />
+                 <img fetchPriority="high" loading="eager" src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${qrModalCampaign.id || 'promo'}`} alt="QR Code" className="w-full h-full object-contain p-2" />
               </div>
               <button onClick={() => handleDownload(qrModalCampaign)} className="w-full py-3 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-md hover:bg-black transition-colors cursor-pointer flex items-center justify-center gap-2">
                 <Download className="w-4 h-4" /> Download QR Code

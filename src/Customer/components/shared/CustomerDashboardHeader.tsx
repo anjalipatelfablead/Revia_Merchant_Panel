@@ -43,17 +43,7 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
       {/* Right Section: Icons and Profile */}
       <div className="flex items-center justify-end gap-2 sm:gap-4 flex-1">
 
-        <button 
-          onClick={() => setTab?.('checkout')}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#222] transition-colors relative"
-        >
-          <ShoppingBag className="w-5 h-5" />
-          {cartCount !== undefined && cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#C89B3C] text-white text-[9px] font-black rounded-full flex items-center justify-center border border-white">
-              {cartCount}
-            </span>
-          )}
-        </button>
+
 
         <button 
           onClick={onNotificationsClick}
@@ -97,12 +87,7 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
               <Heart className="w-4 h-4" />
               Saved Rewards
             </button>
-            <button 
-              className="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-[#666] hover:bg-[#F8F8F6] hover:text-[#222] transition-colors flex items-center gap-3"
-            >
-              <Settings className="w-4 h-4" />
-              Settings
-            </button>
+            {/* Settings button removed */}
             <div className="h-[1px] bg-[#E6E6E6] my-1" />
             <button 
               onClick={() => {

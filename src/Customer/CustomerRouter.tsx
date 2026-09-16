@@ -4,6 +4,7 @@ import { CustomerProvider, useCustomer } from './CustomerContext';
 // Shared Components
 import { CustomerLayout } from './components/shared/CustomerLayout';
 import { ErrorState } from './components/ui/States';
+import { CustomerErrorBoundary } from './components/shared/CustomerErrorBoundary';
 
 import { CustomerWizard } from './screens/pre-auth/CustomerWizard';
 
@@ -17,8 +18,8 @@ import { RewardDetailScreen } from './screens/post-auth/RewardDetailScreen';
 import { RedemptionScreen } from './screens/post-auth/RedemptionScreen';
 import { RedemptionSuccessScreen } from './screens/post-auth/RedemptionSuccessScreen';
 import { MembershipScreen } from './screens/post-auth/MembershipScreen';
+import { JoinLoyaltyScreen } from './screens/post-auth/JoinLoyaltyScreen';
 import { HistoryScreen } from './screens/post-auth/HistoryScreen';
-import { OrdersScreen } from './screens/post-auth/OrdersScreen';
 import { CheckoutScreen } from './screens/post-auth/CheckoutScreen';
 import { PrivacyScreen } from './screens/post-auth/PrivacyScreen';
 import { ProfileScreen } from './screens/post-auth/ProfileScreen';
@@ -40,7 +41,8 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
     cartItems, addItem, updateQuantity, subtotal, tax, total,
     selectedOffer, setSelectedOffer,
     selectedReward, setSelectedReward,
-    selectedProduct, setSelectedProduct
+    selectedProduct, setSelectedProduct,
+    hasJoinedLoyalty
   } = useCustomer();
 
   const subRoute = currentRoute.split('/').filter(Boolean)[1] || 'identify';
@@ -49,7 +51,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
     onNavigate('/customer/' + path);
   };
 
-  const isPostAuthRoute = ['dashboard', 'scan', 'menu', 'orders', 'coupons', 'membership', 'offers', 'rewards', 'history', 'profile', 'checkout', 'product'].includes(subRoute);
+  const isPostAuthRoute = ['dashboard', 'scan', 'menu', 'orders', 'coupons', 'membership', 'offers', 'rewards', 'history', 'profile', 'privacy', 'checkout', 'product', 'redemption-success', 'redemption', 'reward-detail'].includes(subRoute);
 
   // Sync auth state based on route access if necessary, or just rely on the route string
   React.useEffect(() => {
@@ -129,13 +131,11 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
           addItem={addItem}
         />
       ) : activeTab === 'offers' ? (
-        <OffersScreen type="offers" selectedId={selectedOffer} setSelectedId={setSelectedOffer} />
+        <OffersScreen type="offers" selectedId={selectedOffer} setSelectedId={setSelectedOffer} setTab={navigateTo} />
       ) : activeTab === 'coupons' || activeTab === 'rewards' ? (
         <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
       ) : activeTab === 'membership' ? (
-        <MembershipScreen />
-      ) : activeTab === 'orders' ? (
-        <OrdersScreen />
+        <MembershipScreen setTab={navigateTo} />
       ) : activeTab === 'history' ? (
         <HistoryScreen />
       ) : activeTab === 'profile' ? (
@@ -168,7 +168,9 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
 export const CustomerRouter: React.FC<Props> = (props) => {
   return (
     <CustomerProvider>
-      <CustomerRoutesInner {...props} />
+      <CustomerErrorBoundary onNavigateHome={() => props.onNavigate('/customer/dashboard')}>
+        <CustomerRoutesInner {...props} />
+      </CustomerErrorBoundary>
     </CustomerProvider>
   );
 };

@@ -18,7 +18,26 @@ export const HistoryScreen = () => {
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-black text-[#222] mb-0.5">Your Activity</h2>
-        <p className="text-sm text-[#666]">Track your loyalty visits, rewards and more.</p>
+        <p className="text-sm text-[#666]">Track your loyalty visits, rewards, and total value unlocked.</p>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="bg-white rounded-xl border border-[#E6E6E6] p-3 shadow-sm flex flex-col justify-center">
+          <div className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-1">Total Value</div>
+          <div className="text-lg font-black text-[#0D7A53]">₹850</div>
+        </div>
+        <div className="bg-white rounded-xl border border-[#E6E6E6] p-3 shadow-sm flex flex-col justify-center">
+          <div className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-1">Points Balance</div>
+          <div className="text-lg font-black text-[#E0B85E]">2,450 pts</div>
+        </div>
+        <div className="bg-white rounded-xl border border-[#E6E6E6] p-3 shadow-sm flex flex-col justify-center">
+          <div className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-1">Rewards Used</div>
+          <div className="text-lg font-black text-[#222]">12</div>
+        </div>
+        <div className="bg-white rounded-xl border border-[#E6E6E6] p-3 shadow-sm flex flex-col justify-center">
+          <div className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-1">Visits</div>
+          <div className="text-lg font-black text-[#222]">24</div>
+        </div>
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1">
         {filters.map(f => (
