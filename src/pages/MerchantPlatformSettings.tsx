@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Coins, MessageCircle, Smartphone, Save, ChevronDown, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const MerchantPlatformSettings: React.FC = () => {
   const [currency, setCurrency] = useState('INR');
+  const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
+  const currencyDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (currencyDropdownRef.current && !currencyDropdownRef.current.contains(event.target as Node)) {
+        setCurrencyDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const [whatsappEnabled, setWhatsappEnabled] = useState(false);
   const [smsEnabled, setSmsEnabled] = useState(false);
 
   const getSymbol = () => {
     switch (currency) {
-      case 'INR': return '$';
+      case 'USD': return '$';
       case 'GBP': return '£';
       case 'EUR': return '€';
       case 'INR': default: return '₹';
@@ -45,18 +60,39 @@ export const MerchantPlatformSettings: React.FC = () => {
             <div className="space-y-5">
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Business Currency</label>
-                <div className="relative max-w-md">
-                  <select
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    className="w-full px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer pr-10 transition-colors hover:border-[#D1CDC7]"
+                <div ref={currencyDropdownRef} className="relative max-w-md">
+                  <button
+                    type="button"
+                    onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
+                    className="w-full flex items-center justify-between px-4 py-3 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
                   >
-                    <option value="INR">INR — Indian Rupee (₹)</option>
-                    <option value="INR">INR — US Dollar ($)</option>
-                    <option value="GBP">GBP — British Pound (£)</option>
-                    <option value="EUR">EUR — Euro (€)</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                    <span>
+                      {currency === 'INR' ? 'INR — Indian Rupee (₹)' :
+                       currency === 'USD' ? 'USD — US Dollar ($)' :
+                       currency === 'GBP' ? 'GBP — British Pound (£)' :
+                       'EUR — Euro (€)'}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-[#9E9A93] transition-transform ${currencyDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {currencyDropdownOpen && (
+                    <div className="absolute z-10 mt-2 w-full overflow-hidden rounded-md border border-[#EFECE6] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                      {[
+                        { val: 'INR', label: 'INR — Indian Rupee (₹)' },
+                        { val: 'USD', label: 'USD — US Dollar ($)' },
+                        { val: 'GBP', label: 'GBP — British Pound (£)' },
+                        { val: 'EUR', label: 'EUR — Euro (€)' }
+                      ].map((curr) => (
+                        <button
+                          key={curr.val}
+                          type="button"
+                          onClick={() => { setCurrency(curr.val); setCurrencyDropdownOpen(false); }}
+                          className={`w-full cursor-pointer px-3 py-2 text-left text-[14px] hover:bg-[#F5F1EA] ${currency === curr.val ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                        >
+                          {curr.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <p className="mt-2 text-[12px] text-[#9E9A93] font-medium leading-relaxed max-w-xl">
                   All billing thresholds, campaign targets, and reward values will display and calculate using this currency.
@@ -174,7 +210,7 @@ export const MerchantPlatformSettings: React.FC = () => {
         <div className="mt-8 flex justify-end">
           <button
             onClick={handleSave}
-            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[14px] font-bold rounded-xl hover:opacity-95 transition-opacity shadow-md flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[14px] font-bold rounded-xl cursor-pointer hover:opacity-95 transition-opacity shadow-md flex items-center justify-center gap-2"
           >
             <Save className="w-4 h-4" /> Save Settings
           </button>

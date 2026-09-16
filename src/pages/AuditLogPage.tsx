@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ShieldCheck,
   Lock,
@@ -107,7 +107,7 @@ const AccessControlSettings: React.FC = () => {
           </div>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">Identity & Permission Matrix</h2>
         </div>
-        <button type="button" onClick={handleInviteAdmin} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
+        <button type="button" onClick={handleInviteAdmin} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66] cursor-pointer">
           <Lock className="h-3.5 w-3.5 text-[#B7842C]" /> {invitingAdmin ? 'Inviting...' : 'Invite Admin'}
         </button>
       </div>
@@ -192,7 +192,7 @@ const AccessControlSettings: React.FC = () => {
               </div>
             </div>
           </div>
-          <button type="button" onClick={handleReviewPolicies} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
+          <button type="button" onClick={handleReviewPolicies} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615] cursor-pointer">
             {reviewingPolicies ? 'Reviewing...' : 'Review Access Policies'}
           </button>
         </aside>
@@ -225,7 +225,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
           </div>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">API Access & Integration</h2>
         </div>
-        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex w-full sm:w-auto justify-center items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
+        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex w-full sm:w-auto justify-center items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66] cursor-pointer">
           <Key className="h-3.5 w-3.5 text-[#B7842C]" /> {generatingSecret ? 'Generating...' : 'Generate API Secret'}
         </button>
       </div>
@@ -286,7 +286,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
               <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">IDLE</span>
             </div>
           </div>
-          <button type="button" onClick={handleRotateSigningSecret} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
+          <button type="button" onClick={handleRotateSigningSecret} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615] cursor-pointer">
             {rotatingSigningSecret ? 'Rotating...' : 'Rotate Signing Secret'}
           </button>
         </aside>
@@ -325,9 +325,9 @@ const PosHardwareSettings: React.FC = () => {
           </div>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">POS Hardware Fleet</h2>
         </div>
-        <button type="button" onClick={handleSyncHardwareMesh} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
+        {/* <button type="button" onClick={handleSyncHardwareMesh} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
           <Radio className="h-3.5 w-3.5 text-[#B7842C]" /> {syncingMesh ? 'Syncing...' : 'Sync Hardware Mesh'}
-        </button>
+        </button> */}
       </div>
 
       <div className="grid gap-4 p-4 lg:grid-cols-12">
@@ -387,7 +387,7 @@ const PosHardwareSettings: React.FC = () => {
               </div>
             </div>
           </div>
-          <button type="button" onClick={handleReviewHardwarePolicy} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
+          <button type="button" onClick={handleReviewHardwarePolicy} className="cursor-pointer mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
             {policyReviewing ? 'Reviewing...' : 'Review Hardware Policy'}
           </button>
         </aside>
@@ -410,6 +410,25 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   const [eventType, setEventType] = useState<string>('All Event Types');
   const [branchFilter, setBranchFilter] = useState<string>('All Branches');
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [eventTypeDropdownOpen, setEventTypeDropdownOpen] = useState(false);
+  const [branchFilterDropdownOpen, setBranchFilterDropdownOpen] = useState(false);
+  const eventTypeDropdownRef = useRef<HTMLDivElement>(null);
+  const branchFilterDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (eventTypeDropdownRef.current && !eventTypeDropdownRef.current.contains(event.target as Node)) {
+        setEventTypeDropdownOpen(false);
+      }
+      if (branchFilterDropdownRef.current && !branchFilterDropdownRef.current.contains(event.target as Node)) {
+        setBranchFilterDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   const eventTypes = Array.from(new Set(logs.map((log) => log.action))).sort();
   const branchOptions = ['All Branches', 'Downtown', 'Roastery', 'Northside'];
   const filteredLogs = logs.filter((log) => {
@@ -671,8 +690,68 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                       <Search className="h-3 w-3 shrink-0" />
                       <input aria-label="Filter audit log" value={searchQuery} onChange={(event) => { setSearchQuery(event.target.value); setCurrentPage(1); }} placeholder="Filter by actor, IP, hash, or action" className="min-w-0 flex-1 bg-transparent text-[10px] text-[#1A1615] outline-none placeholder:text-[#B8B1A7]" />
                     </label>
-                    <label className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]"> <select value={eventType} onChange={(event) => { setEventType(event.target.value); setCurrentPage(1); }} className="w-full appearance-none bg-transparent outline-none"><option>All Event Types</option>{eventTypes.map((type) => <option key={type} value={type}>{type.replaceAll('_', ' ')}</option>)}</select><ChevronDown className="h-3 w-3 shrink-0 text-[#9E9A93]" /></label>
-                    <label className="flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[9px] font-semibold text-[#6E6A66]"> <select value={branchFilter} onChange={(event) => { setBranchFilter(event.target.value); setCurrentPage(1); }} className="w-full appearance-none bg-transparent outline-none"><option>All Branches</option>{branchOptions.slice(1).map((branch) => <option key={branch}>{branch}</option>)}</select><ChevronDown className="h-3 w-3 shrink-0 text-[#9E9A93]" /></label>
+                    <div ref={eventTypeDropdownRef} className="relative w-full">
+                      <button
+                        type="button"
+                        onClick={() => setEventTypeDropdownOpen(!eventTypeDropdownOpen)}
+                        className="w-full flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[11px] font-semibold text-[#1A1615] cursor-pointer"
+                      >
+                        <span className="truncate">{eventType === 'All Event Types' ? 'All Event Types' : eventType.replaceAll('_', ' ')}</span>
+                        <ChevronDown className={`ml-2 h-3 w-3 shrink-0 text-[#9E9A93] transition-transform ${eventTypeDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {eventTypeDropdownOpen && (
+                        <div className="absolute z-10 mt-1 max-h-60 w-[200px] sm:w-full overflow-auto rounded-md border border-[#E5E0D8] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                          <button
+                            type="button"
+                            onClick={() => { setEventType('All Event Types'); setCurrentPage(1); setEventTypeDropdownOpen(false); }}
+                            className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#F5F1EA] ${eventType === 'All Event Types' ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                          >
+                            All Event Types
+                          </button>
+                          {eventTypes.map((type) => (
+                            <button
+                              key={type}
+                              type="button"
+                              onClick={() => { setEventType(type); setCurrentPage(1); setEventTypeDropdownOpen(false); }}
+                              className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#F5F1EA] ${eventType === type ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                            >
+                              {type.replaceAll('_', ' ')}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div ref={branchFilterDropdownRef} className="relative w-full">
+                      <button
+                        type="button"
+                        onClick={() => setBranchFilterDropdownOpen(!branchFilterDropdownOpen)}
+                        className="w-full flex items-center justify-between rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-left text-[11px] font-semibold text-[#1A1615] cursor-pointer"
+                      >
+                        <span className="truncate">{branchFilter}</span>
+                        <ChevronDown className={`ml-2 h-3 w-3 shrink-0 text-[#9E9A93] transition-transform ${branchFilterDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {branchFilterDropdownOpen && (
+                        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#E5E0D8] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                          <button
+                            type="button"
+                            onClick={() => { setBranchFilter('All Branches'); setCurrentPage(1); setBranchFilterDropdownOpen(false); }}
+                            className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#F5F1EA] ${branchFilter === 'All Branches' ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                          >
+                            All Branches
+                          </button>
+                          {branchOptions.slice(1).map((branch) => (
+                            <button
+                              key={branch}
+                              type="button"
+                              onClick={() => { setBranchFilter(branch); setCurrentPage(1); setBranchFilterDropdownOpen(false); }}
+                              className={`w-full cursor-pointer px-3 py-1.5 text-left text-[11px] hover:bg-[#F5F1EA] ${branchFilter === branch ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                            >
+                              {branch}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]">Today, 2.4</button>
                   </div>
                 </div>
@@ -796,11 +875,11 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                   <span>Showing {firstVisibleEntry}–{lastVisibleEntry} of {orderedLogs.length} immutable log entries</span>
                   <div className="flex items-center gap-2">
                     <span><strong className="text-[#6E6A66]">Merkle Root:</strong> 0x88f...1c8d</span>
-                    <button type="button" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66] disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
+                    <button type="button" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="cursor-pointer rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66] disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
                     {Array.from({ length: totalPages }, (_, pageIndex) => pageIndex + 1).map((page) => (
-                      <button key={page} type="button" onClick={() => goToPage(page)} aria-current={currentPage === page ? 'page' : undefined} className={`rounded px-2 py-1 font-bold ${currentPage === page ? 'bg-[#9E782F] text-white' : 'border border-[#E5E0D8] bg-white text-[#6E6A66]'}`}>{page}</button>
+                      <button key={page} type="button" onClick={() => goToPage(page)} aria-current={currentPage === page ? 'page' : undefined} className={`cursor-pointer rounded px-2 py-1 font-bold ${currentPage === page ? 'bg-[#9E782F] text-white' : 'border border-[#E5E0D8] bg-white text-[#6E6A66]'}`}>{page}</button>
                     ))}
-                    <button type="button" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className="rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66] disabled:cursor-not-allowed disabled:opacity-40">Next</button>
+                    <button type="button" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className="cursor-pointer rounded border border-[#E5E0D8] bg-white px-2 py-1 font-semibold text-[#6E6A66] disabled:cursor-not-allowed disabled:opacity-40">Next</button>
                   </div>
                 </div>
 

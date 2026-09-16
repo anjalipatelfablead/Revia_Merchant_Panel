@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Pencil, Trash2, Plus, Settings, ShieldAlert, ShieldCheck, Save, ChevronDown } from 'lucide-react';
 
 interface Tier {
@@ -83,6 +83,27 @@ export const CustomerTypeSettings: React.FC = () => {
   const [startBasis, setStartBasis] = useState<'Customer signup date' | 'Date threshold reached'>('Date threshold reached');
   const [autoRenew, setAutoRenew] = useState(false);
   const [status, setStatus] = useState<'Active' | 'Expired'>('Active');
+
+  const [validityUnitDropdownOpen, setValidityUnitDropdownOpen] = useState(false);
+  const validityUnitDropdownRef = useRef<HTMLDivElement>(null);
+
+  const [startBasisDropdownOpen, setStartBasisDropdownOpen] = useState(false);
+  const startBasisDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (validityUnitDropdownRef.current && !validityUnitDropdownRef.current.contains(event.target as Node)) {
+        setValidityUnitDropdownOpen(false);
+      }
+      if (startBasisDropdownRef.current && !startBasisDropdownRef.current.contains(event.target as Node)) {
+        setStartBasisDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleEdit = (tier: Tier) => {
     setEditingTier(tier);
@@ -205,7 +226,7 @@ export const CustomerTypeSettings: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={(e) => {
@@ -213,7 +234,7 @@ export const CustomerTypeSettings: React.FC = () => {
                         e.stopPropagation();
                         handleEdit(tier);
                       }}
-                      className="w-9 h-9 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-[#B8862E] hover:border-[#B8862E]/30 transition-colors"
+                      className="w-9 h-9 rounded-full cursor-pointer bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-[#B8862E] hover:border-[#B8862E]/30 transition-colors"
                       title="Edit Tier"
                     >
                       <Pencil className="w-4 h-4" />
@@ -225,7 +246,7 @@ export const CustomerTypeSettings: React.FC = () => {
                         e.stopPropagation();
                         handleDelete(tier.id);
                       }}
-                      className="w-9 h-9 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
+                      className="w-9 h-9 rounded-full cursor-pointer bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
                       title="Delete Tier"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -245,7 +266,7 @@ export const CustomerTypeSettings: React.FC = () => {
                   {editingTier ? 'Edit Tier' : 'Create New Tier'}
                 </h2>
                 {editingTier && (
-                  <button onClick={handleAddNew} className="text-[12px] font-bold text-[#B8862E] hover:text-[#9E782F] flex items-center gap-1">
+                  <button onClick={handleAddNew} className="text-[12px] cursor-pointer font-bold text-[#B8862E] hover:text-[#9E782F] flex items-center gap-1">
                     <Plus className="w-3.5 h-3.5" /> Add New
                   </button>
                 )}
@@ -290,33 +311,58 @@ export const CustomerTypeSettings: React.FC = () => {
                       placeholder="1"
                       className="flex-1 px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
                     />
-                    <div className="relative flex-1 sm:flex-none sm:w-28 shrink-0">
-                      <select
-                        value={validityUnit}
-                        onChange={(e) => setValidityUnit(e.target.value as any)}
-                        className="w-full pl-3 pr-8 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer"
+                    <div ref={validityUnitDropdownRef} className="relative flex-1 sm:flex-none sm:w-28 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setValidityUnitDropdownOpen(!validityUnitDropdownOpen)}
+                        className="w-full flex items-center justify-between pl-3 pr-2 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
                       >
-                        <option value="Days">Days</option>
-                        <option value="Months">Months</option>
-                        <option value="Years">Years</option>
-                      </select>
-                      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E6A66] pointer-events-none" />
+                        <span className="truncate">{validityUnit}</span>
+                        <ChevronDown className={`ml-1 h-4 w-4 shrink-0 text-[#6E6A66] transition-transform ${validityUnitDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {validityUnitDropdownOpen && (
+                        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EFECE6] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                          {['Days', 'Months', 'Years'].map((unit) => (
+                            <button
+                              key={unit}
+                              type="button"
+                              onClick={() => { setValidityUnit(unit as any); setValidityUnitDropdownOpen(false); }}
+                              className={`w-full cursor-pointer px-3 py-1.5 text-left text-[13px] hover:bg-[#F5F1EA] ${validityUnit === unit ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                            >
+                              {unit}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
                 <div>
                   <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Start Date Basis</label>
-                  <div className="relative">
-                    <select
-                      value={startBasis}
-                      onChange={(e) => setStartBasis(e.target.value as any)}
-                      className="w-full pl-4 pr-10 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer"
+                  <div ref={startBasisDropdownRef} className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setStartBasisDropdownOpen(!startBasisDropdownOpen)}
+                      className="w-full flex items-center justify-between pl-4 pr-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
                     >
-                      <option value="Customer signup date">Customer signup date</option>
-                      <option value="Date threshold reached">Date threshold reached</option>
-                    </select>
-                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E6A66] pointer-events-none" />
+                      <span className="truncate">{startBasis}</span>
+                      <ChevronDown className={`ml-2 h-4 w-4 shrink-0 text-[#6E6A66] transition-transform ${startBasisDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {startBasisDropdownOpen && (
+                      <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EFECE6] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                        {['Customer signup date', 'Date threshold reached'].map((basis) => (
+                          <button
+                            key={basis}
+                            type="button"
+                            onClick={() => { setStartBasis(basis as any); setStartBasisDropdownOpen(false); }}
+                            className={`w-full cursor-pointer px-3 py-1.5 text-left text-[13px] hover:bg-[#F5F1EA] ${startBasis === basis ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                          >
+                            {basis}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
