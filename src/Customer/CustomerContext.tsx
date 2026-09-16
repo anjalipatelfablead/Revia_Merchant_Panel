@@ -9,6 +9,8 @@ interface CustomerContextType {
   mobile: string;
   setMobile: (val: string) => void;
   isExistingMember: boolean;
+  hasJoinedLoyalty: boolean;
+  setHasJoinedLoyalty: (val: boolean) => void;
   
   // Cart
   cartItems: ReturnType<typeof useCart>['cartItems'];
@@ -37,6 +39,7 @@ export const CustomerProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [mobile, setMobile] = useState('');
   const [isExistingMember] = useState(true);
+  const [hasJoinedLoyalty, setHasJoinedLoyalty] = useState(false);
 
   const { cartItems, addItem, updateQuantity, subtotal, tax, total } = useCart();
   
@@ -58,6 +61,8 @@ export const CustomerProvider: React.FC<{ children: ReactNode }> = ({ children }
       mobile,
       setMobile,
       isExistingMember,
+      hasJoinedLoyalty,
+      setHasJoinedLoyalty,
       cartItems,
       addItem,
       updateQuantity,

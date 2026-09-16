@@ -8,7 +8,7 @@ import { useCustomer } from '../../CustomerContext';
 import { RedemptionScreen } from './RedemptionScreen';
 import { RedemptionSuccessScreen } from './RedemptionSuccessScreen';
 
-export const OffersScreen = ({ type = 'offers', selectedId, setSelectedId }: { type?: 'offers' | 'coupons'; selectedId: string | null; setSelectedId: (id: string | null) => void }) => {
+export const OffersScreen = ({ type = 'offers', selectedId, setSelectedId, setTab }: { type?: 'offers' | 'coupons'; selectedId: string | null; setSelectedId: (id: string | null) => void; setTab?: (tab: string) => void }) => {
   const { redeemedRewardIds } = useCustomer();
   const [activeTabFilter, setActiveTabFilter] = useState<'active' | 'redeemed'>('active');
   
@@ -101,7 +101,7 @@ export const OffersScreen = ({ type = 'offers', selectedId, setSelectedId }: { t
             {MOCK_CAMPAIGN_PROGRESS.map(camp => {
               const percent = Math.min((camp.currentProgress / camp.targetProgress) * 100, 100);
               return (
-                <div key={camp.campaignId} className="bg-white rounded-2xl border border-[#E6E6E6] p-5 flex flex-col hover:border-[#C89B3C] transition-colors cursor-pointer shadow-sm">
+                <div key={camp.campaignId} onClick={() => { if (setTab) setTab('membership'); }} className="bg-white rounded-2xl border border-[#E6E6E6] p-5 flex flex-col hover:border-[#C89B3C] transition-colors cursor-pointer shadow-sm">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-wider text-[#C89B3C] mb-1">{camp.type} Campaign</p>

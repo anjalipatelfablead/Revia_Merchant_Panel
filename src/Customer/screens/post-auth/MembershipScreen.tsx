@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { Star, Check, Crown, CreditCard, QrCode, Award, Zap, ChevronRight, X, Sparkles } from 'lucide-react';
-import { MOCK_MEMBERSHIP } from '../../data/mockData';
+import { Star, Check, Crown, CreditCard, QrCode, Award, Zap, ChevronRight, X, Sparkles, Store, ChevronDown, Info, ArrowRight, Gift } from 'lucide-react';
+import { MOCK_MEMBERSHIP, MOCK_BUSINESS, MOCK_ACTIVE_CAMPAIGNS, MOCK_CAMPAIGN_PROGRESS } from '../../data/mockData';
 
 const TIER_BENEFITS = [
   {
-    tier: 'Silver Member',
+    tier: 'Bronze Tier',
     minSpend: '₹0',
     multiplier: '1x Points',
+    benefits: ['Standard earning rate', 'Digital Wallet Pass'],
+    color: 'bg-[#F8F8F6] border-[#E6E6E6] text-[#222]',
+    badgeColor: 'bg-[#E6E6E6] text-[#666]'
+  },
+  {
+    tier: 'Silver Member',
+    minSpend: '₹100',
+    multiplier: '1.2x Points',
     benefits: ['Free welcome drink on registration', 'Standard stamp card rewards', 'Digital Wallet Pass'],
     color: 'bg-white border-[#E6E6E6] text-[#222]',
     badgeColor: 'bg-gray-100 text-gray-700'
@@ -17,8 +25,7 @@ const TIER_BENEFITS = [
     multiplier: '1.5x Points',
     benefits: ['1.5x point multiplier on all orders', 'Free pastry with any large drink', 'Birthday special treat', 'Priority table seating'],
     color: 'bg-gradient-to-br from-[#FFF8ED] to-[#FFF0D6] border-[#C89B3C] text-[#222] ring-2 ring-[#C89B3C]/30',
-    badgeColor: 'bg-[#C89B3C] text-white',
-    current: true
+    badgeColor: 'bg-[#C89B3C] text-white'
   },
   {
     tier: 'VIP Platinum',
@@ -30,18 +37,25 @@ const TIER_BENEFITS = [
   }
 ];
 
-export const MembershipScreen = () => {
+export const MembershipScreen = ({ setTab }: { setTab?: (tab: string) => void }) => {
   const [showPassModal, setShowPassModal] = useState(false);
+  const [showBusinessDropdown, setShowBusinessDropdown] = useState(false);
   const membership = MOCK_MEMBERSHIP;
+  const business = MOCK_BUSINESS;
   const nextTierAmount = 1000;
   const progressPercent = Math.min((membership.totalBilledAmount / nextTierAmount) * 100, 100);
+  const pointsBalance = 2450;
 
-  // 10 Stamp Card progress state (e.g. 7 collected)
-  const stampsCollected = 7;
+  const currentTierData = TIER_BENEFITS.find(t => t.tier.includes(membership.tier)) || TIER_BENEFITS.find(t => t.tier.includes('Gold')) || TIER_BENEFITS[0];
+  const multiplier = currentTierData.multiplier;
+
+  const stampCampaigns = MOCK_ACTIVE_CAMPAIGNS.filter(c => (c as any).type === 'Stamp');
 
   return (
-    <div className="max-w-[1280px] mx-auto pb-24 space-y-10 animate-in fade-in duration-500">
+    <div className="max-w-[1280px] mx-auto pb-12 space-y-6 animate-in fade-in duration-500">
       
+      {/* Business Context Header (Hidden for now) */}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E6E6E6] pb-6">
         <div>
@@ -74,10 +88,25 @@ export const MembershipScreen = () => {
             <div className="flex items-center gap-3">
               <Crown className="w-9 h-9 text-[#C89B3C]" />
               <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E0B85E] to-[#C89B3C]">
-                {membership.tier} Tier
+                {currentTierData.tier.split(' ')[0]} Tier
               </h2>
             </div>
-            <p className="text-white/70 text-sm">Valid through Dec 31, 2026 • 1.5x Points Multiplier Active</p>
+            
+            <div>
+              <p className="text-white/70 text-sm flex items-center gap-2">
+                Valid through Dec 31, 2026 • {multiplier} Active
+              </p>
+              
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-sm font-bold text-white">Points Balance: {pointsBalance.toLocaleString()} pts</span>
+                <div className="group relative flex items-center cursor-help">
+                  <Info className="w-4 h-4 text-white/40 group-hover:text-white/80 transition-colors" />
+                  <div className="absolute left-0 bottom-full mb-2 w-64 bg-[#222] text-xs text-white p-3 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 shadow-xl border border-white/10 text-left pointer-events-none">
+                    Earn points on every purchase. Your {membership.tier} tier multiplies points earned by {multiplier.replace(' Points', '')}.
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="w-full md:w-[420px] bg-white/10 rounded-2xl p-6 border border-white/10 backdrop-blur-md space-y-3">
@@ -93,71 +122,119 @@ export const MembershipScreen = () => {
               />
             </div>
             
-            <p className="text-white/60 text-[11px] text-right">Spend ${(nextTierAmount - membership.totalBilledAmount).toFixed(2)} more to unlock VIP Platinum benefits!</p>
+            <div className="flex items-center justify-between pt-1">
+              <p className="text-white/60 text-[11px]">Spend ${(nextTierAmount - membership.totalBilledAmount).toFixed(2)} more for next tier!</p>
+              <button onClick={() => setTab?.('history')} className="text-[10px] font-bold text-[#C89B3C] hover:text-[#E0B85E] flex items-center gap-1 transition-colors group cursor-pointer shrink-0">
+                View Spending History <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Stamp Card Section (Coffee Loyalty Card) */}
-      <div className="bg-white rounded-3xl border border-[#E6E6E6] p-6 md:p-8 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-[#C89B3C]" />
-              <h2 className="text-xl font-black text-[#222]">Signature Coffee Stamp Card</h2>
-            </div>
-            <p className="text-xs text-[#666] mt-1">Collect 10 stamps on artisanal beverages to claim a <strong>Free Signature Brew</strong>.</p>
+      {/* Stamp Cards Section */}
+      <div className="flex gap-6 overflow-x-auto pb-4 snap-x hide-scrollbar items-stretch">
+        {stampCampaigns.length === 0 && (
+          <div className="w-full text-center py-12 text-[#666] bg-white rounded-3xl border border-[#E6E6E6]">
+            No active stamp card campaigns at this location.
           </div>
-          <div className="bg-[#FFF8ED] border border-[#F5DEB3] px-4 py-2 rounded-2xl text-xs font-black text-[#C89B3C] self-start sm:self-auto">
-            Stamps: {stampsCollected} / 10
-          </div>
-        </div>
+        )}
+        
+        {stampCampaigns.map((campaign, campIdx) => {
+          // Find progress or mock it
+          const progress = MOCK_CAMPAIGN_PROGRESS.find(p => p.campaignId === campaign.id);
+          const stampsCollected = progress ? progress.currentProgress : (campIdx === 0 ? 10 : 7);
+          const required = (campaign as any).requiredStamps || 10;
+          const isComplete = stampsCollected >= required;
 
-        {/* 10 Stamps Grid */}
-        <div className="grid grid-cols-5 sm:grid-cols-10 gap-3 md:gap-4 py-2">
-          {Array.from({ length: 10 }).map((_, idx) => {
-            const isStamped = idx < stampsCollected;
-            const isRewardItem = idx === 9;
-
-            return (
-              <div 
-                key={idx}
-                className={`aspect-square rounded-2xl flex flex-col items-center justify-center p-2 transition-all border ${
-                  isStamped 
-                    ? 'bg-[#C89B3C] text-white border-[#C89B3C] shadow-md scale-105' 
-                    : isRewardItem 
-                      ? 'bg-[#FFF8ED] border-2 border-dashed border-[#C89B3C] text-[#C89B3C]' 
-                      : 'bg-[#F8F8F6] border-[#E6E6E6] text-[#CCC]'
-                }`}
-              >
-                {isStamped ? (
-                  <Check className="w-6 h-6 stroke-[3]" />
-                ) : isRewardItem ? (
-                  <Sparkles className="w-6 h-6 animate-bounce" />
+          return (
+            <div key={campaign.id} className={`shrink-0 w-[90vw] sm:w-[400px] md:w-[480px] bg-white rounded-3xl border ${isComplete ? 'border-[#C89B3C] ring-4 ring-[#C89B3C]/10' : 'border-[#E6E6E6]'} p-6 md:p-8 shadow-sm snap-center transition-all flex flex-col`}>
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Award className={`w-5 h-5 ${isComplete ? 'text-[#C89B3C]' : 'text-[#C89B3C]'}`} />
+                    <h2 className="text-xl font-black text-[#222]">{campaign.name}</h2>
+                  </div>
+                  <p className="text-xs text-[#666] mt-1">Collect {required} stamps to claim a <strong>{campaign.rewardValue}</strong>.</p>
+                  <p className="text-[10px] text-[#999] font-bold mt-1">Campaign valid until {campaign.endDate ? new Date(campaign.endDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Ongoing — no end date'}</p>
+                </div>
+                {isComplete ? (
+                  <div className="bg-[#E8F5E9] border border-[#A5D6A7] px-3 py-1.5 rounded-xl text-[11px] font-black text-[#2E7D32] self-start sm:self-auto shadow-sm flex items-center gap-1 shrink-0">
+                    <Check className="w-3.5 h-3.5 stroke-[3]" /> Reward Ready!
+                  </div>
                 ) : (
-                  <span className="text-xs font-black">{idx + 1}</span>
+                  <div className="bg-[#FFF8ED] border border-[#F5DEB3] px-3 py-1.5 rounded-xl text-[11px] font-black text-[#C89B3C] self-start sm:self-auto shrink-0">
+                    Stamps: {stampsCollected} / {required}
+                  </div>
                 )}
               </div>
-            );
-          })}
-        </div>
-        <p className="text-xs text-[#999] text-center font-medium">Show your pass QR code at checkout to automatically earn stamps on qualify orders.</p>
+
+              {/* Stamps Grid */}
+              <div className={`flex flex-wrap gap-2.5 sm:gap-3 py-6 ${isComplete ? 'opacity-80' : ''}`}>
+                {Array.from({ length: required }).map((_, idx) => {
+                  const isStamped = idx < stampsCollected;
+                  const isRewardItem = idx === required - 1;
+
+                  return (
+                    <div 
+                      key={idx}
+                      className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex flex-col items-center justify-center transition-all border ${
+                        isStamped 
+                          ? 'bg-[#C89B3C] text-white border-[#C89B3C] shadow-md scale-105' 
+                          : isRewardItem 
+                            ? 'bg-[#FFF8ED] border-2 border-dashed border-[#C89B3C] text-[#C89B3C]' 
+                            : 'bg-[#F8F8F6] border-[#E6E6E6] text-[#CCC]'
+                      }`}
+                    >
+                      {isStamped ? (
+                        <Check className="w-5 h-5 stroke-[3]" />
+                      ) : isRewardItem ? (
+                        <Sparkles className="w-5 h-5 animate-bounce" />
+                      ) : (
+                        <span className="text-xs sm:text-sm font-black">{idx + 1}</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Bottom Actions */}
+              <div className="mt-auto space-y-4 pt-2">
+                {isComplete ? (
+                  <button onClick={() => setTab?.('rewards')} className="w-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:from-[#C89B3C] hover:to-[#8E681F] text-white py-3 rounded-2xl font-black shadow-lg shadow-[#D4A753]/30 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <Gift className="w-4 h-4" /> Claim Reward
+                  </button>
+                ) : (
+                  <p className="text-xs text-[#999] text-center font-medium px-2">Show your pass QR code at checkout to automatically earn stamps on qualifying orders.</p>
+                )}
+                
+                <div className="flex justify-center">
+                  <button onClick={() => setTab?.('history')} className="text-[11px] font-bold text-[#666] hover:text-[#222] flex items-center gap-1 transition-colors group cursor-pointer">
+                    View Stamp History <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Tier Benefits Comparison */}
       <div className="space-y-6">
         <h2 className="text-2xl font-black text-[#222]">Tier Benefits Overview</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TIER_BENEFITS.map((tier, idx) => (
-            <div key={idx} className={`rounded-3xl border p-6 flex flex-col justify-between space-y-6 transition-all ${tier.color}`}>
+        <div className="flex gap-6 overflow-x-auto pb-4 snap-x hide-scrollbar items-stretch">
+          {TIER_BENEFITS.map((tier, idx) => {
+            const isCurrent = tier.tier === currentTierData.tier;
+            return (
+            <div key={idx} className={`shrink-0 w-[280px] md:w-[320px] rounded-3xl border p-6 flex flex-col justify-between space-y-6 transition-all snap-center self-stretch ${tier.color} ${isCurrent ? 'ring-2 ring-offset-2 ring-[#C89B3C]' : ''}`}>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className={`text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${tier.badgeColor}`}>
                     {tier.tier}
                   </span>
-                  {tier.current && (
-                    <span className="text-xs font-black text-[#C89B3C] flex items-center gap-1">
+                  {isCurrent && (
+                    <span className="text-xs font-black text-[#C89B3C] flex items-center gap-1 bg-[#FFF8ED] px-2 py-1 rounded-full border border-[#F5DEB3]">
                       <Check className="w-3.5 h-3.5" /> Current
                     </span>
                   )}
@@ -178,7 +255,7 @@ export const MembershipScreen = () => {
                 </ul>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </div>
 

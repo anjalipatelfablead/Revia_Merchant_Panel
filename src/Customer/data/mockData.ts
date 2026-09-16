@@ -18,7 +18,12 @@ export const MOCK_ADDONS = [
 ];
 
 export const MOCK_REWARDS = {
-  available: [{ id: 'r1', title: 'Free Coffee', value: '10% OFF', source: 'Loyalty Program · 10 Stamps', validity: 'Valid until 30 Sep 2026', code: 'REVIA-8F42K', business: 'Grand Café', branch: 'Downtown Branch' }],
+  available: [
+    { id: 'r1', title: 'Free Coffee', value: '10% OFF', source: 'Loyalty Program · 10 Stamps', validity: 'Valid until 30 Sep 2026', code: 'REVIA-8F42K', business: 'Grand Café', branch: 'Downtown Branch' },
+    { id: 'r3', title: 'Free Pastry', value: '100% OFF', source: 'Welcome Gift', validity: 'Valid until 15 Oct 2026', code: 'REVIA-X92M1', business: 'Artisan Bakers', branch: 'Connaught Place' },
+    { id: 'r4', title: 'Flat ₹200 Off', value: '₹200 OFF', source: 'VIP Milestone Reward', validity: 'Valid until 31 Dec 2026', code: 'REVIA-BB8PQ', business: 'Elite Roasters', branch: 'Airport Terminal 3' },
+    { id: 'r5', title: 'Complimentary Upgrade', value: 'SIZE UP', source: 'Weekend Promo', validity: 'Valid until 22 Sep 2026', code: 'REVIA-UPG22', business: 'Grand Café', branch: 'All Branches' }
+  ],
   redeemed: [{ id: 'r2', title: 'Buy 1 Get 1', value: 'BOGO', source: 'Special Campaign', validity: 'Redeemed 2 Sep 2026', code: 'REVIA-7X9PM', business: 'Grand Café', branch: 'All Branches' }],
   expired: [],
   voided: [],
@@ -61,6 +66,21 @@ export const MOCK_ACTIVE_CAMPAIGNS: Campaign[] = [
     rewardValue: 'Free Coffee'
   },
   {
+    id: 'camp-4',
+    merchantId: 'm-1',
+    name: 'Pastry Punch Card',
+    category: 'Existing_Customer',
+    type: 'Stamp',
+    qualifyingItemId: 'item-pastry',
+    qualifyingItemName: 'Any Pastry',
+    requiredStamps: 5,
+    startDate: '2026-06-01',
+    endDate: '2026-11-30',
+    status: 'Active',
+    rewardType: 'Discount_Percentage',
+    rewardValue: '50% OFF Bakery'
+  },
+  {
     id: 'camp-2',
     merchantId: 'm-1',
     name: 'High Roller Monthly',
@@ -96,11 +116,21 @@ export const MOCK_CAMPAIGN_PROGRESS: CustomerCampaignProgress[] = [
     campaignId: 'camp-1',
     campaignName: 'Coffee Lover Stamps',
     type: 'Stamp',
-    currentProgress: 7,
+    currentProgress: 10,
     targetProgress: 10,
-    progressText: '7 / 10 Stamps',
+    progressText: '10 / 10 Stamps',
     rewardType: 'Free_Item',
     rewardValue: 'Free Coffee'
+  },
+  {
+    campaignId: 'camp-4',
+    campaignName: 'Pastry Punch Card',
+    type: 'Stamp',
+    currentProgress: 3,
+    targetProgress: 5,
+    progressText: '3 / 5 Stamps',
+    rewardType: 'Discount_Percentage',
+    rewardValue: '50% OFF Bakery'
   },
   {
     campaignId: 'camp-2',

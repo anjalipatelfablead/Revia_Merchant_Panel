@@ -11,9 +11,9 @@ interface SidebarProps {
 
 export const DesktopSidebar: React.FC<SidebarProps> = ({ tabs, activeTab, setTab, onNavigateApp }) => {
   // Group navigation items logically for cleaner aesthetics
-  const mainTabs = tabs.filter(t => ['dashboard', 'menu'].includes(t.id));
-  const loyaltyTabs = tabs.filter(t => ['orders', 'coupons', 'membership'].includes(t.id));
-  const accountTabs = tabs.filter(t => ['offers', 'profile'].includes(t.id));
+  const mainTabs = tabs.filter(t => ['dashboard', 'offers', 'menu'].includes(t.id));
+  const loyaltyTabs = tabs.filter(t => ['history', 'coupons', 'membership'].includes(t.id));
+  const accountTabs = tabs.filter(t => ['profile'].includes(t.id));
 
   const renderTabItem = (t: typeof tabs[0]) => {
     const isActive = activeTab === t.id;
@@ -69,7 +69,7 @@ export const DesktopSidebar: React.FC<SidebarProps> = ({ tabs, activeTab, setTab
 
           {/* Section 2: Loyalty & Rewards */}
           <div className="space-y-1">
-            <p className="text-[9px] font-black text-[#999] uppercase tracking-[0.2em] px-4 mb-2">Loyalty & Orders</p>
+            <p className="text-[9px] font-black text-[#999] uppercase tracking-[0.2em] px-4 mb-2">Loyalty & History</p>
             {loyaltyTabs.map(renderTabItem)}
           </div>
 

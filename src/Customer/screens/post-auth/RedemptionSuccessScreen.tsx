@@ -62,6 +62,12 @@ export const RedemptionSuccessScreen = ({ rewardId, onDone }: { rewardId: string
                 <Award className="w-3.5 h-3.5 text-[#D4A753]" /> +1 Stamp Added
               </span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-[#666]">Time</span>
+              <span className="font-bold text-[#222]">
+                {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
           </div>
         </div>
 

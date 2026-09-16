@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Scan, Utensils, ReceiptText, Ticket, CreditCard, Zap, User, ChevronLeft, Bell, X } from 'lucide-react';
+import { Home, Scan, Utensils, ReceiptText, Ticket, CreditCard, Zap, User, ChevronLeft, Bell, X, History } from 'lucide-react';
 import { MainTab } from '../../types';
 import { MOCK_BUSINESS } from '../../data/mockData';
 import { BottomNav } from './BottomNav';
@@ -18,12 +18,10 @@ export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children,
 
   const tabs: { id: MainTab; label: string; Icon: React.ElementType; badge?: React.ReactNode }[] = [
     { id: 'dashboard', label: 'Home', Icon: Home },
-    // { id: 'scan', label: 'Scan QR', Icon: Scan, badge: <span className="bg-[#EBE7E0] text-[#666] text-[10px] font-bold px-2 py-0.5 rounded-full">Table</span> },
-    { id: 'menu', label: 'Menu / Order', Icon: Utensils, badge: <span className="bg-[#94F1C6] text-[#0D7A53] text-[10px] font-bold px-2 py-0.5 rounded-full">Fresh</span> },
-    { id: 'orders', label: 'My Orders', Icon: ReceiptText, badge: <span className="bg-[#F8F8F6] border border-[#E6E6E6] text-[#666] text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span> },
+    { id: 'offers', label: 'Offers', Icon: Zap, badge: <div className="w-2 h-2 rounded-full bg-[#D32F2F]" /> },
+    { id: 'history', label: 'Activity History', Icon: History, badge: <span className="bg-[#F8F8F6] border border-[#E6E6E6] text-[#666] text-[10px] font-bold px-1.5 py-0.5 rounded-full">12</span> },
     { id: 'coupons', label: 'My Rewards', Icon: Ticket, badge: <span className="bg-[#FFF8ED] border border-[#F5DEB3] text-[#C89B3C] text-[10px] font-bold px-1.5 py-0.5 rounded-full">4</span> },
     { id: 'membership', label: 'Membership Cards', Icon: CreditCard },
-    { id: 'offers', label: 'Offers', Icon: Zap, badge: <div className="w-2 h-2 rounded-full bg-[#D32F2F]" /> },
     { id: 'profile', label: 'Profile', Icon: User },
   ];
 
