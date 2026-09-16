@@ -12,6 +12,7 @@ import {
   TrendingUp,
   Activity,
   CheckCircle2,
+  Save,
   ChevronDown,
   Info,
   Layers,
@@ -333,8 +334,8 @@ export const QrCodesPage: React.FC = () => {
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer shrink-0 rounded-lg border ${showFilters
-                      ? 'bg-[#FAF8F5] border-[#D4A753] text-[#D4A753]'
-                      : 'bg-white border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615]'
+                    ? 'bg-[#FAF8F5] border-[#D4A753] text-[#D4A753]'
+                    : 'bg-white border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615]'
                     }`}>
                   <Filter className="w-4 h-4" />
                   More Filters
@@ -474,12 +475,12 @@ export const QrCodesPage: React.FC = () => {
                 <div className="flex p-0.5 bg-[#EFECE6] rounded-lg">
                   <button
                     onClick={() => setActiveTab('front')}
-                    className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'front' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'}`}>
+                    className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'front' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}>
                     Front Side
                   </button>
                   <button
                     onClick={() => setActiveTab('back')}
-                    className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'back' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'}`}>
+                    className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'back' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}>
                     Back Side
                   </button>
                 </div>
@@ -611,10 +612,10 @@ export const QrCodesPage: React.FC = () => {
                 <div className="flex items-center gap-3 mb-3">
                   <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 text-xs font-bold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-sm cursor-pointer">
                     <Download className="w-4 h-4" />
-                    Download Vector (300 DPI)
+                    Download Vector 
                   </button>
                   <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-xl transition-opacity shadow-sm cursor-pointer">
-                    Save &amp; Push Live
+                    <Save className="w-4 h-4" /> Save &amp; Push Live
                   </button>
                 </div>
                 <div className="text-center flex justify-center items-center gap-1.5 text-[10px] font-semibold text-[#6E6A66]">
