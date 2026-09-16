@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavRoute, OutletsData } from './types';
 import {
   MOCK_CUSTOMERS,
@@ -75,6 +75,7 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [isStandaloneAuthView, setStandaloneAuthView] = useState<boolean>(false);
+  const mainContentRef = useRef<HTMLDivElement>(null);
 
   // Core Mock Datasets
   const [customers, setCustomers] = useState(MOCK_CUSTOMERS);
@@ -101,8 +102,18 @@ export default function App() {
     window.history.pushState({}, '', route);
     setCurrentRouteState(route);
     setIsMobileMenuOpen(false);
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    }
     window.scrollTo(0, 0);
   };
+
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    }
+    window.scrollTo(0, 0);
+  }, [currentRoute]);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -208,7 +219,7 @@ export default function App() {
         />
 
         {/* Main Content Viewport (Starts right next to Sidebar, no overlap!) */}
-        <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
+        <div ref={mainContentRef} className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
           {/* Global Low Balance Banner rendered at the very top of merchant panel layout */}
           <LowBalanceBanner />
 

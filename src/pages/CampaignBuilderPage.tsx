@@ -1070,11 +1070,16 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const { wallet, checkAndDeductCredit } = useWallet();
   const [currentStep, setCurrentStep] = useState<number>(1);
 
-  // Scroll to top when stepping through campaign wizard
+  // Scroll main viewport container to top when stepping through campaign wizard
   React.useEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+
+    const mainScrollContainer = document.querySelector('.overflow-y-scroll');
+    if (mainScrollContainer) {
+      mainScrollContainer.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    }
   }, [currentStep]);
 
   const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LoginPage } from './LoginPage';
 import {
   Check,
@@ -25,6 +25,15 @@ interface OnboardingPageProps {
 export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCancel }) => {
   const [isRegistered, setIsRegistered] = useState(true);
   const [activeStep, setActiveStep] = useState<number>(1);
+
+  // Scroll to top when advancing onboarding steps
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const scrollContainer = document.querySelector('.overflow-y-scroll');
+    if (scrollContainer) {
+      scrollContainer.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    }
+  }, [activeStep]);
 
   // M-01 Business Info
   const [businessName, setBusinessName] = useState('Blue Bottle Specialty Roasters');
