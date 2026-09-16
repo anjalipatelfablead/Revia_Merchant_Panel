@@ -48,6 +48,44 @@ const GlassCard = ({ children, className = '' }: { children: React.ReactNode, cl
    </div>
 );
 
+const RealQRCodeSVG: React.FC<{ className?: string }> = ({ className = "w-36 h-36" }) => {
+   const matrix = [
+      [1,1,1,1,1,1,1,0,1,0,1,1,0,1,0,1,1,1,1,1,1,1],
+      [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
+      [1,0,1,1,1,0,1,0,1,1,0,1,0,1,0,1,0,1,1,1,0,1],
+      [1,0,1,1,1,0,1,0,0,0,1,0,1,0,0,1,0,1,1,1,0,1],
+      [1,0,1,1,1,0,1,0,1,1,0,1,0,0,0,1,0,1,1,1,0,1],
+      [1,0,0,0,0,0,1,0,0,1,1,0,1,1,0,1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,0,1,0,1,0,1,0,0,1,1,1,1,1,1,1],
+      [0,0,0,0,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0,0],
+      [1,1,0,1,0,1,1,1,0,0,1,1,1,0,1,1,0,1,0,1,1,1],
+      [0,1,1,0,1,0,0,0,1,0,0,0,1,1,0,0,1,0,1,0,1,0],
+      [1,0,0,1,1,1,1,1,0,1,1,0,0,1,1,1,0,1,1,0,0,1],
+      [0,1,0,1,0,0,0,0,1,1,0,1,1,0,0,1,1,0,0,1,1,0],
+      [1,0,1,0,1,1,1,1,0,0,1,0,0,1,1,0,1,1,0,1,0,1],
+      [0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,1,0,0,1,0,1,1],
+      [1,1,1,1,1,1,1,0,0,1,1,0,1,1,1,0,1,1,0,1,0,0],
+      [1,0,0,0,0,0,1,0,1,0,0,1,0,0,0,1,1,1,0,0,1,1],
+      [1,0,1,1,1,0,1,0,0,1,1,0,1,1,1,0,0,1,1,1,0,1],
+      [1,0,1,1,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,1,0],
+      [1,0,1,1,1,0,1,0,0,1,1,0,0,0,1,1,1,0,1,1,0,1],
+      [1,0,0,0,0,0,1,0,1,0,0,1,1,1,0,0,0,1,0,1,1,0],
+      [1,1,1,1,1,1,1,0,0,1,1,0,1,0,1,1,0,1,1,0,1,1]
+   ];
+   const size = matrix.length;
+
+   return (
+      <svg viewBox={`0 0 ${size} ${size}`} className={className} shapeRendering="crispEdges">
+         <rect width={size} height={size} fill="white" />
+         {matrix.map((row, r) =>
+            row.map((cell, c) =>
+               cell === 1 ? <rect key={`${r}-${c}`} x={c} y={r} width={1} height={1} fill="#111111" /> : null
+            )
+         )}
+      </svg>
+   );
+};
+
 // ─── Mobile Mockup Frame ──────────────────────────────────────────────────────
 const MobileFrame = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
    <motion.div
@@ -522,7 +560,127 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-[#241C15]">{feat.title}</h3>
                         <p className="text-sm sm:text-base text-gray-500 mb-4 sm:mb-8 leading-relaxed font-medium">{feat.desc}</p>
                      </motion.div>
-                  ))}
+                   ))}
+                </div>
+             </div>
+          </section>
+
+         {/* ═══════════════════════════════════════ */}
+         {/* SMART QR EXPERIENCE & TOUCHPOINTS      */}
+         {/* ═══════════════════════════════════════ */}
+         <section className="py-20 bg-[#1A1410] relative z-10 overflow-hidden text-white" id="qr-experience">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#D9A94E]/10 rounded-full blur-[120px] pointer-events-none" />
+
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+               <SectionLabel>Smart QR Touchpoints</SectionLabel>
+
+               <div className="text-center max-w-3xl mx-auto mb-16">
+                  <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight mb-6">
+                     One QR Code. <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D9A94E] to-[#B8862E]">Endless Engagements.</span>
+                  </h2>
+                  <p className="text-base sm:text-lg text-white/70 font-medium leading-relaxed">
+                     Place acrylic desk stands, coasters, or counter cards in your store. Customers scan with their native phone camera to instantly unlock rewards, active campaigns, reviews, and Wi-Fi — zero app download required.
+                  </p>
+               </div>
+
+               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                  <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                     {[
+                        {
+                           title: "Counter & Table Stand",
+                           subtitle: "Acrylic Desk Display",
+                           desc: "High-quality counter cards placed at checkout or dining tables for 1-second camera scanning.",
+                           icon: QrCode,
+                           badge: "Fast Scan"
+                        },
+                        {
+                           title: "Instant Web Hub",
+                           subtitle: "Zero App Download",
+                           desc: "Opens your branded loyalty pass with digital stamps, active vouchers, and points instantly.",
+                           icon: Smartphone,
+                           badge: "Instant Access"
+                        },
+                        {
+                           title: "1-Tap Google Reviews",
+                           subtitle: "Review Booster",
+                           desc: "Prompts happy customers to leave 5-star reviews on Google right after redeeming rewards.",
+                           icon: Star,
+                           badge: "+40% Reviews"
+                        },
+                        {
+                           title: "Real-Time POS Scan",
+                           subtitle: "Cashier Verification",
+                           desc: "Staff validates coupons and stamps at redemption terminal in under 3 seconds.",
+                           icon: Zap,
+                           badge: "Live Sync"
+                        }
+                     ].map((item, idx) => (
+                        <motion.div
+                           key={idx}
+                           initial={{ opacity: 0, y: 20 }}
+                           whileInView={{ opacity: 1, y: 0 }}
+                           viewport={{ once: true }}
+                           transition={{ delay: idx * 0.1 }}
+                           whileHover={{ y: -4 }}
+                           className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-3xl hover:border-[#D9A94E]/50 hover:bg-white/10 transition-all duration-300 group"
+                        >
+                           <div className="flex items-center justify-between mb-4">
+                              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D9A94E] to-[#B8862E] flex items-center justify-center text-white shadow-lg shadow-[#D9A94E]/20 group-hover:scale-110 transition-transform">
+                                 <item.icon className="w-6 h-6" />
+                              </div>
+                              <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-[#D9A94E]/20 text-[#D9A94E] border border-[#D9A94E]/30 rounded-full">
+                                 {item.badge}
+                              </span>
+                           </div>
+                           <p className="text-[11px] font-bold text-[#D9A94E] uppercase tracking-wider mb-1">{item.subtitle}</p>
+                           <h3 className="text-lg font-black text-white mb-2">{item.title}</h3>
+                           <p className="text-xs text-white/60 leading-relaxed">{item.desc}</p>
+                        </motion.div>
+                     ))}
+                  </div>
+
+                  <div className="lg:col-span-5 flex justify-center">
+                     <div className="relative w-full max-w-sm bg-gradient-to-b from-[#241C15] to-[#120E0C] border border-[#D9A94E]/30 rounded-[36px] p-6 shadow-2xl shadow-black/80 text-center">
+                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                           <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 rounded-lg bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white font-black text-sm flex items-center justify-center">
+                                 R
+                              </div>
+                              <span className="text-xs font-black text-white tracking-wider">REVIA PASS</span>
+                           </div>
+                           <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live QR
+                           </span>
+                        </div>
+
+                        <div className="relative mx-auto w-44 h-44 bg-white p-3 rounded-2xl shadow-xl flex flex-col items-center justify-center border-2 border-[#D9A94E]/50 group overflow-hidden">
+                           <motion.div
+                              animate={{ y: [-70, 70, -70] }}
+                              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                              className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#D9A94E] to-transparent shadow-[0_0_15px_#D9A94E] z-10 pointer-events-none"
+                           />
+                           <RealQRCodeSVG className="w-36 h-36" />
+                        </div>
+
+                        <p className="mt-4 text-xs font-bold text-white/80">Scan with phone camera</p>
+                        <p className="text-[11px] text-white/40 mt-0.5">Works on iOS & Android</p>
+
+                        <div className="mt-6 grid grid-cols-3 gap-2 text-center">
+                           <div className="bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <Star className="w-4 h-4 text-[#D9A94E] mx-auto mb-1" />
+                              <p className="text-[10px] font-bold text-white">Stamps</p>
+                           </div>
+                           <div className="bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <Gift className="w-4 h-4 text-[#D9A94E] mx-auto mb-1" />
+                              <p className="text-[10px] font-bold text-white">Offers</p>
+                           </div>
+                           <div className="bg-white/5 border border-white/10 rounded-xl p-2.5">
+                              <Star className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
+                              <p className="text-[10px] font-bold text-white">Reviews</p>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </div>
          </section>
@@ -604,7 +762,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          {/* ═══════════════════════════════════════ */}
          {/* 8. PRICING SECTION                    */}
          {/* ═══════════════════════════════════════ */}
-         <section className="py-12 bg-white relative z-10" id="pricing">
+         {/* <section className="py-12 bg-white relative z-10" id="pricing">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
                <div className="text-center mb-10">
                   <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#241C15] mb-6 sm:mb-8">Simple, transparent pricing</h2>
@@ -627,9 +785,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   </div>
                </div>
 
-               {/* Desktop pricing grid */}
                <div className="hidden lg:grid grid-cols-3 gap-8 max-w-6xl mx-auto items-center mt-2">
-                  {/* Starter */}
                   <div className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-xl shadow-gray-200/40 hover:-translate-y-2 transition-transform duration-300">
                      <h3 className="text-2xl font-black mb-2 text-[#241C15]">Starter</h3>
                      <div className="flex items-end gap-1 mb-8">
@@ -648,7 +804,6 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      </button>
                   </div>
 
-                  {/* Growth */}
                   <div className="relative">
                      <div className="absolute inset-0 bg-gradient-to-b from-[#D9A94E] to-[#B8862E] rounded-[40px] blur-xl opacity-40 -z-10" />
                      <div className="bg-[#241C15] text-white rounded-[40px] p-12 shadow-2xl relative border border-white/10 md:-scale-y-100 md:scale-y-100 md:scale-105">
@@ -673,7 +828,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      </div>
                   </div>
 
-                  {/* Enterprise */}
+                  
                   <div className="bg-white rounded-[40px] p-10 border border-gray-100 shadow-xl shadow-gray-200/40 hover:-translate-y-2 transition-transform duration-300">
                      <h3 className="text-2xl font-black mb-2 text-[#241C15]">Enterprise</h3>
                      <div className="flex items-end gap-1 mb-8">
@@ -692,7 +847,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   </div>
                </div>
 
-               {/* Mobile pricing slider */}
+               
                <div className="lg:hidden mt-4">
                   <div
                      ref={pricingScrollRef}
@@ -700,7 +855,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-0"
                      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
                   >
-                     {/* Starter */}
+                     
                      <div className="snap-center shrink-0 w-full px-4">
                         <div className="bg-white rounded-[28px] p-6 border border-gray-100 shadow-xl shadow-gray-200/40">
                            <h3 className="text-2xl font-black mb-2 text-[#241C15]">Starter</h3>
@@ -721,7 +876,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         </div>
                      </div>
 
-                     {/* Growth */}
+                    
                      <div className="snap-center shrink-0 w-full px-4">
                         <div className="relative">
                            <div className="absolute inset-0 bg-gradient-to-b from-[#D9A94E] to-[#B8862E] rounded-[28px] blur-xl opacity-40 -z-10" />
@@ -748,7 +903,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         </div>
                      </div>
 
-                     {/* Enterprise */}
+                     
                      <div className="snap-center shrink-0 w-full px-4">
                         <div className="bg-white rounded-[28px] p-6 border border-gray-100 shadow-xl shadow-gray-200/40">
                            <h3 className="text-2xl font-black mb-2 text-[#241C15]">Enterprise</h3>
@@ -769,7 +924,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      </div>
                   </div>
 
-                  {/* Dot indicators */}
+                 
                   <div className="flex justify-center items-center gap-2.5 mt-6">
                      {['Starter', 'Growth', 'Enterprise'].map((label, i) => (
                         <button
@@ -785,7 +940,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   </div>
                </div>
             </div>
-         </section>
+         </section> */}
 
          {/* ═══════════════════════════════════════ */}
          {/* 9. TESTIMONIAL / RESULTS              */}
