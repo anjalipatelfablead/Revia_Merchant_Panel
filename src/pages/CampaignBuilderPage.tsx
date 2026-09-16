@@ -664,6 +664,18 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
   const [rewardPoints, setRewardPoints] = useState<number>(500);
 
   const [freeItem, setFreeItem] = useState<string>('Single Origin Geisha (250g Whole Bean)');
+  const [freeItemDropdownOpen, setFreeItemDropdownOpen] = useState(false);
+  const [showFreeItemNewInput, setShowFreeItemNewInput] = useState(false);
+  const [freeItemNewName, setFreeItemNewName] = useState('');
+  const [catalogProducts, setCatalogProducts] = useState([
+    'Panama Boquete Geisha Tasting Flight',
+    'Ethiopia Yirgacheffe Washed Grade 1',
+    'Colombia Huila Pink Bourbon Anaerobic',
+    'Artisanal Cardamom Kouign-Amann',
+    'Bourbon Cask 24h Kyoto Drip Cold Brew',
+    'Valrhona Dark Chocolate Hazelnut Cruffin',
+    'Single Origin Geisha (250g Whole Bean)',
+  ]);
 
   const [maxRedemptions, setMaxRedemptions] = useState<number>(1);
   const [totalBudgetCap, setTotalBudgetCap] = useState<number>(500);
@@ -862,15 +874,100 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
           {rewardType === 'free_item' && (
             <div className="mt-5 pt-5 border-t border-[#EFECE6] bg-[#FAF8F5] rounded-xl p-4 border">
               <label className="text-[11px] font-bold uppercase tracking-wider text-[#1A1615] block mb-2">FREE ITEM PRODUCT NAME</label>
-              <input
-                type="text"
-                value={freeItem}
-                onChange={e => setFreeItem(e.target.value)}
-                disabled={campaignType === 'existing_stamp' && !!ruleConfig?.stampItem}
-                className={`w-full px-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs ${campaignType === 'existing_stamp' && !!ruleConfig?.stampItem ? 'opacity-70 cursor-not-allowed' : ''
-                  }`}
-                placeholder="e.g. Single Origin Geisha 250g Whole Bean"
-              />
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!(campaignType === 'existing_stamp' && !!ruleConfig?.stampItem)) {
+                      setFreeItemDropdownOpen(!freeItemDropdownOpen);
+                      setShowFreeItemNewInput(false);
+                    }
+                  }}
+                  disabled={campaignType === 'existing_stamp' && !!ruleConfig?.stampItem}
+                  className={`w-full px-4 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-[14px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] flex items-center justify-between cursor-pointer hover:border-[#D4A753]/50 transition-colors shadow-2xs text-left ${campaignType === 'existing_stamp' && !!ruleConfig?.stampItem ? 'opacity-70 cursor-not-allowed' : ''
+                    }`}
+                >
+                  <span className={freeItem ? 'text-[#1A1615]' : 'text-[#9E9A93]'}>
+                    {freeItem || 'Select a product...'}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 text-[#9E9A93] transition-transform ${freeItemDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {freeItemDropdownOpen && !(campaignType === 'existing_stamp' && !!ruleConfig?.stampItem) && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+                    <div className="max-h-[220px] overflow-y-auto py-1">
+                      {catalogProducts.map((product) => (
+                        <button
+                          key={product}
+                          type="button"
+                          onClick={() => {
+                            setFreeItem(product);
+                            setFreeItemDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-2.5 text-[13px] font-semibold flex items-center justify-between gap-2 cursor-pointer transition-colors ${
+                            freeItem === product
+                              ? 'bg-[#FDF8EB] text-[#9E782F]'
+                              : 'text-[#3D3732] hover:bg-[#FAF8F5]'
+                          }`}
+                        >
+                          <span className="truncate">{product}</span>
+                          {freeItem === product && <Check className="w-4 h-4 text-[#D4A753] shrink-0" />}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Divider */}
+                    <div className="border-t border-[#EFECE6]" />
+
+                    {/* Add New Item */}
+                    {!showFreeItemNewInput ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowFreeItemNewInput(true)}
+                        className="w-full text-left px-4 py-3 text-[13px] font-bold text-[#D4A753] flex items-center gap-1.5 cursor-pointer hover:bg-[#FDF8EB] transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add New Item
+                      </button>
+                    ) : (
+                      <div className="px-3 py-2.5 flex items-center gap-2">
+                        <input
+                          type="text"
+                          autoFocus
+                          value={freeItemNewName}
+                          onChange={e => setFreeItemNewName(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' && freeItemNewName.trim()) {
+                              setCatalogProducts(prev => [...prev, freeItemNewName.trim()]);
+                              setFreeItem(freeItemNewName.trim());
+                              setFreeItemNewName('');
+                              setShowFreeItemNewInput(false);
+                              setFreeItemDropdownOpen(false);
+                            }
+                          }}
+                          placeholder="Enter product name..."
+                          className="flex-1 px-3 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] placeholder:text-[#9E9A93]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (freeItemNewName.trim()) {
+                              setCatalogProducts(prev => [...prev, freeItemNewName.trim()]);
+                              setFreeItem(freeItemNewName.trim());
+                              setFreeItemNewName('');
+                              setShowFreeItemNewInput(false);
+                              setFreeItemDropdownOpen(false);
+                            }
+                          }}
+                          className="px-3 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[12px] font-bold rounded-lg cursor-pointer hover:shadow-sm transition-all"
+                        >
+                          Add
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
               {campaignType === 'existing_stamp' && !!ruleConfig?.stampItem && (
                 <p className="mt-2 text-[11px] text-[#9E782F] font-bold flex items-center gap-1">
                   <Info className="w-3.5 h-3.5" /> Auto-set from Stamp Type configuration
@@ -1206,6 +1303,18 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [directCustomerBillNo, setDirectCustomerBillNo] = useState<string>('INV-88219');
   const [directRedemptionMode, setDirectRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
   const [productQrName, setProductQrName] = useState<string>('Single Origin Geisha (250g Whole Bean)');
+  const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+  const [showNewItemInput, setShowNewItemInput] = useState(false);
+  const [newItemName, setNewItemName] = useState('');
+  const [catalogProducts, setCatalogProducts] = useState([
+    'Panama Boquete Geisha Tasting Flight',
+    'Ethiopia Yirgacheffe Washed Grade 1',
+    'Colombia Huila Pink Bourbon Anaerobic',
+    'Artisanal Cardamom Kouign-Amann',
+    'Bourbon Cask 24h Kyoto Drip Cold Brew',
+    'Valrhona Dark Chocolate Hazelnut Cruffin',
+    'Single Origin Geisha (250g Whole Bean)',
+  ]);
   const [productQrQuantity, setProductQrQuantity] = useState<number>(100);
   const [productQrRedemptionMode, setProductQrRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
   const [startDate, setStartDate] = useState('');
@@ -1664,15 +1773,93 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
+                  <div className="relative">
                     <label className="text-[11px] font-bold text-[#6E6A66] block mb-1.5">Target Specific Product / Item</label>
-                    <input
-                      type="text"
-                      value={productQrName}
-                      onChange={e => setProductQrName(e.target.value)}
-                      placeholder="e.g. Single Origin Geisha 250g Whole Bean"
-                      className="w-full px-3.5 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => { setProductDropdownOpen(!productDropdownOpen); setShowNewItemInput(false); }}
+                      className="w-full px-3.5 py-2.5 bg-white border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] flex items-center justify-between cursor-pointer hover:border-[#D4A753]/50 transition-colors text-left"
+                    >
+                      <span className={productQrName ? 'text-[#1A1615]' : 'text-[#9E9A93]'}>
+                        {productQrName || 'Select a product...'}
+                      </span>
+                      <ChevronDown className={`w-3.5 h-3.5 text-[#9E9A93] transition-transform ${productDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {productDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+                        <div className="max-h-[220px] overflow-y-auto py-1">
+                          {catalogProducts.map((product) => (
+                            <button
+                              key={product}
+                              type="button"
+                              onClick={() => {
+                                setProductQrName(product);
+                                setProductDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3.5 py-2 text-[11px] font-semibold flex items-center justify-between gap-2 cursor-pointer transition-colors ${
+                                productQrName === product
+                                  ? 'bg-[#FDF8EB] text-[#9E782F]'
+                                  : 'text-[#3D3732] hover:bg-[#FAF8F5]'
+                              }`}
+                            >
+                              <span className="truncate">{product}</span>
+                              {productQrName === product && <Check className="w-3.5 h-3.5 text-[#D4A753] shrink-0" />}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Divider */}
+                        <div className="border-t border-[#EFECE6]" />
+
+                        {/* Add New Item */}
+                        {!showNewItemInput ? (
+                          <button
+                            type="button"
+                            onClick={() => setShowNewItemInput(true)}
+                            className="w-full text-left px-3.5 py-2.5 text-[11px] font-bold text-[#D4A753] flex items-center gap-1.5 cursor-pointer hover:bg-[#FDF8EB] transition-colors"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            Add New Item
+                          </button>
+                        ) : (
+                          <div className="px-3 py-2.5 flex items-center gap-2">
+                            <input
+                              type="text"
+                              autoFocus
+                              value={newItemName}
+                              onChange={e => setNewItemName(e.target.value)}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter' && newItemName.trim()) {
+                                  setCatalogProducts(prev => [...prev, newItemName.trim()]);
+                                  setProductQrName(newItemName.trim());
+                                  setNewItemName('');
+                                  setShowNewItemInput(false);
+                                  setProductDropdownOpen(false);
+                                }
+                              }}
+                              placeholder="Enter product name..."
+                              className="flex-1 px-2.5 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] placeholder:text-[#9E9A93]"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (newItemName.trim()) {
+                                  setCatalogProducts(prev => [...prev, newItemName.trim()]);
+                                  setProductQrName(newItemName.trim());
+                                  setNewItemName('');
+                                  setShowNewItemInput(false);
+                                  setProductDropdownOpen(false);
+                                }
+                              }}
+                              className="px-2.5 py-1.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[10px] font-bold rounded-lg cursor-pointer hover:shadow-sm transition-all"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -2915,12 +3102,120 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <p className="text-[10px] font-medium text-white/70 mb-4">Single Origin Geisha (Whole Bean 250g)</p>
               </div>
 
-              {/* Barcode Area */}
+              {/* QR Code Area */}
               <div className="bg-white rounded-lg p-3 flex flex-col items-center justify-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/UPC-A-036000291452.svg" alt="barcode" className="w-full h-10 opacity-90 object-cover mb-1.5" style={{ filter: 'grayscale(100%) contrast(200%)' }} />
+                <svg viewBox="0 0 120 120" className="w-20 h-20 mb-1.5">
+                  {/* QR Code Pattern */}
+                  <rect x="0" y="0" width="120" height="120" fill="white"/>
+                  {/* Top-left finder */}
+                  <rect x="4" y="4" width="28" height="28" fill="#1A1615"/>
+                  <rect x="8" y="8" width="20" height="20" fill="white"/>
+                  <rect x="12" y="12" width="12" height="12" fill="#1A1615"/>
+                  {/* Top-right finder */}
+                  <rect x="88" y="4" width="28" height="28" fill="#1A1615"/>
+                  <rect x="92" y="8" width="20" height="20" fill="white"/>
+                  <rect x="96" y="12" width="12" height="12" fill="#1A1615"/>
+                  {/* Bottom-left finder */}
+                  <rect x="4" y="88" width="28" height="28" fill="#1A1615"/>
+                  <rect x="8" y="92" width="20" height="20" fill="white"/>
+                  <rect x="12" y="96" width="12" height="12" fill="#1A1615"/>
+                  {/* Data modules row 1 */}
+                  <rect x="36" y="4" width="4" height="4" fill="#1A1615"/>
+                  <rect x="44" y="4" width="4" height="4" fill="#1A1615"/>
+                  <rect x="52" y="4" width="4" height="4" fill="#1A1615"/>
+                  <rect x="60" y="4" width="8" height="4" fill="#1A1615"/>
+                  <rect x="72" y="4" width="4" height="4" fill="#1A1615"/>
+                  <rect x="80" y="4" width="4" height="4" fill="#1A1615"/>
+                  {/* Data modules row 2 */}
+                  <rect x="36" y="12" width="4" height="4" fill="#1A1615"/>
+                  <rect x="48" y="12" width="8" height="4" fill="#1A1615"/>
+                  <rect x="64" y="12" width="4" height="4" fill="#1A1615"/>
+                  <rect x="76" y="12" width="4" height="4" fill="#1A1615"/>
+                  {/* Data modules rows */}
+                  <rect x="36" y="20" width="8" height="4" fill="#1A1615"/>
+                  <rect x="52" y="20" width="4" height="4" fill="#1A1615"/>
+                  <rect x="60" y="20" width="4" height="4" fill="#1A1615"/>
+                  <rect x="72" y="20" width="8" height="4" fill="#1A1615"/>
+                  {/* Middle area data */}
+                  <rect x="4" y="36" width="4" height="4" fill="#1A1615"/>
+                  <rect x="12" y="36" width="8" height="4" fill="#1A1615"/>
+                  <rect x="28" y="36" width="4" height="4" fill="#1A1615"/>
+                  <rect x="40" y="36" width="4" height="4" fill="#1A1615"/>
+                  <rect x="52" y="36" width="8" height="4" fill="#1A1615"/>
+                  <rect x="64" y="36" width="4" height="4" fill="#1A1615"/>
+                  <rect x="76" y="36" width="8" height="4" fill="#1A1615"/>
+                  <rect x="92" y="36" width="4" height="4" fill="#1A1615"/>
+                  <rect x="104" y="36" width="8" height="4" fill="#1A1615"/>
+                  {/* Timing pattern */}
+                  <rect x="4" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="16" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="24" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="36" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="48" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="56" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="68" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="80" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="88" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="100" y="44" width="4" height="4" fill="#1A1615"/>
+                  <rect x="112" y="44" width="4" height="4" fill="#1A1615"/>
+                  {/* More data */}
+                  <rect x="8" y="52" width="4" height="4" fill="#1A1615"/>
+                  <rect x="20" y="52" width="4" height="4" fill="#1A1615"/>
+                  <rect x="36" y="52" width="8" height="4" fill="#1A1615"/>
+                  <rect x="52" y="52" width="4" height="4" fill="#1A1615"/>
+                  <rect x="64" y="52" width="8" height="4" fill="#1A1615"/>
+                  <rect x="80" y="52" width="4" height="4" fill="#1A1615"/>
+                  <rect x="96" y="52" width="4" height="4" fill="#1A1615"/>
+                  <rect x="108" y="52" width="8" height="4" fill="#1A1615"/>
+                  {/* Lower data */}
+                  <rect x="4" y="60" width="4" height="4" fill="#1A1615"/>
+                  <rect x="16" y="60" width="8" height="4" fill="#1A1615"/>
+                  <rect x="32" y="60" width="4" height="4" fill="#1A1615"/>
+                  <rect x="44" y="60" width="4" height="4" fill="#1A1615"/>
+                  <rect x="56" y="60" width="8" height="4" fill="#1A1615"/>
+                  <rect x="72" y="60" width="4" height="4" fill="#1A1615"/>
+                  <rect x="84" y="60" width="4" height="4" fill="#1A1615"/>
+                  <rect x="100" y="60" width="4" height="4" fill="#1A1615"/>
+                  <rect x="112" y="60" width="4" height="4" fill="#1A1615"/>
+                  {/* Bottom data rows */}
+                  <rect x="40" y="72" width="8" height="4" fill="#1A1615"/>
+                  <rect x="56" y="72" width="4" height="4" fill="#1A1615"/>
+                  <rect x="68" y="72" width="4" height="4" fill="#1A1615"/>
+                  <rect x="84" y="72" width="8" height="4" fill="#1A1615"/>
+                  <rect x="100" y="72" width="4" height="4" fill="#1A1615"/>
+                  <rect x="36" y="80" width="4" height="4" fill="#1A1615"/>
+                  <rect x="48" y="80" width="8" height="4" fill="#1A1615"/>
+                  <rect x="64" y="80" width="4" height="4" fill="#1A1615"/>
+                  <rect x="76" y="80" width="4" height="4" fill="#1A1615"/>
+                  <rect x="92" y="80" width="8" height="4" fill="#1A1615"/>
+                  <rect x="108" y="80" width="4" height="4" fill="#1A1615"/>
+                  {/* Bottom right data */}
+                  <rect x="40" y="88" width="4" height="4" fill="#1A1615"/>
+                  <rect x="52" y="88" width="8" height="4" fill="#1A1615"/>
+                  <rect x="68" y="88" width="4" height="4" fill="#1A1615"/>
+                  <rect x="80" y="88" width="4" height="4" fill="#1A1615"/>
+                  <rect x="96" y="88" width="4" height="4" fill="#1A1615"/>
+                  <rect x="112" y="88" width="4" height="4" fill="#1A1615"/>
+                  <rect x="36" y="96" width="8" height="4" fill="#1A1615"/>
+                  <rect x="52" y="96" width="4" height="4" fill="#1A1615"/>
+                  <rect x="64" y="96" width="8" height="4" fill="#1A1615"/>
+                  <rect x="80" y="96" width="8" height="4" fill="#1A1615"/>
+                  <rect x="100" y="96" width="4" height="4" fill="#1A1615"/>
+                  <rect x="40" y="104" width="4" height="4" fill="#1A1615"/>
+                  <rect x="56" y="104" width="4" height="4" fill="#1A1615"/>
+                  <rect x="72" y="104" width="8" height="4" fill="#1A1615"/>
+                  <rect x="88" y="104" width="4" height="4" fill="#1A1615"/>
+                  <rect x="104" y="104" width="4" height="4" fill="#1A1615"/>
+                  <rect x="36" y="112" width="4" height="4" fill="#1A1615"/>
+                  <rect x="48" y="112" width="4" height="4" fill="#1A1615"/>
+                  <rect x="60" y="112" width="4" height="4" fill="#1A1615"/>
+                  <rect x="76" y="112" width="4" height="4" fill="#1A1615"/>
+                  <rect x="92" y="112" width="8" height="4" fill="#1A1615"/>
+                  <rect x="108" y="112" width="8" height="4" fill="#1A1615"/>
+                </svg>
                 <div className="text-[6px] font-bold tracking-widest text-[#1A1615] uppercase mt-1 text-center leading-tight">
                   <span className="flex items-center justify-center gap-1"><Wifi className="w-2.5 h-2.5 rotate-90" /> HOLD NEAR COUNTER NFC OR</span>
-                  SCAN BARCODE
+                  SCAN QR CODE
                 </div>
               </div>
             </div>
