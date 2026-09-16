@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { StaggerTestimonials } from '../components/ui/stagger-testimonials';
 import { FAQSection } from '../components/ui/faqsection';
+import { MarketingNavbar } from '../components/layout/MarketingNavbar';
 import { MarketingFooter } from '../components/layout/MarketingFooter';
 
 interface Props {
@@ -207,71 +208,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          {/* ═══════════════════════════════════════ */}
          {/* 1. NAVBAR                             */}
          {/* ═══════════════════════════════════════ */}
-         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-white/80 backdrop-blur-xl border-b border-white/50 shadow-sm py-4' : 'bg-transparent py-6'}`}>
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between">
-               <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => window.scrollTo(0, 0)}
-               >
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#D9A94E] to-[#B8862E] flex items-center justify-center shadow-lg shadow-[#D9A94E]/30">
-                     <span className="text-white font-black text-lg">R</span>
-                  </div>
-                  <span className="text-2xl font-black tracking-tight">Revia</span>
-               </motion.div>
-
-               <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="hidden lg:flex items-center gap-10 text-sm font-bold text-gray-600 bg-white/50 px-8 py-3 rounded-full backdrop-blur-md border border-white/60 shadow-sm"
-               >
-                  <a href="#features" className="hover:text-[#B8862E] transition-colors">Features</a>
-                  <a href="#how-it-works" className="hover:text-[#B8862E] transition-colors">How It Works</a>
-                  <a href="#pricing" className="hover:text-[#B8862E] transition-colors">Pricing</a>
-                  <a href="#faq" className="hover:text-[#B8862E] transition-colors">FAQ</a>
-               </motion.div>
-
-               <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="hidden lg:flex items-center gap-6"
-               >
-                  <button onClick={() => onNavigate?.('/login')} className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-[#B8862E] transition-colors">
-                     <Lock className="w-4 h-4" />
-                     Log In
-                  </button>
-                  <button onClick={() => onNavigate?.('/login')} className="flex items-center gap-2 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#D9A94E]/30 hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                     <Store className="w-4 h-4" />
-                     Become Merchant
-                  </button>
-               </motion.div>
-
-               <button className="lg:hidden z-50 relative" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                  {isMobileMenuOpen ? <X className="w-6 h-6 text-[#241C15]" /> : <Menu className="w-6 h-6" />}
-               </button>
-            </div>
-         </nav>
-
-         <AnimatePresence>
-            {isMobileMenuOpen && (
-               <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="fixed inset-0 z-40 bg-white/95 backdrop-blur-2xl pt-28 px-6 flex flex-col gap-6 lg:hidden border-b border-gray-100"
-               >
-                  <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black border-b border-gray-100 pb-4">Features</a>
-                  <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black border-b border-gray-100 pb-4">How It Works</a>
-                  <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black border-b border-gray-100 pb-4">Pricing</a>
-                  <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black border-b border-gray-100 pb-4">FAQ</a>
-                  <div className="flex flex-col gap-4 mt-auto pb-12">
-                     <button onClick={() => { setIsMobileMenuOpen(false); onNavigate?.('/login'); }} className="w-full bg-[#FAF6EE] text-[#241C15] py-4 rounded-xl font-black text-lg border border-[#D9A94E]/20">Log In</button>
-                     <button onClick={() => { setIsMobileMenuOpen(false); onNavigate?.('/login'); }} className="w-full bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-[#D9A94E]/30">Become Merchant</button>
-                  </div>
-               </motion.div>
-            )}
-         </AnimatePresence>
+         <MarketingNavbar onNavigate={onNavigate} />
 
          {/* ═══════════════════════════════════════ */}
          {/* 2. HERO SECTION                       */}
@@ -307,11 +244,11 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                      QR-based loyalty, targeted campaigns, and rewards — no app download required for your customers. Built to seamlessly integrate with your counter.
                   </motion.p>
                   <motion.div variants={itemVariants} className="mt-8 sm:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4">
-                     <button onClick={() => onNavigate?.('/onboarding')} className="bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black shadow-xl shadow-[#D9A94E]/30 hover:shadow-[0_20px_40px_rgba(217,169,78,0.25)] hover:scale-105 transition-all duration-300 flex justify-center items-center gap-3 group relative overflow-hidden">
+                     <button onClick={() => onNavigate?.('/onboarding')} className="cursor-pointer bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black shadow-xl shadow-[#D9A94E]/30 hover:shadow-[0_20px_40px_rgba(217,169,78,0.25)] hover:scale-105 transition-all duration-300 flex justify-center items-center gap-3 group relative overflow-hidden">
                         <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                         <span className="relative z-10 flex items-center gap-2">Start Free <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></span>
                      </button>
-                     <button onClick={() => onNavigate?.('/login')} className="bg-white/80 backdrop-blur-md border-2 border-gray-200 hover:border-[#D9A94E]/50 text-[#241C15] px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black transition-all shadow-sm hover:shadow-lg flex justify-center items-center">
+                     <button onClick={() => onNavigate?.('/login')} className="cursor-pointer bg-white/80 backdrop-blur-md border-2 border-gray-200 hover:border-[#D9A94E]/50 text-[#241C15] px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black transition-all shadow-sm hover:shadow-lg flex justify-center items-center">
                         Become Merchant
                      </button>
                   </motion.div>
