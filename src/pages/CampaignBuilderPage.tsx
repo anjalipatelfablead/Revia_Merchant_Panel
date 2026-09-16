@@ -3492,7 +3492,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <h3 className="text-lg font-bold text-[#1A1615] mb-2">{qrModalCampaign.name}</h3>
               <p className="text-xs text-[#7C746C] mb-6">Scan this QR code to join the campaign.</p>
               <div className="w-48 h-48 bg-white border-2 border-[#EFECE6] rounded-xl flex items-center justify-center mb-6 shadow-sm overflow-hidden">
-                 <img fetchpriority="high" loading="eager" src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${qrModalCampaign.id || 'promo'}`} alt="QR Code" className="w-full h-full object-contain p-2" />
+                 <img fetchPriority="high" loading="eager" src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${qrModalCampaign.id || 'promo'}`} alt="QR Code" className="w-full h-full object-contain p-2" />
               </div>
               <button onClick={() => handleDownload(qrModalCampaign)} className="w-full py-3 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-md hover:bg-black transition-colors cursor-pointer flex items-center justify-center gap-2">
                 <Download className="w-4 h-4" /> Download QR Code
