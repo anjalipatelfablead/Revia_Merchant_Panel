@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useWallet } from '../context/WalletContext';
 import {
   Users,
   Shield,
@@ -211,6 +212,7 @@ const INITIAL_STAFF_MEMBERS: StaffMemberDetailed[] = [
 ];
 
 export const StaffPage: React.FC = () => {
+  const { checkAndDeductCredit } = useWallet();
   const [staffList, setStaffList] = useState<StaffMemberDetailed[]>(INITIAL_STAFF_MEMBERS);
   const [selectedStaffId, setSelectedStaffId] = useState<string>('STF-1042');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -271,6 +273,13 @@ export const StaffPage: React.FC = () => {
     if (!inviteName || !inviteEmail) return;
 
     const newId = `STF-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    // CREDIT CHECK GATING (20 credits)
+    const allowed = checkAndDeductCredit('staff_invite', 20, newId, `Invite Staff Seat: ${inviteName}`);
+    if (!allowed) {
+      return; // Blocked due to insufficient wallet credits
+    }
+
     const initials = inviteName
       .split(' ')
       .map((p) => p[0])

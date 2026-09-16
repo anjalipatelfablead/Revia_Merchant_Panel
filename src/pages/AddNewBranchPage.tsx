@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useWallet } from '../context/WalletContext';
 import {
   ArrowLeft,
   X,
@@ -35,6 +36,8 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
   onNavigate,
   onAddBranch,
 }) => {
+  const { checkAndDeductCredit } = useWallet();
+
   // Form State initialized to exact Figma defaults
   const [branchName, setBranchName] = useState('SoHo Roastery & Tasting Salon');
   const [outletCode, setOutletCode] = useState('REV-NYC-04');
@@ -91,12 +94,18 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
     setOutletCode(`REV-${randomPrefix}-${randomNum}`);
   };
 
-  // Provision and launch branch handler
+  // Provision and launch branch handler (CREDIT GATED)
   const handleProvisionBranch = () => {
+    const branchId = `branch-rev-${Date.now()}`;
+    const allowed = checkAndDeductCredit('branch_setup', 100, branchId, 'New Branch Setup');
+    if (!allowed) {
+      return; // Blocked due to insufficient wallet credits
+    }
+
     setIsSubmitting(true);
 
     const createdOutlet: OutletsData = {
-      id: `branch-rev-${Date.now()}`,
+      id: branchId,
       name: branchName || 'New Outlet',
       shortName: branchName.split(' ')[0] || 'Outlet',
       type: venueProfile === 'roastery' ? 'Primary Hub' : 'Active',
@@ -223,7 +232,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           <div className="bg-white border border-[#EAE6E1] rounded-2xl shadow-2xs overflow-hidden border-l-4 border-l-[#B38637]">
             <div className="p-6 space-y-6">
               {/* Card Header with Phase Pill and Code Pill */}
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                 <div>
                   <span className="inline-block bg-[#FAF6EE] text-[#9E782F] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase mb-1">
                     PHASE 01
@@ -504,7 +513,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           <div className="bg-white border border-[#EAE6E1] rounded-2xl shadow-2xs overflow-hidden border-l-4 border-l-[#15803D]">
             <div className="p-6 space-y-6">
               {/* Card Header with Phase Pill and Mesh Ready Pill */}
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                 <div>
                   <span className="inline-block bg-[#FAF6EE] text-[#9E782F] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase mb-1">
                     PHASE 02

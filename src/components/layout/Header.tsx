@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Search, Bell, Menu, ChevronDown, X, Radio } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -17,6 +17,23 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    if (profileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileDropdownOpen]);
 
   // Dynamic breadcrumb matching current route and Figma specs
   const getBreadcrumbs = () => {
@@ -56,12 +73,13 @@ export const Header: React.FC<HeaderProps> = ({
       case '/analytics':
         return { category: 'Intelligence', page: 'Analytics & Reports' };
       case '/billing':
-        return { category: 'Merchant Account', page: 'Subscription & Billing' };
+        return { category: 'Merchant Account', page: 'Wallet & Credits' };
       case '/notifications':
         return { category: 'Activity Stream', page: 'Notifications' };
       case '/settings/audit':
-      case '/settings/branding':
         return { category: 'Governance', page: 'Settings & Audit Log' };
+      case '/settings/branding':
+        return { category: 'Governance', page: 'Business Profile & Branding' };
       case '/item-catalog':
         return { category: 'Catalog', page: 'Item Catalog' };
       case '/orders':
@@ -75,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
+    <header className="sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
       {/* Left: Mobile hamburger & Clean Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button
@@ -119,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {notificationsOpen && (
-            <div className="absolute right-0 mt-2 w-80 bg-white border border-[#EAE6E1] rounded-xl shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute right-0 sm:right-0 mt-2 w-[290px] sm:w-80 bg-white border border-[#EAE6E1] rounded-xl shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-2 border-b border-[#EAE6E1]">
                 <div className="text-xs font-bold text-[#1A1615] flex items-center gap-1.5">
                   <Bell className="w-3.5 h-3.5 text-[#A37837]" /> Notifications (3 active)
@@ -174,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* User Profile Card: Elena Rostova, Regional Director (matching Figma design) */}
-        <div className="relative">
+        <div className="relative" ref={profileDropdownRef}>
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
             className="flex items-center gap-2 pl-1 py-1 pr-1.5 hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
@@ -203,6 +221,15 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="font-bold text-[#1A1615]">Elena Rostova</div>
                 <div className="text-[10px] text-[#7C746C]">elena.rostova@bluebottle.com</div>
               </div>
+              <button
+                onClick={() => {
+                  setProfileDropdownOpen(false);
+                  onNavigate('/settings/audit');
+                }}
+                className="w-full text-left px-3 py-2 hover:bg-[#FAF8F5] text-[#3D3732] cursor-pointer"
+              >
+                Merchant Profile
+              </button>
               <button
                 onClick={() => {
                   setProfileDropdownOpen(false);
