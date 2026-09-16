@@ -171,7 +171,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
    // Auto-rotate hero preview slides every 4 seconds
    useEffect(() => {
       const interval = setInterval(() => {
-         setActiveSlide((prev) => (prev + 1) % 3);
+         setActiveSlide((prev) => (prev + 1) % 2);
       }, 4000);
       return () => clearInterval(interval);
    }, []);
@@ -221,7 +221,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
          {/* ═══════════════════════════════════════ */}
          {/* 2. HERO SECTION                       */}
          {/* ═══════════════════════════════════════ */}
-         <section className="pt-24 sm:pt-32 lg:pt-30 pb-8 sm:pb-12 lg:pb-20 overflow-hidden relative z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]">
+         <section className="pt-20 sm:pt-24 lg:pt-28 pb-4 sm:pb-6 lg:pb-10 overflow-hidden relative z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]">
             {/* Animated decorative blobs */}
             <motion.div
                animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
@@ -234,13 +234,13 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                className="absolute bottom-[10%] right-[5%] w-[30rem] h-[30rem] bg-[#241C15]/5 rounded-[60%_40%_30%_70%] blur-3xl pointer-events-none z-0"
             />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-16 items-center relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-center relative z-10">
                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="relative">
                   <div className="absolute -left-6 -top-6 w-20 h-20 bg-[radial-gradient(circle_at_center,rgba(217,169,78,0.15)_0,transparent_50%)]" />
                   <motion.div variants={itemVariants}>
                      <GoldBadge><Sparkles className="w-3 h-3" /> Loyalty & Retention Platform</GoldBadge>
                   </motion.div>
-                  <motion.h1 variants={itemVariants} className="mt-6 sm:mt-8 text-3xl sm:text-5xl lg:text-[4rem] font-black leading-[1.08] tracking-tight text-[#241C15] drop-shadow-sm">
+                  <motion.h1 variants={itemVariants} className="mt-4 sm:mt-5 text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-[3.75rem] font-black leading-[1.08] tracking-tight text-[#241C15] drop-shadow-sm">
                      Turn every customer into a <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D9A94E] via-[#C89B3C] to-[#B8862E] relative inline-block">
                         repeat customer
                         <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 100 12" preserveAspectRatio="none">
@@ -248,10 +248,10 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         </svg>
                      </span>
                   </motion.h1>
-                  <motion.p variants={itemVariants} className="mt-6 sm:mt-10 text-base sm:text-xl text-gray-600 leading-relaxed max-w-lg font-medium">
+                  <motion.p variants={itemVariants} className="mt-4 sm:mt-5 text-base sm:text-lg text-gray-600 leading-relaxed max-w-lg font-medium">
                      QR-based loyalty, targeted campaigns, and rewards — no app download required for your customers. Built to seamlessly integrate with your counter.
                   </motion.p>
-                  <motion.div variants={itemVariants} className="mt-8 sm:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <motion.div variants={itemVariants} className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
                      <button onClick={() => onNavigate?.('/onboarding')} className="cursor-pointer bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-sm sm:text-base font-black shadow-xl shadow-[#D9A94E]/30 hover:shadow-[0_20px_40px_rgba(217,169,78,0.25)] hover:scale-105 transition-all duration-300 flex justify-center items-center gap-3 group relative overflow-hidden">
                         <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                         <span className="relative z-10 flex items-center gap-2">Start Free <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></span>
@@ -260,12 +260,12 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         Become Merchant
                      </button>
                   </motion.div>
-                  <motion.p variants={itemVariants} className="mt-8 text-sm text-gray-500 font-bold flex items-center gap-2">
+                  <motion.p variants={itemVariants} className="mt-5 sm:mt-6 text-sm text-gray-500 font-bold flex items-center gap-2">
                      <CheckCircle2 className="w-4 h-4 text-[#D9A94E]" /> No credit card required · Setup in under 10 minutes
                   </motion.p>
                </motion.div>
 
-               <div className="flex justify-center lg:justify-end lg:pr-12 h-[460px] sm:h-[600px] lg:h-[650px] items-center mt-2 sm:mt-10 lg:mt-0 pb-4 sm:pb-0 w-full relative max-sm:overflow-x-clip">
+               <div className="flex justify-center lg:justify-end lg:pr-6 h-[440px] sm:h-[500px] lg:h-[400px] items-center mt-2 sm:mt-6 lg:mt-0 pb-2 sm:pb-0 w-full relative max-sm:overflow-x-clip">
                   <div className="relative w-full h-full flex flex-col items-center justify-center">
                      {/* Ambient glow behind phone */}
                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-gradient-to-br from-[#D9A94E]/40 to-[#241C15]/10 rounded-full blur-[80px]" />
@@ -462,109 +462,18 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                            </motion.div>
                         )}
 
-                        {activeSlide === 2 && (
-                           <motion.div
-                              key="slide2"
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -20 }}
-                              transition={{ duration: 0.5 }}
-                              className="relative w-full max-w-[400px] h-full flex flex-col items-center justify-center pt-2 sm:pt-4"
-                           >
-                              <h3 className="text-2xl sm:text-3xl font-black text-[#241C15] mb-4 sm:mb-6 text-center w-full">All from the same code.</h3>
-
-                              <div className="relative w-full flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 max-sm:scale-80 max-sm:origin-center">
-                                 {/* Standee Card on Left */}
-                                 <div className="bg-[#FAF6EE] border-2 border-gray-100 rounded-[28px] p-4 sm:p-5 shadow-xl w-[180px] sm:w-[240px] aspect-square flex flex-col justify-between z-10 relative">
-                                    <div>
-                                       <div className="flex items-center justify-center gap-2 mb-3 mt-1">
-                                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-[#D9A94E] text-white flex items-center justify-center font-black text-[10px] sm:text-xs shadow-md">A</div>
-                                          <span className="font-black text-base sm:text-lg tracking-wide uppercase">Ash & Oak</span>
-                                       </div>
-                                       <div className="flex justify-between text-[5px] sm:text-[6px] font-black tracking-normal text-[#241C15] mb-4 px-0.5">
-                                          <span>REVIEWS</span>
-                                          <span>WEBSITE</span>
-                                          <span>WI-FI</span>
-                                          <span>REWARDS</span>
-                                       </div>
-                                    </div>
-                                    <div className="bg-white p-2 rounded-2xl shadow-sm mx-auto w-3/4 max-w-[150px]">
-                                       <RealQRCodeSVG className="w-full h-auto" />
-                                    </div>
-                                    <div>
-                                       <p className="text-center text-[8px] sm:text-[9px] font-bold text-gray-400 mt-2 sm:mt-3 mb-1 sm:mb-2 tracking-widest">SP001</p>
-                                       <div className="text-center">
-                                          <span className="font-black text-xs sm:text-sm text-[#D9A94E]">ashandoak.com</span>
-                                       </div>
-                                    </div>
-                                 </div>
-
-                                 {/* Right Badges */}
-                                 <div className="relative flex flex-col space-y-2 sm:space-y-3 z-10 w-full sm:w-auto items-center sm:items-start">
-                                    {/* Main Connector from Card to Spine */}
-                                    <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-[64px] w-[32px] h-px bg-gray-700" />
-
-                                    {/* Outer Spine (Top to Bottom, with top and bottom branches) */}
-                                    <div className="hidden sm:block absolute top-[28px] bottom-[28px] -left-[32px] w-[32px] border-y border-l border-gray-700 rounded-l-lg z-0" />
-
-                                    {/* Badge 1 - Google Reviews */}
-                                    {/* <div className="relative z-10">
-                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2 sm:py-2.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
-                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white shadow-sm"><Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" /></div>
-                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Google Reviews</span>
-                                       </div>
-                                    </div> */}
-
-                                    {/* Badge 2 - Loyalty & Rewards */}
-                                    <div className="relative z-10">
-                                       <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-[32px] w-[32px] h-px bg-gray-700" />
-                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2 sm:py-2.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
-                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-sm">R</div>
-                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Loyalty & Rewards</span>
-                                       </div>
-                                    </div>
-
-                                    {/* Badge 3 - Website & Menu */}
-                                    <div className="relative z-10">
-                                       <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-[32px] w-[32px] h-px bg-gray-700" />
-                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2 sm:py-2.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
-                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white shadow-sm"><Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" /></div>
-                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Website & Digital Menu</span>
-                                       </div>
-                                    </div>
-
-                                    {/* Badge 4 - Social Media */}
-                                    <div className="relative z-10">
-                                       <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-[32px] w-[32px] h-px bg-gray-700" />
-                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2 sm:py-2.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
-                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-sm">@</div>
-                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Social Media & Links</span>
-                                       </div>
-                                    </div>
-
-                                    {/* Badge 5 - Wi-Fi */}
-                                    <div className="relative z-10">
-                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2 sm:py-2.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
-                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white shadow-sm"><Wifi className="w-3.5 h-3.5 sm:w-4 sm:h-4" /></div>
-                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Instant Wi-Fi</span>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                           </motion.div>
-                        )}
                      </AnimatePresence>
 
                      {/* Slider Controls */}
-                     <div className="absolute bottom-0 sm:-bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-40">
-                        {[0, 1, 2].map(i => (
+                     {/* <div className="absolute bottom-0 sm:-bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+                        {[0, 1].map(i => (
                            <button
                               key={i}
                               onClick={() => setActiveSlide(i)}
                               className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${activeSlide === i ? 'w-8 bg-[#D9A94E]' : 'w-4 bg-gray-300'}`}
                            />
                         ))}
-                     </div>
+                     </div> */}
                   </div>
                </div>
             </div>
