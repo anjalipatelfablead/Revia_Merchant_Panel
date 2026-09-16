@@ -1,6 +1,54 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Bell, Menu, ChevronDown, X, Radio } from 'lucide-react';
+import { Search, Bell, Menu, ChevronDown, X, Radio, Gift, Check, XCircle, Clock, User, Tag, Sparkles } from 'lucide-react';
 import { NavRoute } from '../../types';
+
+interface RedeemRequest {
+  id: string;
+  customerName: string;
+  customerAvatar: string;
+  campaignName: string;
+  rewardTitle: string;
+  stampsUsed: number;
+  requestedAt: string;
+  branch: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
+const INITIAL_REDEEM_REQUESTS: RedeemRequest[] = [
+  {
+    id: 'rr-001',
+    customerName: 'Marcus Vance',
+    customerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    campaignName: 'Summer Loyalty Surge',
+    rewardTitle: 'Free Artisan Latte',
+    stampsUsed: 8,
+    requestedAt: '2m ago',
+    branch: 'Downtown Flagship',
+    status: 'pending',
+  },
+  {
+    id: 'rr-002',
+    customerName: 'Sophia Chen',
+    customerAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+    campaignName: 'VIP Double Points',
+    rewardTitle: '20% Off Next Order',
+    stampsUsed: 12,
+    requestedAt: '8m ago',
+    branch: 'Northside Café',
+    status: 'pending',
+  },
+  {
+    id: 'rr-003',
+    customerName: 'James Patterson',
+    customerAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+    campaignName: 'Weekend Brunch Boost',
+    rewardTitle: 'Free Pastry Combo',
+    stampsUsed: 5,
+    requestedAt: '15m ago',
+    branch: 'Eastside Hub',
+    status: 'pending',
+  },
+];
 
 interface HeaderProps {
   currentRoute: NavRoute;
@@ -17,23 +65,39 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [redeemOpen, setRedeemOpen] = useState(false);
+  const [redeemRequests, setRedeemRequests] = useState<RedeemRequest[]>(INITIAL_REDEEM_REQUESTS);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const redeemDropdownRef = useRef<HTMLDivElement>(null);
+
+  const pendingCount = redeemRequests.filter(r => r.status === 'pending').length;
+
+  const handleAccept = (id: string) => {
+    setRedeemRequests(prev => prev.map(r => r.id === id ? { ...r, status: 'approved' as const } : r));
+  };
+
+  const handleReject = (id: string) => {
+    setRedeemRequests(prev => prev.map(r => r.id === id ? { ...r, status: 'rejected' as const } : r));
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
         setProfileDropdownOpen(false);
       }
+      if (redeemDropdownRef.current && !redeemDropdownRef.current.contains(event.target as Node)) {
+        setRedeemOpen(false);
+      }
     };
 
-    if (profileDropdownOpen) {
+    if (profileDropdownOpen || redeemOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [profileDropdownOpen]);
+  }, [profileDropdownOpen, redeemOpen]);
 
   // Dynamic breadcrumb matching current route and Figma specs
   const getBreadcrumbs = () => {
@@ -122,13 +186,157 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Middle: Removed Search Bar per user request */}
       <div className="flex-1" />
 
-      {/* Right: Scanner Status Pill, Notification Bell, Profile Info */}
+      {/* Right: Redeem Requests, Notification Bell, Profile Info */}
       <div className="flex items-center gap-3 ml-auto">
+
+        {/* Redeem Requests Button with Badge */}
+        <div className="relative" ref={redeemDropdownRef}>
+          <button
+            onClick={() => { setRedeemOpen(!redeemOpen); setNotificationsOpen(false); }}
+            className="p-2 rounded-lg text-[#5C554E] hover:bg-[#FAF8F5] relative transition-colors cursor-pointer"
+            aria-label="Redeem Requests"
+          >
+            <Gift className="w-4 h-4 text-[#5C554E]" />
+            {pendingCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#D9A94E] text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
+                {pendingCount}
+              </span>
+            )}
+          </button>
+
+          {redeemOpen && (
+            <div className="absolute right-0 sm:right-0 mt-2 w-[320px] sm:w-[380px] bg-white border border-[#EAE6E1] rounded-xl shadow-xl z-50 animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#EAE6E1] bg-gradient-to-r from-[#FAF8F5] to-white">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#D9A94E] to-[#A37837] flex items-center justify-center">
+                    <Gift className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#1A1615]">Redeem Requests</div>
+                    <div className="text-[10px] text-[#8C827A]">{pendingCount} pending approval{pendingCount !== 1 ? 's' : ''}</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setRedeemOpen(false)}
+                  className="text-[#9E9A93] hover:text-[#1A1615] cursor-pointer p-1 rounded-md hover:bg-[#FAF8F5] transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Request List */}
+              <div className="max-h-[360px] overflow-y-auto py-2 px-2 space-y-2">
+                {redeemRequests.map((request) => (
+                  <div
+                    key={request.id}
+                    className={`rounded-xl border p-3 transition-all duration-300 ${
+                      request.status === 'approved'
+                        ? 'bg-emerald-50/70 border-emerald-200'
+                        : request.status === 'rejected'
+                        ? 'bg-red-50/50 border-red-200 opacity-60'
+                        : 'bg-[#FAF8F5] border-[#EAE6E1] hover:border-[#D9A94E]/40 hover:shadow-sm'
+                    }`}
+                  >
+                    {/* Customer Row */}
+                    <div className="flex items-start gap-2.5">
+                      <img
+                        src={request.customerAvatar}
+                        alt={request.customerName}
+                        className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-[#1A1615] truncate">{request.customerName}</span>
+                          <span className="text-[9px] text-[#8C827A] flex items-center gap-0.5 flex-shrink-0 ml-1">
+                            <Clock className="w-2.5 h-2.5" />
+                            {request.requestedAt}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-[#7C746C] mt-0.5 flex items-center gap-1">
+                          <Tag className="w-2.5 h-2.5 text-[#A37837]" />
+                          {request.campaignName}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Reward Detail */}
+                    <div className="mt-2 flex items-center justify-between bg-white/80 rounded-lg px-2.5 py-1.5 border border-[#EAE6E1]/60">
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-[#D9A94E]" />
+                        <span className="text-[10px] font-semibold text-[#3D3732]">{request.rewardTitle}</span>
+                      </div>
+                      <span className="text-[9px] text-[#8C827A] bg-[#FAF8F5] px-1.5 py-0.5 rounded-md font-medium">
+                        {request.stampsUsed} stamps
+                      </span>
+                    </div>
+
+                    <div className="text-[9px] text-[#8C827A] mt-1.5 pl-0.5">
+                      📍 {request.branch}
+                    </div>
+
+                    {/* Action Buttons */}
+                    {request.status === 'pending' && (
+                      <div className="flex items-center gap-2 mt-2.5">
+                        <button
+                          onClick={() => handleAccept(request.id)}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#D9A94E] to-[#A37837] text-white text-[10px] font-bold hover:shadow-md hover:brightness-110 transition-all cursor-pointer"
+                        >
+                          <Check className="w-3 h-3" />
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleReject(request.id)}
+                          className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg border border-[#EAE6E1] text-[#7C746C] text-[10px] font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all cursor-pointer"
+                        >
+                          <XCircle className="w-3 h-3" />
+                          Reject
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Status Badge */}
+                    {request.status === 'approved' && (
+                      <div className="flex items-center gap-1.5 mt-2 text-[10px] font-semibold text-emerald-700">
+                        <div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
+                          <Check className="w-2.5 h-2.5 text-white" />
+                        </div>
+                        Approved — Customer can redeem now
+                      </div>
+                    )}
+
+                    {request.status === 'rejected' && (
+                      <div className="flex items-center gap-1.5 mt-2 text-[10px] font-semibold text-red-500">
+                        <div className="w-4 h-4 rounded-full bg-red-400 flex items-center justify-center">
+                          <X className="w-2.5 h-2.5 text-white" />
+                        </div>
+                        Rejected
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer */}
+              <div className="px-4 py-2.5 border-t border-[#EAE6E1] bg-[#FAF8F5]/50">
+                <button
+                  onClick={() => {
+                    setRedeemOpen(false);
+                    onNavigate('/rewards');
+                  }}
+                  className="w-full text-center text-[11px] font-semibold text-[#A37837] hover:underline cursor-pointer"
+                >
+                  View All Rewards & History →
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Notifications Bell with Badge */}
         <div className="relative">
           <button
-            onClick={() => setNotificationsOpen(!notificationsOpen)}
+            onClick={() => { setNotificationsOpen(!notificationsOpen); setRedeemOpen(false); }}
             className="p-2 rounded-lg text-[#5C554E] hover:bg-[#FAF8F5] relative transition-colors cursor-pointer"
             aria-label="Notifications"
           >

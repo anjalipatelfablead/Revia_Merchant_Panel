@@ -208,7 +208,7 @@ export const LoyaltyPage: React.FC = () => {
                       onChange={(e) => setStampsToComplete(Number(e.target.value))}
                       className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753]/20 transition-all"
                     />
-                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#6E6A66]">
+                    <div className="absolute right-10 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#6E6A66] pointer-events-none">
                       Stamps
                     </div>
                   </div>
@@ -505,7 +505,7 @@ export const LoyaltyPage: React.FC = () => {
                 {/* Toggle Switch */}
                 <button
                   onClick={() => setFlashActive(!flashActive)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:ring-offset-2 ${flashActive ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0D7A53] focus:ring-offset-2 cursor-pointer ${flashActive ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'
                     }`}
                 >
                   <span
@@ -532,19 +532,19 @@ export const LoyaltyPage: React.FC = () => {
               <div className="flex p-0.5 bg-[#EFECE6] rounded-lg">
                 <button
                   onClick={() => setWalletView('ios')}
-                  className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${walletView === 'ios' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'}`}
+                  className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${walletView === 'ios' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}
                 >
                   iOS
                 </button>
                 <button
                   onClick={() => setWalletView('google')}
-                  className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${walletView === 'google' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'}`}
+                  className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${walletView === 'google' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}
                 >
                   Google
                 </button>
                 <button
                   onClick={() => setWalletView('pwa')}
-                  className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${walletView === 'pwa' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'}`}
+                  className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${walletView === 'pwa' ? 'bg-white shadow-xs text-[#1A1615]' : 'text-[#6E6A66] hover:text-[#1A1615]'} cursor-pointer`}
                 >
                   PWA
                 </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Store,
   Users,
@@ -65,6 +65,13 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
   const [regionFilter, setRegionFilter] = useState('All West Coast');
   const [statusFilter, setStatusFilter] = useState('All');
   const [sortBy, setSortBy] = useState<'revenue-desc' | 'revenue-asc' | 'name-asc' | 'name-desc'>('revenue-desc');
+  const [activeDropdown, setActiveDropdown] = useState<'region' | 'status' | 'sort' | null>(null);
+
+  useEffect(() => {
+    const handleClick = () => setActiveDropdown(null);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -335,51 +342,110 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
 
         {/* Right: Dropdowns and View Switchers */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Region select */}
+          {/* Region Filter */}
           <div className="relative">
-            <select
-              value={regionFilter}
-              onChange={(e) => setRegionFilter(e.target.value)}
-              className="appearance-none bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 pr-8 text-xs font-medium text-[#1A1615] shadow-2xs focus:outline-none cursor-pointer"
+            <button
+              onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'region' ? null : 'region'); }}
+              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[150px] cursor-pointer"
             >
-              <option value="All West Coast">Region: All West Coast</option>
-              <option value="Los Angeles">Region: Los Angeles</option>
-              <option value="San Francisco">Region: San Francisco</option>
-            </select>
-            <ChevronDown className="w-3 h-3 text-[#8C827A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <span>{`Region: ${regionFilter}`}</span>
+              <ChevronDown className={`w-3 h-3 text-[#8C827A] transition-transform ${activeDropdown === 'region' ? 'rotate-180' : ''}`} />
+            </button>
+            {activeDropdown === 'region' && (
+              <div className="absolute top-full left-0 mt-1 w-full sm:w-48 bg-white border border-[#EFECE6] rounded-md shadow-xl z-50 overflow-hidden text-left">
+                {[
+                  { value: 'All West Coast', label: 'Region: All West Coast' },
+                  { value: 'Los Angeles', label: 'Region: Los Angeles' },
+                  { value: 'San Francisco', label: 'Region: San Francisco' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setRegionFilter(opt.value);
+                      setActiveDropdown(null);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-[11px] hover:bg-[#FAF8F5] cursor-pointer ${regionFilter === opt.value ? 'bg-[#FAF8F5] font-bold text-[#1A1615]' : 'font-medium text-[#1A1615]'}`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Status select */}
+          {/* Status Filter */}
           <div className="relative">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="appearance-none bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 pr-8 text-xs font-medium text-[#1A1615] shadow-2xs focus:outline-none cursor-pointer"
+            <button
+              onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'status' ? null : 'status'); }}
+              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[150px] cursor-pointer"
             >
-              <option value="All">Status: All</option>
-              <option value="Active">Status: Active ({outlets.length})</option>
-              <option value="Maintenance">Status: Maintenance</option>
-            </select>
-            <ChevronDown className="w-3 h-3 text-[#8C827A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <span>{statusFilter === 'All' ? 'Status: All' : statusFilter === 'Active' ? `Status: Active (${outlets.length})` : 'Status: Maintenance'}</span>
+              <ChevronDown className={`w-3 h-3 text-[#8C827A] transition-transform ${activeDropdown === 'status' ? 'rotate-180' : ''}`} />
+            </button>
+            {activeDropdown === 'status' && (
+              <div className="absolute top-full left-0 mt-1 w-full sm:w-48 bg-white border border-[#EFECE6] rounded-md shadow-xl z-50 overflow-hidden text-left">
+                {[
+                  { value: 'All', label: 'Status: All' },
+                  { value: 'Active', label: `Status: Active (${outlets.length})` },
+                  { value: 'Maintenance', label: 'Status: Maintenance' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setStatusFilter(opt.value);
+                      setActiveDropdown(null);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-[11px] hover:bg-[#FAF8F5] cursor-pointer ${statusFilter === opt.value ? 'bg-[#FAF8F5] font-bold text-[#1A1615]' : 'font-medium text-[#1A1615]'}`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Sort By */}
           <div className="relative">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="appearance-none bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 pr-8 text-xs font-medium text-[#1A1615] shadow-2xs focus:outline-none cursor-pointer"
+            <button
+              onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'sort' ? null : 'sort'); }}
+              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[180px] cursor-pointer"
             >
-              <option value="revenue-desc">Sort by: Revenue (High to Low)</option>
-              <option value="revenue-asc">Sort by: Revenue (Low to High)</option>
-              <option value="name-asc">Sort by: Name (A-Z)</option>
-              <option value="name-desc">Sort by: Name (Z-A)</option>
-            </select>
-            <Sliders className="w-3 h-3 text-[#8C827A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <span>{
+                sortBy === 'revenue-desc' ? 'Sort by: Revenue (High to Low)' :
+                  sortBy === 'revenue-asc' ? 'Sort by: Revenue (Low to High)' :
+                    sortBy === 'name-asc' ? 'Sort by: Name (A-Z)' :
+                      'Sort by: Name (Z-A)'
+              }</span>
+              <Sliders className="w-3 h-3 text-[#8C827A]" />
+            </button>
+            {activeDropdown === 'sort' && (
+              <div className="absolute top-full left-0 mt-1 w-full sm:w-56 bg-white border border-[#EFECE6] rounded-md shadow-xl z-50 overflow-hidden text-left">
+                {[
+                  { value: 'revenue-desc', label: 'Sort by: Revenue (High to Low)' },
+                  { value: 'revenue-asc', label: 'Sort by: Revenue (Low to High)' },
+                  { value: 'name-asc', label: 'Sort by: Name (A-Z)' },
+                  { value: 'name-desc', label: 'Sort by: Name (Z-A)' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSortBy(opt.value as any);
+                      setActiveDropdown(null);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-[11px] hover:bg-[#FAF8F5] cursor-pointer ${sortBy === opt.value ? 'bg-[#FAF8F5] font-bold text-[#1A1615]' : 'font-medium text-[#1A1615]'}`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center border border-[#EAE6E1] bg-white rounded-lg p-0.5 shadow-2xs">
+          {/* <div className="flex items-center border border-[#EAE6E1] bg-white rounded-lg p-0.5 shadow-2xs">
             <button
               onClick={() => setViewMode('list')}
               className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === 'list'
@@ -403,7 +469,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
             >
               <Map className="w-4 h-4" />
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -502,15 +568,6 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                           Manage
                         </button>
                       )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          showToast(`Managing options for ${outlet.shortName}`);
-                        }}
-                        className="p-1 text-[#8C827A] hover:text-[#1A1615] rounded hover:bg-[#FAF8F5] cursor-pointer"
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
                     </div>
                   </div>
 

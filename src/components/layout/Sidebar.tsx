@@ -17,7 +17,8 @@ import {
   Package,
   ClipboardList,
   ScanLine,
-  X
+  X,
+  ChevronDown
 } from 'lucide-react';
 import { NavRoute } from '../../types';
 
@@ -51,6 +52,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isMobileOpen = false,
   onMobileClose,
 }) => {
+  const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({
+    'CRM & ACTIVITY': false,
+    'INSIGHTS & CONFIG': false,
+  });
+
   // Navigation groups matching Figma design screenshot exactly
   const navigationGroups: NavGroup[] = [
     {
@@ -58,24 +64,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         { name: 'Dashboard', route: '/dashboard', icon: LayoutDashboard },
         { name: 'Branches', route: '/branches', icon: Store },
+        { name: 'Customers', route: '/customerlist', icon: Users },
+        { name: 'Campaigns', route: '/campaigns', icon: Megaphone },
         { name: 'Staff & RBAC', route: '/staff', icon: ShieldCheck },
         { name: 'Loyalty Program', route: '/loyalty', icon: Gift },
         { name: 'QR Codes', route: '/qr-codes', icon: QrCode },
-      ],
-    },
-    {
-      label: 'CATALOG & ORDERS',
-      items: [
         { name: 'Item Catalog', route: '/item-catalog', icon: Package },
-        { name: 'Order Queue', route: '/orders', icon: ClipboardList },
+
       ],
     },
+    // {
+    //   label: 'CATALOG',
+    //   items: [
+    //     // { name: 'Item Catalog', route: '/item-catalog', icon: Package },
+    //     // { name: 'Order Queue', route: '/orders', icon: ClipboardList },
+    //   ],
+    // },
     {
       label: 'CRM & ACTIVITY',
       items: [
-        { name: 'Customers', route: '/customerlist', icon: Users },
+        // { name: 'Customers', route: '/customerlist', icon: Users },
         { name: 'Transactions', route: '/transactions', icon: Receipt },
-        { name: 'Campaigns', route: '/campaigns', icon: Megaphone },
+        // { name: 'Campaigns', route: '/campaigns', icon: Megaphone },
         { name: 'Redemption Terminal', route: '/terminal', icon: ScanLine },
         { name: 'Rewards', route: '/rewards', icon: Award },
       ],
@@ -124,36 +134,61 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Navigation Links Area */}
       <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-0.5">
-        {navigationGroups.map((group) => (
-          <React.Fragment key={group.label}>
-            {group.items.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                currentRoute === item.route ||
-                (item.route === '/branches' && currentRoute === '/branches/new') ||
-                (item.route === '/campaigns' && currentRoute === '/campaigns/new');
+        {navigationGroups.map((group, groupIndex) => {
+          const isSubmenuGroup = group.label !== 'MAIN' && group.label !== 'CATALOG';
+          const isExpanded = isSubmenuGroup ? openSubmenus[group.label] : true;
 
-              return (
+          return (
+            <React.Fragment key={group.label}>
+              {group.label && !isSubmenuGroup && (
+                <div className={`px-3 pb-1 ${groupIndex > 0 ? 'mt-5' : 'mt-1'} text-[10px] font-bold text-[#8C827A] uppercase tracking-wider`}>
+                  {group.label}
+                </div>
+              )}
+
+              {group.label && isSubmenuGroup && (
                 <button
-                  key={item.name}
-                  onClick={() => {
-                    onRouteChange(item.route);
-                    if (onMobileClose) onMobileClose();
-                  }}
-                  className={`w-full flex items-center px-3 py-2 rounded-lg text-[13px] transition-all duration-150 cursor-pointer whitespace-nowrap ${isActive
-                      ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs'
-                      : 'bg-transparent text-[#4A433D] hover:bg-[#FAF8F5] hover:text-[#1A1615] font-medium'
-                    }`}
+                  onClick={() => setOpenSubmenus(prev => ({ ...prev, [group.label]: !prev[group.label] }))}
+                  className={`w-full flex items-center justify-between px-3 py-2 ${groupIndex > 0 ? 'mt-2' : ''} text-[10px] font-bold text-[#8C827A] uppercase tracking-wider hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
-                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />
-                    <span className="whitespace-nowrap tracking-tight font-sans">{item.name}</span>
-                  </div>
+                  <span>{group.label}</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                 </button>
-              );
-            })}
-          </React.Fragment>
-        ))}
+              )}
+
+              {isExpanded && (
+                <div className={isSubmenuGroup ? "pl-2 space-y-0.5" : "space-y-0.5"}>
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive =
+                      currentRoute === item.route ||
+                      (item.route === '/branches' && currentRoute === '/branches/new') ||
+                      (item.route === '/campaigns' && currentRoute === '/campaigns/new');
+
+                    return (
+                      <button
+                        key={item.name}
+                        onClick={() => {
+                          onRouteChange(item.route);
+                          if (onMobileClose) onMobileClose();
+                        }}
+                        className={`w-full flex items-center px-3 py-2 rounded-lg text-[13px] transition-all duration-150 cursor-pointer whitespace-nowrap ${isActive
+                          ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white font-bold shadow-xs'
+                          : 'bg-transparent text-[#4A433D] hover:bg-[#FAF8F5] hover:text-[#1A1615] font-medium'
+                          }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0 flex-nowrap">
+                          <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#6E6A66]'}`} />
+                          <span className="whitespace-nowrap tracking-tight font-sans">{item.name}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </React.Fragment>
+          );
+        })}
       </div>
 
       {/* Footer Status matching Figma: ● v2.14.0-prod  LIVE */}

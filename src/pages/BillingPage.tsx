@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useWallet } from '../context/WalletContext';
 import { WalletActionCategory } from '../types/wallet';
-import { CreditCard, CheckCircle2, Zap, ShieldCheck, ArrowRight, ReceiptText, Search, Download, ChevronRight, LockKeyhole, WalletCards, Users, Server, FileText, Bell, CalendarDays, Building2, MoreVertical, PlusCircle, AlertTriangle, PieChart, Settings2, History, Filter, ArrowDownLeft, ArrowUpRight, ChevronLeft } from 'lucide-react';
+import { CreditCard, CheckCircle2, Zap, ShieldCheck, ArrowRight, ReceiptText, Search, Download, ChevronRight, LockKeyhole, WalletCards, Users, Server, FileText, Bell, CalendarDays, Building2, MoreVertical, PlusCircle, AlertTriangle, PieChart, Settings2, History, Filter, ArrowDownLeft, ArrowUpRight, ChevronLeft, ChevronDown } from 'lucide-react';
 
 const MobileBillingPage: React.FC = () => {
   const invoices = [
@@ -41,6 +41,18 @@ export const BillingPage: React.FC = () => {
 
   // Ledger Filter & Pagination States
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const categoryDropdownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target as Node)) {
+        setCategoryDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -382,9 +394,9 @@ export const BillingPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col gap-2 lg:items-end w-full lg:w-auto">
             {/* Search Bar */}
-            <div className="relative flex-1 min-w-[180px]">
+            <div className="relative w-full sm:min-w-[280px]">
               <Search className="w-3.5 h-3.5 text-[#9E9A93] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
@@ -398,36 +410,67 @@ export const BillingPage: React.FC = () => {
               />
             </div>
 
-            {/* Category Filter */}
-            <div className="flex items-center gap-1 bg-[#FAF8F5] border border-[#EAE6E1] px-2.5 py-1.5 rounded-lg text-[12px]">
-              <Filter className="w-3.5 h-3.5 text-[#6E6A66]" />
-              <select
-                value={selectedCategory}
-                onChange={(e) => {
-                  setSelectedCategory(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="bg-transparent border-none text-[#1A1615] font-bold outline-none cursor-pointer"
-              >
-                <option value="all">All Categories</option>
-                <option value="topup">Credit Top-Up</option>
-                <option value="branch_setup">Branch Setup</option>
-                <option value="staff_invite">Staff Invitation</option>
-                <option value="loyalty_setup">Loyalty Program Setup</option>
-                <option value="qr_generation">QR / Stand Generation</option>
-                <option value="campaign_creation">Campaign Creation</option>
-                <option value="redemption_commission">Redemption Commission</option>
-              </select>
-            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              {/* Category Filter */}
+              <div className="flex-1 sm:flex-none flex items-center gap-1 bg-[#FAF8F5] border border-[#EAE6E1] px-2.5 py-1.5 rounded-lg text-[12px] relative" ref={categoryDropdownRef}>
+                <Filter className="w-3.5 h-3.5 text-[#6E6A66] shrink-0" />
+                <button
+                  type="button"
+                  onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                  className="bg-transparent border-none text-[#1A1615] font-bold outline-none cursor-pointer flex items-center gap-1 w-full justify-between sm:min-w-[140px]"
+                >
+                  <span className="truncate">
+                    {{
+                      'all': 'All Categories',
+                      'topup': 'Credit Top-Up',
+                      'branch_setup': 'Branch Setup',
+                      'staff_invite': 'Staff Invitation',
+                      'loyalty_setup': 'Loyalty Program Setup',
+                      'qr_generation': 'QR / Stand Generation',
+                      'campaign_creation': 'Campaign Creation',
+                      'redemption_commission': 'Redemption Commission'
+                    }[selectedCategory as string] || 'All Categories'}
+                  </span>
+                  <ChevronDown className={`w-3.5 h-3.5 shrink-0 text-[#9E9A93] transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {categoryDropdownOpen && (
+                  <div className="absolute top-full right-0 sm:left-0 mt-1 w-[200px] sm:w-52 bg-white border border-[#EFECE6] rounded-md shadow-xl z-50 overflow-hidden text-left">
+                    {[
+                      { value: 'all', label: 'All Categories' },
+                      { value: 'topup', label: 'Credit Top-Up' },
+                      { value: 'branch_setup', label: 'Branch Setup' },
+                      { value: 'staff_invite', label: 'Staff Invitation' },
+                      { value: 'loyalty_setup', label: 'Loyalty Program Setup' },
+                      { value: 'qr_generation', label: 'QR / Stand Generation' },
+                      { value: 'campaign_creation', label: 'Campaign Creation' },
+                      { value: 'redemption_commission', label: 'Redemption Commission' },
+                    ].map(opt => (
+                      <button
+                        key={opt.value}
+                        onClick={() => {
+                          setSelectedCategory(opt.value);
+                          setCurrentPage(1);
+                          setCategoryDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-[11px] hover:bg-[#FAF8F5] cursor-pointer ${selectedCategory === opt.value ? 'bg-[#FAF8F5] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            {/* Export CSV Button */}
-            <button
-              onClick={handleExportCSV}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] hover:bg-[#EAE6E1] text-[#1A1615] rounded-lg font-bold text-[12px] transition-colors cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5 text-[#6E6A66]" />
-              <span>Export CSV</span>
-            </button>
+              {/* Export CSV Button */}
+              <button
+                onClick={handleExportCSV}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] hover:bg-[#EAE6E1] text-[#1A1615] rounded-lg font-bold text-[12px] transition-colors cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5 text-[#6E6A66] shrink-0" />
+                <span className="truncate">Export CSV</span>
+              </button>
+            </div>
           </div>
         </div>
 
