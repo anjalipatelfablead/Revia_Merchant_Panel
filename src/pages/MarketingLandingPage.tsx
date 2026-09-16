@@ -469,11 +469,11 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                               animate={{ opacity: 1, x: 0 }}
                               exit={{ opacity: 0, x: -20 }}
                               transition={{ duration: 0.5 }}
-                              className="relative w-full max-w-[400px] h-full flex flex-col items-center justify-center sm:pt-8"
+                              className="relative w-full max-w-[400px] h-full flex flex-col items-center justify-center pt-2 sm:pt-4"
                            >
-                              <h3 className="absolute top-0 text-3xl font-black text-[#241C15] mb-8 z-20 text-center w-full">All from the same code.</h3>
+                              <h3 className="text-2xl sm:text-3xl font-black text-[#241C15] mb-4 sm:mb-6 text-center w-full">All from the same code.</h3>
 
-                              <div className="relative w-full flex flex-col sm:flex-row items-center justify-center mt-4 sm:mt-12 gap-6 sm:gap-16 max-sm:scale-80 max-sm:origin-center">
+                              <div className="relative w-full flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 max-sm:scale-80 max-sm:origin-center">
                                  {/* Standee Card on Left */}
                                  <div className="bg-[#FAF6EE] border-2 border-gray-100 rounded-[28px] p-4 sm:p-5 shadow-xl w-[180px] sm:w-[240px] aspect-square flex flex-col justify-between z-10 relative">
                                     <div>
@@ -481,7 +481,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                                           <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-[#D9A94E] text-white flex items-center justify-center font-black text-[10px] sm:text-xs shadow-md">A</div>
                                           <span className="font-black text-base sm:text-lg tracking-wide uppercase">Ash & Oak</span>
                                        </div>
-                                       <div className="flex justify-between text-[6px] sm:text-[7px] font-black tracking-widest text-[#241C15] mb-4 px-1">
+                                       <div className="flex justify-between text-[5px] sm:text-[6px] font-black tracking-normal text-[#241C15] mb-4 px-0.5">
                                           <span>REVIEWS</span>
                                           <span>WEBSITE</span>
                                           <span>WI-FI</span>

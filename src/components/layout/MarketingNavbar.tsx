@@ -59,7 +59,7 @@ export const MarketingNavbar: React.FC<Props> = ({ onNavigate }) => {
                >
                   <a href="#features" onClick={(e) => { e.preventDefault(); handleNavClick('#features'); }} className="hover:text-[#B8862E] transition-colors cursor-pointer">Features</a>
                   <a href="#how-it-works" onClick={(e) => { e.preventDefault(); handleNavClick('#how-it-works'); }} className="hover:text-[#B8862E] transition-colors cursor-pointer">How It Works</a>
-                  <a href="#pricing" onClick={(e) => { e.preventDefault(); handleNavClick('#pricing'); }} className="hover:text-[#B8862E] transition-colors cursor-pointer">Pricing</a>
+                  <a href="/about" onClick={(e) => { e.preventDefault(); onNavigate?.('/about'); }} className="hover:text-[#B8862E] transition-colors cursor-pointer">About Us</a>
                   <a href="#faq" onClick={(e) => { e.preventDefault(); handleNavClick('#faq'); }} className="hover:text-[#B8862E] transition-colors cursor-pointer">FAQ</a>
                </motion.div>
 

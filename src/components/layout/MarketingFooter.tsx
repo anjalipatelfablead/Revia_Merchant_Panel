@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, CreditCard, RefreshCw, Users, Megaphone, Lock, CheckCircle2, MapPin, Phone, Mail } from 'lucide-react';
+import { Star, QrCode, RefreshCw, Users, Megaphone, Lock, CheckCircle2, MapPin, Phone, Mail } from 'lucide-react';
 
 interface Props {
    onNavigate?: (route: string) => void;
@@ -44,9 +44,15 @@ export const MarketingFooter: React.FC<Props> = ({ onNavigate }) => {
                            </a>
                         </li>
                         <li>
-                           <a href="#pricing" onClick={(e) => { e.preventDefault(); onNavigate?.('/'); }} className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
-                              <CreditCard className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
-                              Pricing
+                           <a href="#how-it-works" onClick={(e) => { e.preventDefault(); onNavigate?.('/'); }} className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
+                              <QrCode className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
+                              QR Loyalty
+                           </a>
+                        </li>
+                        <li>
+                           <a href="#how-it-works" onClick={(e) => { e.preventDefault(); onNavigate?.('/'); }} className="flex items-center gap-3 hover:text-[#D9A94E] transition-colors group">
+                              <Megaphone className="w-4 h-4 text-[#D9A94E] opacity-70 group-hover:opacity-100 transition-opacity shrink-0" />
+                              Campaign Builder
                            </a>
                         </li>
                         <li>
