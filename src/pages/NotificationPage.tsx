@@ -194,26 +194,26 @@ export const NotificationPage: React.FC = () => {
 			<div className="rounded-2xl border border-[#E5EAF0] bg-white shadow-xs">
 			{/* Page Header */}
 			<div className="border-b border-[#E5EAF0] p-4 sm:p-6 lg:p-8">
-				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 					<div>
-						<div className="flex items-center gap-3">
-							<Bell className="h-7 w-7 text-[#D4A753]" />
-							<h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Notifications</h1>
-							<span className="rounded-full bg-[#EBF7F0] px-2.5 py-0.5 text-[11px] font-bold text-[#15803D] border border-[#15803D]/20">
+						<div className="flex flex-wrap items-center gap-2 sm:gap-3">
+							<Bell className="h-6 w-6 sm:h-7 sm:w-7 text-[#D4A753] shrink-0" />
+							<h1 className="text-xl sm:text-2xl lg:text-[28px] font-bold tracking-tight text-[#1A1615] break-words">Notifications</h1>
+							<span className="rounded-full bg-[#EBF7F0] px-2 py-0.5 sm:px-2.5 text-[10px] sm:text-[11px] font-bold text-[#15803D] border border-[#15803D]/20 shrink-0">
 								{unreadCount} new
 							</span>
 						</div>
-						<p className="mt-1 text-sm text-[#7C746C]">
+						<p className="mt-1 text-xs sm:text-sm text-[#7C746C] leading-relaxed break-words">
 							Manage all your system alerts, real-time updates, and notification settings.
 						</p>
 					</div>
 
-					<div className="flex items-center gap-2 shrink-0">
+					<div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto">
 						<button
 							type="button"
 							onClick={markAllRead}
 							disabled={unreadCount === 0}
-							className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40 cursor-pointer whitespace-nowrap shrink-0"
+							className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40 cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
 						>
 							<CheckCheck className="h-4 w-4" />
 							Mark all as read
@@ -223,7 +223,7 @@ export const NotificationPage: React.FC = () => {
 							<button
 								type="button"
 								onClick={restoreDefaults}
-								className="flex items-center gap-1.5 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2.5 text-xs font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+								className="flex items-center justify-center gap-1.5 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2.5 text-xs font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
 								title="Reset mock notifications"
 							>
 								<RotateCcw className="h-3.5 w-3.5" />
@@ -235,8 +235,8 @@ export const NotificationPage: React.FC = () => {
 			</div>
 
 			{/* Action Toolbar: Filter Tabs & Bulk Actions */}
-			<div className="border-b border-[#E5EAF0] px-4 py-3 sm:px-6 lg:px-8 bg-[#FAF9F7]/60 flex flex-wrap items-center justify-between gap-3">
-				<div className="flex items-center gap-3">
+			<div className="border-b border-[#E5EAF0] px-4 py-3 sm:px-6 lg:px-8 bg-[#FAF9F7]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+				<div className="flex flex-wrap items-center gap-3 sm:gap-4">
 					{/* Select All Checkbox */}
 					{visibleItems.length > 0 && (
 						<label className="flex items-center gap-2 text-xs font-bold text-[#1A1615] cursor-pointer select-none">
@@ -246,7 +246,7 @@ export const NotificationPage: React.FC = () => {
 								onChange={toggleSelectAll}
 								className="w-4 h-4 rounded border-[#D1CDC7] text-[#D4A753] focus:ring-[#D4A753] cursor-pointer"
 							/>
-							<span className="hidden sm:inline">Select All</span>
+							<span>Select All</span>
 						</label>
 					)}
 
@@ -319,49 +319,51 @@ export const NotificationPage: React.FC = () => {
 						return (
 							<div
 								key={item.id}
-								className={`group flex min-h-[86px] items-center gap-3.5 px-4 py-4 sm:px-6 lg:px-8 transition-colors ${
+								className={`group flex flex-col sm:flex-row sm:items-center justify-between min-h-[86px] gap-3 px-4 py-4 sm:px-6 lg:px-8 transition-colors ${
 									isSelected ? 'bg-[#FDF8EB]/50' : !item.read ? 'bg-[#FCFDFF]' : 'bg-white hover:bg-[#FAF8F5]/60'
 								}`}
 							>
-								{/* Selection Checkbox */}
-								<input
-									type="checkbox"
-									checked={isSelected}
-									onChange={() => toggleSelect(item.id)}
-									className="w-4 h-4 rounded border-[#D1CDC7] text-[#D4A753] focus:ring-[#D4A753] cursor-pointer shrink-0"
-								/>
+								<div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
+									{/* Selection Checkbox */}
+									<input
+										type="checkbox"
+										checked={isSelected}
+										onChange={() => toggleSelect(item.id)}
+										className="w-4 h-4 rounded border-[#D1CDC7] text-[#D4A753] focus:ring-[#D4A753] cursor-pointer shrink-0 mt-1 sm:mt-0"
+									/>
 
-								{/* Notification Category Icon */}
-								<div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${tone.iconStyle}`}>
-									<Icon className="h-[17px] w-[17px]" strokeWidth={1.8} />
-								</div>
-
-								{/* Notification Content */}
-								<div className="min-w-0 flex-1">
-									<div className="flex flex-wrap items-center gap-2">
-										<h2 className={`text-[14px] text-[#263A55] ${!item.read ? 'font-bold' : 'font-normal'}`}>
-											{item.title}
-										</h2>
-										<span className="text-[10px] font-bold uppercase tracking-wider text-[#8C9BAE]">
-											{tone.label}
-										</span>
-										{!item.read && <span className="h-1.5 w-1.5 rounded-full bg-[#4C7FEA]" />}
+									{/* Notification Category Icon */}
+									<div className={`flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full ${tone.iconStyle} mt-0.5 sm:mt-0`}>
+										<Icon className="h-4 w-4 sm:h-[17px] sm:w-[17px]" strokeWidth={1.8} />
 									</div>
-									<p className={`mt-1 text-[13px] ${!item.read ? 'text-[#4A6079] font-semibold' : 'text-[#8291A4]'}`}>
-										{item.description}
-									</p>
-									<p className="mt-1 text-[11px] text-[#93A0B0] font-medium">
-										{item.time} <span className="mx-1 text-[#D2DAE3]">•</span> {item.location}
-									</p>
+
+									{/* Notification Content */}
+									<div className="min-w-0 flex-1">
+										<div className="flex flex-wrap items-center gap-2">
+											<h2 className={`text-sm text-[#263A55] ${!item.read ? 'font-bold' : 'font-normal'}`}>
+												{item.title}
+											</h2>
+											<span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#8C9BAE]">
+												{tone.label}
+											</span>
+											{!item.read && <span className="h-1.5 w-1.5 rounded-full bg-[#4C7FEA] shrink-0" />}
+										</div>
+										<p className={`mt-1 text-xs sm:text-[13px] leading-relaxed ${!item.read ? 'text-[#4A6079] font-semibold' : 'text-[#8291A4]'}`}>
+											{item.description}
+										</p>
+										<p className="mt-1 text-[10px] sm:text-[11px] text-[#93A0B0] font-medium">
+											{item.time} <span className="mx-1 text-[#D2DAE3]">•</span> {item.location}
+										</p>
+									</div>
 								</div>
 
 								{/* Action Buttons: Mark Read + Delete */}
-								<div className="flex items-center gap-2 shrink-0">
+								<div className="flex items-center gap-2 shrink-0 self-end sm:self-auto pl-[48px] sm:pl-0 mt-2 sm:mt-0">
 									{!item.read && (
 										<button
 											type="button"
 											onClick={() => markRead(item.id)}
-											className="inline-flex items-center gap-1.5 rounded-full border border-[#BCE3D1] bg-[#EAF8F0] px-3 py-1 text-[11px] font-bold text-[#178252] transition-colors hover:border-[#8FD0AE] hover:bg-[#DFF5E8] cursor-pointer"
+											className="inline-flex items-center gap-1.5 rounded-full border border-[#BCE3D1] bg-[#EAF8F0] px-3 py-1 text-[10px] sm:text-[11px] font-bold text-[#178252] transition-colors hover:border-[#8FD0AE] hover:bg-[#DFF5E8] cursor-pointer"
 										>
 											<span className="h-1.5 w-1.5 rounded-full bg-[#27A96B]" />
 											Mark Read
