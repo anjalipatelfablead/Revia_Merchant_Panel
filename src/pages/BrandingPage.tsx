@@ -30,7 +30,13 @@ import {
 } from 'lucide-react';
 import { PrimaryButton, TierBadge } from '../components/common/Badges';
 
-export const BrandingPage: React.FC = () => {
+import { NavRoute } from '../types';
+
+interface BrandingPageProps {
+   onNavigate?: (route: NavRoute) => void;
+}
+
+export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
    const [primaryGold, setPrimaryGold] = useState('#C59B46');
    const [charcoal, setCharcoal] = useState('#1A1615');
    const [canvasIvory, setCanvasIvory] = useState('#FAF8F5');
@@ -58,7 +64,7 @@ export const BrandingPage: React.FC = () => {
    }, [activeTheme]);
 
    return (
-      <div className="flex flex-col h-full bg-[#FAF8F5] text-[#1A1615] font-sans pb-24">
+      <div className="flex flex-col h-full bg-[#FAF8F5] text-[#1A1615] font-sans">
 
          <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
             {/* Page Title Section */}
@@ -180,15 +186,15 @@ export const BrandingPage: React.FC = () => {
 
                   {/* Color Architecture & Contrast Engine */}
                   <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm">
-                     <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2">
-                           <Palette className="w-5 h-5 text-[#A37837]" />
-                           <h2 className="text-lg font-bold text-[#1A1615]">Color Architecture & Contrast Engine</h2>
+                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                        <div className="flex items-start gap-2">
+                           <Palette className="w-5 h-5 text-[#A37837] shrink-0 mt-0.5" />
+                           <h2 className="text-lg font-bold text-[#1A1615] leading-tight">Color Architecture & Contrast Engine</h2>
                         </div>
-                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#0D7A53]">
+                        {/* <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#0D7A53]">
                            <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
                            16.2:1 AAA Verified
-                        </div>
+                        </div> */}
                      </div>
 
                      <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl w-full sm:w-fit mb-6">
@@ -277,12 +283,12 @@ export const BrandingPage: React.FC = () => {
 
                   {/* Public Roastery & Concierge Metadata */}
                   <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm mb-12">
-                     <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2">
-                           <Store className="w-5 h-5 text-[#A37837]" />
-                           <h2 className="text-lg font-bold text-[#1A1615]">Public Roastery & Concierge Metadata</h2>
+                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                        <div className="flex items-start gap-2">
+                           <Store className="w-5 h-5 text-[#A37837] shrink-0 mt-0.5" />
+                           <h2 className="text-lg font-bold text-[#1A1615] leading-tight">Public Roastery & Concierge Metadata</h2>
                         </div>
-                        <div className="px-2.5 py-1 bg-[#FAF8F5] rounded text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">
+                        <div className="self-start sm:self-auto px-2.5 py-1 bg-[#FAF8F5] rounded text-[10px] font-bold text-[#8C827A] uppercase tracking-wider shrink-0">
                            CUSTOMER-FACING
                         </div>
                      </div>
@@ -336,7 +342,7 @@ export const BrandingPage: React.FC = () => {
                         <div className="pt-2">
                            <div className="flex items-center justify-between mb-3">
                               <h3 className="text-[13px] font-bold text-[#1A1615]">Synced Salon Nodes</h3>
-                              <button className="text-[11px] font-bold text-[#C59B46] hover:underline flex items-center gap-1">Manage Branches <ArrowRight className="w-3 h-3" /></button>
+                              <button onClick={() => onNavigate && onNavigate('/branches')} className="text-[11px] font-bold text-[#C59B46] hover:underline flex items-center gap-1 cursor-pointer">Manage Branches <ArrowRight className="w-3 h-3" /></button>
                            </div>
                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                               <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg p-3 flex items-start justify-between">
