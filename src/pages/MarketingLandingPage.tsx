@@ -6,7 +6,7 @@ import {
    Zap, RefreshCw, Eye, Lock, Bell, TrendingUp,
    Coffee, Scissors, Dumbbell, ShoppingBag, Store,
    Megaphone, MapPin, BarChart3, Users, CreditCard,
-   ChevronDown, Sparkles, Phone, Mail
+   ChevronDown, Sparkles, Phone, Mail, Wifi
 } from 'lucide-react';
 import { StaggerTestimonials } from '../components/ui/stagger-testimonials';
 import { FAQSection } from '../components/ui/faqsection';
@@ -50,27 +50,27 @@ const GlassCard = ({ children, className = '' }: { children: React.ReactNode, cl
 
 const RealQRCodeSVG: React.FC<{ className?: string }> = ({ className = "w-36 h-36" }) => {
    const matrix = [
-      [1,1,1,1,1,1,1,0,1,0,1,1,0,1,0,1,1,1,1,1,1,1],
-      [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
-      [1,0,1,1,1,0,1,0,1,1,0,1,0,1,0,1,0,1,1,1,0,1],
-      [1,0,1,1,1,0,1,0,0,0,1,0,1,0,0,1,0,1,1,1,0,1],
-      [1,0,1,1,1,0,1,0,1,1,0,1,0,0,0,1,0,1,1,1,0,1],
-      [1,0,0,0,0,0,1,0,0,1,1,0,1,1,0,1,0,0,0,0,0,1],
-      [1,1,1,1,1,1,1,0,1,0,1,0,1,0,0,1,1,1,1,1,1,1],
-      [0,0,0,0,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0,0],
-      [1,1,0,1,0,1,1,1,0,0,1,1,1,0,1,1,0,1,0,1,1,1],
-      [0,1,1,0,1,0,0,0,1,0,0,0,1,1,0,0,1,0,1,0,1,0],
-      [1,0,0,1,1,1,1,1,0,1,1,0,0,1,1,1,0,1,1,0,0,1],
-      [0,1,0,1,0,0,0,0,1,1,0,1,1,0,0,1,1,0,0,1,1,0],
-      [1,0,1,0,1,1,1,1,0,0,1,0,0,1,1,0,1,1,0,1,0,1],
-      [0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,1,0,0,1,0,1,1],
-      [1,1,1,1,1,1,1,0,0,1,1,0,1,1,1,0,1,1,0,1,0,0],
-      [1,0,0,0,0,0,1,0,1,0,0,1,0,0,0,1,1,1,0,0,1,1],
-      [1,0,1,1,1,0,1,0,0,1,1,0,1,1,1,0,0,1,1,1,0,1],
-      [1,0,1,1,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,1,0],
-      [1,0,1,1,1,0,1,0,0,1,1,0,0,0,1,1,1,0,1,1,0,1],
-      [1,0,0,0,0,0,1,0,1,0,0,1,1,1,0,0,0,1,0,1,1,0],
-      [1,1,1,1,1,1,1,0,0,1,1,0,1,0,1,1,0,1,1,0,1,1]
+      [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+      [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1],
+      [0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0],
+      [1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1],
+      [0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0],
+      [1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1],
+      [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0],
+      [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+      [1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0],
+      [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1]
    ];
    const size = matrix.length;
 
@@ -143,6 +143,7 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
    const [activeFaq, setActiveFaq] = useState<number | null>(null);
    const [isAnnual, setIsAnnual] = useState(true);
    const [activePlanIndex, setActivePlanIndex] = useState(1);
+   const [activeSlide, setActiveSlide] = useState(0);
    const pricingScrollRef = useRef<HTMLDivElement>(null);
 
    const handlePricingScroll = useCallback(() => {
@@ -319,96 +320,297 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                   </motion.p>
                </motion.div>
 
-               <div className="flex justify-center lg:justify-end lg:pr-12 h-auto sm:h-auto lg:h-[580px] items-center mt-6 sm:mt-10 lg:mt-0 pb-4 sm:pb-0">
-                  <div className="relative">
+               <div className="flex justify-center lg:justify-end lg:pr-12 h-[620px] sm:h-[600px] lg:h-[650px] items-center mt-6 sm:mt-10 lg:mt-0 pb-4 sm:pb-0 w-full relative">
+                  <div className="relative w-full h-full flex flex-col items-center justify-center">
                      {/* Ambient glow behind phone */}
                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-gradient-to-br from-[#D9A94E]/40 to-[#241C15]/10 rounded-full blur-[80px]" />
 
-                     {/* Floating stat card 1 */}
-                     <motion.div
-                        initial={{ opacity: 0, x: -50, y: -20 }}
-                        animate={{ opacity: 1, x: 0, y: [0, 15, 0] }}
-                        transition={{ duration: 0.8, y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}
-                        className="absolute top-[20%] -left-12 lg:-left-20 z-20 bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white hidden sm:flex items-center gap-4 hover:scale-105 transition-transform cursor-default"
-                     >
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center shadow-lg shadow-green-500/30">
-                           <TrendingUp className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                           <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-0.5">Repeat Visit Rate</p>
-                           <div className="flex items-end gap-2">
-                              <p className="text-2xl font-black text-[#241C15]">68%</p>
-                              <p className="text-xs font-black text-green-600 mb-1 flex items-center bg-green-50 px-1.5 py-0.5 rounded-full">↑12%</p>
-                           </div>
-                        </div>
-                     </motion.div>
+                     <AnimatePresence mode="wait">
+                        {activeSlide === 0 && (
+                           <motion.div
+                              key="slide0"
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -20 }}
+                              transition={{ duration: 0.5 }}
+                              className="relative w-full max-w-[400px] h-full flex flex-col items-center justify-center"
+                           >
+                              <h3 className="absolute top-0 text-3xl font-black text-[#241C15] mb-8 z-20 text-center w-full">One scan can do more.</h3>
 
-                     {/* Floating stat card 2 */}
-                     <motion.div
-                        initial={{ opacity: 0, x: 50, y: 20 }}
-                        animate={{ opacity: 1, x: 0, y: [0, -15, 0] }}
-                        transition={{ duration: 0.8, delay: 0.2, y: { duration: 6, repeat: Infinity, ease: "easeInOut" } }}
-                        className="absolute bottom-[20%] -right-8 lg:-right-16 z-30 bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white hidden sm:flex items-center gap-3 hover:scale-105 transition-transform cursor-default"
-                     >
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#D9A94E] to-[#B8862E] flex items-center justify-center shadow-lg shadow-[#D9A94E]/30">
-                           <Users className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                           <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-0.5">New Members</p>
-                           <p className="text-xl font-black text-[#241C15]">+124</p>
-                        </div>
-                     </motion.div>
+                              <div className="relative w-full flex justify-center mt-20">
+                                 {/* Standee Card */}
+                                 <div className="bg-[#FAF6EE] border-2 border-gray-100 rounded-[28px] p-5 shadow-xl w-[220px] sm:w-[280px] aspect-square flex flex-col justify-between z-10 mr-8 sm:mr-20">
+                                    <div>
+                                       <div className="flex items-center justify-center gap-2 mb-3 mt-1">
+                                          <div className="w-6 h-6 rounded-md bg-[#D9A94E] text-white flex items-center justify-center font-black text-xs shadow-md">R</div>
+                                          <span className="font-black text-lg tracking-wide">REVIA</span>
+                                       </div>
+                                       <div className="flex justify-between text-[7px] font-black tracking-widest text-[#241C15] mb-4 px-1">
+                                          <span>REVIEWS</span>
+                                          <span>SOCIALS</span>
+                                          <span>WI-FI</span>
+                                          <span>REWARDS</span>
+                                       </div>
+                                    </div>
+                                    <div className="bg-white p-2 rounded-2xl shadow-sm mx-auto w-3/4 max-w-[180px]">
+                                       <RealQRCodeSVG className="w-full h-auto" />
+                                    </div>
+                                    <div>
+                                       <p className="text-center text-[9px] font-bold text-gray-400 mt-3 mb-2 tracking-widest">SP001</p>
+                                       <div className="text-center">
+                                          <span className="font-black text-sm text-[#D9A94E]">revia</span>
+                                       </div>
+                                    </div>
+                                 </div>
 
-                     <MobileFrame className="transform lg:rotate-3 transition-transform duration-700 hover:rotate-0 relative z-10 sm:scale-90 md:scale-90 lg:scale-100">
-                        <div className="flex flex-col h-full bg-[#FAF6EE] p-5">
-                           <div className="bg-gradient-to-br from-[#241C15] to-[#1A1410] rounded-3xl p-6 mb-5 text-white shadow-xl relative overflow-hidden">
-                              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2" />
-                              <div className="flex justify-between items-start mb-6 relative z-10">
+                                 {/* Phone Overlapping */}
+                                 <div className="absolute -bottom-16 sm:-bottom-24 -right-12 sm:-right-24 lg:-right-32 z-30">
+                                    <MobileFrame className="transform lg:rotate-3 transition-transform duration-700 hover:rotate-0 relative z-10 scale-75 sm:scale-90 md:scale-90 lg:scale-100 origin-bottom-right shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]">
+                                       {/* Camera Scanner View */}
+                                       <div
+                                          className="h-full w-full relative flex flex-col items-center justify-center min-h-[480px] bg-cover bg-center"
+                                          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=600")' }}
+                                       >
+                                          {/* Background Overlay */}
+                                          <div className="absolute inset-0 bg-[#1A1410]/70 z-0 backdrop-blur-[2px]" />
+
+                                          {/* Camera Frame View of Standee */}
+                                          <div className="bg-white rounded-2xl w-[150px] p-4 relative mb-12 shadow-2xl z-10">
+                                             <div className="flex items-center justify-center gap-2 mb-3">
+                                                <div className="w-4 h-4 rounded bg-[#D9A94E] text-white flex items-center justify-center font-black text-[8px]">R</div>
+                                                <span className="font-black text-xs">REVIA</span>
+                                             </div>
+                                             <div className="flex justify-between text-[5px] font-black tracking-widest text-[#241C15] mb-3 px-1">
+                                                <span>REVIEWS</span>
+                                                <span>SOCIALS</span>
+                                                <span>WI-FI</span>
+                                                <span>REWARDS</span>
+                                             </div>
+                                             <div className="border-2 border-[#D9A94E] rounded-lg p-1.5 relative">
+                                                <div className="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-[#D9A94E]" />
+                                                <div className="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-[#D9A94E]" />
+                                                <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-[#D9A94E]" />
+                                                <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-[#D9A94E]" />
+                                                <RealQRCodeSVG className="w-full h-auto" />
+                                             </div>
+                                             <div className="text-center mt-3">
+                                                <span className="font-black text-[10px] text-[#D9A94E]">revia</span>
+                                             </div>
+                                          </div>
+
+                                          {/* Action Popup */}
+                                          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-[85%] bg-white rounded-full p-1.5 flex items-center justify-between shadow-lg z-10">
+                                             <div className="flex items-center gap-2 pl-1">
+                                                <div className="w-6 h-6 rounded-full bg-[#D9A94E] flex items-center justify-center">
+                                                   <span className="text-white text-[10px] font-black">R</span>
+                                                </div>
+                                                <span className="text-[10px] font-bold text-[#241C15]">go.revia.com</span>
+                                             </div>
+                                             <span className="text-[10px] font-bold text-blue-500 pr-3">Open</span>
+                                          </div>
+
+                                          {/* Camera Shutter button */}
+                                          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full border-2 border-white/50 flex items-center justify-center z-10 backdrop-blur-sm bg-black/20">
+                                             <div className="w-10 h-10 rounded-full bg-white" />
+                                          </div>
+                                       </div>
+                                    </MobileFrame>
+                                 </div>
+                              </div>
+                           </motion.div>
+                        )}
+
+                        {activeSlide === 1 && (
+                           <motion.div
+                              key="slide1"
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -20 }}
+                              transition={{ duration: 0.5 }}
+                              className="relative w-full h-full flex items-center justify-center"
+                           >
+                              {/* Floating stat card 1 */}
+                              <motion.div
+                                 initial={{ opacity: 0, x: -50, y: -20 }}
+                                 animate={{ opacity: 1, x: 0, y: [0, 15, 0] }}
+                                 transition={{ duration: 0.8, y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}
+                                 className="absolute top-[20%] -left-12 lg:-left-20 z-20 bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white hidden sm:flex items-center gap-4 hover:scale-105 transition-transform cursor-default"
+                              >
+                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center shadow-lg shadow-green-500/30">
+                                    <TrendingUp className="w-5 h-5 text-white" />
+                                 </div>
                                  <div>
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">REVIA LOYALTY</p>
-                                    <p className="text-xl font-black">Amber Coffee</p>
+                                    <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-0.5">Repeat Visit Rate</p>
+                                    <div className="flex items-end gap-2">
+                                       <p className="text-2xl font-black text-[#241C15]">68%</p>
+                                       <p className="text-xs font-black text-green-600 mb-1 flex items-center bg-green-50 px-1.5 py-0.5 rounded-full">↑12%</p>
+                                    </div>
                                  </div>
-                                 <div className="text-right">
-                                    <p className="text-[9px] text-white/50 font-bold mb-1">PROGRESS</p>
-                                    <p className="text-2xl font-black text-[#D9A94E]">6/10</p>
-                                 </div>
-                              </div>
+                              </motion.div>
 
-                              <div className="grid grid-cols-5 gap-2.5 mb-5 relative z-10">
-                                 {Array.from({ length: 10 }).map((_, i) => (
-                                    <div key={i} className={`aspect-square rounded-full flex items-center justify-center text-sm font-black shadow-inner ${i < 6 ? 'bg-gradient-to-br from-[#D9A94E] to-[#B8862E] text-white' : 'bg-white/10 text-white/20'}`}>
-                                       {i < 6 && <Star className="w-4 h-4 fill-current" />}
-                                    </div>
-                                 ))}
-                              </div>
-                              <p className="text-[11px] text-center text-white/70 font-bold relative z-10">4 more stamps unlocks a free item ☕</p>
-                           </div>
+                              {/* Floating stat card 2 */}
+                              <motion.div
+                                 initial={{ opacity: 0, x: 50, y: 20 }}
+                                 animate={{ opacity: 1, x: 0, y: [0, -15, 0] }}
+                                 transition={{ duration: 0.8, delay: 0.2, y: { duration: 6, repeat: Infinity, ease: "easeInOut" } }}
+                                 className="absolute bottom-[20%] -right-8 lg:-right-16 z-30 bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl border border-white hidden sm:flex items-center gap-3 hover:scale-105 transition-transform cursor-default"
+                              >
+                                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#D9A94E] to-[#B8862E] flex items-center justify-center shadow-lg shadow-[#D9A94E]/30">
+                                    <Users className="w-5 h-5 text-white" />
+                                 </div>
+                                 <div>
+                                    <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest mb-0.5">New Members</p>
+                                    <p className="text-xl font-black text-[#241C15]">+124</p>
+                                 </div>
+                              </motion.div>
 
-                           <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Recent Activity</p>
-                              <div className="space-y-4">
-                                 <div className="flex justify-between items-center border-b border-gray-50 pb-3">
-                                    <div>
-                                       <p className="text-sm font-bold text-[#241C15]">Visit Recorded</p>
-                                       <p className="text-[10px] text-gray-400">Today, 9:42 AM</p>
+                              <MobileFrame className="transform lg:rotate-3 transition-transform duration-700 hover:rotate-0 relative z-10 sm:scale-90 md:scale-90 lg:scale-100">
+                                 <div className="flex flex-col h-full bg-[#FAF6EE] p-5">
+                                    <div className="bg-gradient-to-br from-[#241C15] to-[#1A1410] rounded-3xl p-6 mb-5 text-white shadow-xl relative overflow-hidden">
+                                       <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2" />
+                                       <div className="flex justify-between items-start mb-6 relative z-10">
+                                          <div>
+                                             <p className="text-[9px] font-black uppercase tracking-widest text-white/50 mb-1">REVIA LOYALTY</p>
+                                             <p className="text-xl font-black">Amber Coffee</p>
+                                          </div>
+                                          <div className="text-right">
+                                             <p className="text-[9px] text-white/50 font-bold mb-1">PROGRESS</p>
+                                             <p className="text-2xl font-black text-[#D9A94E]">6/10</p>
+                                          </div>
+                                       </div>
+
+                                       <div className="grid grid-cols-5 gap-2.5 mb-5 relative z-10">
+                                          {Array.from({ length: 10 }).map((_, i) => (
+                                             <div key={i} className={`aspect-square rounded-full flex items-center justify-center text-sm font-black shadow-inner ${i < 6 ? 'bg-gradient-to-br from-[#D9A94E] to-[#B8862E] text-white' : 'bg-white/10 text-white/20'}`}>
+                                                {i < 6 && <Star className="w-4 h-4 fill-current" />}
+                                             </div>
+                                          ))}
+                                       </div>
+                                       <p className="text-[11px] text-center text-white/70 font-bold relative z-10">4 more stamps unlocks a free item ☕</p>
                                     </div>
-                                    <div className="bg-[#D9A94E]/10 px-3 py-1 rounded-full">
-                                       <p className="text-sm font-black text-[#B8862E]">+1</p>
+
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                                       <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Recent Activity</p>
+                                       <div className="space-y-4">
+                                          <div className="flex justify-between items-center border-b border-gray-50 pb-3">
+                                             <div>
+                                                <p className="text-sm font-bold text-[#241C15]">Visit Recorded</p>
+                                                <p className="text-[10px] text-gray-400">Today, 9:42 AM</p>
+                                             </div>
+                                             <div className="bg-[#D9A94E]/10 px-3 py-1 rounded-full">
+                                                <p className="text-sm font-black text-[#B8862E]">+1</p>
+                                             </div>
+                                          </div>
+                                          <div className="flex justify-between items-center opacity-60">
+                                             <div>
+                                                <p className="text-sm font-bold text-[#241C15]">Visit Recorded</p>
+                                                <p className="text-[10px] text-gray-400">Mon, 2:15 PM</p>
+                                             </div>
+                                             <div className="bg-gray-100 px-3 py-1 rounded-full">
+                                                <p className="text-sm font-black text-gray-500">+1</p>
+                                             </div>
+                                          </div>
+                                       </div>
                                     </div>
                                  </div>
-                                 <div className="flex justify-between items-center opacity-60">
+                              </MobileFrame>
+                           </motion.div>
+                        )}
+
+                        {activeSlide === 2 && (
+                           <motion.div
+                              key="slide2"
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -20 }}
+                              transition={{ duration: 0.5 }}
+                              className="relative w-full h-full flex flex-col items-center justify-center pt-8"
+                           >
+                              <h3 className="absolute top-0 text-3xl font-black text-[#241C15] mb-8 z-20 text-center w-full">All from the same code.</h3>
+
+                              <div className="relative w-full flex flex-col sm:flex-row items-center justify-center mt-20 sm:mt-12 gap-6 sm:gap-16">
+                                 {/* Standee Card on Left */}
+                                 <div className="bg-[#FAF6EE] border-2 border-gray-100 rounded-[28px] p-4 sm:p-5 shadow-xl w-[180px] sm:w-[240px] aspect-square flex flex-col justify-between z-10 relative">
                                     <div>
-                                       <p className="text-sm font-bold text-[#241C15]">Visit Recorded</p>
-                                       <p className="text-[10px] text-gray-400">Mon, 2:15 PM</p>
+                                       <div className="flex items-center justify-center gap-2 mb-3 mt-1">
+                                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-[#D9A94E] text-white flex items-center justify-center font-black text-[10px] sm:text-xs shadow-md">A</div>
+                                          <span className="font-black text-base sm:text-lg tracking-wide uppercase">Ash & Oak</span>
+                                       </div>
+                                       <div className="flex justify-between text-[6px] sm:text-[7px] font-black tracking-widest text-[#241C15] mb-4 px-1">
+                                          <span>REVIEWS</span>
+                                          <span>SOCIALS</span>
+                                          <span>WI-FI</span>
+                                          <span>REWARDS</span>
+                                       </div>
                                     </div>
-                                    <div className="bg-gray-100 px-3 py-1 rounded-full">
-                                       <p className="text-sm font-black text-gray-500">+1</p>
+                                    <div className="bg-white p-2 rounded-2xl shadow-sm mx-auto w-3/4 max-w-[150px]">
+                                       <RealQRCodeSVG className="w-full h-auto" />
+                                    </div>
+                                    <div>
+                                       <p className="text-center text-[8px] sm:text-[9px] font-bold text-gray-400 mt-2 sm:mt-3 mb-1 sm:mb-2 tracking-widest">SP001</p>
+                                       <div className="text-center">
+                                          <span className="font-black text-xs sm:text-sm text-[#D9A94E]">scanreviews</span>
+                                       </div>
+                                    </div>
+                                 </div>
+
+                                 {/* Right Badges */}
+                                 <div className="relative flex flex-col space-y-3 sm:space-y-4 z-10 w-full sm:w-auto items-center sm:items-start">
+                                    {/* Main Connector from Card to Spine */}
+                                    <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-[64px] w-[32px] h-px bg-gray-700" />
+
+                                    {/* Outer Spine (Top to Bottom, with top and bottom branches) */}
+                                    <div className="hidden sm:block absolute top-[31px] bottom-[31px] -left-[32px] w-[32px] border-y border-l border-gray-700 rounded-l-lg z-0" />
+
+                                    {/* Badge 1 */}
+                                    <div className="relative z-10">
+                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2.5 sm:py-3.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
+                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white shadow-sm"><Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" /></div>
+                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Google Reviews</span>
+                                       </div>
+                                    </div>
+
+                                    {/* Badge 2 */}
+                                    <div className="relative z-10">
+                                       <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-[32px] w-[32px] h-px bg-gray-700" />
+                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2.5 sm:py-3.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
+                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-sm">R</div>
+                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Loyalty & Rewards</span>
+                                       </div>
+                                    </div>
+
+                                    {/* Badge 3 */}
+                                    <div className="relative z-10">
+                                       <div className="hidden sm:block absolute top-1/2 -translate-y-1/2 -left-[32px] w-[32px] h-px bg-gray-700" />
+                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2.5 sm:py-3.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
+                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-sm">@</div>
+                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Social media</span>
+                                       </div>
+                                    </div>
+
+                                    {/* Badge 4 */}
+                                    <div className="relative z-10">
+                                       <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 py-2.5 sm:py-3.5 px-4 sm:px-5 flex items-center gap-3 sm:gap-4 w-[240px] sm:w-64 hover:scale-105 transition-transform cursor-pointer">
+                                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#F8C145] flex items-center justify-center text-white shadow-sm"><Wifi className="w-3.5 h-3.5 sm:w-4 sm:h-4" /></div>
+                                          <span className="font-bold text-xs sm:text-sm text-[#241C15]">Wi-Fi</span>
+                                       </div>
                                     </div>
                                  </div>
                               </div>
-                           </div>
-                        </div>
-                     </MobileFrame>
+                           </motion.div>
+                        )}
+                     </AnimatePresence>
+
+                     {/* Slider Controls */}
+                     <div className="absolute bottom-0 sm:-bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+                        {[0, 1, 2].map(i => (
+                           <button
+                              key={i}
+                              onClick={() => setActiveSlide(i)}
+                              className={`h-1.5 rounded-full transition-all duration-300 ${activeSlide === i ? 'w-8 bg-[#D9A94E]' : 'w-4 bg-gray-300'}`}
+                           />
+                        ))}
+                     </div>
                   </div>
                </div>
             </div>
@@ -560,10 +762,10 @@ export const MarketingLandingPage: React.FC<Props> = ({ onNavigate }) => {
                         <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-[#241C15]">{feat.title}</h3>
                         <p className="text-sm sm:text-base text-gray-500 mb-4 sm:mb-8 leading-relaxed font-medium">{feat.desc}</p>
                      </motion.div>
-                   ))}
-                </div>
-             </div>
-          </section>
+                  ))}
+               </div>
+            </div>
+         </section>
 
          {/* ═══════════════════════════════════════ */}
          {/* SMART QR EXPERIENCE & TOUCHPOINTS      */}
