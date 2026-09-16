@@ -1215,6 +1215,26 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [customSegmentName, setCustomSegmentName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
+  const [statusFilterDropdownOpen, setStatusFilterDropdownOpen] = useState(false);
+  const statusFilterDropdownRef = useRef<HTMLDivElement>(null);
+
+  const [typeFilter, setTypeFilter] = useState('All Types');
+  const [typeFilterDropdownOpen, setTypeFilterDropdownOpen] = useState(false);
+  const typeFilterDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (statusFilterDropdownRef.current && !statusFilterDropdownRef.current.contains(event.target as Node)) {
+        setStatusFilterDropdownOpen(false);
+      }
+      if (typeFilterDropdownRef.current && !typeFilterDropdownRef.current.contains(event.target as Node)) {
+        setTypeFilterDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const [expandedCampaignId, setExpandedCampaignId] = useState<number | null>(null);
 
   const [campaigns, setCampaigns] = useState([
@@ -1558,8 +1578,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       type="button"
                       onClick={() => setDirectRedemptionMode('auto')}
                       className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${directRedemptionMode === 'auto'
-                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
                         }`}
                     >
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${directRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
@@ -1577,8 +1597,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       type="button"
                       onClick={() => setDirectRedemptionMode('merchant_approval')}
                       className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${directRedemptionMode === 'merchant_approval'
-                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
                         }`}
                     >
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${directRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
@@ -1656,8 +1676,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       type="button"
                       onClick={() => setProductQrRedemptionMode('auto')}
                       className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${productQrRedemptionMode === 'auto'
-                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
                         }`}
                     >
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${productQrRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
@@ -1675,8 +1695,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       type="button"
                       onClick={() => setProductQrRedemptionMode('merchant_approval')}
                       className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${productQrRedemptionMode === 'merchant_approval'
-                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
                         }`}
                     >
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${productQrRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
@@ -2543,7 +2563,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 1: Basics Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5]  border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(1)}>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] cursor-pointer  border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(1)}>
               Edit Step 1 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
@@ -2602,7 +2622,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 2: Audience Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(2)}>
+            <button className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(2)}>
               Edit Step 2 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
@@ -2659,7 +2679,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 3: Conditions &amp; Rules Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(3)}>
+            <button className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(3)}>
               Edit Step 3 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
@@ -2726,7 +2746,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 4: Reward Definition Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(4)}>
+            <button className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(4)}>
               Edit Step 4 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
@@ -2941,22 +2961,55 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             />
           </div>
           <div className="grid grid-cols-2 md:flex md:items-center gap-3 w-full md:w-auto">
-            <select className="w-full md:w-auto border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] py-2.5 px-3 text-xs sm:text-sm font-semibold text-[#1A1615] focus:outline-none focus:ring-1 focus:ring-[#D4A753]">
-              <option>All Types</option>
-              <option>Visit Type</option>
-              <option>Billing Type</option>
-              <option>Stamp Type</option>
-            </select>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full md:w-auto border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] py-2.5 px-3 text-xs sm:text-sm font-semibold text-[#1A1615] focus:outline-none focus:ring-1 focus:ring-[#D4A753]"
-            >
-              <option>All Status</option>
-              <option>Active</option>
-              <option>Draft</option>
-              <option>Ended</option>
-            </select>
+            <div ref={typeFilterDropdownRef} className="relative w-full md:w-[140px]">
+              <button
+                type="button"
+                onClick={() => setTypeFilterDropdownOpen(!typeFilterDropdownOpen)}
+                className="w-full flex items-center justify-between border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] py-2.5 px-3 text-xs sm:text-sm font-semibold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
+              >
+                <span className="truncate">{typeFilter}</span>
+                <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${typeFilterDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {typeFilterDropdownOpen && (
+                <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                  {['All Types', 'Visit Type', 'Billing Type', 'Stamp Type'].map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => { setTypeFilter(type); setTypeFilterDropdownOpen(false); }}
+                      className={`w-full cursor-pointer px-3 py-2 text-left text-xs sm:text-sm hover:bg-[#F5F1EA] ${typeFilter === type ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div ref={statusFilterDropdownRef} className="relative w-full md:w-[140px]">
+              <button
+                type="button"
+                onClick={() => setStatusFilterDropdownOpen(!statusFilterDropdownOpen)}
+                className="w-full flex items-center justify-between border border-[#EAE6E1] rounded-lg bg-[#FAF8F5] py-2.5 px-3 text-xs sm:text-sm font-semibold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
+              >
+                <span className="truncate">{statusFilter}</span>
+                <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${statusFilterDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {statusFilterDropdownOpen && (
+                <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                  {['All Status', 'Active', 'Draft', 'Ended'].map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => { setStatusFilter(status); setStatusFilterDropdownOpen(false); }}
+                      className={`w-full cursor-pointer px-3 py-2 text-left text-xs sm:text-sm hover:bg-[#F5F1EA] ${statusFilter === status ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
