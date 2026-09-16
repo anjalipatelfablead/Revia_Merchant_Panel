@@ -892,10 +892,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 Branch Comparison &amp; Stand Status
               </h2>
               <button
-                className="text-[#8C827A] hover:text-[#1A1615] p-1 cursor-pointer"
-                aria-label="Options"
+                onClick={() => onNavigate('/branches')}
+                className="text-[11px] font-bold text-[#C59B46] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <MoreVertical className="w-4 h-4" />
+                Manage Branches <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
             <p className="text-xs text-[#7C746C] mt-0.5 mb-4">

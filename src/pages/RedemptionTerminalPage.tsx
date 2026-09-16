@@ -75,10 +75,6 @@ export const RedemptionTerminalPage = () => {
               Downtown Flagship • POS #02
             </span>
           </div>
-          <div className="flex items-center gap-2 text-[10px] text-[#6E6A66] font-medium tracking-wider">
-            <span className="px-2 py-0.5 bg-[#EFECE6] rounded text-[#1A1615] font-bold">SPACE</span> Toggle Scanner •
-            <span className="px-2 py-0.5 bg-[#EFECE6] rounded text-[#1A1615] font-bold ml-1">ENTER</span> Settle
-          </div>
         </div>
       </div>
 
@@ -180,7 +176,6 @@ export const RedemptionTerminalPage = () => {
               <button className="flex items-center gap-1.5 text-[11px] font-bold text-[#D4A753] hover:text-[#9E782F] transition-colors">
                 <Info className="w-3.5 h-3.5" /> Request Manager Override
               </button>
-              <span className="text-[10px] text-[#9E9A93] font-medium">Lane 02 Logged</span>
             </div>
           </div>
         </div>
@@ -196,7 +191,6 @@ export const RedemptionTerminalPage = () => {
               </span>
               <div className="flex items-center gap-2 text-[10px]">
                 <span className="font-bold text-[#6E6A66]">REV-VCH-8924</span>
-                <span className="text-[#9E9A93]">Scanned 12s ago</span>
               </div>
             </div>
 
@@ -280,10 +274,10 @@ export const RedemptionTerminalPage = () => {
                 onClick={handleSettleReward}
                 className="w-full sm:w-auto flex-1 bg-[#D4A753] hover:bg-[#C29541] text-white h-12 sm:h-14 rounded-xl flex items-center justify-center gap-2 font-bold text-[13px] sm:text-[14px] transition-colors shadow-sm cursor-pointer px-2 sm:px-4"
               >
-                <CheckCircle2 className="w-4 h-4 shrink-0" /> <span className="whitespace-nowrap">Confirm & Settle Reward (↵)</span>
+                <CheckCircle2 className="w-4 h-4 shrink-0" /> <span className="whitespace-nowrap">Confirm & Settle Reward </span>
               </button>
               <button className="w-full sm:w-auto px-8 h-12 sm:h-14 bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-xl font-bold text-[13px] sm:text-[14px] transition-colors shadow-sm cursor-pointer shrink-0">
-                Clear (Esc)
+                Clear
               </button>
             </div>
           </div>
