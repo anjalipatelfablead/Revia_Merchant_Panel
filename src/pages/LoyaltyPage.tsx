@@ -124,21 +124,19 @@ export const LoyaltyPage: React.FC = () => {
     <div className="p-4 sm:p-6 space-y-6 bg-[#FAF8F5] min-h-[calc(100vh-4rem)]">
       {/* 2. PAGE HEADER & ACTIONS */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* Title & Mobile/iPad Discard */}
-        <div className="flex items-center justify-between w-full lg:w-auto gap-4">
+        {/* Title */}
+        <div className="w-full lg:w-auto">
           <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">
             Loyalty Program Builder
           </h1>
-          <button className="md:hidden px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer shrink-0">
-            Discard
-          </button>
         </div>
 
-        <div className="flex flex-row items-center gap-2 lg:gap-3 self-start lg:self-auto">
-          <button className="hidden md:block flex-none px-4 py-2 text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
-            Discard Changes
+        <div className="flex flex-wrap items-center gap-2 lg:gap-3 self-start lg:self-auto w-full lg:w-auto">
+          <button className="flex-none px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
+            <span className="hidden sm:inline">Discard Changes</span>
+            <span className="sm:hidden">Discard</span>
           </button>
-          <button className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer whitespace-nowrap">
+          <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer whitespace-nowrap">
             <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Save Draft
           </button>

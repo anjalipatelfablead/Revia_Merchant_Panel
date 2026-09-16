@@ -48,20 +48,6 @@ const MobileAnalyticsView: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FBF6F1] px-5 pb-7 pt-3 text-[#211C19]">
       <div className="mx-auto w-full max-w-[430px]">
-        <header className="flex items-center justify-between pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#211C19] text-sm font-bold text-white">R</div>
-            <div className="leading-tight">
-              <div className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.04em]">Mayfair Flagship <ChevronDown className="h-3 w-3 text-[#756D65]" /></div>
-              <div className="text-[10px] font-bold uppercase text-[#B28529]">MoreAnalytics</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="relative text-[#5F5750]"><span className="absolute -right-0.5 -top-1 h-1.5 w-1.5 rounded-full bg-[#B7362F]" /><Sparkles className="h-4 w-4" /></div>
-            <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-white shadow-sm"><img src="https://i.pravatar.cc/80?img=47" alt="Account" className="h-full w-full object-cover" /></div>
-          </div>
-        </header>
-
         <div className="pt-4">
           <div className="flex items-center justify-between gap-2">
             <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Analytics &amp; Retention</h1>
@@ -324,7 +310,7 @@ export const AnalyticsPage: React.FC = () => {
           </div>
           */}
 
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
                 <div className="max-w-[480px]">
                   <div className="flex flex-wrap items-center gap-3">
                     <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight leading-[1.05] text-[#1A1615]">

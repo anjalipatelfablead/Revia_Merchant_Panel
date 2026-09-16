@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pencil, Trash2, Plus, Settings, ShieldAlert, ShieldCheck, Save } from 'lucide-react';
+import { Pencil, Trash2, Plus, Settings, ShieldAlert, ShieldCheck, Save, ChevronDown } from 'lucide-react';
 
 interface Tier {
   id: string;
@@ -175,30 +175,30 @@ export const CustomerTypeSettings: React.FC = () => {
               </div>
             ) : (
               tiers.map((tier) => (
-                <div key={tier.id} className="bg-white rounded-2xl p-5 border border-[#EFECE6] shadow-sm flex items-center justify-between group hover:border-[#D4A753]/40 transition-colors">
-                  <div className="flex items-center gap-5 flex-1">
-                    <div className="w-12 h-12 rounded-xl bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center shrink-0">
-                      <ShieldAlert className="w-5 h-5 text-[#9E9A93]" />
+                <div key={tier.id} className="bg-white rounded-2xl p-3 sm:p-5 border border-[#EFECE6] shadow-sm flex items-center justify-between gap-2 group hover:border-[#D4A753]/40 transition-colors">
+                  <div className="flex items-center gap-3 sm:gap-5 flex-1 min-w-0">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center shrink-0">
+                      <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5 text-[#9E9A93]" />
                     </div>
-                    <div>
-                      <div className="flex items-center gap-3 mb-1.5">
-                        <h3 className="text-[16px] font-bold text-[#1A1615]">{tier.name}</h3>
-                        <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wide border ${tier.colorClass}`}>
+                    <div className="min-w-0">
+                      <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-1.5">
+                        <h3 className="text-[14px] sm:text-[16px] font-bold text-[#1A1615] truncate">{tier.name}</h3>
+                        <span className={`px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded text-[10px] sm:text-[11px] font-bold uppercase tracking-wide border shrink-0 ${tier.colorClass}`}>
                           {tier.name}
                         </span>
                         {tier.status === 'Expired' && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-red-50 text-red-600 border border-red-200">
+                          <span className="px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wide bg-red-50 text-red-600 border border-red-200 shrink-0">
                             Expired
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-4 text-[13px] text-[#6E6A66] font-medium">
-                        <span className="flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#D4A753]"></span>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-[12px] sm:text-[13px] text-[#6E6A66] font-medium">
+                        <span className="flex items-center gap-1.5 whitespace-nowrap">
+                          <span className="w-1.5 h-1.5 shrink-0 rounded-full bg-[#D4A753]"></span>
                           {formatCurrency(tier.minBilling)} Min. Spend
                         </span>
-                        <span className="flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#9E9A93]"></span>
+                        <span className="flex items-center gap-1.5 whitespace-nowrap">
+                          <span className="w-1.5 h-1.5 shrink-0 rounded-full bg-[#9E9A93]"></span>
                           {tier.validityDuration} {tier.validityUnit}
                         </span>
                       </div>
@@ -207,14 +207,24 @@ export const CustomerTypeSettings: React.FC = () => {
 
                   <div className="flex items-center gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => handleEdit(tier)}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleEdit(tier);
+                      }}
                       className="w-9 h-9 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-[#B8862E] hover:border-[#B8862E]/30 transition-colors"
                       title="Edit Tier"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(tier.id)}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDelete(tier.id);
+                      }}
                       className="w-9 h-9 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
                       title="Delete Tier"
                     >
@@ -260,7 +270,7 @@ export const CustomerTypeSettings: React.FC = () => {
                     <input
                       type="number"
                       value={minBilling}
-                      onChange={(e) => setMinBilling(Number(e.target.value))}
+                      onChange={(e) => setMinBilling(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="5000"
                       className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
                     />
@@ -276,32 +286,38 @@ export const CustomerTypeSettings: React.FC = () => {
                     <input
                       type="number"
                       value={validityDuration}
-                      onChange={(e) => setValidityDuration(Number(e.target.value))}
+                      onChange={(e) => setValidityDuration(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="1"
                       className="flex-1 px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
                     />
-                    <select
-                      value={validityUnit}
-                      onChange={(e) => setValidityUnit(e.target.value as any)}
-                      className="w-28 px-3 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer"
-                    >
-                      <option value="Days">Days</option>
-                      <option value="Months">Months</option>
-                      <option value="Years">Years</option>
-                    </select>
+                    <div className="relative flex-1 sm:flex-none sm:w-28 shrink-0">
+                      <select
+                        value={validityUnit}
+                        onChange={(e) => setValidityUnit(e.target.value as any)}
+                        className="w-full pl-3 pr-8 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer"
+                      >
+                        <option value="Days">Days</option>
+                        <option value="Months">Months</option>
+                        <option value="Years">Years</option>
+                      </select>
+                      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E6A66] pointer-events-none" />
+                    </div>
                   </div>
                 </div>
 
                 <div>
                   <label className="text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] block mb-2">Start Date Basis</label>
-                  <select
-                    value={startBasis}
-                    onChange={(e) => setStartBasis(e.target.value as any)}
-                    className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer"
-                  >
-                    <option value="Customer signup date">Customer signup date</option>
-                    <option value="Date threshold reached">Date threshold reached</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={startBasis}
+                      onChange={(e) => setStartBasis(e.target.value as any)}
+                      className="w-full pl-4 pr-10 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] appearance-none cursor-pointer"
+                    >
+                      <option value="Customer signup date">Customer signup date</option>
+                      <option value="Date threshold reached">Date threshold reached</option>
+                    </select>
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E6A66] pointer-events-none" />
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between py-4 border-y border-[#EFECE6]">

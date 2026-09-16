@@ -50,10 +50,6 @@ const MobileAuditView: React.FC<{ logs: AuditLogEntry[] }> = ({ logs }) => {
   return (
     <div className="min-h-screen bg-[#FBF8F4] px-5 pb-6 pt-3 text-[#211C19]">
       <div className="mx-auto w-full max-w-[430px]">
-        <header className="flex items-center justify-between border-b border-[#E9E0D7] pb-3">
-          <div className="flex items-center gap-2.5"><div className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-[#C99B42] text-sm font-bold text-white">R</div><div><div className="text-[10px] font-bold uppercase text-[#756D65]">Revia</div><div className="text-[18px] font-bold leading-none">Downtown Flagship⌄</div></div></div>
-          <div className="flex items-center gap-3"><div className="relative"><span className="absolute -right-0.5 -top-1 h-1.5 w-1.5 rounded-full bg-[#C99B42]" /><Clock3 className="h-4 w-4 text-[#4F4842]" /></div><div className="h-8 w-8 overflow-hidden rounded-full border-2 border-[#C99B42]"><img src="https://i.pravatar.cc/80?img=47" alt="Account" className="h-full w-full object-cover" /></div></div>
-        </header>
 
         <section className="mt-3 rounded-[13px] bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)]"><div className="flex items-center gap-2 text-[19px] font-bold"><ShieldCheck className="h-4 w-4 text-[#8B681F]" />Security &amp; Audit Log</div><div className="my-3 h-px bg-[#E9E0D7]" /><div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-[11px]"><span className="flex gap-1.5"><span>▤</span>Downtown<br />Flagship</span><span className="border-l border-[#E9E0D7] pl-3 text-[#756D65]">Mesh ID: REV-<br />8402</span><b className="text-[#8B681F]">99.98%<br />Uptime</b></div></section>
 
@@ -220,7 +216,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
 
   return (
     <div className="mt-4 overflow-hidden rounded-xl border border-[#E5E0D8] bg-white shadow-xs">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E0D8] bg-[#FAF8F5] px-4 py-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-[#E5E0D8] bg-[#FAF8F5] px-3 sm:px-4 py-3">
         <div>
           <div className="flex items-center gap-2">
             <Webhook className="h-4 w-4 text-[#B7842C]" />
@@ -228,7 +224,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
           </div>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">API Access & Integration</h2>
         </div>
-        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
+        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex w-full sm:w-auto justify-center items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66]">
           <Key className="h-3.5 w-3.5 text-[#B7842C]" /> {generatingSecret ? 'Generating...' : 'Generate API Secret'}
         </button>
       </div>
@@ -241,33 +237,33 @@ const ApiKeysWebhooksSettings: React.FC = () => {
               <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#6E6A66]">Credential Registry</span>
             </div>
           </div>
-          <div className="rounded-lg border border-[#E5E0D8] bg-white p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-[12px] font-bold text-[#1A1615]">Shopify POS Sync</div>
-                <div className="text-[10px] text-[#6E6A66]">Production key · Last rotated 2 days ago</div>
+          <div className="rounded-lg border border-[#E5E0D8] bg-white p-3 sm:p-4">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="text-[12px] font-bold text-[#1A1615] truncate">Shopify POS Sync</div>
+                <div className="text-[10px] text-[#6E6A66] truncate">Production key · Last rotated 2 days ago</div>
               </div>
-              <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">ACTIVE</span>
+              <span className="shrink-0 rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">ACTIVE</span>
             </div>
-            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-3 py-2 font-mono text-[10px] text-[#6E6A66]">
+            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-3 py-2 font-mono text-[10px] text-[#6E6A66] break-all">
               rev_live_994a••••••••••••
             </div>
           </div>
-          <div className="rounded-lg border border-[#E5E0D8] bg-white p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-[12px] font-bold text-[#1A1615]">Wallet Push Endpoint</div>
-                <div className="text-[10px] text-[#6E6A66]">Apple & Google Wallet webhook</div>
+          <div className="rounded-lg border border-[#E5E0D8] bg-white p-3 sm:p-4">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <div className="text-[12px] font-bold text-[#1A1615] truncate">Wallet Push Endpoint</div>
+                <div className="text-[10px] text-[#6E6A66] truncate">Apple & Google Wallet webhook</div>
               </div>
-              <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">99.98%</span>
+              <span className="shrink-0 rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">99.98%</span>
             </div>
-            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-3 py-2 font-mono text-[10px] text-[#6E6A66]">
+            <div className="mt-3 rounded-md border border-[#E5E0D8] bg-[#FAF8F5] px-3 py-2 font-mono text-[10px] text-[#6E6A66] break-all">
               https://revia.example.com/webhooks/wallet/push
             </div>
           </div>
         </div>
 
-        <aside className="rounded-lg border border-[#E5E0D8] bg-[#FCFBF9] p-4 lg:col-span-5">
+        <aside className="rounded-lg border border-[#E5E0D8] bg-[#FCFBF9] p-3 sm:p-4 lg:col-span-5">
           <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
             <div className="flex items-center gap-2">
               <Webhook className="h-4 w-4 text-[#B7842C]" />
@@ -494,12 +490,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
-
   return (
     <>
-      <div className="sm:hidden"><MobileAuditView logs={logs} /></div>
-      <div className="hidden sm:block">
-        <div className="space-y-3 p-2 sm:py-4 sm:pl-4 sm:pr-1">
+      <div className="space-y-3 p-2 sm:py-4 sm:pl-4 sm:pr-1">
           {/*
       <div className="flex items-center justify-between gap-2 px-1 text-[8px] font-bold uppercase tracking-[0.1em] text-[#9E9A93]">
         <div className="flex min-w-0 items-center gap-2 truncate">
@@ -698,9 +691,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                               {statusLabel}
                             </span>
                           </div>
-                          <div className="mt-2 grid grid-cols-2 gap-2 text-[9px]">
-                            <div><span className="block uppercase tracking-wider text-[#A09A91]">Target</span><span className="block truncate font-medium text-[#1A1615]">{log.target}</span></div>
-                            <div><span className="block uppercase tracking-wider text-[#A09A91]">Time</span><span className="block text-[#6E6A66]">{log.timestamp}</span></div>
+                          <div className="mt-2 grid grid-cols-[1fr_minmax(0,auto)] gap-2 text-[9px]">
+                            <div className="min-w-0"><span className="block uppercase tracking-wider text-[#A09A91]">Target</span><span className="block truncate font-medium text-[#1A1615]">{log.target}</span></div>
+                            <div className="min-w-0"><span className="block uppercase tracking-wider text-[#A09A91]">Time</span><span className="block truncate text-[#6E6A66]">{log.timestamp}</span></div>
                           </div>
                         </button>
                       );
@@ -810,9 +803,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                     </div>
                     <div className="mt-2 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-2 font-mono text-[11px] leading-relaxed text-[#6E6A66]">
                       <div className="flex flex-wrap justify-between gap-x-4"><span>LAST VERIFIED BLOCK: <strong className="text-[#1A1615]">#892,104</strong></span><span>DIFFICULTY TARGET: 0000ffff...</span></div>
-                      <div><strong className="text-[#1A1615]">PREV_HASH:</strong> 000000000000000004f29a88c7d61dea352f683ab293410a8d67e0e1189ac6</div>
-                      <div className="text-[#B7842C]"><strong>CURR_HASH:</strong> 00000000000000001c91f3f09ae84227c991823c51c8ba48726190a862ef</div>
-                      <div className="mt-1 flex items-center gap-1 text-[#0D7A53]"><CheckCircle2 className="h-3 w-3" /> Cryptographic witness attested by Cloudflare HSM & Amazon KMS enclave</div>
+                      <div className="break-all"><strong className="text-[#1A1615]">PREV_HASH:</strong> 000000000000000004f29a88c7d61dea352f683ab293410a8d67e0e1189ac6</div>
+                      <div className="text-[#B7842C] break-all"><strong>CURR_HASH:</strong> 00000000000000001c91f3f09ae84227c991823c51c8ba48726190a862ef</div>
+                      <div className="mt-1 flex items-start gap-1 text-[#0D7A53]"><CheckCircle2 className="h-3 w-3 shrink-0 mt-0.5" /> <span>Cryptographic witness attested by Cloudflare HSM & Amazon KMS enclave</span></div>
                     </div>
                   </div>
                 </div>
@@ -953,7 +946,6 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
             <span className="inline-flex items-center gap-1.5"><Clock3 className="h-3 w-3" /> Last synchronized: 2 minutes ago</span>
           </footer> */}
         </div>
-      </div>
     </>
   );
 };

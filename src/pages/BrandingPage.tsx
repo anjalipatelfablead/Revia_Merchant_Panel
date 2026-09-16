@@ -41,7 +41,7 @@ export const BrandingPage: React.FC = () => {
 
          <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
             {/* Page Title Section */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                <div>
                   <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] mb-1 leading-none font-sans">Business Profile &amp; Branding</h1>
                   <p className="text-[14px] text-[#6E6A66] max-w-2xl">
@@ -49,12 +49,12 @@ export const BrandingPage: React.FC = () => {
                   </p>
                </div>
 
-               <div className="flex items-center gap-3 shrink-0">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+               <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full lg:w-auto mt-4 lg:mt-0">
+                  <button className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
                      <RotateCcw className="w-4 h-4" /> Discard Changes
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
-                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens (⌘S)
+                  <button className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens
                   </button>
                </div>
             </div>
@@ -138,20 +138,20 @@ export const BrandingPage: React.FC = () => {
                      </div>
 
                      {/* Pass Background Ambient Texture */}
-                     <div className="border border-[#EAE6E1] rounded-xl p-3 flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                           <div className="w-20 h-12 rounded-lg bg-black overflow-hidden relative">
+                     <div className="border border-[#EAE6E1] rounded-xl p-3 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:justify-between">
+                        <div className="flex items-start sm:items-center gap-4">
+                           <div className="w-20 h-12 rounded-lg bg-black overflow-hidden relative shrink-0">
                               <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Texture" className="w-full h-full object-cover opacity-80" />
                            </div>
                            <div>
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
                                  <h3 className="text-[13px] font-bold text-[#1A1615]">Pass Background Ambient Texture</h3>
                                  <span className="bg-[#EBF7F0] text-[#0D7A53] px-2 py-0.5 rounded text-[10px] font-bold">Active</span>
                               </div>
-                              <p className="text-[11px] text-[#8C827A] mt-0.5">Rich tactile grain applied to digital membership keys and salon displays.</p>
+                              <p className="text-[11px] text-[#8C827A] mt-0.5 leading-snug">Rich tactile grain applied to digital membership keys and salon displays.</p>
                            </div>
                         </div>
-                        <button className="px-4 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[12px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors">
+                        <button className="w-full sm:w-auto px-4 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[12px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors shrink-0">
                            Replace Scrim
                         </button>
                      </div>
@@ -170,7 +170,7 @@ export const BrandingPage: React.FC = () => {
                         </div>
                      </div>
 
-                     <div className="flex items-center gap-2 p-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl w-fit mb-6">
+                     <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl w-full sm:w-fit mb-6">
                         <button className="px-4 py-1.5 bg-white border border-[#EAE6E1] rounded-lg text-[12px] font-bold text-[#A37837] shadow-xs flex items-center gap-2">
                            <span className="w-2 h-2 rounded-full bg-[#A37837]"></span> Artisanal Roastery (Default)
                         </button>
@@ -184,7 +184,7 @@ export const BrandingPage: React.FC = () => {
 
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {/* Primary Gold Base */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-[100px]">
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-auto min-h-[100px] gap-3">
                            <div className="flex items-center justify-between">
                               <span className="text-[13px] font-bold text-[#1A1615]">Primary Gold Base</span>
                               <span className="text-[10px] text-[#8C827A]">Buttons & Badges</span>
@@ -201,7 +201,7 @@ export const BrandingPage: React.FC = () => {
                         </div>
 
                         {/* Espresso Charcoal */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-[100px]">
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-auto min-h-[100px] gap-3">
                            <div className="flex items-center justify-between">
                               <span className="text-[13px] font-bold text-[#1A1615]">Espresso Charcoal</span>
                               <span className="text-[10px] text-[#8C827A]">Typography & Marks</span>
@@ -218,7 +218,7 @@ export const BrandingPage: React.FC = () => {
                         </div>
 
                         {/* Canvas Ivory */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-[100px]">
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-auto min-h-[100px] gap-3">
                            <div className="flex items-center justify-between">
                               <span className="text-[13px] font-bold text-[#1A1615]">Canvas Ivory</span>
                               <span className="text-[10px] text-[#8C827A]">Screen Canvas Ground</span>
@@ -235,7 +235,7 @@ export const BrandingPage: React.FC = () => {
                         </div>
 
                         {/* Forest Emerald */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-[100px]">
+                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-auto min-h-[100px] gap-3">
                            <div className="flex items-center justify-between">
                               <span className="text-[13px] font-bold text-[#1A1615]">Forest Emerald</span>
                               <span className="text-[10px] text-[#8C827A]">Success & Flash Perks</span>
