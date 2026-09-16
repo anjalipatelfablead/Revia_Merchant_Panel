@@ -330,13 +330,12 @@ export const QrCodesPage: React.FC = () => {
                     className="w-full pl-9 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753] focus:ring-1 focus:ring-[#D4A753]/20 transition-all text-[#1A1615] font-semibold"
                   />
                 </div>
-                <button 
+                <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer shrink-0 rounded-lg border ${
-                    showFilters 
-                      ? 'bg-[#FAF8F5] border-[#D4A753] text-[#D4A753]' 
+                  className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer shrink-0 rounded-lg border ${showFilters
+                      ? 'bg-[#FAF8F5] border-[#D4A753] text-[#D4A753]'
                       : 'bg-white border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615]'
-                  }`}>
+                    }`}>
                   <Filter className="w-4 h-4" />
                   More Filters
                 </button>
@@ -344,30 +343,30 @@ export const QrCodesPage: React.FC = () => {
 
               {showFilters && (
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#EFECE6]">
-                <div className="flex flex-wrap items-center gap-2">
-                  <DropdownSelect
-                    id="venue"
-                    value={venueFilter}
-                    options={['VENUE: All', 'VENUE: Downtown Flagship', 'VENUE: Northside Mall', 'VENUE: West End Kiosk']}
-                    onChange={setVenueFilter}
-                  />
-                  <DropdownSelect
-                    id="type"
-                    value={assetTypeFilter}
-                    options={['ASSET TYPE: All (Acrylic, Brass, NFC)', 'ASSET TYPE: Acrylic', 'ASSET TYPE: Brass']}
-                    onChange={setAssetTypeFilter}
-                  />
-                  <DropdownSelect
-                    id="dest"
-                    value={destinationFilter}
-                    options={['DESTINATION: All Routing Targets']}
-                    onChange={setDestinationFilter}
-                  />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <DropdownSelect
+                      id="venue"
+                      value={venueFilter}
+                      options={['VENUE: All', 'VENUE: Downtown Flagship', 'VENUE: Northside Mall', 'VENUE: West End Kiosk']}
+                      onChange={setVenueFilter}
+                    />
+                    <DropdownSelect
+                      id="type"
+                      value={assetTypeFilter}
+                      options={['ASSET TYPE: All (Acrylic, Brass, NFC)', 'ASSET TYPE: Acrylic', 'ASSET TYPE: Brass']}
+                      onChange={setAssetTypeFilter}
+                    />
+                    <DropdownSelect
+                      id="dest"
+                      value={destinationFilter}
+                      options={['DESTINATION: All Routing Targets']}
+                      onChange={setDestinationFilter}
+                    />
+                  </div>
+                  <div className="text-[11px] font-bold tracking-widest uppercase text-[#9E9A93]">
+                    Showing {filteredAssets.length} of {assets.length}
+                  </div>
                 </div>
-                <div className="text-[11px] font-bold tracking-widest uppercase text-[#9E9A93]">
-                  Showing {filteredAssets.length} of {assets.length}
-                </div>
-              </div>
               )}
             </div>
 
@@ -396,13 +395,13 @@ export const QrCodesPage: React.FC = () => {
                           <div className="flex items-center gap-2 shrink-0 relative">
                             <button
                               onClick={(e) => { e.stopPropagation(); setSelectedActionAsset(asset); setIsEditModalOpen(true); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors"><Edit2 className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                             <button
                               onClick={(e) => { e.stopPropagation(); setSelectedActionAsset(asset); setIsDownloadModalOpen(true); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors"><Download className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors cursor-pointer"><Download className="w-3.5 h-3.5" /></button>
                             <button
                               onClick={(e) => { e.stopPropagation(); setOpenDropdown(openDropdown === asset.id ? null : asset.id); }}
-                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors"><MoreHorizontal className="w-3.5 h-3.5" /></button>
+                              className="p-1.5 text-[#9E9A93] hover:text-[#1A1615] rounded bg-[#FAF8F5] transition-colors cursor-pointer"><MoreHorizontal className="w-3.5 h-3.5" /></button>
 
                             {/* Dropdown Menu */}
                             {openDropdown === asset.id && (
@@ -467,9 +466,9 @@ export const QrCodesPage: React.FC = () => {
               <div className="px-5 py-4 border-b border-[#EFECE6] bg-[#FAF8F5] shrink-0">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-[13px] font-bold uppercase tracking-wider text-[#1A1615] truncate max-w-[250px]">{selectedAssetDetails.title.split(' • ')[1] || selectedAssetDetails.title}</h3>
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E0E7FF] text-[#4338CA] border border-[#C7D2FE] rounded uppercase tracking-wider flex items-center gap-1">
+                  {/* <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E0E7FF] text-[#4338CA] border border-[#C7D2FE] rounded uppercase tracking-wider flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#4338CA] animate-pulse"></span> LIVE VECTOR PREVIEW
-                  </span>
+                  </span> */}
                 </div>
 
                 <div className="flex p-0.5 bg-[#EFECE6] rounded-lg">
@@ -496,14 +495,12 @@ export const QrCodesPage: React.FC = () => {
                     <div className="absolute top-0 left-0 right-0 h-full bg-gradient-to-br from-white/80 to-transparent pointer-events-none"></div>
 
                     <div className="text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 z-10">• {selectedAssetDetails.title.split(' • ')[0].toUpperCase()}</div>
-                    <div className="text-xs font-bold tracking-widest text-[#D4A753] uppercase mb-4 z-10">PRIVE MEMBER ACCESS</div>
-
-                    {/* <h4 className="text-center text-[15px] font-black text-[#1A1615] leading-tight px-6 z-10">
+                    <h4 className="text-center text-[15px] font-black text-[#1A1615] leading-tight px-6 z-10">
                       {activeTab === 'front' ? 'SCAN TO JOIN REVIA PRIVÉ' : 'REVIA PRIVÉ MEMBER PERKS'}
-                    </h4> */}
-                    {/* <p className="text-center text-[10px] font-semibold text-[#6E6A66] px-8 mt-2 mb-6 z-10 leading-snug">
+                    </h4>
+                    <p className="text-center text-[10px] font-semibold text-[#6E6A66] px-8 mt-2 mb-6 z-10 leading-snug">
                       {activeTab === 'front' ? 'Unlock complimentary artisanal pour-over on your next reservation.' : 'Tap or scan to access your digital wallet pass and current tier benefits.'}
-                    </p> */}
+                    </p>
 
                     {/* Vector QR Code Core */}
                     <div className="w-32 h-32 bg-white border border-[#EFECE6] rounded-lg p-2 shadow-sm mb-4 z-10 relative flex items-center justify-center">
@@ -621,7 +618,7 @@ export const QrCodesPage: React.FC = () => {
                   </button>
                 </div>
                 <div className="text-center flex justify-center items-center gap-1.5 text-[10px] font-semibold text-[#6E6A66]">
-                  <Info className="w-3.5 h-3.5" /> ⓘ Changes update cloud redirect without reprinting physical stand!
+                  <Info className="w-3.5 h-3.5" />Changes update cloud redirect without reprinting physical stand!
                 </div>
               </div>
 
