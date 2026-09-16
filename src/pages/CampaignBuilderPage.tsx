@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useWallet } from '../context/WalletContext';
 import {
   Clock,
@@ -465,8 +465,8 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
                   type="button"
                   onClick={() => setBranches(branches.map(b => b.id === branch.id ? { ...b, selected: !b.selected } : b))}
                   className={`px-3 py-1.5 border text-[12px] font-bold rounded-full flex items-center gap-2 transition-all cursor-pointer ${branch.selected
-                      ? 'bg-[#FDF8EB] border-[#D4A753] text-[#1A1615] shadow-2xs'
-                      : 'bg-[#F5F4F2] border-[#E2DED9] text-[#9E9A93] hover:text-[#1A1615]'
+                    ? 'bg-[#FDF8EB] border-[#D4A753] text-[#1A1615] shadow-2xs'
+                    : 'bg-[#F5F4F2] border-[#E2DED9] text-[#9E9A93] hover:text-[#1A1615]'
                     }`}
                 >
                   <span className={`w-2 h-2 rounded-full ${branch.selected ? 'bg-[#0D7A53]' : 'bg-[#D1CDC7]'}`}></span>
@@ -666,7 +666,25 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
   const [maxRedemptions, setMaxRedemptions] = useState<number>(1);
   const [totalBudgetCap, setTotalBudgetCap] = useState<number>(500);
   const [coolingPeriodHours, setCoolingPeriodHours] = useState<number>(6);
+  const [coolingPeriodDropdownOpen, setCoolingPeriodDropdownOpen] = useState(false);
+  const coolingPeriodDropdownRef = useRef<HTMLDivElement>(null);
+
   const [applicableBranches, setApplicableBranches] = useState<string>('all');
+  const [applicableBranchesDropdownOpen, setApplicableBranchesDropdownOpen] = useState(false);
+  const applicableBranchesDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (coolingPeriodDropdownRef.current && !coolingPeriodDropdownRef.current.contains(event.target as Node)) {
+        setCoolingPeriodDropdownOpen(false);
+      }
+      if (applicableBranchesDropdownRef.current && !applicableBranchesDropdownRef.current.contains(event.target as Node)) {
+        setApplicableBranchesDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   const [autoRevokeOnRefund, setAutoRevokeOnRefund] = useState<boolean>(true);
   const [stackable, setStackable] = useState<boolean>(false);
 
@@ -748,8 +766,8 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                   type="button"
                   onClick={() => setRewardType(opt.id)}
                   className={`p-4 rounded-xl border transition-all cursor-pointer text-left flex items-start gap-3.5 relative ${isSelected
-                      ? 'bg-[#FDF8EB] border-[#D4A753] ring-2 ring-[#D4A753]/20 shadow-xs'
-                      : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-white'
+                    ? 'bg-[#FDF8EB] border-[#D4A753] ring-2 ring-[#D4A753]/20 shadow-xs'
+                    : 'bg-[#FAF8F5] border-[#EFECE6] hover:border-[#D4A753]/50 hover:bg-white'
                     }`}
                 >
                   <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${isSelected ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-white border border-[#EFECE6] text-[#7C746C]'
@@ -797,8 +815,8 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                       type="button"
                       onClick={() => setDiscountType(t)}
                       className={`px-4 py-1.5 rounded-lg text-[12px] font-bold transition-all cursor-pointer ${discountType === t
-                          ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-2xs'
-                          : 'text-[#7C746C] hover:text-[#1A1615]'
+                        ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-2xs'
+                        : 'text-[#7C746C] hover:text-[#1A1615]'
                         }`}
                     >
                       {t} Amount
@@ -889,33 +907,78 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
+            <div ref={coolingPeriodDropdownRef} className="relative">
               <label className="text-[11px] font-bold uppercase tracking-wider text-[#7C746C] block mb-2">VISIT COOLING PERIOD (HOURS)</label>
-              <select
-                value={coolingPeriodHours}
-                onChange={e => setCoolingPeriodHours(Number(e.target.value))}
-                className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+              <button
+                type="button"
+                onClick={() => setCoolingPeriodDropdownOpen(!coolingPeriodDropdownOpen)}
+                className="w-full flex items-center justify-between px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors shadow-2xs cursor-pointer"
               >
-                <option value={0}>Instant (No Cooling Period)</option>
-                <option value={4}>4 Hours between visits</option>
-                <option value={6}>6 Hours between visits (Recommended)</option>
-                <option value={12}>12 Hours between visits</option>
-                <option value={24}>24 Hours (Max 1 Visit per day)</option>
-              </select>
+                <span className="truncate">
+                  {coolingPeriodHours === 0 ? 'Instant (No Cooling Period)' :
+                    coolingPeriodHours === 4 ? '4 Hours between visits' :
+                      coolingPeriodHours === 6 ? '6 Hours between visits (Recommended)' :
+                        coolingPeriodHours === 12 ? '12 Hours between visits' :
+                          coolingPeriodHours === 24 ? '24 Hours (Max 1 Visit per day)' : `${coolingPeriodHours} Hours`}
+                </span>
+                <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${coolingPeriodDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {coolingPeriodDropdownOpen && (
+                <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EFECE6] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                  {[
+                    { value: 0, label: 'Instant (No Cooling Period)' },
+                    { value: 4, label: '4 Hours between visits' },
+                    { value: 6, label: '6 Hours between visits (Recommended)' },
+                    { value: 12, label: '12 Hours between visits' },
+                    { value: 24, label: '24 Hours (Max 1 Visit per day)' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => { setCoolingPeriodHours(opt.value); setCoolingPeriodDropdownOpen(false); }}
+                      className={`w-full cursor-pointer px-3 py-2 text-left text-[13px] hover:bg-[#F5F1EA] ${coolingPeriodHours === opt.value ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div>
+            <div ref={applicableBranchesDropdownRef} className="relative">
               <label className="text-[11px] font-bold uppercase tracking-wider text-[#7C746C] block mb-2">APPLICABLE STORE LOCATION / BRANCH</label>
-              <select
-                value={applicableBranches}
-                onChange={e => setApplicableBranches(e.target.value)}
-                className="w-full px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] transition-colors shadow-2xs"
+              <button
+                type="button"
+                onClick={() => setApplicableBranchesDropdownOpen(!applicableBranchesDropdownOpen)}
+                className="w-full flex items-center justify-between px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors shadow-2xs cursor-pointer"
               >
-                <option value="all">All Outlets &amp; Branches</option>
-                <option value="indiranagar">Indiranagar Flagship Outlet</option>
-                <option value="mg_road">MG Road Espresso Bar</option>
-                <option value="koramangala">Koramangala Roastery</option>
-              </select>
+                <span className="truncate">
+                  {applicableBranches === 'all' ? 'All Outlets & Branches' :
+                    applicableBranches === 'indiranagar' ? 'Indiranagar Flagship Outlet' :
+                      applicableBranches === 'mg_road' ? 'MG Road Espresso Bar' :
+                        applicableBranches === 'koramangala' ? 'Koramangala Roastery' : applicableBranches}
+                </span>
+                <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${applicableBranchesDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {applicableBranchesDropdownOpen && (
+                <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EFECE6] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                  {[
+                    { value: 'all', label: 'All Outlets & Branches' },
+                    { value: 'indiranagar', label: 'Indiranagar Flagship Outlet' },
+                    { value: 'mg_road', label: 'MG Road Espresso Bar' },
+                    { value: 'koramangala', label: 'Koramangala Roastery' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => { setApplicableBranches(opt.value); setApplicableBranchesDropdownOpen(false); }}
+                      className={`w-full cursor-pointer px-3 py-2 text-left text-[13px] hover:bg-[#F5F1EA] ${applicableBranches === opt.value ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -1126,6 +1189,26 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [endDate, setEndDate] = useState('');
   const [statusDraft, setStatusDraft] = useState(true);
   const [currency, setCurrency] = useState('INR (₹)');
+  const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
+  const currencyDropdownRef = useRef<HTMLDivElement>(null);
+  const [conditionStatus, setConditionStatus] = useState('Active');
+  const [conditionStatusDropdownOpen, setConditionStatusDropdownOpen] = useState(false);
+  const conditionStatusDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (currencyDropdownRef.current && !currencyDropdownRef.current.contains(event.target as Node)) {
+        setCurrencyDropdownOpen(false);
+      }
+      if (conditionStatusDropdownRef.current && !conditionStatusDropdownRef.current.contains(event.target as Node)) {
+        setConditionStatusDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Custom Segment Modal state
   const [showCustomSegmentModal, setShowCustomSegmentModal] = useState(false);
@@ -1474,15 +1557,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                     <button
                       type="button"
                       onClick={() => setDirectRedemptionMode('auto')}
-                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
-                        directRedemptionMode === 'auto'
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${directRedemptionMode === 'auto'
                           ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
                           : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
-                      }`}
+                        }`}
                     >
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                        directRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
-                      }`}>
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${directRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                        }`}>
                         <Zap className="w-4 h-4" />
                       </div>
                       <div>
@@ -1495,15 +1576,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                     <button
                       type="button"
                       onClick={() => setDirectRedemptionMode('merchant_approval')}
-                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
-                        directRedemptionMode === 'merchant_approval'
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${directRedemptionMode === 'merchant_approval'
                           ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
                           : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
-                      }`}
+                        }`}
                     >
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                        directRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
-                      }`}>
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${directRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                        }`}>
                         <ShieldCheck className="w-4 h-4" />
                       </div>
                       <div>
@@ -1576,15 +1655,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                     <button
                       type="button"
                       onClick={() => setProductQrRedemptionMode('auto')}
-                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
-                        productQrRedemptionMode === 'auto'
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${productQrRedemptionMode === 'auto'
                           ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
                           : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
-                      }`}
+                        }`}
                     >
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                        productQrRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
-                      }`}>
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${productQrRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                        }`}>
                         <Zap className="w-4 h-4" />
                       </div>
                       <div>
@@ -1597,15 +1674,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                     <button
                       type="button"
                       onClick={() => setProductQrRedemptionMode('merchant_approval')}
-                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${
-                        productQrRedemptionMode === 'merchant_approval'
+                      className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${productQrRedemptionMode === 'merchant_approval'
                           ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
                           : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
-                      }`}
+                        }`}
                     >
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                        productQrRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
-                      }`}>
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${productQrRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
+                        }`}>
                         <ShieldCheck className="w-4 h-4" />
                       </div>
                       <div>
@@ -1952,20 +2027,29 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           {/* ── CURRENCY ── */}
           <div className="bg-white border border-[#EFECE6] rounded-xl p-4 shadow-sm lg:p-4 lg:border lg:border-[#EFECE6] lg:shadow-sm">
             <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-2">Currency</label>
-            <div className="relative mb-1">
-              <select
-                value={currency}
-                onChange={e => setCurrency(e.target.value)}
-                className="w-full bg-[#FAF8F5] border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] appearance-none cursor-pointer"
+            <div ref={currencyDropdownRef} className="relative mb-1">
+              <button
+                type="button"
+                onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
+                className="w-full flex items-center justify-between bg-[#FAF8F5] border border-[#EFECE6] px-3 py-2.5 rounded-lg text-[13px] font-bold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
               >
-                <option value="INR (₹)">INR (₹)</option>
-                <option value="INR ($)">INR ($)</option>
-                <option value="EUR (€)">EUR (€)</option>
-                <option value="GBP (£)">GBP (£)</option>
-              </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                <ChevronDown className="w-4 h-4 text-[#9E9A93]" />
-              </div>
+                <span className="truncate">{currency}</span>
+                <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${currencyDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {currencyDropdownOpen && (
+                <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EFECE6] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                  {['INR (₹)', 'INR ($)', 'EUR (€)', 'GBP (£)'].map((curr) => (
+                    <button
+                      key={curr}
+                      type="button"
+                      onClick={() => { setCurrency(curr); setCurrencyDropdownOpen(false); }}
+                      className={`w-full cursor-pointer px-3 py-1.5 text-left text-[13px] hover:bg-[#F5F1EA] ${currency === curr ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                    >
+                      {curr}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <p className="mt-1.5 text-[11px] font-semibold text-[#6E6A66] leading-relaxed">
               Read from merchant/system configuration. Base currency for all campaign targets and calculations.
@@ -2070,31 +2154,31 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <p className="text-[13px] text-[#6E6A66]">Select eligible member tiers that can unlock this campaign perk.</p>
           </div>
           <div className="flex flex-wrap gap-2.5">
-            <button onClick={() => toggleTier('Obsidian VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Obsidian VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+            <button onClick={() => toggleTier('Obsidian VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Obsidian VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
               {selectedTiers.includes('Obsidian VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
               Obsidian VIP
             </button>
-            <button onClick={() => toggleTier('VVIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('VVIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+            <button onClick={() => toggleTier('VVIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('VVIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
               {selectedTiers.includes('VVIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
               VVIP
             </button>
-            <button onClick={() => toggleTier('VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+            <button onClick={() => toggleTier('VIP')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('VIP') ? 'bg-[#1A1615] text-white' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
               {selectedTiers.includes('VIP') ? <span className="w-2.5 h-2.5 rounded-full bg-[#D4A753]"></span> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
               VIP
             </button>
-            <button onClick={() => toggleTier('Gold')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Gold') ? 'bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+            <button onClick={() => toggleTier('Gold')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Gold') ? 'bg-[#FDF8EB] border border-[#F3E5C8] text-[#9E782F]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
               {selectedTiers.includes('Gold') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A753]" /> : <span className="w-2.5 h-2.5 rounded-full border-2 border-[#D1CDC7]"></span>}
               Gold
             </button>
-            <button onClick={() => toggleTier('Silver')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Silver') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+            <button onClick={() => toggleTier('Silver')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Silver') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
               {selectedTiers.includes('Silver') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
               Silver
             </button>
-            <button onClick={() => toggleTier('Bronze')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors ${selectedTiers.includes('Bronze') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
+            <button onClick={() => toggleTier('Bronze')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold shadow-sm transition-colors cursor-pointer ${selectedTiers.includes('Bronze') ? 'bg-[#F0F2F5] border border-[#E2E8F0] text-[#475569]' : 'bg-white border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5]'}`}>
               {selectedTiers.includes('Bronze') ? <CheckCircle2 className="w-3.5 h-3.5 text-[#64748B]" /> : <span className="w-3.5 h-3.5 rounded-full border-2 border-[#D1CDC7]"></span>}
               Bronze
             </button>
-            <button onClick={() => toggleTier('All Tiers')} className={`flex items-center px-4 py-2 rounded-full text-[13px] font-bold transition-colors ${selectedTiers.includes('All Tiers') ? 'bg-[#EFECE6] text-[#1A1615]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] hover:bg-[#EFECE6]'}`}>
+            <button onClick={() => toggleTier('All Tiers')} className={`flex items-center px-4 py-2 rounded-full text-[13px] font-bold transition-colors cursor-pointer ${selectedTiers.includes('All Tiers') ? 'bg-[#EFECE6] text-[#1A1615]' : 'bg-[#FAF8F5] border border-[#EFECE6] text-[#6E6A66] hover:bg-[#EFECE6]'}`}>
               All Customers
             </button>
           </div>
@@ -2110,12 +2194,30 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                     <input type="number" defaultValue={1000} className="w-full pl-7 pr-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]" />
                   </div>
                 </div>
-                <div>
+                <div ref={conditionStatusDropdownRef} className="relative">
                   <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Status</label>
-                  <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm focus:outline-none focus:border-[#D4A753]">
-                    <option>Active</option>
-                    <option>Inactive</option>
-                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setConditionStatusDropdownOpen(!conditionStatusDropdownOpen)}
+                    className="w-full flex items-center justify-between bg-white border border-[#EFECE6] px-3 py-2 rounded-lg text-sm font-medium text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
+                  >
+                    <span className="truncate">{conditionStatus}</span>
+                    <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${conditionStatusDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {conditionStatusDropdownOpen && (
+                    <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EFECE6] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+                      {['Active', 'Inactive'].map((status) => (
+                        <button
+                          key={status}
+                          type="button"
+                          onClick={() => { setConditionStatus(status); setConditionStatusDropdownOpen(false); }}
+                          className={`w-full cursor-pointer px-3 py-1.5 text-left text-sm hover:bg-[#F5F1EA] ${conditionStatus === status ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-medium text-[#6E6A66]'}`}
+                        >
+                          {status}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="text-[11px] font-bold text-[#6E6A66] block mb-1">Start Date</label>
@@ -2441,7 +2543,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 1: Basics Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(1)}>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5]  border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(1)}>
               Edit Step 1 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
