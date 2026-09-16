@@ -184,105 +184,8 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                      </div>
                   </div>
 
-                  {/* Color Architecture & Contrast Engine */}
-                  <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm">
-                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-                        <div className="flex items-start gap-2">
-                           <Palette className="w-5 h-5 text-[#A37837] shrink-0 mt-0.5" />
-                           <h2 className="text-lg font-bold text-[#1A1615] leading-tight">Color Architecture & Contrast Engine</h2>
-                        </div>
-                        {/* <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#0D7A53]">
-                           <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span>
-                           16.2:1 AAA Verified
-                        </div> */}
-                     </div>
-
-                     <div className="flex flex-wrap items-center gap-2 p-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl w-full sm:w-fit mb-6">
-                        <button onClick={() => setActiveTheme('Artisanal Roastery (Default)')} className={`px-4 py-1.5 rounded-lg text-[12px] flex items-center gap-2 transition-all ${activeTheme === 'Artisanal Roastery (Default)' ? 'bg-white border border-[#EAE6E1] font-bold text-[#A37837] shadow-xs' : 'font-medium text-[#6E6A66] hover:bg-white hover:shadow-xs border border-transparent'}`}>
-                           <span className="w-2 h-2 rounded-full bg-[#A37837]"></span> Artisanal Roastery (Default)
-                        </button>
-                        <button onClick={() => setActiveTheme('Midnight Obsidian')} className={`px-4 py-1.5 rounded-lg text-[12px] flex items-center gap-2 transition-all ${activeTheme === 'Midnight Obsidian' ? 'bg-white border border-[#EAE6E1] font-bold text-[#1A1615] shadow-xs' : 'font-medium text-[#6E6A66] hover:bg-white hover:shadow-xs border border-transparent'}`}>
-                           <span className="w-2 h-2 rounded-full bg-[#1A1615]"></span> Midnight Obsidian
-                        </button>
-                        <button onClick={() => setActiveTheme('Botanical Reserve')} className={`px-4 py-1.5 rounded-lg text-[12px] flex items-center gap-2 transition-all ${activeTheme === 'Botanical Reserve' ? 'bg-white border border-[#EAE6E1] font-bold text-[#0D7A53] shadow-xs' : 'font-medium text-[#6E6A66] hover:bg-white hover:shadow-xs border border-transparent'}`}>
-                           <span className="w-2 h-2 rounded-full bg-[#0D7A53]"></span> Botanical Reserve
-                        </button>
-                     </div>
-
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {/* Primary Gold Base */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-auto min-h-[100px] gap-3">
-                           <div className="flex items-center justify-between">
-                              <span className="text-[13px] font-bold text-[#1A1615]">Primary Gold Base</span>
-                              <span className="text-[10px] text-[#8C827A]">Buttons & Badges</span>
-                           </div>
-                           <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg shadow-xs flex items-center justify-center cursor-pointer relative group" style={{ backgroundColor: primaryGold }}>
-                                 <Edit2 className="w-3.5 h-3.5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </div>
-                              <div className="bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5 flex-1 flex items-center justify-between font-mono text-[13px] font-bold text-[#1A1615]">
-                                 {primaryGold}
-                              </div>
-                              <div className="text-[9px] text-[#8C827A] font-mono leading-tight text-right uppercase w-[40px]">RGB<br />197,<br />155,<br />70</div>
-                           </div>
-                        </div>
-
-                        {/* Espresso Charcoal */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-auto min-h-[100px] gap-3">
-                           <div className="flex items-center justify-between">
-                              <span className="text-[13px] font-bold text-[#1A1615]">Espresso Charcoal</span>
-                              <span className="text-[10px] text-[#8C827A]">Typography & Marks</span>
-                           </div>
-                           <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg shadow-xs flex items-center justify-center cursor-pointer relative group" style={{ backgroundColor: charcoal }}>
-                                 <Edit2 className="w-3.5 h-3.5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </div>
-                              <div className="bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5 flex-1 flex items-center justify-between font-mono text-[13px] font-bold text-[#1A1615]">
-                                 {charcoal}
-                              </div>
-                              <div className="text-[9px] text-[#8C827A] font-mono leading-tight text-right uppercase w-[40px]">INK<br />PRIMARY</div>
-                           </div>
-                        </div>
-
-                        {/* Canvas Ivory */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-auto min-h-[100px] gap-3">
-                           <div className="flex items-center justify-between">
-                              <span className="text-[13px] font-bold text-[#1A1615]">Canvas Ivory</span>
-                              <span className="text-[10px] text-[#8C827A]">Screen Canvas Ground</span>
-                           </div>
-                           <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg border border-[#EAE6E1] shadow-xs flex items-center justify-center cursor-pointer relative group" style={{ backgroundColor: canvasIvory }}>
-                                 <Edit2 className="w-3.5 h-3.5 text-[#1A1615] opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </div>
-                              <div className="bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5 flex-1 flex items-center justify-between font-mono text-[13px] font-bold text-[#1A1615]">
-                                 {canvasIvory}
-                              </div>
-                              <div className="text-[9px] text-[#8C827A] font-mono leading-tight text-right uppercase w-[40px]">BACK<br />GROUND</div>
-                           </div>
-                        </div>
-
-                        {/* Forest Emerald */}
-                        <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between h-auto min-h-[100px] gap-3">
-                           <div className="flex items-center justify-between">
-                              <span className="text-[13px] font-bold text-[#1A1615]">Forest Emerald</span>
-                              <span className="text-[10px] text-[#8C827A]">Success & Flash Perks</span>
-                           </div>
-                           <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg shadow-xs flex items-center justify-center cursor-pointer relative group" style={{ backgroundColor: forestEmerald }}>
-                                 <Edit2 className="w-3.5 h-3.5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </div>
-                              <div className="bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5 flex-1 flex items-center justify-between font-mono text-[13px] font-bold text-[#1A1615]">
-                                 {forestEmerald}
-                              </div>
-                              <div className="text-[9px] text-[#8C827A] font-mono leading-tight text-right uppercase w-[40px]">SYSTEM<br />LIVE</div>
-                           </div>
-                        </div>
-
-                     </div>
-                  </div>
-
                   {/* Public Roastery & Concierge Metadata */}
-                  <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm mb-12">
+                  <div className="bg-white border border-[#EAE6E1] rounded-2xl p-6 shadow-sm ">
                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
                         <div className="flex items-start gap-2">
                            <Store className="w-5 h-5 text-[#A37837] shrink-0 mt-0.5" />
@@ -388,7 +291,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                      </div>
 
                      {/* Mobile Phone Mockup */}
-                     <div className="flex justify-center mb-6">
+                     <div className="flex justify-center">
                         <div className="w-[320px] bg-[#1A1615] rounded-[40px] p-2.5 shadow-2xl relative border-4 border-[#3D3732]">
                            {/* Notch */}
                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#1A1615] rounded-b-3xl z-30"></div>
@@ -521,12 +424,12 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                         </div>
                      </div>
 
-                     <div className="flex items-center justify-between text-[11px]">
+                     {/* <div className="flex items-center justify-between text-[11px]">
                         <div className="flex items-center gap-1.5 text-[#0D7A53] font-medium">
                            <CheckCircle2 className="w-3.5 h-3.5" /> Tokens Validated for PassKit 3.0
                         </div>
                         <button className="font-bold text-[#C59B46] hover:underline">Test on Device</button>
-                     </div>
+                     </div> */}
                   </div>
                </div>
             </div>
