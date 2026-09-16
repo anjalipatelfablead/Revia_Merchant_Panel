@@ -414,9 +414,9 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
             >
               <span>{
                 sortBy === 'revenue-desc' ? 'Sort by: Revenue (High to Low)' :
-                sortBy === 'revenue-asc' ? 'Sort by: Revenue (Low to High)' :
-                sortBy === 'name-asc' ? 'Sort by: Name (A-Z)' :
-                'Sort by: Name (Z-A)'
+                  sortBy === 'revenue-asc' ? 'Sort by: Revenue (Low to High)' :
+                    sortBy === 'name-asc' ? 'Sort by: Name (A-Z)' :
+                      'Sort by: Name (Z-A)'
               }</span>
               <Sliders className="w-3 h-3 text-[#8C827A]" />
             </button>
@@ -568,15 +568,6 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                           Manage
                         </button>
                       )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          showToast(`Managing options for ${outlet.shortName}`);
-                        }}
-                        className="p-1 text-[#8C827A] hover:text-[#1A1615] rounded hover:bg-[#FAF8F5] cursor-pointer"
-                      >
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
                     </div>
                   </div>
 
