@@ -15,89 +15,7 @@ import {
 } from 'lucide-react';
 import { RETENTION_COHORT_DATA } from '../data/mockData';
 
-const mobileRetentionDrivers = [
-  {
-    name: 'Panama Geisha Reserve',
-    subtitle: 'Single Origin Pour',
-    rate: '94% repeat',
-    detail: '420 stamps linked',
-    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=120&auto=format&fit=crop&q=80',
-  },
-  {
-    name: 'Cardamom Tahini Cruffin',
-    subtitle: 'Viennoiserie Batch',
-    rate: '88% repeat',
-    detail: '310 stamps linked',
-    image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120&auto=format&fit=crop&q=80',
-  },
-  {
-    name: 'Madagascar Vanilla Latte',
-    subtitle: 'House Bean Extraction',
-    rate: '81% repeat',
-    detail: '680 stamps linked',
-    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=120&auto=format&fit=crop&q=80',
-  },
-];
 
-const MobileAnalyticsView: React.FC = () => {
-  const cohorts = [
-    { name: 'W1 Oct Cohort', size: '980 patrons', change: '+4.1% MoM', values: ['100%', '84%', '76%', '68%'] },
-    { name: 'W2 Oct Cohort', size: '1,120 patrons', change: '+8.6% MoM', values: ['100%', '88%', '79%', '71%'] },
-  ];
-
-  return (
-    <div className="min-h-screen bg-[#FBF6F1] px-5 pb-7 pt-3 text-[#211C19]">
-      <div className="mx-auto w-full max-w-[430px]">
-        <div className="pt-4">
-          <div className="flex items-center justify-between gap-2">
-            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Analytics &amp; Retention</h1>
-            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#B9F1CF] px-2 py-1 text-[10px] font-bold text-[#08734B]"><span className="h-1.5 w-1.5 rounded-full bg-[#0D9A63]" />Live Telemetry</span>
-          </div>
-          <p className="mt-2 text-[15px] text-[#756D65]">Longitudinal cohort curves &amp; VIP telemetry</p>
-        </div>
-
-        <div className="mt-4 flex gap-2 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {['Last 30D', 'Last 90D', 'YTD', 'All Branches'].map((period, index) => (
-            <button key={period} type="button" className={`shrink-0 rounded-full px-4 py-2 text-[12px] font-bold cursor-pointer transition-all ${index === 1 ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-xs' : 'bg-[#F3E9DF] text-[#3D3732] hover:bg-[#EAE1D7]'}`}>{period}</button>
-          ))}
-        </div>
-
-        <section className="mt-4 grid grid-cols-2 gap-2">
-          {[
-            { label: '30D Retention', value: '74.8%', detail: '+6.2% vs avg', icon: Timer, positive: true },
-            { label: 'Obsidian LTV', value: '₹1,480', detail: '₹38.90 AOV baseline', icon: Award },
-            { label: 'Stamp Velocity', value: '12.4 Days', detail: 'To 10th stamp reward', icon: Timer },
-            { label: 'Churn Risk', value: '4.2%', detail: '18 rescued this wk', icon: ShieldCheck, positive: true },
-          ].map(({ label, value, detail, icon: Icon, positive }) => (
-            <div key={label} className="min-h-[116px] rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-              <div className="flex items-center justify-between"><span className="text-xs font-medium text-[#7C746C]">{label}</span><span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#FBF1E4] text-[#A8761C]"><Icon className="h-3.5 w-3.5" /></span></div>
-              <div className="mt-3 text-2xl font-bold leading-none tracking-tight">{value}</div>
-              <div className={`mt-1 text-[11px] font-medium ${positive ? 'text-[#078157]' : 'text-[#756D65]'}`}>{positive && <span className="mr-1">↗</span>}{detail}</div>
-            </div>
-          ))}
-        </section>
-
-        <section className="mt-8 rounded-[13px] bg-white p-4 shadow-[0_5px_18px_rgba(60,38,20,0.05)]">
-          <div className="flex items-start justify-between"><div><h2 className="text-[15px] font-bold text-[#1A1615]">Cohort Decay Curves</h2><p className="text-[11px] font-semibold text-[#6E6A66]">Weekly active return telemetry</p></div><SlidersHorizontal className="mt-1 h-4 w-4 text-[#756D65]" /></div>
-          <div className="mt-2 flex items-center justify-between rounded-[8px] bg-[#FCF2E7] px-3 py-2 text-[10px] text-[#756D65]"><span className="font-bold">Cohort Origin</span><span className="flex gap-2"><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#E6D5BA]" />&lt;50%</span><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#B69A5B]" />70%</span><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#806014]" />90%+</span></span></div>
-          <div className="mt-3 space-y-3">
-            {cohorts.map((cohort) => (
-              <div key={cohort.name} className="rounded-[8px] bg-[#FCF5EE] p-3"><div className="flex items-center justify-between text-[12px]"><span><b>{cohort.name}</b> <span className="text-[#756D65]">({cohort.size})</span></span><b className="text-[#087B55]">{cohort.change}</b></div><div className="mt-2 grid grid-cols-4 gap-1.5">{cohort.values.map((value, index) => <div key={value} className={`rounded-[4px] px-1 py-1.5 text-center text-white ${['bg-[#8A6200]', 'bg-[#9F7E2D]', 'bg-[#B29A5F]', 'bg-[#BDAA7C]'][index]}`}><div className="text-[9px] opacity-80">W{index === 3 ? 4 : index}</div><b className="text-[14px]">{value}</b></div>)}</div></div>
-            ))}
-          </div>
-          <div className="mt-4 flex gap-2 rounded-[8px] bg-[#FFF0D7] p-3 text-[11px] leading-[1.25] text-[#513C18]"><Award className="h-4 w-4 shrink-0 text-[#9A741E]" /><span><b>Obsidian cohort retention outperforms</b> roastery benchmark by <b className="text-[#087B55]">+22%</b> over a 90-day trajectory.</span></div>
-        </section>
-
-        <section className="mt-8 rounded-[13px] bg-white p-4 shadow-[0_5px_18px_rgba(60,38,20,0.05)]"><div className="flex items-start justify-between"><div><h2 className="text-[15px] font-bold text-[#1A1615]">VIP Tier Progression</h2><p className="text-[11px] font-semibold text-[#6E6A66]">Conversion funnel &amp; velocity</p></div><span className="rounded-[4px] bg-[#F4EEE8] px-2 py-1 text-[10px] font-bold text-[#756D65]">3,420 Enrolled</span></div><div className="mt-3 space-y-2.5">{[['Guest Scan', '100%', '3,420 guests', 'bg-[#6E6862]'], ['Prive Member', '82%', '2,804 members', 'bg-[#D4A753]'], ['Black Tier', '34%', '1,162 members', 'bg-[#C39A3D]'], ['Obsidian VIP', '11.8%', '404 members', 'bg-[#8A6200]']].map(([name, value, detail, color], index) => <div key={name}><div className="flex justify-between text-[12px]"><span className="font-medium"><i className={`mr-1.5 inline-block h-2 w-2 rounded-full ${color}`} />{name}</span><b>{value} <span className="font-normal">• {detail}</span></b></div><div className="mt-1 h-2.5 rounded-full bg-[#EFE5DA]"><div className={`h-full rounded-full ${color}`} style={{ width: value }} /></div>{index > 0 && <div className="ml-3 mt-1 text-[10px] text-[#756D65]">Avg velocity: {index === 1 ? '14 days from guest activation' : index === 2 ? '42 days (3.8 visits/wk)' : 'Generates top 48.6% of gross margin'}</div>}</div>)}</div></section>
-
-        <section className="mt-8"><div className="flex items-end justify-between"><div><h2 className="text-[15px] font-bold text-[#1A1615]">High LTV Drivers</h2><p className="text-[11px] font-semibold text-[#6E6A66]">Menu items prompting repeat visits</p></div><span className="text-[11px] font-bold text-[#A8761C]">TOP 3</span></div><div className="mt-3 space-y-2">{mobileRetentionDrivers.map((item) => <div key={item.name} className="flex items-center gap-3 rounded-[12px] bg-white p-3 shadow-[0_4px_14px_rgba(60,38,20,0.04)]"><img src={item.image} alt="" className="h-12 w-12 rounded-[7px] object-cover" /><div className="min-w-0 flex-1"><div className="truncate text-[13px] font-bold">{item.name}</div><div className="text-[11px] text-[#756D65]">{item.subtitle}</div></div><div className="text-right text-[11px]"><b className="block text-[#087B55]">{item.rate}</b><span>{item.detail}</span></div></div>)}</div></section>
-
-        <button type="button" className="mt-8 flex w-full items-center justify-center gap-2 rounded-[11px] bg-gradient-to-r from-[#D4A753] to-[#9E782F] py-3.5 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><FileText className="h-4 w-4" />Download Executive PDF Report</button>
-        <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-[#756D65]"><LockKeyhole className="h-3 w-3" />Encrypted TLS 1.3 telemetry • Revia Merchant Audit v4.2</div>
-      </div>
-    </div>
-  );
-};
 
 export const AnalyticsPage: React.FC = () => {
   const [selectedDateRange, setSelectedDateRange] = useState('Last 90 Days (Aug 15 - Nov 14, 2024)');
@@ -307,11 +225,7 @@ export const AnalyticsPage: React.FC = () => {
 
   return (
     <>
-      <div className="md:hidden">
-        <MobileAnalyticsView />
-      </div>
-      <div className="hidden md:block">
-        <div className="min-h-0 bg-[#F6F3EE] px-3 pb-2 pt-4 sm:px-5 lg:px-6">
+      <div className="min-h-0 bg-[#F6F3EE] px-3 pb-2 pt-4 sm:px-5 lg:px-6 w-full">
           <div className="mx-auto w-full max-w-[1400px]">
             <header className="relative z-30 bg-[#F6F3EE]  pt-3">
               {/*
@@ -343,7 +257,7 @@ export const AnalyticsPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="hidden md:hidden lg:flex max-w-[380px] flex-wrap items-start justify-end gap-2 self-start lg:grid lg:w-[560px] lg:max-w-full lg:grid-cols-2 lg:self-auto">
+                <div className="flex w-full flex-col sm:flex-row lg:grid lg:w-[560px] lg:max-w-full lg:grid-cols-2 gap-2 self-start lg:self-auto mt-4 lg:mt-0">
                   <div className="relative z-50 min-w-[230px] lg:min-w-0 lg:w-full dropdown-container">
                     <button type="button" onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
                       <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Calendar className="h-2.5 w-2.5" /></span>
@@ -373,37 +287,7 @@ export const AnalyticsPage: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="hidden md:flex lg:hidden w-full max-w-[760px] flex-wrap items-center gap-2 self-start">
-                  <div className="flex w-full flex-wrap items-center gap-2">
-                    <div className="relative z-50 min-w-[180px] flex-1 dropdown-container">
-                      <button type="button" onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
-                        <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Calendar className="h-2.5 w-2.5" /></span>
-                        <span className="flex min-w-0 flex-1 flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Date horizon</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedDateRange}</span></span>
-                        <ChevronDown className={`h-3 w-3 shrink-0 text-[#8C847A] transition-transform ${openDropdown === 'date' ? 'rotate-180' : ''}`} />
-                      </button>
-                      {openDropdown === 'date' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[230px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose date horizon</div>{['Last 30 Days', 'Last 90 Days (Aug 15 - Nov 14, 2024)', 'Year to date'].map((range) => <button key={range} type="button" onClick={() => { setSelectedDateRange(range); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedDateRange === range ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{range}</button>)}</div>}
-                    </div>
 
-                    <div className="relative z-50 min-w-[150px] flex-1 dropdown-container">
-                      <button type="button" onClick={() => setOpenDropdown(openDropdown === 'venue' ? null : 'venue')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
-                        <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Filter className="h-2.5 w-2.5" /></span>
-                        <span className="flex min-w-0 flex-1 flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Venues</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedVenue}</span></span>
-                        <ChevronDown className={`h-3 w-3 shrink-0 text-[#8C847A] transition-transform ${openDropdown === 'venue' ? 'rotate-180' : ''}`} />
-                      </button>
-                      {openDropdown === 'venue' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[160px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose venue</div>{['All Venues (3)', 'Downtown Flagship', 'Roastery Reserve', 'Northside Pop-up'].map((venue) => <button key={venue} type="button" onClick={() => { setSelectedVenue(venue); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedVenue === venue ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{venue}</button>)}</div>}
-                    </div>
-
-                    <div className="inline-flex min-w-[160px] flex-1 items-center gap-2 rounded-[9px] border border-[#E7E1D8] bg-[#F4F0EA] px-2.5 py-1.5 shadow-[0_2px_8px_rgba(25,20,18,0.02)]">
-                      <BarChart3 className="h-3 w-3 text-[#9E782F]" />
-                      <span className="flex flex-col text-[10px] font-bold uppercase leading-3 tracking-widest text-[#1A1615]"><span className="text-[#8C847A]">Cohort benchmark</span><span className="inline-flex items-center gap-1 text-[#1A1615]"><span>VIP vs</span><span>New Guests</span></span></span>
-                    </div>
-
-                    <button type="button" onClick={exportDossier} className="inline-flex min-w-[150px] flex-1 items-center justify-center gap-1.5 rounded-[9px] bg-gradient-to-b from-[#D4A753] to-[#9E782F] px-2.5 py-3 text-[10px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95">
-                      <Download className="h-3 w-3" />
-                      {exported ? 'Dossier Ready' : 'Export CSV / PDF Dossier'}
-                    </button>
-                  </div>
-                </div>
               </div>
             </header>
 
@@ -455,7 +339,7 @@ export const AnalyticsPage: React.FC = () => {
 
             <div className="mt-4 grid gap-3 xl:grid-cols-[1.75fr_0.9fr]">
               <main className="space-y-3">
-                <section className="overflow-hidden rounded-[9px] border border-[#E9E2D8] bg-white p-2.5 shadow-[0_5px_16px_rgba(29,24,18,0.02)] sm:p-3">
+                <section className="hidden md:block overflow-hidden rounded-[9px] border border-[#E9E2D8] bg-white p-2.5 shadow-[0_5px_16px_rgba(29,24,18,0.02)] sm:p-3">
                   <div className="mb-2 flex flex-col gap-2 border-b border-[#EAE3D9] pb-2 md:flex-row md:items-start md:justify-between">
                     <div>
                       <h2 className="text-[15px] font-bold text-[#1A1615]">Weekly Retention Cohort Heatmap <span className="text-[10px] text-[#8C847A]">(i)</span></h2>
@@ -623,7 +507,7 @@ export const AnalyticsPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+
     </>
   );
 };
