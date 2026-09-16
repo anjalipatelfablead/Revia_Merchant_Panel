@@ -18,6 +18,7 @@ interface CatalogItem {
   title: string;
   sku: string;
   category: string;
+  branch?: string;
   price: number;
   cost: number;
   image: string;
@@ -92,10 +93,13 @@ export const ItemCatalogPage: React.FC = () => {
   // Add Modal state
   const [newItemTitle, setNewItemTitle] = useState('');
   const [newItemCategory, setNewItemCategory] = useState('');
+  const [newItemBranch, setNewItemBranch] = useState('');
   const [newItemSku, setNewItemSku] = useState('');
   const [newItemPrice, setNewItemPrice] = useState('');
   const [newItemCost, setNewItemCost] = useState('');
   const [newItemImage, setNewItemImage] = useState<string | null>(null);
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
@@ -128,6 +132,11 @@ export const ItemCatalogPage: React.FC = () => {
   };
 
   const handleAddItem = () => {
+    if (!newItemBranch) {
+      setToastMessage('Branch selection is required');
+      setTimeout(() => setToastMessage(null), 3000);
+      return;
+    }
     if (!newItemTitle || !newItemPrice || !newItemCost || !newItemCategory) return;
 
     const newItem: CatalogItem = {
@@ -146,6 +155,7 @@ export const ItemCatalogPage: React.FC = () => {
     // Reset Form
     setNewItemTitle('');
     setNewItemCategory('');
+    setNewItemBranch('');
     setNewItemSku('');
     setNewItemPrice('');
     setNewItemCost('');
@@ -156,6 +166,11 @@ export const ItemCatalogPage: React.FC = () => {
 
   const handleUpdateItem = () => {
     if (!editingItem) return;
+    if (!editingItem.branch) {
+      setToastMessage('Branch selection is required');
+      setTimeout(() => setToastMessage(null), 3000);
+      return;
+    }
     setItems(items.map(i => i.id === editingItem.id ? editingItem : i));
   };
 
@@ -225,7 +240,12 @@ export const ItemCatalogPage: React.FC = () => {
   };
 
   return (
-    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col h-full font-sans">
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-6 flex flex-col h-full font-sans relative">
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-[60] bg-[#DC2626] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#991B1B] animate-in slide-in-from-bottom-5 fade-in">
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
       {/* HEADER SECTION */}
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
@@ -552,7 +572,16 @@ export const ItemCatalogPage: React.FC = () => {
                   <input type="text" value={editingItem.title} onChange={e => setEditingItem({ ...editingItem, title: e.target.value })} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[13px] text-[#1A1615] focus:outline-none focus:border-[#B38637]" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Branch</label>
+                    <select value={editingItem.branch || ''} onChange={e => setEditingItem({ ...editingItem, branch: e.target.value })} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[13px] text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer">
+                      <option value="" disabled>Select branch</option>
+                      <option value="Downtown Flagship">Downtown Flagship</option>
+                      <option value="Northside Mall">Northside Mall</option>
+                      <option value="West End Kiosk">West End Kiosk</option>
+                    </select>
+                  </div>
                   <div>
                     <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Category</label>
                     <select value={editingItem.category} onChange={e => setEditingItem({ ...editingItem, category: e.target.value })} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-3 py-2.5 text-[13px] text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer">
@@ -716,7 +745,16 @@ export const ItemCatalogPage: React.FC = () => {
                   <input type="text" value={newItemTitle} onChange={e => setNewItemTitle(e.target.value)} placeholder="Enter item title" className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637]" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Branch</label>
+                    <select value={newItemBranch} onChange={e => setNewItemBranch(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer">
+                      <option value="" disabled>Select branch</option>
+                      <option value="Downtown Flagship">Downtown Flagship</option>
+                      <option value="Northside Mall">Northside Mall</option>
+                      <option value="West End Kiosk">West End Kiosk</option>
+                    </select>
+                  </div>
                   <div>
                     <label className="block text-[11px] font-bold text-[#1A1615] mb-1.5">Category</label>
                     <select value={newItemCategory} onChange={e => setNewItemCategory(e.target.value)} className="w-full bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg px-4 py-3 text-sm text-[#1A1615] focus:outline-none focus:border-[#B38637] appearance-none cursor-pointer">

@@ -288,7 +288,6 @@ export const RedemptionTerminalPage = () => {
               <span className="flex items-center gap-2 text-[11px] font-bold text-[#1A1615] uppercase tracking-wider">
                 <Receipt className="w-4 h-4 text-[#D4A753] shrink-0" /> TODAY'S LANE REDEMPTIONS
               </span>
-              <span className="text-[11px] text-[#6E6A66]">Lane #02 • {settledLogs.length + 11} settled today</span>
             </div>
 
             <div className="space-y-2">
