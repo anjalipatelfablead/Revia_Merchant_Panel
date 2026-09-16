@@ -1558,8 +1558,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       type="button"
                       onClick={() => setDirectRedemptionMode('auto')}
                       className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${directRedemptionMode === 'auto'
-                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
                         }`}
                     >
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${directRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
@@ -1577,8 +1577,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       type="button"
                       onClick={() => setDirectRedemptionMode('merchant_approval')}
                       className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${directRedemptionMode === 'merchant_approval'
-                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
                         }`}
                     >
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${directRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
@@ -1656,8 +1656,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       type="button"
                       onClick={() => setProductQrRedemptionMode('auto')}
                       className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${productQrRedemptionMode === 'auto'
-                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
                         }`}
                     >
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${productQrRedemptionMode === 'auto' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
@@ -1675,8 +1675,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       type="button"
                       onClick={() => setProductQrRedemptionMode('merchant_approval')}
                       className={`p-3.5 rounded-xl border-2 transition-all text-left flex items-start gap-3 cursor-pointer ${productQrRedemptionMode === 'merchant_approval'
-                          ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
-                          : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
+                        ? 'bg-[#FDF8EB] border-[#D4A753] shadow-sm'
+                        : 'bg-white border-[#EFECE6] hover:border-[#D4A753]/50'
                         }`}
                     >
                       <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${productQrRedemptionMode === 'merchant_approval' ? 'bg-[#D4A753] text-white' : 'bg-[#FAF8F5] text-[#9E9A93]'
@@ -2543,7 +2543,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 1: Basics Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5]  border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(1)}>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] cursor-pointer  border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(1)}>
               Edit Step 1 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
@@ -2602,7 +2602,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 2: Audience Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(2)}>
+            <button className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(2)}>
               Edit Step 2 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
@@ -2659,7 +2659,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 3: Conditions &amp; Rules Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(3)}>
+            <button className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(3)}>
               Edit Step 3 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
@@ -2726,7 +2726,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                 <h3 className="text-[18px] font-bold text-[#1A1615]">Step 4: Reward Definition Summary</h3>
               </div>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(4)}>
+            <button className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors" onClick={() => setCurrentStep(4)}>
               Edit Step 4 <ArrowRight className="w-3 h-3 -rotate-45" />
             </button>
           </div>
