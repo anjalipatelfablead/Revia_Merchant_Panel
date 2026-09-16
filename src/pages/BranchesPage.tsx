@@ -445,7 +445,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           </div>
 
           {/* View Mode Toggle */}
-          <div className="flex items-center border border-[#EAE6E1] bg-white rounded-lg p-0.5 shadow-2xs">
+          {/* <div className="flex items-center border border-[#EAE6E1] bg-white rounded-lg p-0.5 shadow-2xs">
             <button
               onClick={() => setViewMode('list')}
               className={`p-1.5 rounded-md transition-colors cursor-pointer ${viewMode === 'list'
@@ -469,7 +469,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
             >
               <Map className="w-4 h-4" />
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 

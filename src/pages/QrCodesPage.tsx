@@ -528,7 +528,7 @@ export const QrCodesPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="text-center mb-6">
+                <div className="text-center">
                   <span className="inline-block px-3 py-1 bg-white border border-[#EFECE6] rounded-full text-[10px] font-bold text-[#6E6A66] tracking-widest shadow-xs">
                     ⊙ Vector Asset Ready • CMYK 300 DPI Export
                   </span>
@@ -537,7 +537,7 @@ export const QrCodesPage: React.FC = () => {
                 {/* Material & Dynamic Routing Configuration Controls */}
                 <div className="space-y-5">
                   {/* 1. Brand Foil & Acrylic Accent */}
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Brand Foil &amp; Acrylic Accent</label>
                     <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-[#EFECE6]">
                       <div className="flex items-center gap-2 border-r border-[#EFECE6] pr-3">
@@ -547,10 +547,10 @@ export const QrCodesPage: React.FC = () => {
                       </div>
                       <span className="text-xs font-semibold text-[#1A1615]">Champagne Gold Hot-stamped metallic foil</span>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* 2. Dynamic Routing Target (Cloud Redirect) */}
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Dynamic Routing Target</label>
                       <span className="text-[9px] font-bold px-1.5 py-0.5 bg-[#FEF3C7] text-[#B45309] rounded uppercase">INSTANT SHIFT</span>
@@ -567,10 +567,10 @@ export const QrCodesPage: React.FC = () => {
                         <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> https://revia.club/df/104
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* 3. Pattern Density & Error Correction */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Pattern Density</label>
                       <div className="relative">
@@ -591,10 +591,10 @@ export const QrCodesPage: React.FC = () => {
                         <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#9E9A93] pointer-events-none" />
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* 4. Physical Material Fabric */}
-                  <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 flex items-center justify-between">
+                  {/* <div className="bg-[#FAF8F5] border border-[#EFECE6] rounded-xl p-3 flex items-center justify-between">
                     <div className="space-y-1">
                       <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Physical Material Fabric</div>
                       <div className="text-[11px] font-semibold text-[#1A1615]">{selectedAssetDetails.material}</div>
@@ -602,7 +602,7 @@ export const QrCodesPage: React.FC = () => {
                     <button className="px-3 py-1.5 bg-white border border-[#EFECE6] rounded-lg text-[10px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors cursor-pointer shrink-0 uppercase tracking-wider">
                       Change
                     </button>
-                  </div>
+                  </div> */}
                 </div>
 
               </div>
@@ -612,7 +612,7 @@ export const QrCodesPage: React.FC = () => {
                 <div className="flex items-center gap-3 mb-3">
                   <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 text-xs font-bold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-sm cursor-pointer">
                     <Download className="w-4 h-4" />
-                    Download Vector 
+                    Download Vector
                   </button>
                   <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-xl transition-opacity shadow-sm cursor-pointer">
                     <Save className="w-4 h-4" /> Save &amp; Push Live

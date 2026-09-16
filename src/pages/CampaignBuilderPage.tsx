@@ -56,8 +56,11 @@ import {
   ChevronRight,
   Wallet,
   Eye,
-  Download
+  Download,
+  Image as ImageIcon,
+  Award
 } from 'lucide-react';
+import { AddItemModal } from '../components/AddItemModal';
 
 interface CampaignRulesStepProps {
   campaignType: string;
@@ -1304,6 +1307,16 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [directRedemptionMode, setDirectRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
   const [productQrName, setProductQrName] = useState<string>('Single Origin Geisha (250g Whole Bean)');
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+  
+  // Modal states for Add New Item
+  const [isAddCatalogItemModalOpen, setIsAddCatalogItemModalOpen] = useState(false);
+
+  const handleAddCatalogItem = (item: any) => {
+    setCatalogProducts(prev => [...prev, item.title]);
+    setProductQrName(item.title);
+    setIsAddCatalogItemModalOpen(false);
+  };
+
   const [showNewItemInput, setShowNewItemInput] = useState(false);
   const [newItemName, setNewItemName] = useState('');
   const [catalogProducts, setCatalogProducts] = useState([
@@ -1374,6 +1387,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
     { id: 2, name: 'Holiday Triple Stamps', type: 'Stamp Campaign', status: 'Draft', target: 'All Customers', startDate: 'Dec 1, 2024', endDate: 'Dec 31, 2024', progress: 0, reward: 'Free Pastry' },
     { id: 3, name: 'Morning Happy Hour', type: 'Happy Hours', status: 'Active', target: 'Gold', startDate: 'Oct 15, 2024', endDate: 'Ongoing', progress: 42, reward: '10% Discount' },
   ]);
+
+  React.useEffect(() => {
+    campaigns.forEach(c => {
+      const img = new window.Image();
+      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`;
+    });
+  }, [campaigns]);
 
   const [priorityLevel, setPriorityLevel] = useState<number>(1);
   const [selectedTiers, setSelectedTiers] = useState<string[]>(['Obsidian VIP', 'Gold Reserve']);
@@ -1788,6 +1808,22 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
                     {productDropdownOpen && (
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+                        {/* Add New Item */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsAddCatalogItemModalOpen(true);
+                            setProductDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-3.5 py-2.5 text-[11px] font-bold text-[#D4A753] flex items-center gap-1.5 cursor-pointer hover:bg-[#FDF8EB] transition-colors"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Add New Item
+                        </button>
+                        
+                        {/* Divider */}
+                        <div className="border-b border-[#EFECE6]" />
+
                         <div className="max-h-[220px] overflow-y-auto py-1">
                           {catalogProducts.map((product) => (
                             <button
@@ -1808,56 +1844,6 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                             </button>
                           ))}
                         </div>
-
-                        {/* Divider */}
-                        <div className="border-t border-[#EFECE6]" />
-
-                        {/* Add New Item */}
-                        {!showNewItemInput ? (
-                          <button
-                            type="button"
-                            onClick={() => setShowNewItemInput(true)}
-                            className="w-full text-left px-3.5 py-2.5 text-[11px] font-bold text-[#D4A753] flex items-center gap-1.5 cursor-pointer hover:bg-[#FDF8EB] transition-colors"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                            Add New Item
-                          </button>
-                        ) : (
-                          <div className="px-3 py-2.5 flex items-center gap-2">
-                            <input
-                              type="text"
-                              autoFocus
-                              value={newItemName}
-                              onChange={e => setNewItemName(e.target.value)}
-                              onKeyDown={e => {
-                                if (e.key === 'Enter' && newItemName.trim()) {
-                                  setCatalogProducts(prev => [...prev, newItemName.trim()]);
-                                  setProductQrName(newItemName.trim());
-                                  setNewItemName('');
-                                  setShowNewItemInput(false);
-                                  setProductDropdownOpen(false);
-                                }
-                              }}
-                              placeholder="Enter product name..."
-                              className="flex-1 px-2.5 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] placeholder:text-[#9E9A93]"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (newItemName.trim()) {
-                                  setCatalogProducts(prev => [...prev, newItemName.trim()]);
-                                  setProductQrName(newItemName.trim());
-                                  setNewItemName('');
-                                  setShowNewItemInput(false);
-                                  setProductDropdownOpen(false);
-                                }
-                              }}
-                              className="px-2.5 py-1.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[10px] font-bold rounded-lg cursor-pointer hover:shadow-sm transition-all"
-                            >
-                              Add
-                            </button>
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>
@@ -3384,7 +3370,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
                     </td>
                     <td className="py-4 px-5 text-right space-x-2 flex justify-end">
-                      <button onClick={() => setQrModalCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
+                      <button onClick={() => setQrModalCampaign(c)} onMouseEnter={() => { const img = new Image(); img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`; }} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
                       <button onClick={() => handleDownload(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
                       <button onClick={handleOpenBuilder} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
                       <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
@@ -3462,7 +3448,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#EFECE6]">
-                        <button onClick={() => setQrModalCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                        <button onClick={() => setQrModalCampaign(c)} onMouseEnter={() => { const img = new Image(); img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${c.id || 'promo'}`; }} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Eye className="w-3.5 h-3.5" /> View
                         </button>
                         <button onClick={() => handleDownload(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
@@ -3494,7 +3480,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       <>
         {renderDashboard()}
         
-        {/* QR Code Modal */}
+
+      {/* QR Code Modal */}
         {qrModalCampaign && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 relative flex flex-col items-center text-center">
@@ -3505,7 +3492,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <h3 className="text-lg font-bold text-[#1A1615] mb-2">{qrModalCampaign.name}</h3>
               <p className="text-xs text-[#7C746C] mb-6">Scan this QR code to join the campaign.</p>
               <div className="w-48 h-48 bg-white border-2 border-[#EFECE6] rounded-xl flex items-center justify-center mb-6 shadow-sm overflow-hidden">
-                 <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${qrModalCampaign.id || 'promo'}`} alt="QR Code" className="w-full h-full object-contain p-2" />
+                 <img fetchpriority="high" loading="eager" src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${qrModalCampaign.id || 'promo'}`} alt="QR Code" className="w-full h-full object-contain p-2" />
               </div>
               <button onClick={() => handleDownload(qrModalCampaign)} className="w-full py-3 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-md hover:bg-black transition-colors cursor-pointer flex items-center justify-center gap-2">
                 <Download className="w-4 h-4" /> Download QR Code
@@ -3519,6 +3506,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] relative">
+
+      {/* Add Item Modal */}
+      <AddItemModal
+        isOpen={isAddCatalogItemModalOpen}
+        onClose={() => setIsAddCatalogItemModalOpen(false)}
+        onAdd={handleAddCatalogItem}
+      />
 
       {/* Add Location Modal */}
       {isAddLocationOpen && (
