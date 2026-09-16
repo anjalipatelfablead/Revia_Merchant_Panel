@@ -425,8 +425,8 @@ export const TransactionsPage: React.FC = () => {
                             <>
                               <div className="fixed inset-0 z-[50]" onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); }} />
                               <div className={`absolute right-0 w-40 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-[60] overflow-hidden text-left ${idx >= currentTransactions.length - 2 && currentTransactions.length > 2 ? 'bottom-full mb-1' : 'top-full mt-1'}`}>
-                                <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); setReceiptModalTx(tx); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5]">View Receipt</button>
-                                <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Refunding transaction...'); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#DC2626] hover:bg-[#FEE2E2]">Refund</button>
+                                <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); setReceiptModalTx(tx); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1A1615] cursor-pointer hover:bg-[#FAF8F5]">View Receipt</button>
+                                <button onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); showToast('Refunding transaction...'); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#DC2626] cursor-pointer hover:bg-[#FEE2E2]">Refund</button>
                               </div>
                             </>
                           )}
@@ -564,7 +564,7 @@ export const TransactionsPage: React.FC = () => {
                     <span className="text-[9px] font-bold uppercase tracking-wider text-white/70">QUICK MODE</span>
                     <button
                       onClick={() => setFastEntryMode(!fastEntryMode)}
-                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${fastEntryMode ? 'bg-[#0D7A53]' : 'bg-[#4A4441]'}`}
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none cursor-pointer ${fastEntryMode ? 'bg-[#0D7A53]' : 'bg-[#4A4441]'}`}
                     >
                       <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${fastEntryMode ? 'translate-x-4.5' : 'translate-x-1'}`} />
                     </button>
@@ -855,7 +855,7 @@ export const TransactionsPage: React.FC = () => {
                   </span>
                 </div>
               </div>
-              
+
               <button onClick={() => { setReceiptModalTx(null); showToast('Receipt printed'); }} className="w-full mt-6 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-[#EFECE6] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer">
                 Print Receipt
               </button>

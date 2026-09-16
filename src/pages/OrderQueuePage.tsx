@@ -10,7 +10,8 @@ import {
   Coffee,
   CheckCircle2,
   MoreVertical,
-  X
+  X,
+  ChevronDown
 } from 'lucide-react';
 import { NavRoute } from '../types';
 
@@ -88,6 +89,7 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
   const [chimeEnabled, setChimeEnabled] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeFilter, setActiveFilter] = useState<OrderStatus | 'All'>('All');
+  const [openAssignDropdownId, setOpenAssignDropdownId] = useState<string | null>(null);
 
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [manualCustomerName, setManualCustomerName] = useState('');
@@ -275,16 +277,35 @@ export const OrderQueuePage: React.FC<{ onNavigate?: (route: NavRoute) => void }
                           Unassign
                         </button>
                       ) : (
-                        <select
-                          className="text-[10px] font-bold tracking-wider bg-white border border-[#EAE6E1] rounded px-1.5 py-1 outline-none focus:border-[#D4A753] cursor-pointer text-[#1A1615]"
-                          value=""
-                          onChange={(e) => assignStaff(order.id, e.target.value)}
-                        >
-                          <option value="" disabled>Assign Staff...</option>
-                          <option value="Elena Rostova">Elena Rostova</option>
-                          <option value="John Doe">John Doe</option>
-                          <option value="Sarah Smith">Sarah Smith</option>
-                        </select>
+                        <div className="relative">
+                          <button
+                            onClick={() => setOpenAssignDropdownId(openAssignDropdownId === order.id ? null : order.id)}
+                            className="flex items-center gap-1 text-[10px] font-bold tracking-wider bg-white border border-[#EAE6E1] rounded px-2 py-1 outline-none hover:border-[#D4A753] cursor-pointer text-[#1A1615]"
+                          >
+                            Assign Staff...
+                            <ChevronDown className={`w-3 h-3 transition-transform ${openAssignDropdownId === order.id ? 'rotate-180' : ''}`} />
+                          </button>
+                          {openAssignDropdownId === order.id && (
+                            <>
+                              <div className="fixed inset-0 z-[50]" onClick={(e) => { e.stopPropagation(); setOpenAssignDropdownId(null); }} />
+                              <div className="absolute right-0 top-full mt-1 w-32 bg-white border border-[#EFECE6] rounded-md shadow-xl z-[60] overflow-hidden text-left">
+                                {['Elena Rostova', 'John Doe', 'Sarah Smith'].map(staff => (
+                                  <button
+                                    key={staff}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      assignStaff(order.id, staff);
+                                      setOpenAssignDropdownId(null);
+                                    }}
+                                    className="w-full text-left px-3 py-2 text-[10px] font-bold text-[#1A1615] cursor-pointer hover:bg-[#FAF8F5]"
+                                  >
+                                    {staff}
+                                  </button>
+                                ))}
+                              </div>
+                            </>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
