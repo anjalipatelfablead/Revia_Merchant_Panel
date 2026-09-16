@@ -224,6 +224,15 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => {
                   setProfileDropdownOpen(false);
+                  onNavigate('/settings/audit');
+                }}
+                className="w-full text-left px-3 py-2 hover:bg-[#FAF8F5] text-[#3D3732] cursor-pointer"
+              >
+                Merchant Profile
+              </button>
+              <button
+                onClick={() => {
+                  setProfileDropdownOpen(false);
                   onNavigate('/branches');
                 }}
                 className="w-full text-left px-3 py-2 hover:bg-[#FAF8F5] text-[#3D3732] cursor-pointer"
