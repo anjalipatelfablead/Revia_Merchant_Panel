@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Download,
   Plus,
@@ -118,35 +118,35 @@ const RewardRequestsView: React.FC<{
            <div className="p-8 text-center text-[#6E6A66] font-semibold">No requests found.</div>
         ) : (
           requests.map(r => (
-            <div key={r.id} className="bg-white border border-[#EFECE6] rounded-xl p-5 shadow-sm hover:border-[#D1CDC7] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-5">
-                <div className="w-12 h-12 bg-[#FAF8F5] rounded-full flex items-center justify-center border border-[#EFECE6] shrink-0">
-                  <Award className="w-6 h-6 text-[#9E782F]" />
+            <div key={r.id} className="bg-white border border-[#EFECE6] rounded-xl p-4 sm:p-5 shadow-sm hover:border-[#D1CDC7] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+              <div className="flex items-start sm:items-center gap-3 sm:gap-5 w-full">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#FAF8F5] rounded-full flex items-center justify-center border border-[#EFECE6] shrink-0 mt-0.5 sm:mt-0">
+                  <Award className="w-5 h-5 sm:w-6 sm:h-6 text-[#9E782F]" />
                 </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       r.status === 'Accepted' ? 'bg-[#E6F4ED] text-[#0D7A53]' : 
                       r.status === 'Declined' ? 'bg-[#FEE2E2] text-[#DC2626]' : 
                       'bg-[#FFF5D6] text-[#B38637]'
                     }`}>{r.status}</span>
-                    <span className="text-[10px] font-bold text-[#9E9A93] uppercase">{r.id} • {r.timestamp}</span>
+                    <span className="text-[9px] sm:text-[10px] font-bold text-[#9E9A93] uppercase whitespace-nowrap">{r.id} • {r.timestamp}</span>
                   </div>
-                  <h4 className="text-[15px] font-bold text-[#1A1615]">{r.customerName} <span className="text-[#6E6A66] font-normal">requested</span> {r.rewardName}</h4>
-                  <div className="text-xs font-semibold text-[#8C827A] mt-1 flex flex-wrap items-center gap-2 sm:gap-3">
+                  <h4 className="text-[13px] sm:text-[15px] font-bold text-[#1A1615] leading-snug break-words">{r.customerName} <span className="text-[#6E6A66] font-normal">requested</span> {r.rewardName}</h4>
+                  <div className="text-[10px] sm:text-xs font-semibold text-[#8C827A] mt-1.5 flex flex-wrap items-center gap-1.5 sm:gap-3">
                     <span>{r.tier}</span>
-                    <span className="w-1 h-1 rounded-full bg-[#D1CDC7] hidden sm:block"></span>
+                    <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
                     <span>{r.branch}</span>
-                    <span className="w-1 h-1 rounded-full bg-[#D1CDC7] hidden sm:block"></span>
+                    <span className="w-1 h-1 rounded-full bg-[#D1CDC7]"></span>
                     <span className="text-[#D4A753]">{r.cost}</span>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0 w-full sm:w-auto mt-3 sm:mt-0">
                 {r.status === 'Pending' && (
                   <>
-                    <button onClick={(e) => handleDecline(r.id, e)} className="px-4 py-2 text-xs font-bold text-[#DC2626] bg-[#FEF2F2] border border-[#FEE2E2] hover:bg-[#FEE2E2] rounded-lg transition-colors cursor-pointer">Decline</button>
-                    <button onClick={(e) => handleAccept(r.id, e)} className="px-4 py-2 text-xs font-bold text-white bg-[#0D7A53] hover:bg-[#065F3E] rounded-lg transition-colors cursor-pointer">Accept Request</button>
+                    <button onClick={(e) => handleDecline(r.id, e)} className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold text-[#DC2626] bg-[#FEF2F2] border border-[#FEE2E2] hover:bg-[#FEE2E2] rounded-lg transition-colors cursor-pointer text-center">Decline</button>
+                    <button onClick={(e) => handleAccept(r.id, e)} className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold text-white bg-[#0D7A53] hover:bg-[#065F3E] rounded-lg transition-colors cursor-pointer text-center">Accept Request</button>
                   </>
                 )}
               </div>
@@ -159,7 +159,7 @@ const RewardRequestsView: React.FC<{
 };
 
 export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = ({ onNavigate }) => {
-  const [activeTab, setActiveTab] = useState('All Rewards (18)');
+  const [activeTab, setActiveTab] = useState('Reward Requests');
   const [rewardRequests, setRewardRequests] = useState<RewardRequest[]>(mockRewardRequests);
   
   const [dynamicQR, setDynamicQR] = useState(true);
@@ -168,6 +168,29 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
   const [tierFilter, setTierFilter] = useState('All Tiers');
   const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const [statusFilter, setStatusFilter] = useState('Status: Active');
+
+  const [tierFilterDropdownOpen, setTierFilterDropdownOpen] = useState(false);
+  const [categoryFilterDropdownOpen, setCategoryFilterDropdownOpen] = useState(false);
+  const [statusFilterDropdownOpen, setStatusFilterDropdownOpen] = useState(false);
+  const tierFilterRef = useRef<HTMLDivElement>(null);
+  const categoryFilterRef = useRef<HTMLDivElement>(null);
+  const statusFilterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tierFilterRef.current && !tierFilterRef.current.contains(event.target as Node)) {
+        setTierFilterDropdownOpen(false);
+      }
+      if (categoryFilterRef.current && !categoryFilterRef.current.contains(event.target as Node)) {
+        setCategoryFilterDropdownOpen(false);
+      }
+      if (statusFilterRef.current && !statusFilterRef.current.contains(event.target as Node)) {
+        setStatusFilterDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const [availabilityWindow, setAvailabilityWindow] = useState('60 Days');
   const [selectedMatrixTier, setSelectedMatrixTier] = useState<string | null>(null);
@@ -414,7 +437,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
         {/* Tabs Row */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EFECE6] pb-1">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            {['All Rewards (18)', 'Reward Requests', 'Vouchers & Items (10)', 'VIP & Tier Perks (5)', 'Flash & Happy Hour (3)', 'Archived'].map(tab => (
+            {['Reward Requests', 'All Rewards (18)', 'Vouchers & Items (10)', 'VIP & Tier Perks (5)', 'Flash & Happy Hour (3)', 'Archived'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -449,45 +472,92 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#EFECE6] rounded-full text-xs font-bold text-[#1A1615] placeholder:text-[#9E9A93] focus:outline-none focus:border-[#D4A753]"
             />
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            <div className="relative">
-              <select
-                value={tierFilter}
-                onChange={(e) => { setTierFilter(e.target.value); showToast(`Filter applied: ${e.target.value}`); }}
-                className="appearance-none bg-white border border-[#EFECE6] rounded-full pl-4 pr-8 py-2 text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] min-w-[240px] cursor-pointer"
+          <div className="flex items-center gap-2 flex-wrap">
+            <div ref={tierFilterRef} className="relative min-w-[240px]">
+              <button
+                type="button"
+                onClick={() => setTierFilterDropdownOpen(!tierFilterDropdownOpen)}
+                className="w-full flex items-center justify-between bg-white border border-[#EFECE6] rounded-lg pl-4 pr-3 py-2.5 text-xs font-semibold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
               >
-                <option value="All Tiers">All Tiers (Silver, Gold, Black, Obsidian)</option>
-                <option value="Silver Tier">Silver Tier</option>
-                <option value="Gold Tier">Gold Tier</option>
-                <option value="Black Tier">Black Tier</option>
-                <option value="Obsidian VIP">Obsidian VIP</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                <span className="truncate">{tierFilter === 'All Tiers' ? 'All Tiers (Silver, Gold, Black, Obsidian)' : tierFilter}</span>
+                <ChevronDown className={`w-4 h-4 text-[#9E9A93] transition-transform ${tierFilterDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {tierFilterDropdownOpen && (
+                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5">
+                  {['All Tiers', 'Silver Tier', 'Gold Tier', 'Black Tier', 'Obsidian VIP'].map((tier) => (
+                    <button
+                      key={tier}
+                      type="button"
+                      onClick={() => { 
+                        setTierFilter(tier); 
+                        setTierFilterDropdownOpen(false); 
+                        showToast(`Filter applied: ${tier}`); 
+                      }}
+                      className={`w-full cursor-pointer px-3 py-2 text-left text-xs hover:bg-[#F5F1EA] ${tierFilter === tier ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                    >
+                      {tier === 'All Tiers' ? 'All Tiers (Silver, Gold, Black, Obsidian)' : tier}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className="relative">
-              <select
-                value={categoryFilter}
-                onChange={(e) => { setCategoryFilter(e.target.value); showToast(`Category selected: ${e.target.value}`); }}
-                className="appearance-none bg-white border border-[#EFECE6] rounded-full pl-4 pr-8 py-2 text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] min-w-[140px] cursor-pointer"
+            
+            <div ref={categoryFilterRef} className="relative min-w-[140px]">
+              <button
+                type="button"
+                onClick={() => setCategoryFilterDropdownOpen(!categoryFilterDropdownOpen)}
+                className="w-full flex items-center justify-between bg-white border border-[#EFECE6] rounded-lg pl-4 pr-3 py-2.5 text-xs font-semibold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
               >
-                <option value="All Categories">All Categories</option>
-                <option value="Beverages">Beverages</option>
-                <option value="Pastries">Pastries</option>
-                <option value="Merchandise">Merchandise</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                <span className="truncate">{categoryFilter}</span>
+                <ChevronDown className={`w-4 h-4 text-[#9E9A93] transition-transform ${categoryFilterDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {categoryFilterDropdownOpen && (
+                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5">
+                  {['All Categories', 'Beverages', 'Pastries', 'Merchandise'].map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => { 
+                        setCategoryFilter(cat); 
+                        setCategoryFilterDropdownOpen(false); 
+                        showToast(`Category selected: ${cat}`); 
+                      }}
+                      className={`w-full cursor-pointer px-3 py-2 text-left text-xs hover:bg-[#F5F1EA] ${categoryFilter === cat ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <div className="relative">
-              <select
-                value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value); showToast(`Status filter: ${e.target.value}`); }}
-                className="appearance-none bg-white border border-[#EFECE6] rounded-full pl-4 pr-8 py-2 text-xs font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] min-w-[120px] cursor-pointer"
+            
+            <div ref={statusFilterRef} className="relative min-w-[140px]">
+              <button
+                type="button"
+                onClick={() => setStatusFilterDropdownOpen(!statusFilterDropdownOpen)}
+                className="w-full flex items-center justify-between bg-white border border-[#EFECE6] rounded-lg pl-4 pr-3 py-2.5 text-xs font-semibold text-[#1A1615] hover:border-[#D1CDC7] transition-colors cursor-pointer"
               >
-                <option value="Status: Active">Status: Active</option>
-                <option value="Status: Draft">Status: Draft</option>
-                <option value="Status: Paused">Status: Paused</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93] pointer-events-none" />
+                <span className="truncate">{statusFilter}</span>
+                <ChevronDown className={`w-4 h-4 text-[#9E9A93] transition-transform ${statusFilterDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {statusFilterDropdownOpen && (
+                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5">
+                  {['Status: Active', 'Status: Draft', 'Status: Paused'].map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => { 
+                        setStatusFilter(status); 
+                        setStatusFilterDropdownOpen(false); 
+                        showToast(`Status filter: ${status}`); 
+                      }}
+                      className={`w-full cursor-pointer px-3 py-2 text-left text-xs hover:bg-[#F5F1EA] ${statusFilter === status ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             </div>
           </div>
