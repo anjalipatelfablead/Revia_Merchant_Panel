@@ -9,7 +9,7 @@ import {
   Megaphone,
   Gift,
   BarChart2,
-  CreditCard,
+  Wallet,
   Bell,
   ShieldCheck,
   Award,
@@ -84,7 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'INSIGHTS & CONFIG',
       items: [
         { name: 'Analytics & Reports', route: '/analytics', icon: BarChart2 },
-        { name: 'Subscription & Billing', route: '/billing', icon: CreditCard },
+        { name: 'Wallet & Credits', route: '/billing', icon: Wallet },
         { name: 'Notifications', route: '/notifications', icon: Bell },
         { name: 'Settings & Audit Log', route: '/settings/audit', icon: ShieldCheck },
         { name: 'Business Profile & Branding', route: '/settings/branding', icon: Store },
@@ -95,10 +95,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={`
-        bg-white border-r border-[#EAE6E1] flex flex-col shrink-0 h-screen transition-all duration-200 z-50
-        lg:static lg:w-[240px] lg:translate-x-0
+        bg-white border-r border-[#EAE6E1] flex flex-col shrink-0 h-screen transition-all duration-200
+        lg:static lg:w-[240px] lg:translate-x-0 lg:z-auto
         ${isMobileOpen
-          ? 'fixed inset-y-0 left-0 w-[260px] translate-x-0 shadow-2xl'
+          ? 'fixed inset-y-0 left-0 w-[280px] max-w-[85vw] translate-x-0 shadow-2xl z-[60]'
           : 'hidden lg:flex'
         }
       `}

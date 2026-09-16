@@ -207,14 +207,24 @@ export const CustomerTypeSettings: React.FC = () => {
 
                   <div className="flex items-center gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      onClick={() => handleEdit(tier)}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleEdit(tier);
+                      }}
                       className="w-9 h-9 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-[#B8862E] hover:border-[#B8862E]/30 transition-colors"
                       title="Edit Tier"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(tier.id)}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDelete(tier.id);
+                      }}
                       className="w-9 h-9 rounded-full bg-[#FAF8F5] border border-[#EFECE6] flex items-center justify-center text-[#6E6A66] hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-colors"
                       title="Delete Tier"
                     >
@@ -260,7 +270,7 @@ export const CustomerTypeSettings: React.FC = () => {
                     <input
                       type="number"
                       value={minBilling}
-                      onChange={(e) => setMinBilling(Number(e.target.value))}
+                      onChange={(e) => setMinBilling(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="5000"
                       className="w-full pl-8 pr-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
                     />
@@ -276,7 +286,7 @@ export const CustomerTypeSettings: React.FC = () => {
                     <input
                       type="number"
                       value={validityDuration}
-                      onChange={(e) => setValidityDuration(Number(e.target.value))}
+                      onChange={(e) => setValidityDuration(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="1"
                       className="flex-1 px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
                     />

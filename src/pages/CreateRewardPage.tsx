@@ -23,26 +23,27 @@ export const CreateRewardPage: React.FC<{ onNavigate?: (route: string) => void }
     <div className="min-h-screen bg-[#FAF8F5] pb-24 relative">
       {/* Top Header */}
       <div className="bg-white border-b border-[#EFECE6] px-6 py-4 sticky top-0 z-40">
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={() => onNavigate?.('/rewards')}
-              className="w-10 h-10 flex items-center justify-center rounded-full border border-[#EFECE6] hover:bg-[#FAF8F5] transition-colors cursor-pointer text-[#1A1615]"
+              className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 flex items-center justify-center rounded-full border border-[#EFECE6] hover:bg-[#FAF8F5] transition-colors cursor-pointer text-[#1A1615]"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Rewards Catalog</span>
-                <span className="text-[#D1CDC7]">•</span>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#D4A753]">New Builder</span>
+              <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1 flex-wrap">
+                <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Rewards Catalog</span>
+                <span className="text-[#D1CDC7] hidden sm:inline">•</span>
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-[#D4A753]">New Builder</span>
               </div>
-              <h1 className="text-xl font-bold text-[#1A1615]">Create New Reward</h1>
+              <h1 className="text-base sm:text-xl font-bold text-[#1A1615] leading-tight">Create New Reward</h1>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#6E6A66]">
-            <span className="w-2 h-2 rounded-full bg-[#0D7A53] animate-pulse"></span>
-            Draft Mode
+          <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-bold text-[#6E6A66] shrink-0 text-right">
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#0D7A53] animate-pulse"></span>
+            <span className="hidden sm:inline">Draft Mode</span>
+            <span className="sm:hidden">Draft</span>
           </div>
         </div>
       </div>
@@ -309,7 +310,7 @@ export const CreateRewardPage: React.FC<{ onNavigate?: (route: string) => void }
         <div className="max-w-[1200px] mx-auto flex items-center justify-between">
           <button
             onClick={() => onNavigate?.('/rewards')}
-            className="px-6 py-2.5 text-sm font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors"
+            className="hidden sm:block px-6 py-2.5 text-sm font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors"
           >
             Cancel
           </button>

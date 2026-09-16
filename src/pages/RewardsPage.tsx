@@ -164,8 +164,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
         </div>
       )}
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-        <div>
+      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 lg:gap-8">
+        <div className="flex-1 max-w-3xl">
           {/* <div className="flex items-center gap-2 text-xs font-bold text-[#9E9A93] mb-2 uppercase tracking-wider">
             Home <ChevronRight className="w-3 h-3" /> CRM & Activity <ChevronRight className="w-3 h-3" /> <span className="text-[#1A1615]">Rewards Catalog & Perks</span>
           </div> */}
@@ -180,22 +180,22 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] leading-tight">
             Rewards Catalog & Tier Perks Manager
           </h1>
-          <p className="text-sm text-[#6E6A66] mt-1 font-medium">
+          <p className="text-sm text-[#6E6A66] mt-2 font-medium leading-relaxed">
             Configure redeemable guest vouchers, tier exclusivity thresholds, perk fulfillment rules, and digital wallet redemption limits for Revia hospitality venues.
           </p>
         </div>
 
-        <div className="flex flex-col items-end gap-4 shrink-0">
+        <div className="flex flex-col items-start lg:items-end gap-4 shrink-0 mt-2 lg:mt-0">
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A1615]">
             {/* <span className="w-2 h-2 rounded-full bg-[#0D7A53] animate-pulse"></span>
             REALTIME WALLET SYNC: ACTIVE */}
           </div>
 
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] text-[#1A1615] text-xs font-bold rounded-lg shadow-xs hover:bg-[#FAF8F5] transition-colors cursor-pointer">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
+            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-[#EAE6E1] text-[#1A1615] text-xs font-bold rounded-lg shadow-xs hover:bg-[#FAF8F5] transition-colors cursor-pointer">
               <Download className="w-4 h-4" /> Export Matrix (CSV)
             </button>
-            <button onClick={() => onNavigate?.('/rewards/new')} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-xs font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
+            <button onClick={() => onNavigate?.('/rewards/new')} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-xs font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
               <Plus className="w-4 h-4 text-white" /> Create New Reward
             </button>
           </div>

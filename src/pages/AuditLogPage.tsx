@@ -691,9 +691,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                               {statusLabel}
                             </span>
                           </div>
-                          <div className="mt-2 grid grid-cols-2 gap-2 text-[9px]">
-                            <div><span className="block uppercase tracking-wider text-[#A09A91]">Target</span><span className="block truncate font-medium text-[#1A1615]">{log.target}</span></div>
-                            <div><span className="block uppercase tracking-wider text-[#A09A91]">Time</span><span className="block text-[#6E6A66]">{log.timestamp}</span></div>
+                          <div className="mt-2 grid grid-cols-[1fr_minmax(0,auto)] gap-2 text-[9px]">
+                            <div className="min-w-0"><span className="block uppercase tracking-wider text-[#A09A91]">Target</span><span className="block truncate font-medium text-[#1A1615]">{log.target}</span></div>
+                            <div className="min-w-0"><span className="block uppercase tracking-wider text-[#A09A91]">Time</span><span className="block truncate text-[#6E6A66]">{log.timestamp}</span></div>
                           </div>
                         </button>
                       );
@@ -803,9 +803,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                     </div>
                     <div className="mt-2 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-2 font-mono text-[11px] leading-relaxed text-[#6E6A66]">
                       <div className="flex flex-wrap justify-between gap-x-4"><span>LAST VERIFIED BLOCK: <strong className="text-[#1A1615]">#892,104</strong></span><span>DIFFICULTY TARGET: 0000ffff...</span></div>
-                      <div><strong className="text-[#1A1615]">PREV_HASH:</strong> 000000000000000004f29a88c7d61dea352f683ab293410a8d67e0e1189ac6</div>
-                      <div className="text-[#B7842C]"><strong>CURR_HASH:</strong> 00000000000000001c91f3f09ae84227c991823c51c8ba48726190a862ef</div>
-                      <div className="mt-1 flex items-center gap-1 text-[#0D7A53]"><CheckCircle2 className="h-3 w-3" /> Cryptographic witness attested by Cloudflare HSM & Amazon KMS enclave</div>
+                      <div className="break-all"><strong className="text-[#1A1615]">PREV_HASH:</strong> 000000000000000004f29a88c7d61dea352f683ab293410a8d67e0e1189ac6</div>
+                      <div className="text-[#B7842C] break-all"><strong>CURR_HASH:</strong> 00000000000000001c91f3f09ae84227c991823c51c8ba48726190a862ef</div>
+                      <div className="mt-1 flex items-start gap-1 text-[#0D7A53]"><CheckCircle2 className="h-3 w-3 shrink-0 mt-0.5" /> <span>Cryptographic witness attested by Cloudflare HSM & Amazon KMS enclave</span></div>
                     </div>
                   </div>
                 </div>

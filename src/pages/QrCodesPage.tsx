@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useWallet } from '../context/WalletContext';
 import {
   Download,
   Plus,
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 
 export const QrCodesPage: React.FC = () => {
+  const { checkAndDeductCredit } = useWallet();
   const [activeAsset, setActiveAsset] = useState<string>('asset-1');
   const [activeTab, setActiveTab] = useState<'front' | 'back'>('front');
   const [searchQuery, setSearchQuery] = useState('');
@@ -119,6 +121,13 @@ export const QrCodesPage: React.FC = () => {
     }
 
     const newId = `asset-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    // CREDIT CHECK GATING (10 credits per QR generation/stand)
+    const allowed = checkAndDeductCredit('qr_generation', 10, newId, `Generate Stand QR: ${createForm.standName}`);
+    if (!allowed) {
+      return; // Blocked due to insufficient wallet credits
+    }
+
     const newAsset = {
       id: newId,
       title: `${createForm.venue} • ${createForm.standName}`,
