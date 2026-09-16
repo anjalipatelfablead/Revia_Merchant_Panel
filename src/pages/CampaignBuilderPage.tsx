@@ -56,8 +56,11 @@ import {
   ChevronRight,
   Wallet,
   Eye,
-  Download
+  Download,
+  Image as ImageIcon,
+  Award
 } from 'lucide-react';
+import { AddItemModal } from '../components/AddItemModal';
 
 interface CampaignRulesStepProps {
   campaignType: string;
@@ -1304,6 +1307,16 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   const [directRedemptionMode, setDirectRedemptionMode] = useState<'auto' | 'merchant_approval'>('merchant_approval');
   const [productQrName, setProductQrName] = useState<string>('Single Origin Geisha (250g Whole Bean)');
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+  
+  // Modal states for Add New Item
+  const [isAddCatalogItemModalOpen, setIsAddCatalogItemModalOpen] = useState(false);
+
+  const handleAddCatalogItem = (item: any) => {
+    setCatalogProducts(prev => [...prev, item.title]);
+    setProductQrName(item.title);
+    setIsAddCatalogItemModalOpen(false);
+  };
+
   const [showNewItemInput, setShowNewItemInput] = useState(false);
   const [newItemName, setNewItemName] = useState('');
   const [catalogProducts, setCatalogProducts] = useState([
@@ -1788,6 +1801,22 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
                     {productDropdownOpen && (
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EFECE6] rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+                        {/* Add New Item */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsAddCatalogItemModalOpen(true);
+                            setProductDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-3.5 py-2.5 text-[11px] font-bold text-[#D4A753] flex items-center gap-1.5 cursor-pointer hover:bg-[#FDF8EB] transition-colors"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Add New Item
+                        </button>
+                        
+                        {/* Divider */}
+                        <div className="border-b border-[#EFECE6]" />
+
                         <div className="max-h-[220px] overflow-y-auto py-1">
                           {catalogProducts.map((product) => (
                             <button
@@ -1808,56 +1837,6 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                             </button>
                           ))}
                         </div>
-
-                        {/* Divider */}
-                        <div className="border-t border-[#EFECE6]" />
-
-                        {/* Add New Item */}
-                        {!showNewItemInput ? (
-                          <button
-                            type="button"
-                            onClick={() => setShowNewItemInput(true)}
-                            className="w-full text-left px-3.5 py-2.5 text-[11px] font-bold text-[#D4A753] flex items-center gap-1.5 cursor-pointer hover:bg-[#FDF8EB] transition-colors"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                            Add New Item
-                          </button>
-                        ) : (
-                          <div className="px-3 py-2.5 flex items-center gap-2">
-                            <input
-                              type="text"
-                              autoFocus
-                              value={newItemName}
-                              onChange={e => setNewItemName(e.target.value)}
-                              onKeyDown={e => {
-                                if (e.key === 'Enter' && newItemName.trim()) {
-                                  setCatalogProducts(prev => [...prev, newItemName.trim()]);
-                                  setProductQrName(newItemName.trim());
-                                  setNewItemName('');
-                                  setShowNewItemInput(false);
-                                  setProductDropdownOpen(false);
-                                }
-                              }}
-                              placeholder="Enter product name..."
-                              className="flex-1 px-2.5 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[11px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] placeholder:text-[#9E9A93]"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (newItemName.trim()) {
-                                  setCatalogProducts(prev => [...prev, newItemName.trim()]);
-                                  setProductQrName(newItemName.trim());
-                                  setNewItemName('');
-                                  setShowNewItemInput(false);
-                                  setProductDropdownOpen(false);
-                                }
-                              }}
-                              className="px-2.5 py-1.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[10px] font-bold rounded-lg cursor-pointer hover:shadow-sm transition-all"
-                            >
-                              Add
-                            </button>
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>
@@ -3494,7 +3473,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       <>
         {renderDashboard()}
         
-        {/* QR Code Modal */}
+
+      {/* QR Code Modal */}
         {qrModalCampaign && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 relative flex flex-col items-center text-center">
@@ -3519,6 +3499,13 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] flex flex-col font-sans text-[#1A1615] relative">
+
+      {/* Add Item Modal */}
+      <AddItemModal
+        isOpen={isAddCatalogItemModalOpen}
+        onClose={() => setIsAddCatalogItemModalOpen(false)}
+        onAdd={handleAddCatalogItem}
+      />
 
       {/* Add Location Modal */}
       {isAddLocationOpen && (
