@@ -62,7 +62,7 @@ export const BrandingPage: React.FC = () => {
 
          <div className="p-4 lg:p-6 space-y-6 flex-1 max-w-[1600px] mx-auto w-full">
             {/* Page Title Section */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                <div>
                   <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] mb-1 leading-none font-sans">Business Profile &amp; Branding</h1>
                   <p className="text-[14px] text-[#6E6A66] max-w-2xl">
@@ -70,12 +70,12 @@ export const BrandingPage: React.FC = () => {
                   </p>
                </div>
 
-               <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full lg:w-auto mt-4 lg:mt-0">
-                  <button className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+               <div className="flex items-center gap-3 shrink-0">
+                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
                      <RotateCcw className="w-4 h-4" /> Discard Changes
                   </button>
-                  <button className="w-full sm:w-auto justify-center flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
-                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens
+                  <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens (⌘S)
                   </button>
                </div>
             </div>

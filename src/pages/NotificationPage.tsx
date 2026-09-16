@@ -319,46 +319,44 @@ export const NotificationPage: React.FC = () => {
 						return (
 							<div
 								key={item.id}
-								className={`group flex flex-col sm:flex-row sm:items-center min-h-[86px] gap-3 sm:gap-3.5 px-4 py-4 sm:px-6 lg:px-8 transition-colors ${
+								className={`group flex min-h-[86px] items-center gap-3.5 px-4 py-4 sm:px-6 lg:px-8 transition-colors ${
 									isSelected ? 'bg-[#FDF8EB]/50' : !item.read ? 'bg-[#FCFDFF]' : 'bg-white hover:bg-[#FAF8F5]/60'
 								}`}
 							>
-								<div className="flex items-start sm:items-center gap-3 sm:gap-3.5 flex-1 min-w-0 w-full">
-									{/* Selection Checkbox */}
-									<input
-										type="checkbox"
-										checked={isSelected}
-										onChange={() => toggleSelect(item.id)}
-										className="w-4 h-4 rounded border-[#D1CDC7] text-[#D4A753] focus:ring-[#D4A753] cursor-pointer shrink-0 mt-1 sm:mt-0"
-									/>
+								{/* Selection Checkbox */}
+								<input
+									type="checkbox"
+									checked={isSelected}
+									onChange={() => toggleSelect(item.id)}
+									className="w-4 h-4 rounded border-[#D1CDC7] text-[#D4A753] focus:ring-[#D4A753] cursor-pointer shrink-0"
+								/>
 
-									{/* Notification Category Icon */}
-									<div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${tone.iconStyle}`}>
-										<Icon className="h-[17px] w-[17px]" strokeWidth={1.8} />
-									</div>
+								{/* Notification Category Icon */}
+								<div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${tone.iconStyle}`}>
+									<Icon className="h-[17px] w-[17px]" strokeWidth={1.8} />
+								</div>
 
-									{/* Notification Content */}
-									<div className="min-w-0 flex-1">
-										<div className="flex flex-wrap items-center gap-2">
-											<h2 className={`text-[14px] text-[#263A55] ${!item.read ? 'font-bold' : 'font-normal'}`}>
-												{item.title}
-											</h2>
-											<span className="text-[10px] font-bold uppercase tracking-wider text-[#8C9BAE]">
-												{tone.label}
-											</span>
-											{!item.read && <span className="h-1.5 w-1.5 rounded-full bg-[#4C7FEA]" />}
-										</div>
-										<p className={`mt-1 text-[13px] ${!item.read ? 'text-[#4A6079] font-semibold' : 'text-[#8291A4]'}`}>
-											{item.description}
-										</p>
-										<p className="mt-1 text-[11px] text-[#93A0B0] font-medium">
-											{item.time} <span className="mx-1 text-[#D2DAE3]">•</span> {item.location}
-										</p>
+								{/* Notification Content */}
+								<div className="min-w-0 flex-1">
+									<div className="flex flex-wrap items-center gap-2">
+										<h2 className={`text-[14px] text-[#263A55] ${!item.read ? 'font-bold' : 'font-normal'}`}>
+											{item.title}
+										</h2>
+										<span className="text-[10px] font-bold uppercase tracking-wider text-[#8C9BAE]">
+											{tone.label}
+										</span>
+										{!item.read && <span className="h-1.5 w-1.5 rounded-full bg-[#4C7FEA]" />}
 									</div>
+									<p className={`mt-1 text-[13px] ${!item.read ? 'text-[#4A6079] font-semibold' : 'text-[#8291A4]'}`}>
+										{item.description}
+									</p>
+									<p className="mt-1 text-[11px] text-[#93A0B0] font-medium">
+										{item.time} <span className="mx-1 text-[#D2DAE3]">•</span> {item.location}
+									</p>
 								</div>
 
 								{/* Action Buttons: Mark Read + Delete */}
-								<div className="flex items-center gap-2 shrink-0 self-end sm:self-auto mt-2 sm:mt-0">
+								<div className="flex items-center gap-2 shrink-0">
 									{!item.read && (
 										<button
 											type="button"
