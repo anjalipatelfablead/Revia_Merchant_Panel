@@ -335,7 +335,7 @@ export default function App() {
             )}
 
             {currentRoute === '/settings/branding' && (
-              <BrandingPage />
+              <BrandingPage onNavigate={handleNavigate} />
             )}
 
             {currentRoute === '/catalog' && (
