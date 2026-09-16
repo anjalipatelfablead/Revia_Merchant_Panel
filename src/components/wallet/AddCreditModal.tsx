@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Wallet as WalletIcon, Check, CreditCard, Building, Smartphone, Sparkles } from 'lucide-react';
+import { X, Wallet as WalletIcon, Check, Sparkles, Shield } from 'lucide-react';
 import { useWallet } from '../../context/WalletContext';
 
 export const AddCreditModal: React.FC = () => {
@@ -7,7 +7,7 @@ export const AddCreditModal: React.FC = () => {
 
   const [selectedPreset, setSelectedPreset] = useState<number>(1000);
   const [customAmount, setCustomAmount] = useState<string>('');
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi' | 'netbanking'>('card');
+  const [paymentMethod] = useState<'razorpay'>('razorpay');
   const [isProcessing, setIsProcessing] = useState(false);
 
   if (!isTopUpModalOpen) return null;
@@ -35,9 +35,7 @@ export const AddCreditModal: React.FC = () => {
     setIsProcessing(true);
 
     setTimeout(() => {
-      let methodLabel = 'Card •••• 8814';
-      if (paymentMethod === 'upi') methodLabel = 'UPI (revia@okaxis)';
-      if (paymentMethod === 'netbanking') methodLabel = 'HDFC Net Banking';
+      const methodLabel = 'Razorpay';
 
       topUpWallet(finalAmount, methodLabel);
       setIsProcessing(false);
@@ -125,44 +123,31 @@ export const AddCreditModal: React.FC = () => {
             />
           </div>
 
-          {/* Payment Method */}
+          {/* Payment Method - Razorpay Only */}
           <div>
             <label className="block text-[11px] sm:text-[12px] font-bold text-[#4A433D] uppercase tracking-wider mb-1.5">
-              Payment Method
+              Payment Gateway
             </label>
-            <div className="space-y-1.5">
-              {[
-                { id: 'card', name: 'Credit / Debit Card', detail: 'Mastercard •••• 8814', icon: CreditCard },
-                { id: 'upi', name: 'Instant UPI Payment', detail: 'Google Pay / PhonePe / Paytm', icon: Smartphone },
-                { id: 'netbanking', name: 'Net Banking', detail: 'HDFC, ICICI, SBI & all major banks', icon: Building }
-              ].map((method) => {
-                const Icon = method.icon;
-                const isSelected = paymentMethod === method.id;
-                return (
-                  <label
-                    key={method.id}
-                    onClick={() => setPaymentMethod(method.id as any)}
-                    className={`flex items-center gap-3 p-2.5 sm:p-3 rounded-xl border cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-[#D4A753] bg-[#FAF6EE]'
-                        : 'border-[#EAE6E1] bg-white hover:bg-[#FAF8F5]'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      checked={isSelected}
-                      onChange={() => {}}
-                      className="accent-[#D4A753]"
-                    />
-                    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isSelected ? 'text-[#9E782F]' : 'text-[#6E6A66]'}`} />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[12px] sm:text-[13px] font-bold text-[#1A1615]">{method.name}</div>
-                      <div className="text-[10px] sm:text-[11px] text-[#6E6A66] truncate">{method.detail}</div>
-                    </div>
-                  </label>
-                );
-              })}
+            <div className="flex items-center gap-3 p-3 sm:p-3.5 rounded-xl border-2 border-[#D4A753] bg-[#FAF6EE] cursor-default">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#072654] flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-6 sm:h-6" fill="none">
+                  <path d="M6 8L10 4L14 12L18 4" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M4 20H14L18 8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] sm:text-[14px] font-extrabold text-[#1A1615] flex items-center gap-1.5">
+                  Razorpay
+                  <Check className="w-3.5 h-3.5 text-[#D4A753]" />
+                </div>
+                <div className="text-[10px] sm:text-[11px] text-[#6E6A66]">
+                  UPI · Cards · Net Banking · Wallets
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full font-semibold shrink-0">
+                <Shield className="w-3 h-3" />
+                Secure
+              </div>
             </div>
           </div>
 
