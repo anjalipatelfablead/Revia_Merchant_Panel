@@ -47,6 +47,12 @@ import { ContactPage } from './pages/ContactPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from './pages/TermsOfServicePage';
 
+// Wallet Components & Context
+import { WalletProvider } from './context/WalletContext';
+import { LowBalanceBanner } from './components/wallet/LowBalanceBanner';
+import { AddCreditModal } from './components/wallet/AddCreditModal';
+import { NotEnoughCreditModal } from './components/wallet/NotEnoughCreditModal';
+
 const VALID_ROUTES = [
   '/dashboard', '/atelier', '/branches', '/branches/new', '/staff',
   '/loyalty', '/qr-codes', '/item-catalog', '/catalog', '/orders', '/invoices',
@@ -169,168 +175,175 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-[#FAF8F5] text-[#1A1615] font-sans antialiased selection:bg-[#FAF6EE] selection:text-[#A37837] overflow-hidden">
-      {/* Mobile Drawer Backdrop */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs transition-opacity cursor-pointer"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
+    <WalletProvider>
+      <div className="flex h-screen bg-[#FAF8F5] text-[#1A1615] font-sans antialiased selection:bg-[#FAF6EE] selection:text-[#A37837] overflow-hidden">
+        {/* Mobile Drawer Backdrop */}
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-[50] lg:hidden backdrop-blur-xs transition-opacity cursor-pointer"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
 
-      {/* ⌘K Global Command Palette */}
-      <CommandPalette
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-        onNavigate={handleNavigate}
-      />
-
-      {/* Persistent Desktop Sidebar (w-[240px]) & Mobile Drawer */}
-      <Sidebar
-        currentRoute={currentRoute}
-        onRouteChange={handleNavigate}
-        activeBranch={activeBranch}
-        onBranchChange={setActiveBranch}
-        branches={branchList}
-        isMobileOpen={isMobileMenuOpen}
-        onMobileClose={() => setIsMobileMenuOpen(false)}
-      />
-
-      {/* Main Content Viewport (Starts right next to Sidebar, no overlap!) */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
-        {/* Top Header */}
-        <Header
-          currentRoute={currentRoute}
-          onOpenSearch={() => setIsSearchOpen(true)}
-          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        {/* ⌘K Global Command Palette */}
+        <CommandPalette
+          isOpen={isSearchOpen}
+          onClose={() => setIsSearchOpen(false)}
           onNavigate={handleNavigate}
         />
 
-        {/* Dynamic Page Routing Area */}
-        <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
-          {currentRoute === '/dashboard' && (
-            <DashboardPage
-              onNavigate={handleNavigate}
-              customers={customers}
-              catalog={catalog}
-              branches={branches}
-            />
-          )}
+        {/* Global Modals for Wallet Top-Up and Blocked Action */}
+        <AddCreditModal />
+        <NotEnoughCreditModal />
 
-          {currentRoute === '/branches' && (
-            <BranchesPage
-              onNavigate={handleNavigate}
-              onBranchSelect={setActiveBranch}
-              outlets={outlets}
-              onAddBranch={handleAddOutlet}
-              selectedOutletId={selectedOutletId}
-              onSelectOutletId={setSelectedOutletId}
-            />
-          )}
+        {/* Persistent Desktop Sidebar (w-[240px]) & Mobile Drawer */}
+        <Sidebar
+          currentRoute={currentRoute}
+          onRouteChange={handleNavigate}
+          activeBranch={activeBranch}
+          onBranchChange={setActiveBranch}
+          branches={branchList}
+          isMobileOpen={isMobileMenuOpen}
+          onMobileClose={() => setIsMobileMenuOpen(false)}
+        />
 
-          {currentRoute === '/branches/new' && (
-            <AddNewBranchPage
-              onNavigate={handleNavigate}
-              onAddBranch={handleAddOutlet}
-            />
-          )}
+        {/* Main Content Viewport (Starts right next to Sidebar, no overlap!) */}
+        <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-scroll">
+          {/* Global Low Balance Banner rendered at the very top of merchant panel layout */}
+          <LowBalanceBanner />
 
-          {currentRoute === '/staff' && (
-            <StaffPage />
-          )}
+          {/* Top Header */}
+          <Header
+            currentRoute={currentRoute}
+            onOpenSearch={() => setIsSearchOpen(true)}
+            onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onNavigate={handleNavigate}
+          />
 
-          {currentRoute === '/loyalty' && (
-            <LoyaltyPage />
-          )}
+          {/* Dynamic Page Routing Area */}
+          <main className={`flex-1 ${currentRoute === '/analytics' ? 'pb-0' : 'pb-0'} ${['/billing', '/settings/audit'].includes(currentRoute) ? 'page-text-scale' : ''}`}>
+            {currentRoute === '/dashboard' && (
+              <DashboardPage
+                onNavigate={handleNavigate}
+                customers={customers}
+                catalog={catalog}
+                branches={branches}
+              />
+            )}
 
-          {currentRoute === '/qr-codes' && (
-            <QrCodesPage />
-          )}
+            {currentRoute === '/branches' && (
+              <BranchesPage
+                onNavigate={handleNavigate}
+                onBranchSelect={setActiveBranch}
+                outlets={outlets}
+                onAddBranch={handleAddOutlet}
+                selectedOutletId={selectedOutletId}
+                onSelectOutletId={setSelectedOutletId}
+              />
+            )}
 
-          {currentRoute === '/item-catalog' && (
-            <ItemCatalogPage />
-          )}
+            {currentRoute === '/branches/new' && (
+              <AddNewBranchPage
+                onNavigate={handleNavigate}
+                onAddBranch={handleAddOutlet}
+              />
+            )}
 
-          {currentRoute === '/orders' && (
-            <OrderQueuePage onNavigate={handleNavigate} />
-          )}
+            {currentRoute === '/staff' && (
+              <StaffPage />
+            )}
 
-          {currentRoute === '/customerlist' && (
-            <CustomersPage
-              customers={customers}
-              onUpdateCustomer={(updated) => {
-                setCustomers((currentCustomers) =>
-                  currentCustomers.map((customer) => (customer.id === updated.id ? updated : customer))
-                );
-              }}
-              onAddCustomer={(newCustomer) => {
-                setCustomers((currentCustomers) => [newCustomer, ...currentCustomers]);
-              }}
-            />
-          )}
+            {currentRoute === '/loyalty' && (
+              <LoyaltyPage />
+            )}
 
-          {currentRoute === '/transactions' && (
-            <TransactionsPage />
-          )}
+            {currentRoute === '/qr-codes' && (
+              <QrCodesPage />
+            )}
 
-          {currentRoute === '/campaigns' && (
-            <CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} />
-          )}
+            {currentRoute === '/item-catalog' && (
+              <ItemCatalogPage />
+            )}
 
-          {currentRoute === '/campaigns/new' && (
-            <CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} />
-          )}
+            {currentRoute === '/orders' && (
+              <OrderQueuePage onNavigate={handleNavigate} />
+            )}
 
-          {currentRoute === '/rewards' && (
-            <RewardsPage onNavigate={handleNavigate} />
-          )}
+            {currentRoute === '/customerlist' && (
+              <CustomersPage
+                customers={customers}
+                onUpdateCustomer={(updated) => {
+                  setCustomers((currentCustomers) =>
+                    currentCustomers.map((customer) => (customer.id === updated.id ? updated : customer))
+                  );
+                }}
+                onAddCustomer={(newCustomer) => {
+                  setCustomers((currentCustomers) => [newCustomer, ...currentCustomers]);
+                }}
+              />
+            )}
 
-          {currentRoute === '/rewards/new' && (
-            <CreateRewardPage onNavigate={handleNavigate} />
-          )}
+            {currentRoute === '/transactions' && (
+              <TransactionsPage />
+            )}
 
-          {currentRoute === '/terminal' && (
-            <RedemptionTerminalPage />
-          )}
+            {currentRoute === '/campaigns' && (
+              <CampaignBuilderPage initialViewMode="dashboard" onNavigate={(route) => handleNavigate(route as NavRoute)} />
+            )}
 
-          {currentRoute === '/analytics' && (
-            <AnalyticsPage />
-          )}
+            {currentRoute === '/campaigns/new' && (
+              <CampaignBuilderPage initialViewMode="builder" onNavigate={(route) => handleNavigate(route as NavRoute)} />
+            )}
 
-          {currentRoute === '/billing' && (
-            <BillingPage />
-          )}
+            {currentRoute === '/rewards' && (
+              <RewardsPage onNavigate={handleNavigate} />
+            )}
 
-          {currentRoute === '/notifications' && (
-            <NotificationPage />
-          )}
+            {currentRoute === '/rewards/new' && (
+              <CreateRewardPage onNavigate={handleNavigate} />
+            )}
 
-          {currentRoute === '/settings/audit' && (
-            <AuditLogPage logs={auditLogs} />
-          )}
+            {currentRoute === '/terminal' && (
+              <RedemptionTerminalPage />
+            )}
 
-          {currentRoute === '/settings/branding' && (
-            <BrandingPage />
-          )}
+            {currentRoute === '/analytics' && (
+              <AnalyticsPage />
+            )}
 
-          {currentRoute === '/catalog' && (
-            <CatalogPage
-              catalog={catalog}
-              onUpdateItem={(updatedItem) => {
-                setCatalog((currentCatalog) =>
-                  currentCatalog.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-                );
-              }}
-              onAddItem={(newItem) => {
-                setCatalog((currentCatalog) => [newItem, ...currentCatalog]);
-              }}
-            />
-          )}
+            {currentRoute === '/billing' && (
+              <BillingPage />
+            )}
 
+            {currentRoute === '/notifications' && (
+              <NotificationPage />
+            )}
 
+            {currentRoute === '/settings/audit' && (
+              <AuditLogPage logs={auditLogs} />
+            )}
 
-        </main >
+            {currentRoute === '/settings/branding' && (
+              <BrandingPage />
+            )}
+
+            {currentRoute === '/catalog' && (
+              <CatalogPage
+                catalog={catalog}
+                onUpdateItem={(updatedItem) => {
+                  setCatalog((currentCatalog) =>
+                    currentCatalog.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+                  );
+                }}
+                onAddItem={(newItem) => {
+                  setCatalog((currentCatalog) => [newItem, ...currentCatalog]);
+                }}
+              />
+            )}
+
+          </main >
+        </div >
       </div >
-    </div >
+    </WalletProvider>
   );
 }

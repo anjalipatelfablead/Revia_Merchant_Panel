@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useWallet } from '../context/WalletContext';
 import {
   Maximize,
   Wifi,
@@ -14,8 +15,44 @@ import {
 } from 'lucide-react';
 
 export const RedemptionTerminalPage = () => {
+  const { checkAndDeductCredit } = useWallet();
+  const [settledLogs, setSettledLogs] = useState([
+    { id: '01', item: 'Artisanal Oat Cortado & Financier', guest: "Clara O'Donnell", vch: 'REV-7712', amount: '₹11.50', time: '14:22' },
+    { id: '02', item: 'Whole Bean 250g Panama Gesha bag', guest: 'Julian Hayes', vch: 'REV-6490', amount: '₹38.00', time: '13:58' },
+    { id: '03', item: 'Cascara Fizz Mocktail', guest: 'Chloe Bennett', vch: 'REV-5901', amount: '₹9.00', time: '13:14' },
+  ]);
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const handleSettleReward = () => {
+    // REDEMPTION COMMISSION HOOK (5 credits)
+    const allowed = checkAndDeductCredit('redemption_commission', 5, 'REV-VCH-8924', 'Redemption Commission (Voucher #REV-VCH-8924)');
+    if (!allowed) {
+      return; // Blocked due to insufficient wallet credits
+    }
+
+    const newLog = {
+      id: String(settledLogs.length + 1).padStart(2, '0'),
+      item: 'Complimentary Specialty Tasting Flight & Artisanal Brioche',
+      guest: 'Marcus Vance',
+      vch: 'REV-8924',
+      amount: '₹24.00',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
+    };
+
+    setSettledLogs([newLog, ...settledLogs]);
+    setToastMessage('Reward voucher REV-8924 successfully settled! 5 credits commission deducted.');
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
   return (
-    <div className="max-w-[1600px] mx-auto w-full p-4 lg:p-6 sm:pb-12 flex flex-col gap-6 font-sans">
+    <div className="max-w-[1600px] mx-auto w-full p-4 lg:p-6 sm:pb-12 flex flex-col gap-6 font-sans relative">
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#1A1615] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-bottom-5 fade-in">
+          <CheckCircle2 className="w-5 h-5 text-[#15803D]" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -239,7 +276,10 @@ export const RedemptionTerminalPage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2">
-              <button className="w-full sm:w-auto flex-1 bg-[#D4A753] hover:bg-[#C29541] text-white h-12 sm:h-14 rounded-xl flex items-center justify-center gap-2 font-bold text-[13px] sm:text-[14px] transition-colors shadow-sm cursor-pointer px-2 sm:px-4">
+              <button
+                onClick={handleSettleReward}
+                className="w-full sm:w-auto flex-1 bg-[#D4A753] hover:bg-[#C29541] text-white h-12 sm:h-14 rounded-xl flex items-center justify-center gap-2 font-bold text-[13px] sm:text-[14px] transition-colors shadow-sm cursor-pointer px-2 sm:px-4"
+              >
                 <CheckCircle2 className="w-4 h-4 shrink-0" /> <span className="whitespace-nowrap">Confirm & Settle Reward (↵)</span>
               </button>
               <button className="w-full sm:w-auto px-8 h-12 sm:h-14 bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-xl font-bold text-[13px] sm:text-[14px] transition-colors shadow-sm cursor-pointer shrink-0">
@@ -254,15 +294,11 @@ export const RedemptionTerminalPage = () => {
               <span className="flex items-center gap-2 text-[11px] font-bold text-[#1A1615] uppercase tracking-wider">
                 <Receipt className="w-4 h-4 text-[#D4A753] shrink-0" /> TODAY'S LANE REDEMPTIONS
               </span>
-              <span className="text-[11px] text-[#6E6A66]">Lane #02 • 14 settled today</span>
+              <span className="text-[11px] text-[#6E6A66]">Lane #02 • {settledLogs.length + 11} settled today</span>
             </div>
 
             <div className="space-y-2">
-              {[
-                { id: '01', item: 'Artisanal Oat Cortado & Financier', guest: "Clara O'Donnell", vch: 'REV-7712', amount: '₹11.50', time: '14:22' },
-                { id: '02', item: 'Whole Bean 250g Panama Gesha bag', guest: 'Julian Hayes', vch: 'REV-6490', amount: '₹38.00', time: '13:58' },
-                { id: '03', item: 'Cascara Fizz Mocktail', guest: 'Chloe Bennett', vch: 'REV-5901', amount: '₹9.00', time: '13:14' },
-              ].map(log => (
+              {settledLogs.map(log => (
                 <div key={log.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] hover:bg-white transition-colors cursor-pointer gap-2 sm:gap-0">
                   <div className="flex items-start sm:items-center gap-3">
                     <span className="text-[11px] font-bold text-[#D4A753] mt-0.5 sm:mt-0">#{log.id}</span>
