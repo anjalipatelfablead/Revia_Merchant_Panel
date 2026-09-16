@@ -69,15 +69,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Staff & RBAC', route: '/staff', icon: ShieldCheck },
         { name: 'Loyalty Program', route: '/loyalty', icon: Gift },
         { name: 'QR Codes', route: '/qr-codes', icon: QrCode },
-      ],
-    },
-    {
-      label: 'CATALOG',
-      items: [
         { name: 'Item Catalog', route: '/item-catalog', icon: Package },
-        // { name: 'Order Queue', route: '/orders', icon: ClipboardList },
+
       ],
     },
+    // {
+    //   label: 'CATALOG',
+    //   items: [
+    //     // { name: 'Item Catalog', route: '/item-catalog', icon: Package },
+    //     // { name: 'Order Queue', route: '/orders', icon: ClipboardList },
+    //   ],
+    // },
     {
       label: 'CRM & ACTIVITY',
       items: [
