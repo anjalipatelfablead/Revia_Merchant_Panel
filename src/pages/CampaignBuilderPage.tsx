@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useWallet } from '../context/WalletContext';
 import {
   Clock,
   BookOpen,
@@ -1066,6 +1067,7 @@ export interface CampaignBuilderPageProps {
 }
 
 export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initialViewMode = 'dashboard', onNavigate }) => {
+  const { wallet, checkAndDeductCredit } = useWallet();
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   // Scroll to top when stepping through campaign wizard
@@ -2667,6 +2669,27 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               </ul>
             </div>
           </div>
+
+          {/* Wallet Credit Cost Disclosure Box */}
+          <div className="mt-6 bg-[#FAF6EE] border border-[#EAE6E1] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-[#D4A753]/20 flex items-center justify-center text-[#9E782F] shrink-0 font-bold">
+                <Wallet className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="font-extrabold text-[#1A1615]">Campaign Launch Cost &amp; Commission Disclosure</div>
+                <div className="text-[#6E6A66] mt-0.5">
+                  Publishing this campaign costs <strong>50 credits</strong>. Each customer redemption will additionally cost <strong>5 credits</strong> from your wallet.
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-lg border border-[#EAE6E1] shrink-0">
+              <span className="text-[#6E6A66] font-medium">Wallet Balance:</span>
+              <span className={`font-extrabold ${wallet.balance < 50 ? 'text-red-600' : 'text-emerald-700'}`}>
+                {wallet.balance} credits
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -3124,7 +3147,16 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
               <button className="flex-1 md:flex-none px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-xl text-[12px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors shadow-sm whitespace-nowrap text-center cursor-pointer">
                 Save Draft
               </button>
-              <button className="w-full md:w-auto px-5 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl text-[12px] font-bold shadow-md transition-opacity flex items-center justify-center gap-2 cursor-pointer">
+              <button
+                onClick={() => {
+                  const allowed = checkAndDeductCredit('campaign_creation', 50, `cmp-pub-${Date.now()}`, 'Publish & Launch Campaign');
+                  if (!allowed) return;
+
+                  showToast('Campaign deployed & published! 50 credits deducted from wallet.');
+                  setTimeout(() => handleGoToDashboard(), 1200);
+                }}
+                className="w-full md:w-auto px-5 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl text-[12px] font-bold shadow-md transition-opacity flex items-center justify-center gap-2 cursor-pointer"
+              >
                 <Zap className="w-3.5 h-3.5" /> Deploy &amp; Publish Campaign <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>

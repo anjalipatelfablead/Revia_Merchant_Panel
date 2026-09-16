@@ -1,271 +1,517 @@
-import React, { useState } from 'react';
-import { CreditCard, CheckCircle2, Zap, ShieldCheck, ArrowRight, ReceiptText, Search, Download, ChevronRight, LockKeyhole, WalletCards, Users, Server, FileText, Bell, CalendarDays, Building2, MoreVertical } from 'lucide-react';
-
+import React, { useState, useMemo } from 'react';
+import {
+  Wallet,
+  PlusCircle,
+  AlertTriangle,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Search,
+  Filter,
+  Download,
+  ChevronLeft,
+  ChevronRight,
+  Settings2,
+  CheckCircle2,
+  PieChart,
+  History
+} from 'lucide-react';
+import { useWallet } from '../context/WalletContext';
+import { WalletActionCategory } from '../types/wallet';
 
 export const BillingPage: React.FC = () => {
-  const [activeInvoiceTab, setActiveInvoiceTab] = useState<'All Invoices' | 'Paid' | 'Upcoming'>('All Invoices');
-  const [searchInvoice, setSearchInvoice] = useState('');
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [addons, setAddons] = useState({ pos: 2, sms: 0, branch: 0 });
+  const { wallet, transactions, costRules, openTopUpModal, updateCostRule } = useWallet();
 
-  const handleAddonUpdate = (key: keyof typeof addons, increment: boolean) => {
-    setAddons((prev) => ({
-      ...prev,
-      [key]: Math.max(0, prev[key] + (increment ? 1 : -1))
-    }));
+  // Ledger Filter & Pagination States
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 6;
+
+  // Admin Cost Rules edit state
+  const [editingRule, setEditingRule] = useState<WalletActionCategory | null>(null);
+  const [newCostInput, setNewCostInput] = useState<string>('');
+
+  const isLowBalance = wallet.balance < wallet.lowBalanceThreshold;
+
+  // Category labels and display configs
+  const categoryConfig: Record<WalletActionCategory, { label: string; color: string }> = {
+    topup: { label: 'Credit Top-Up', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    branch_setup: { label: 'Branch Setup', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+    staff_invite: { label: 'Staff Invitation', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    loyalty_setup: { label: 'Loyalty Program Setup', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+    qr_generation: { label: 'QR / Stand Generation', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+    campaign_creation: { label: 'Campaign Creation', color: 'bg-rose-50 text-rose-700 border-rose-200' },
+    redemption_commission: { label: 'Redemption Commission', color: 'bg-orange-50 text-orange-700 border-orange-200' },
+    admin_adjustment: { label: 'Admin Adjustment', color: 'bg-gray-50 text-gray-700 border-gray-200' },
   };
 
-  const [paymentMethods, setPaymentMethods] = useState([
-    { label: 'Mastercard', digits: '•••• 8814', meta: 'Expires 08/27 • Elena Vance', default: true, kind: 'MC', detail: 'Revia Hospitality LLC', className: 'bg-[#FAF0E3]' },
-    { label: 'Chase Commercial', digits: '•••• 4109', meta: 'Business Checking • Direct Debit', default: false, kind: 'ACH', detail: 'Auto-follower backup', className: 'bg-[#FAF8F5]' },
-  ]);
-
-  const invoiceRows = [
-    { invoiceId: '#REV-INV-2024', date: 'Nov 1, 2024', plan: 'Enterprise Atelier +2 POS add-ons', amount: '₹429.00', status: 'Paid' as const },
-    { invoiceId: '#REV-INV-2023', date: 'Oct 1, 2024', plan: 'Enterprise Atelier +2 POS add-ons', amount: '₹429.00', status: 'Paid' as const },
-    { invoiceId: '#REV-INV-2022', date: 'Sep 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '₹389.00', status: 'Paid' as const },
-    { invoiceId: '#REV-INV-2021', date: 'Aug 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '₹389.00', status: 'Paid' as const },
-    { invoiceId: '#REV-INV-2020', date: 'Jul 1, 2024', plan: 'Enterprise Atelier Base Plan', amount: '₹389.00', status: 'Upcoming' as const },
-  ];
-
-  const filteredInvoiceRows = invoiceRows.filter((row) => activeInvoiceTab === 'All Invoices' || row.status === activeInvoiceTab);
-  const invoiceTabCounts = {
-    'All Invoices': invoiceRows.length,
-    'Paid': invoiceRows.filter((row) => row.status === 'Paid').length,
-    'Upcoming': invoiceRows.filter((row) => row.status === 'Upcoming').length,
-  };
-
-  const exportTaxDossier = () => {
-    const rows = [
-      ['Legal Entity', 'Revia Hospitality Atelier Group LLC'],
-      ['Tax Identification', 'US-EIN: 27-4196482'],
-      ['Registered Atelier Address', '482 Broadway, SoHo, New York, NY 10013, United States'],
-      ['Billing Recipient', 'Elena Vance'],
-      ['Dispatch Email', 'billing@revia.hospitality.com'],
-      ['Current Plan', 'Enterprise Atelier'],
-      ['Billing Cycle', '₹389.00 due Dec 1'],
-      ['Download Type', 'Tax Dossier'],
+  // Compute Usage Breakdown per Category dynamically from transactions
+  const usageBreakdown = useMemo(() => {
+    const categories: WalletActionCategory[] = [
+      'branch_setup',
+      'staff_invite',
+      'loyalty_setup',
+      'qr_generation',
+      'campaign_creation',
+      'redemption_commission'
     ];
 
-    const csv = rows
-      .map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(','))
-      .join('\n');
+    return categories.map((cat) => {
+      const catTxs = transactions.filter((t) => t.category === cat && t.type === 'debit');
+      const totalSpent = catTxs.reduce((sum, t) => sum + t.amount, 0);
+      const count = catTxs.length;
+      return {
+        category: cat,
+        label: categoryConfig[cat].label,
+        totalSpent,
+        count,
+      };
+    });
+  }, [transactions]);
 
-    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'revia-tax-dossier.csv';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
+  const grandTotalSpent = useMemo(() => {
+    return usageBreakdown.reduce((sum, item) => sum + item.totalSpent, 0);
+  }, [usageBreakdown]);
 
-  const downloadInvoiceLedger = () => {
-    const rows = invoiceRows.map((row) => [
-      row.invoiceId,
-      row.date,
-      row.plan,
-      row.amount,
-      row.status,
+  // Filter & Sort Transactions
+  const filteredTransactions = useMemo(() => {
+    return transactions
+      .filter((tx) => {
+        if (selectedCategory !== 'all' && tx.category !== selectedCategory) {
+          return false;
+        }
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase();
+          return (
+            tx.description.toLowerCase().includes(q) ||
+            tx.id.toLowerCase().includes(q) ||
+            (tx.relatedEntityId && tx.relatedEntityId.toLowerCase().includes(q))
+          );
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const timeA = new Date(a.createdAt).getTime() || 0;
+        const timeB = new Date(b.createdAt).getTime() || 0;
+        return sortOrder === 'newest' ? timeB - timeA : timeA - timeB;
+      });
+  }, [transactions, selectedCategory, searchQuery, sortOrder]);
+
+  const totalPages = Math.ceil(filteredTransactions.length / pageSize) || 1;
+  const paginatedTransactions = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredTransactions.slice(start, start + pageSize);
+  }, [filteredTransactions, currentPage, pageSize]);
+
+  // CSV Export for Transaction Ledger
+  const handleExportCSV = () => {
+    const headers = ['Transaction ID', 'Date', 'Description', 'Category', 'Type', 'Amount (Credits)', 'Balance After'];
+    const rows = filteredTransactions.map((t) => [
+      t.id,
+      t.createdAt,
+      `"${t.description.replace(/"/g, '""')}"`,
+      categoryConfig[t.category]?.label || t.category,
+      t.type.toUpperCase(),
+      t.type === 'credit' ? `+${t.amount}` : `-${t.amount}`,
+      t.balanceAfter
     ]);
 
-    const csv = [
-      ['Invoice ID', 'Date', 'Plan & Add-ons', 'Amount', 'Status'],
-      ...rows,
-    ]
-      .map((entry) => entry.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(','))
-      .join('\n');
-
-    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'revia-invoice-ledger.csv';
+    link.download = `revia-wallet-ledger-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
-  const downloadInvoiceReceipt = (row: { invoiceId: string; date: string; plan: string; amount: string; status: string }) => {
-    const rows = [
-      ['Invoice ID', row.invoiceId],
-      ['Date', row.date],
-      ['Plan & Add-ons', row.plan],
-      ['Amount', row.amount],
-      ['Status', row.status],
-      ['Download Type', 'Invoice Receipt'],
-      ['Receipt File', 'revia-invoice-receipt.csv'],
-    ];
-
-    const csv = rows
-      .map((entry) => entry.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(','))
-      .join('\n');
-
-    const filename = `${row.invoiceId.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-receipt.csv`;
-    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  const handleSaveCostRule = (action: WalletActionCategory) => {
+    const val = parseInt(newCostInput, 10);
+    if (!isNaN(val) && val >= 0) {
+      updateCostRule(action, val);
+    }
+    setEditingRule(null);
+    setNewCostInput('');
   };
 
   return (
-    <>
-      <div>
-        <div className="mx-auto max-w-[1600px] space-y-5 bg-[#FAF8F5] p-4 lg:p-6">
-          {/*
-      <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold text-[#81776E]">
-        <span>Home</span><span>/</span><span>Intelligence &amp; Admin</span><span>/</span><span className="text-[#1A1615]">Subscription &amp; Billing</span>
-        <span className="ml-2 inline-flex items-center gap-1.5 rounded-full bg-[#CFF6DF] px-2.5 py-1 text-[10px] font-bold text-[#16804A]"><span className="h-1.5 w-1.5 rounded-full bg-[#16804A]" /> Enterprise Multi-Venue • Auto-Renewal Active (Dec 1, 2025)</span>
+    <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5 text-[#1A1615]">
+      
+      {/* Page Header (Matching Dashboard & Branches header structure exactly) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
+              Wallet &amp; Credits
+            </h1>
+          </div>
+          <p className="text-xs text-[#7C746C] mt-1 max-w-2xl leading-relaxed">
+            Pay-as-you-go credit engine for branch expansion, staff seats, campaign launches, and redemption commissions.
+          </p>
+        </div>
+
+        <button
+          onClick={openTopUpModal}
+          className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer self-start sm:self-auto shrink-0"
+        >
+          <PlusCircle className="w-4 h-4 text-white" />
+          <span>Add Credit</span>
+        </button>
       </div>
-      */}
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8 md:max-lg:flex-col md:max-lg:gap-3 md:max-lg:items-start">
-            <div className="md:max-lg:w-full md:max-lg:flex-none">
-              <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615] md:max-lg:text-[18px]">Subscription &amp; Billing Management</h1>
-              <p className="mt-1 max-w-[600px] text-[14px] font-normal leading-relaxed text-[#7C746C] md:max-lg:max-w-[600px] md:max-lg:text-[12px]">Manage your hospitality atelier subscription plan, connected branch licensing, POS seat quotas, and tax invoice history.</p>
+      {/* Top Wallet Balance Summary Card */}
+      <div className={`rounded-xl p-5 border transition-all shadow-2xs ${
+        isLowBalance
+          ? 'bg-gradient-to-br from-amber-500/10 via-white to-amber-500/5 border-amber-300'
+          : 'bg-white border-[#EAE6E1]'
+      }`}>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          
+          {/* Left Balance Display */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2.5">
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#8C827A] uppercase tracking-wider">
+                CURRENT WALLET BALANCE
+              </span>
+              {isLowBalance ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200">
+                  <AlertTriangle className="w-3 h-3 text-amber-700" /> Low Balance Notice
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-700" /> Healthy Balance
+                </span>
+              )}
             </div>
-            <div className="mt-1 flex shrink-0 items-center gap-2 md:max-lg:gap-1.5">
-              <button type="button" onClick={exportTaxDossier} className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-3 py-2 text-xs font-semibold text-[#4F4842] shadow-2xs hover:bg-[#F5F1EA] cursor-pointer md:max-lg:px-2 md:max-lg:text-[10px]"><ReceiptText className="h-3.5 w-3.5 text-[#9E782F]" /> Download Tax Dossier (PDF)</button>
-              <button type="button" onClick={() => document.getElementById('subscription-allocation')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:opacity-95 cursor-pointer md:max-lg:px-2 md:max-lg:text-[10px]"><Zap className="h-3.5 w-3.5" /> Upgrade Plan Quota</button>
+
+            <div className="flex items-baseline gap-2.5">
+              <span className={`text-3xl sm:text-4xl font-black tracking-tight ${
+                isLowBalance ? 'text-amber-700' : 'text-[#1A1615]'
+              }`}>
+                {wallet.balance.toLocaleString()}
+              </span>
+              <span className="text-lg font-bold text-[#6E6A66]">credits</span>
+            </div>
+
+            <p className="text-[11px] text-[#6E6A66] leading-normal pt-0.5">
+              Low balance threshold set to <strong className="text-[#1A1615]">{wallet.lowBalanceThreshold} credits</strong>. Warning banner triggers automatically when balance drops below threshold.
+            </p>
+          </div>
+
+          {/* Right Summary Metrics */}
+          <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-5 bg-[#FAF8F5] border border-[#EAE6E1] p-3.5 sm:p-4 rounded-xl shrink-0">
+            <div className="flex-1 min-w-[110px]">
+              <div className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">Total Spent</div>
+              <div className="text-[17px] sm:text-[18px] font-extrabold text-[#1A1615] mt-0.5">{grandTotalSpent.toLocaleString()}</div>
+            </div>
+            <div className="w-px bg-[#EAE6E1] hidden sm:block" />
+            <div className="flex-1 min-w-[110px]">
+              <div className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">Cost Rules</div>
+              <div className="text-[17px] sm:text-[18px] font-extrabold text-[#1A1615] mt-0.5">{costRules.length} Categories</div>
+            </div>
+            <div className="w-px bg-[#EAE6E1] hidden sm:block" />
+            <div className="flex-1 min-w-[110px]">
+              <div className="text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">Ledger History</div>
+              <div className="text-[17px] sm:text-[18px] font-extrabold text-[#1A1615] mt-0.5">{transactions.length} Events</div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-            <div className="flex min-h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-              <div>
-                <div className="flex items-center justify-between text-[11px] font-medium text-[#7C746C]"><span>Current Plan</span><span className="rounded-full bg-[#CFF6DF] px-2 py-1 text-[9px] font-bold text-[#16804A]">● Active • Tier 3</span></div>
-                <div className="mt-2 text-[22px] font-bold tracking-tight text-[#1A1615]">Enterprise Atelier</div>
-                <p className="mt-1 text-[11px] text-[#81776E] leading-relaxed">$389/mo • Billed annually<br />($4,668/yr)</p>
-              </div>
-              <div className="mt-3 flex items-center justify-between text-[11px] font-semibold text-[#B7842C]">Includes 5 venue licenses <ArrowRight className="h-4 w-4" /></div>
-            </div>
+        </div>
+      </div>
 
-            <div className="flex min-h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-              <div>
-                <div className="flex items-center justify-between text-[11px] font-medium text-[#7C746C]"><span>Active Venues</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#4F4842]">75% Cap</span></div>
-                <div className="mt-2 text-[22px] font-bold tracking-tight text-[#1A1615]">3 of 5 Venues</div>
-                <p className="mt-1 text-[11px] text-[#81776E]">12 of 16 POS terminals active</p>
-              </div>
-              <div className="mt-3">
-                <div className="h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-3/4 rounded-full bg-[#C99B42]" /></div>
-                <div className="mt-2 flex justify-between text-[10px] text-[#81776E]"><span className="font-semibold">Mesh Sync Healthy</span><span>4 Seats Available</span></div>
-              </div>
+      {/* Grid Section: Usage Breakdown & Action Cost Matrix */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        
+        {/* Usage Breakdown Card (2 Columns) */}
+        <div className="lg:col-span-2 bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs space-y-4">
+          <div className="flex items-center justify-between border-b border-[#EAE6E1] pb-3">
+            <div className="flex items-center gap-2">
+              <PieChart className="w-4 h-4 text-[#D4A753]" />
+              <h2 className="text-[15px] font-bold text-[#1A1615] tracking-tight">
+                Usage Breakdown by Action Category
+              </h2>
             </div>
-
-            <div className="flex min-h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-              <div>
-                <div className="flex items-center justify-between text-[11px] font-medium text-[#7C746C]"><span>Billing Cycle</span><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[9px] font-bold text-[#81776E]">Net 0</span></div>
-                <div className="mt-2 text-[22px] font-bold tracking-tight text-[#1A1615]">$389.00 due</div>
-                <p className="mt-1 text-[11px] text-[#81776E] leading-relaxed">Dec 1 charge via Mastercard<br />•••• 8814</p>
-              </div>
-              <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-[#16804A]"><ShieldCheck className="h-4 w-4 shrink-0" /> Auto-pay configured</div>
-            </div>
-
-            <div className="flex min-h-[162px] flex-col justify-between rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs">
-              <div>
-                <div className="flex items-center justify-between text-[11px] font-medium text-[#7C746C]"><span>Loyalty Quota</span><span className="rounded-full bg-[#FFE0A2] px-2 py-1 text-[9px] font-bold text-[#4F4842]">56.8% Used</span></div>
-                <div className="mt-2 text-[22px] font-bold tracking-tight text-[#1A1615]">14.2k / 25k</div>
-                <p className="mt-1 text-[11px] text-[#81776E] leading-relaxed">Overage protection is ON (capped)</p>
-              </div>
-              <div className="mt-3">
-                <div className="h-1.5 overflow-hidden rounded-full bg-[#EEE9E2]"><div className="h-full w-[57%] rounded-full bg-[#80611D]" /></div>
-                <div className="mt-2 flex justify-between items-center text-[10px] text-[#81776E]"><span className="font-semibold">10.7k left</span><span className="text-[#B7842C] font-semibold">Resets in 11d</span></div>
-              </div>
-            </div>
+            <span className="text-[11px] font-semibold text-[#6E6A66]">
+              All-Time Spending
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-3">
-            <div className="space-y-5 lg:col-span-2">
-              <section id="subscription-allocation" className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div><span className="text-[9px] font-bold uppercase tracking-wider text-[#B7842C]">Allocations &amp; Entitlements</span><h2 className="text-[16px] font-bold text-[#1A1615]">Subscription Tier &amp; Entitlement Allocation</h2></div>
-                  <div className="flex gap-1.5"><button type="button" className="rounded-md border border-[#E5E0D8] bg-white px-2 py-1 text-[9px] font-semibold text-[#4F4842] cursor-pointer hover:bg-gray-50">Manage Venue Licenses</button><button type="button" className="rounded-md bg-[#C99B42] hover:bg-[#A37D32] transition-colors cursor-pointer px-2 py-1 text-[9px] font-bold text-white">Change Tier</button></div>
-                </div>
-                <div className="mt-3 flex flex-col gap-3 rounded-lg bg-[#FAF3E8] p-3 sm:flex-row sm:items-center sm:justify-between"><div><div className="text-[11px] font-bold text-[#1A1615]">Enterprise Atelier Architecture <span className="ml-1 rounded bg-white px-1.5 py-0.5 text-[8px] font-normal text-[#81776E]">v3.4 Dedicated Ledger</span></div><p className="mt-1 max-w-[520px] text-[10px] leading-relaxed text-[#81776E]">Designed for luxury coffee houses, tasting rooms, and boutique hospitality chains. Includes SOC-2 audit compliance and hardware mesh routing.</p></div><div className="flex min-w-[150px] items-center gap-2 rounded-lg bg-[#FFF2E3] px-3 py-2"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#B7842C]"><ShieldCheck className="h-4 w-4" /></span><span><strong className="block text-[10px] text-[#4F4842]">Concierge Support</strong><small className="block text-[9px] text-[#81776E]">15m SLA Response</small></span></div></div>
-                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {[['Unlimited VIP Guest Profiles', 'No artificial customer contact limits', 'Users'], ['Apple & Google Wallet Passes', 'Dynamic loyalty pass NFC push updates', 'WalletCards'], ['SOC-2 Cryptographic Ledger', 'Immutable point redemption verification', 'LockKeyhole'], ['Custom SMS & Push Gateway', 'Branded sender ID with 99.8% inbox deliverability', 'Zap']].map(([title, detail, icon]) => <div key={title} className="flex items-start gap-2 rounded-md border border-[#EEE7DE] bg-[#FCFBF9] p-2"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#16804A]" /><div><div className="text-[10px] font-semibold text-[#1A1615]">{title}</div><div className="text-[9px] text-[#81776E]">{detail}</div></div></div>)}
-                </div>
-                <div className="mt-4 flex items-center justify-between"><span className="text-[9px] font-bold uppercase tracking-wider text-[#81776E]">Live resource quota meters</span><span className="text-[9px] text-[#81776E]">Synchronized 4m ago</span></div>
-                <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div><div className="flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>Venues Licensed</span><span>3 / 5 <em className="font-normal text-[#81776E]">(60%)</em></span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE9E2]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div><div className="mt-1 text-[9px] text-[#81776E]">Flagship (SoHo), Roastery Reserve, Northside Pop-up</div></div>
-                  <div><div className="flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>POS Hardware Nodes</span><span>12 / 20 <em className="font-normal text-[#81776E]">(60%)</em></span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE9E2]"><div className="h-full w-3/5 rounded-full bg-[#C99B42]" /></div><div className="mt-1 text-[9px] text-[#81776E]">Clover, Square &amp; Revia Atelier Touch terminals</div></div>
-                  <div><div className="flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>Monthly Member Transactions</span><span>14,240 / 25,000 <em className="font-normal text-[#81776E]">(57%)</em></span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE9E2]"><div className="h-full w-[57%] rounded-full bg-[#80611D]" /></div><div className="mt-1 text-[9px] text-[#81776E]">Encrypted loyalty scan transactions processed</div></div>
-                  <div><div className="flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>Custom VIP Pass SMS</span><span>4,120 / 10,000 <em className="font-normal text-[#81776E]">(41%)</em></span></div><div className="mt-1 h-1.5 rounded-full bg-[#EEE9E2]"><div className="h-full w-[41%] rounded-full bg-[#C99B42]" /></div><div className="mt-1 text-[9px] text-[#81776E]">Transactional automated SMS delivery credits</div></div>
-                </div>
-              </section>
-
-              <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-                <div className="flex flex-wrap items-end justify-between gap-2"><div><span className="text-[9px] font-bold uppercase tracking-wider text-[#B7842C]">Accounting &amp; Tax Audits</span><h2 className="text-[16px] font-bold text-[#1A1615]">Invoice History &amp; Receipts Ledger</h2></div><div className="flex items-center gap-1"><div className="flex w-[190px] items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] text-[#81776E]"><Search className="h-3 w-3" /><input aria-label="Search by invoice number" value={searchInvoice} onChange={(event) => setSearchInvoice(event.target.value)} placeholder="Search by invoice #..." className="w-full border-0 bg-transparent text-[9px] text-[#81776E] outline-none placeholder:text-[#81776E]" /></div><button type="button" aria-label="Download invoice ledger" onClick={downloadInvoiceLedger} className="rounded-md border border-[#E5E0D8] bg-white p-1.5 text-[#81776E] hover:bg-[#F5F1EA] cursor-pointer"><Download className="h-3 w-3" /></button></div></div>
-                <div className="mt-3 inline-flex rounded-md bg-[#F1EDE7] p-0.5 text-[9px] font-semibold text-[#81776E]">
-                  {(['All Invoices', 'Paid', 'Upcoming'] as Array<'All Invoices' | 'Paid' | 'Upcoming'>).map((tab) => (
-                    <button key={tab} type="button" onClick={() => setActiveInvoiceTab(tab)} className={`cursor-pointer rounded px-2.5 py-1 ${activeInvoiceTab === tab ? 'bg-white text-[#4F4842] shadow-2xs' : 'text-[#81776E] hover:text-[#4F4842]'}`}>{tab} ({invoiceTabCounts[tab]})</button>
-                  ))}
-                </div>
-                <div className="mt-3 overflow-x-auto"><table className="w-full min-w-[600px] text-left text-[9px]"><thead className="border-b border-[#E8E1D9] text-[8px] uppercase tracking-wider text-[#81776E]"><tr><th className="pb-2">Invoice ID</th><th className="pb-2">Date</th><th className="pb-2">Plan &amp; Add-ons</th><th className="pb-2">Amount</th><th className="pb-2">Status</th><th className="pb-2">Actions</th></tr></thead><tbody className="divide-y divide-[#F0EBE4]">{filteredInvoiceRows.filter((row) => row.invoiceId.toLowerCase().includes(searchInvoice.toLowerCase())).map((row) => <tr key={row.invoiceId}><td className="py-2 font-semibold text-[#1A1615]">{row.invoiceId}</td><td className="py-2 text-[#81776E]">{row.date}</td><td className="py-2 text-[#4F4842]">{row.plan}</td><td className="py-2 font-semibold text-[#1A1615]">{row.amount}</td><td className="py-2"><span className="rounded-full bg-[#CFF6DF] px-2 py-1 font-bold text-[#16804A]">{row.status}</span></td><td className="py-2"><button type="button" onClick={() => downloadInvoiceReceipt(row)} className="inline-flex items-center gap-1 rounded border border-[#E5E0D8] px-1.5 py-1 text-[8px] text-[#4F4842] cursor-pointer hover:bg-gray-50"><Download className="h-3 w-3" /> Receipt</button></td></tr>)}</tbody></table></div>
-                <div className="mt-3 flex items-center gap-2 rounded-md bg-[#FAF8F5] p-2 text-[9px] text-[#81776E]"><LockKeyhole className="h-3.5 w-3.5 text-[#B7842C]" /> Cryptographic Ledger Seal: <span className="font-mono text-[#4F4842]">sha256:7f4a...912e8b</span><span className="ml-auto hidden sm:inline">Compliant with US GAAP &amp; EU VAT cross-border directive</span></div>
-              </section>
-            </div>
-
-            <aside className="space-y-5">
-              <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]">
-                <div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Payment Methods</h2><CreditCard className="h-4 w-4 text-[#B7842C]" /></div>
-                <div className="mt-3 space-y-2">
-                  {paymentMethods.map((method, index) => (
-                    <div key={`${method.label}-${method.digits}`} className={`rounded-lg p-2.5 ${method.className}`}>
-                      <div className="flex items-start gap-2"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#1A1615] text-[8px] font-bold text-white">{method.kind}</span><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-1 text-[10px] font-bold"><span>{method.label} {method.digits}</span>{method.default ? <span className="rounded-full bg-[#FFE0A2] px-1.5 py-0.5 text-[8px]">Default</span> : <span className="rounded-full bg-[#CFF6DF] px-1.5 py-0.5 text-[8px] text-[#16804A]">Verified</span>}</div><div className="text-[9px] leading-tight text-[#81776E]">{method.meta}</div></div></div>
-                      <div className="mt-2 flex justify-between text-[9px] font-semibold text-[#4F4842]"><span>{method.detail}</span><button type="button" className="cursor-pointer hover:underline">{method.default ? 'Edit' : 'Set Default'}</button></div>
+          <div className="space-y-3">
+            {usageBreakdown.map((item) => {
+              const percentage = grandTotalSpent > 0 ? Math.round((item.totalSpent / grandTotalSpent) * 100) : 0;
+              return (
+                <div key={item.category} className="p-3 rounded-lg border border-[#EAE6E1] bg-[#FAF8F5] space-y-1.5">
+                  <div className="flex items-center justify-between text-[12px]">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold border ${categoryConfig[item.category].color}`}>
+                        {item.label}
+                      </span>
                     </div>
-                  ))}
+                    <div className="text-right">
+                      <span className="font-extrabold text-[#1A1615]">{item.totalSpent} credits</span>
+                      <span className="text-[11px] text-[#9E9A93] ml-2 font-medium">
+                        ({item.count} {item.count === 1 ? 'event' : 'events'})
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-[#EAE6E1] h-1.5 rounded-full overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] h-full rounded-full transition-all duration-300"
+                      style={{ width: `${Math.max(percentage, item.totalSpent > 0 ? 3 : 0)}%` }}
+                    />
+                  </div>
                 </div>
-                <button type="button" onClick={() => setShowPaymentModal(true)} className="mt-3 w-full rounded-lg bg-[#F1EDE7] py-2 text-[9px] font-semibold text-[#4F4842] hover:bg-[#EAE4DB] transition-colors cursor-pointer"><CreditCard className="mr-1 inline h-3 w-3" /> + Add Payment Method</button>
-              </section>
-              <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Plan Quota Add-ons</h2><span className="rounded-full bg-[#F1EDE7] px-2 py-1 text-[8px] text-[#81776E]">Self-Serve</span></div><p className="mt-2 text-[9px] leading-relaxed text-[#81776E]">Expand capacity on demand. Add-ons are prorated automatically to your current monthly cycle.</p>{([['POS Hardware Node', '+$20.00 / mo per terminal', addons.pos, 'pos'], ['SMS VIP Trunk (10k)', '+$45.00 / mo per block', addons.sms, 'sms'], ['Branch Venue Slot', '+$95.00 / mo per branch', addons.branch, 'branch']] as const).map(([title, detail, count, key]) => <div key={title} className="mt-2 flex items-center justify-between border-b border-[#F0EBE4] pb-2"><div><div className="text-[10px] font-semibold text-[#1A1615]">{title}</div><div className="text-[9px] text-[#81776E]">{detail}</div></div><div className="flex items-center gap-2 rounded border border-[#E5E0D8] px-2 py-1 text-[9px] text-[#4F4842]"><button type="button" onClick={() => handleAddonUpdate(key, false)} className="hover:text-black cursor-pointer">−</button><span className="w-3 text-center">{count}</span><button type="button" onClick={() => handleAddonUpdate(key, true)} className="hover:text-black cursor-pointer">+</button></div></div>)}</section>
-              <section className="rounded-xl border border-[#E8E1D9] bg-white p-4 shadow-[0_2px_10px_rgba(31,29,26,0.04)]"><div className="flex items-center justify-between"><h2 className="text-[16px] font-bold text-[#1A1615]">Tax &amp; Legal Entity</h2><button type="button" className="text-[9px] font-semibold text-[#B7842C] hover:underline cursor-pointer">Edit Details</button></div><div className="mt-3 space-y-2 text-[9px] text-[#81776E]"><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Legal Entity</b><span className="text-[#4F4842]">Revia Hospitality Atelier Group LLC</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Tax Identification</b><span className="text-[#4F4842]">US-EIN: 27-4196482</span></div><div><b className="block text-[8px] uppercase tracking-wider text-[#B0A69C]">Registered Atelier Address</b><span className="text-[#4F4842]">482 Broadway, SoHo<br />New York, NY 10013, United States</span></div></div><div className="mt-3 rounded-md bg-[#FAF8F5] p-2 text-[9px] text-[#81776E]"><FileText className="mr-1 inline h-3 w-3 text-[#B7842C]" /> W-9 &amp; Tax Residency forms on file (Verified 2024).</div></section>
-            </aside>
+              );
+            })}
           </div>
         </div>
+
+        {/* Action Cost Matrix Card (1 Column) */}
+        <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs space-y-3.5 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between border-b border-[#EAE6E1] pb-3 mb-3">
+              <div className="flex items-center gap-2">
+                <Settings2 className="w-4 h-4 text-[#D4A753]" />
+                <h2 className="text-[15px] font-bold text-[#1A1615] tracking-tight">
+                  Action Cost Matrix
+                </h2>
+              </div>
+              <span className="text-[9px] font-bold uppercase tracking-wider bg-[#FAF6EE] text-[#9E782F] px-2 py-0.5 rounded border border-[#EAE6E1]">
+                Admin Editable
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              {costRules.map((rule) => {
+                const isEditing = editingRule === rule.action;
+                return (
+                  <div
+                    key={rule.action}
+                    className="p-2.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg flex items-center justify-between text-[11px]"
+                  >
+                    <div>
+                      <div className="font-bold text-[#1A1615]">{rule.label}</div>
+                      <div className="text-[10px] text-[#9E9A93] capitalize">{rule.costType} cost per action</div>
+                    </div>
+
+                    {isEditing ? (
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          value={newCostInput}
+                          onChange={(e) => setNewCostInput(e.target.value)}
+                          className="w-14 px-2 py-1 bg-white border border-[#D4A753] rounded text-[11px] font-bold outline-none"
+                          autoFocus
+                        />
+                        <button
+                          onClick={() => handleSaveCostRule(rule.action)}
+                          className="px-2 py-1 bg-[#D4A753] text-white rounded font-bold text-[10px] cursor-pointer"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="font-extrabold text-[#1A1615] bg-white border border-[#EAE6E1] px-2 py-0.5 rounded">
+                          {rule.cost} credits
+                        </span>
+                        <button
+                          onClick={() => {
+                            setEditingRule(rule.action);
+                            setNewCostInput(String(rule.cost));
+                          }}
+                          className="text-[10px] font-bold text-[#9E782F] hover:underline cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="pt-2.5 border-t border-[#EAE6E1]">
+            <p className="text-[10px] text-[#6E6A66] leading-relaxed">
+              * Cost changes update immediately across the merchant panel gating functions.
+            </p>
+          </div>
+        </div>
+
       </div>
 
-      {showPaymentModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="relative w-full max-w-md animate-in zoom-in-95 rounded-3xl bg-white p-8 shadow-2xl duration-200">
-            <button onClick={() => setShowPaymentModal(false)} className="absolute right-4 top-4 cursor-pointer text-[#9E9A93] transition-colors hover:text-[#1A1615]">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
-            </button>
-            <h3 className="mb-2 flex items-center gap-2 text-xl font-bold text-[#1A1615]"><CreditCard className="h-5 w-5 text-[#D4A753]" /> Add Payment Method</h3>
-            <p className="mb-6 text-[13px] text-[#6E6A66]">Connect a new card or bank account for billing.</p>
-            <div className="mb-6 space-y-4">
-              <div>
-                <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Card Number</label>
-                <input type="text" placeholder="0000 0000 0000 0000" className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-4 py-3 text-[14px] font-bold text-[#1A1615] focus:border-[#D4A753] focus:outline-none" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">Expiry Date</label>
-                  <input type="text" placeholder="MM/YY" className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-4 py-3 text-[14px] font-bold text-[#1A1615] focus:border-[#D4A753] focus:outline-none" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-[#9E9A93]">CVC</label>
-                  <input type="text" placeholder="123" className="w-full rounded-xl border border-[#EFECE6] bg-[#FAF8F5] px-4 py-3 text-[14px] font-bold text-[#1A1615] focus:border-[#D4A753] focus:outline-none" />
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setShowPaymentModal(false)} className="cursor-pointer flex-1 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] py-3.5 text-[14px] font-bold text-[#1A1615] transition-colors hover:bg-[#EFECE6]">Cancel</button>
-              <button onClick={() => {
-                const addedMethod = { label: 'Visa Corporate', digits: '•••• 1234', meta: 'Expires 12/28 • Main Account', default: false, kind: 'VISA', detail: 'Secondary backup', className: 'bg-[#F4F0EC]' };
-                setPaymentMethods(prev => [...prev, addedMethod]);
-                setShowPaymentModal(false);
-              }} className="cursor-pointer flex-1 rounded-xl bg-[#D4A753] py-3.5 text-[14px] font-bold text-white shadow-sm transition-colors hover:bg-[#C29541]">Save Card</button>
+      {/* Transaction Ledger Card */}
+      <div className="bg-white border border-[#EAE6E1] rounded-xl p-5 shadow-2xs space-y-4">
+        
+        {/* Ledger Header & Filters */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#EAE6E1] pb-3">
+          <div className="flex items-center gap-2">
+            <History className="w-4 h-4 text-[#D4A753]" />
+            <div>
+              <h2 className="text-[15px] font-bold text-[#1A1615] tracking-tight">
+                Transaction Ledger
+              </h2>
+              <p className="text-[11px] text-[#6E6A66]">
+                Complete audit trail of credit additions, setup fees, and redemption commissions
+              </p>
             </div>
           </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Search Bar */}
+            <div className="relative flex-1 min-w-[180px]">
+              <Search className="w-3.5 h-3.5 text-[#9E9A93] absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search description or ID..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full pl-8 pr-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[12px] font-medium text-[#1A1615] outline-none focus:border-[#D4A753]"
+              />
+            </div>
+
+            {/* Category Filter */}
+            <div className="flex items-center gap-1 bg-[#FAF8F5] border border-[#EAE6E1] px-2.5 py-1.5 rounded-lg text-[12px]">
+              <Filter className="w-3.5 h-3.5 text-[#6E6A66]" />
+              <select
+                value={selectedCategory}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="bg-transparent border-none text-[#1A1615] font-bold outline-none cursor-pointer"
+              >
+                <option value="all">All Categories</option>
+                <option value="topup">Credit Top-Up</option>
+                <option value="branch_setup">Branch Setup</option>
+                <option value="staff_invite">Staff Invitation</option>
+                <option value="loyalty_setup">Loyalty Program Setup</option>
+                <option value="qr_generation">QR / Stand Generation</option>
+                <option value="campaign_creation">Campaign Creation</option>
+                <option value="redemption_commission">Redemption Commission</option>
+              </select>
+            </div>
+
+            {/* Export CSV Button */}
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] hover:bg-[#EAE6E1] text-[#1A1615] rounded-lg font-bold text-[12px] transition-colors cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-[#6E6A66]" />
+              <span>Export CSV</span>
+            </button>
+          </div>
         </div>
-      )}
-    </>
+
+        {/* Ledger Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[700px]">
+            <thead>
+              <tr className="border-b border-[#EAE6E1] bg-[#FAF8F5] text-[10px] font-bold text-[#8C827A] uppercase tracking-wider">
+                <th className="py-2.5 px-3">Date &amp; ID</th>
+                <th className="py-2.5 px-3">Event Description</th>
+                <th className="py-2.5 px-3">Category</th>
+                <th className="py-2.5 px-3">Type</th>
+                <th className="py-2.5 px-3 text-right">Amount</th>
+                <th className="py-2.5 px-3 text-right">Balance After</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#EAE6E1] text-[12px]">
+              {paginatedTransactions.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-6 text-center text-[#6E6A66]">
+                    No transactions matching the selected filters.
+                  </td>
+                </tr>
+              ) : (
+                paginatedTransactions.map((tx) => {
+                  const catCfg = categoryConfig[tx.category] || { label: tx.category, color: 'bg-gray-100 text-gray-800 border-gray-200' };
+                  const isCredit = tx.type === 'credit';
+                  return (
+                    <tr key={tx.id} className="hover:bg-[#FAF8F5] transition-colors">
+                      <td className="py-3 px-3 font-mono text-[11px]">
+                        <div className="font-bold text-[#1A1615]">{tx.createdAt}</div>
+                        <div className="text-[10px] text-[#9E9A93]">{tx.id}</div>
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="font-bold text-[#1A1615]">{tx.description}</div>
+                        {tx.relatedEntityId && (
+                          <div className="text-[10px] text-[#6E6A66] font-mono">Ref: {tx.relatedEntityId}</div>
+                        )}
+                      </td>
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold border ${catCfg.color}`}>
+                          {catCfg.label}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        {isCredit ? (
+                          <span className="inline-flex items-center gap-1 text-emerald-700 font-bold text-[11px]">
+                            <ArrowDownLeft className="w-3.5 h-3.5" /> Credit
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-rose-700 font-bold text-[11px]">
+                            <ArrowUpRight className="w-3.5 h-3.5" /> Debit
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 px-3 text-right font-black whitespace-nowrap">
+                        <span className={isCredit ? 'text-emerald-700' : 'text-rose-700'}>
+                          {isCredit ? '+' : '-'}{tx.amount} credits
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-right font-extrabold text-[#1A1615] whitespace-nowrap">
+                        {tx.balanceAfter.toLocaleString()}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Ledger Pagination */}
+        <div className="flex items-center justify-between pt-2.5 border-t border-[#EAE6E1]">
+          <div className="text-[11px] text-[#6E6A66]">
+            Showing <strong className="text-[#1A1615]">{filteredTransactions.length === 0 ? 0 : (currentPage - 1) * pageSize + 1}</strong> to{' '}
+            <strong className="text-[#1A1615]">{Math.min(currentPage * pageSize, filteredTransactions.length)}</strong> of{' '}
+            <strong className="text-[#1A1615]">{filteredTransactions.length}</strong> transactions
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:text-[#1A1615] hover:bg-[#FAF8F5] disabled:opacity-40 cursor-pointer"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+            <span className="text-[11px] font-bold text-[#1A1615]">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-1.5 rounded-lg border border-[#EAE6E1] text-[#6E6A66] hover:text-[#1A1615] hover:bg-[#FAF8F5] disabled:opacity-40 cursor-pointer"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
   );
 };

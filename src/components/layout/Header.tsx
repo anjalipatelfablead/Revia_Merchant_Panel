@@ -73,7 +73,7 @@ export const Header: React.FC<HeaderProps> = ({
       case '/analytics':
         return { category: 'Intelligence', page: 'Analytics & Reports' };
       case '/billing':
-        return { category: 'Merchant Account', page: 'Subscription & Billing' };
+        return { category: 'Merchant Account', page: 'Wallet & Credits' };
       case '/notifications':
         return { category: 'Activity Stream', page: 'Notifications' };
       case '/settings/audit':
@@ -92,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({
   const breadcrumbs = getBreadcrumbs();
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
+    <header className="sticky top-0 z-30 bg-white border-b border-[#EAE6E1] px-4 lg:px-6 py-2.5 flex items-center gap-4 lg:gap-6">
       {/* Left: Mobile hamburger & Clean Breadcrumbs */}
       <div className="flex items-center gap-3">
         <button
@@ -136,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {notificationsOpen && (
-            <div className="absolute right-[-50px] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white border border-[#EAE6E1] rounded-xl shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute right-0 sm:right-0 mt-2 w-[290px] sm:w-80 bg-white border border-[#EAE6E1] rounded-xl shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-2 border-b border-[#EAE6E1]">
                 <div className="text-xs font-bold text-[#1A1615] flex items-center gap-1.5">
                   <Bell className="w-3.5 h-3.5 text-[#A37837]" /> Notifications (3 active)

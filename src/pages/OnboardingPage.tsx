@@ -5,8 +5,6 @@ import {
   Building2,
   Clock,
   Store,
-  Award,
-  Users,
   MapPin,
   ShieldCheck,
   Coffee,
@@ -14,9 +12,10 @@ import {
   Sparkles,
   Zap,
   Lock,
-  CreditCard
+  Wallet,
+  Rocket
 } from 'lucide-react';
-import { PrimaryButton, LiveBadge } from '../components/common/Badges';
+import { PrimaryButton } from '../components/common/Badges';
 
 interface OnboardingPageProps {
   onComplete: () => void;
@@ -27,14 +26,10 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const [isRegistered, setIsRegistered] = useState(true);
   const [activeStep, setActiveStep] = useState<number>(1);
 
-  // M-01 Registration
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  // M-02 Business Info
-  const [businessName, setBusinessName] = useState('');
-  const [businessCategory, setBusinessCategory] = useState('');
-  const [ownerName, setOwnerName] = useState('');
+  // M-01 Business Info
+  const [businessName, setBusinessName] = useState('Blue Bottle Specialty Roasters');
+  const [businessCategory, setBusinessCategory] = useState('Coffee Shop & Artisanal Bakery');
+  const [ownerName, setOwnerName] = useState('Elena Vance');
 
   // Step 3 First Branch
   const [branchName, setBranchName] = useState('Blue Bottle Cafe - Downtown Flagship');
@@ -43,15 +38,12 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   const [hours, setHours] = useState('06:30 AM - 07:00 PM PST');
   const [registerType, setRegisterType] = useState<'counter' | 'salon' | 'express'>('counter');
 
-  // Step 4 & 5
-  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'pro' | 'enterprise'>('pro');
-
+  // 4 Steps replacing old subscription & payment steps with Review & Launch
   const steps = [
     { id: 1, name: 'Business Info', icon: Building2 },
     { id: 2, name: 'Category & Time', icon: Clock },
     { id: 3, name: 'First Branch', icon: Store },
-    { id: 4, name: 'Select Plan', icon: Sparkles },
-    { id: 5, name: 'Payment', icon: CreditCard },
+    { id: 4, name: 'Review & Launch', icon: Rocket },
   ];
 
   if (!isRegistered) {
@@ -59,12 +51,12 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pb-16">
+    <div className="min-h-screen bg-[#FAF8F5] pb-16 font-sans">
       {/* Top Banner & Navigation Header */}
       <div className="bg-white border-b border-[#E5E0D8] px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-[#D4A753] to-[#9E782F] flex items-center justify-center text-white shadow-xs">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
@@ -74,15 +66,15 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
           </div>
           <button
             onClick={onCancel}
-            className="text-xs font-semibold text-[#6E6A66] hover:text-[#1A1615] px-3 py-1.5 rounded-lg border border-[#E5E0D8] hover:bg-[#FAF8F5] cursor-pointer"
+            className="text-xs font-semibold text-[#6E6A66] hover:text-[#1A1615] px-3 py-1.5 rounded-lg border border-[#E5E0D8] hover:bg-[#FAF8F5] cursor-pointer transition-colors"
           >
-            Save Draft & Exit
+            Save Draft &amp; Exit
           </button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
-        {/* Top 5-Step Horizontal Wizard */}
+        {/* Top 4-Step Horizontal Wizard */}
         <div className="bg-white border border-[#E5E0D8] rounded-xl p-4 sm:p-5 mb-6 shadow-xs">
           <div className="flex items-center justify-between relative">
             <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#E5E0D8] -translate-y-1/2 z-0 hidden md:block" />
@@ -90,7 +82,6 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
             {steps.map((step) => {
               const isPast = step.id < activeStep;
               const isCurrent = step.id === activeStep;
-              const Icon = step.icon;
 
               return (
                 <div
@@ -99,23 +90,25 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   className="relative z-10 flex flex-col items-center group cursor-pointer"
                 >
                   <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-xs font-bold ${isPast
+                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all text-xs font-bold ${
+                      isPast
                         ? 'bg-[#0D7A53] text-white ring-4 ring-[#E6F4ED]'
                         : isCurrent
                           ? 'bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md ring-4 ring-[#FDF8EB]'
                           : 'bg-white border-2 border-[#E5E0D8] text-[#9E9A93] group-hover:border-[#9E9A93]'
-                      }`}
+                    }`}
                   >
                     {isPast ? <Check className="w-4 h-4 text-white" /> : <span>{step.id}</span>}
                   </div>
                   <div className="mt-2 text-center">
                     <span
-                      className={`text-xs font-semibold block ${isCurrent
+                      className={`text-xs block ${
+                        isCurrent
                           ? 'text-[#1A1615] font-bold'
                           : isPast
-                            ? 'text-[#0D7A53]'
-                            : 'text-[#9E9A93]'
-                        }`}
+                            ? 'text-[#0D7A53] font-semibold'
+                            : 'text-[#9E9A93] font-medium'
+                      }`}
                     >
                       {step.name}
                     </span>
@@ -133,9 +126,11 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
         {/* Main 2-Column Area: Form + Right Progress Checklist */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
           {/* Main Form Area (8 cols) */}
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-white border border-[#E5E0D8] rounded-xl p-6 shadow-xs">
+              
               {activeStep === 1 && (
                 <>
                   <div className="border-b border-[#E5E0D8] pb-4 mb-6">
@@ -146,7 +141,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       Business Information
                     </h2>
                     <p className="text-xs text-[#6E6A66] mt-1">
-                      Set up your tenant profile and business details.
+                      Set up your tenant profile and merchant details.
                     </p>
                   </div>
                   <div className="space-y-4">
@@ -169,7 +164,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       STEP 02 // OPERATIONS
                     </span>
                     <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
-                      Category & Settings
+                      Category &amp; Settings
                     </h2>
                     <p className="text-xs text-[#6E6A66] mt-1">
                       Define your primary business category and regional preferences.
@@ -191,7 +186,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       STEP 03 // PHYSICAL RETAIL PROFILE
                     </span>
                     <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
-                      Configure Flagship Outlet & Register Setup
+                      Configure Flagship Outlet &amp; Register Setup
                     </h2>
                     <p className="text-xs text-[#6E6A66] mt-1">
                       Define the operating parameters and hardware profile for your initial physical location.
@@ -214,7 +209,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
 
                     <div>
                       <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                        Physical Address & GPS Pin
+                        Physical Address &amp; GPS Pin
                       </label>
                       <div className="relative">
                         <MapPin className="w-4 h-4 text-[#9E782F] absolute left-3 top-3" />
@@ -283,13 +278,13 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                       </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {/* Option 1 */}
                         <div
                           onClick={() => setRegisterType('counter')}
-                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'counter'
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+                            registerType === 'counter'
                               ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                               : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                            }`}
+                          }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
@@ -305,13 +300,13 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           <div className="text-[10px] text-[#6E6A66] mt-0.5">High-volume pour-over bar, dual customer display scanner.</div>
                         </div>
 
-                        {/* Option 2 */}
                         <div
                           onClick={() => setRegisterType('salon')}
-                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'salon'
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+                            registerType === 'salon'
                               ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                               : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                            }`}
+                          }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
@@ -327,13 +322,13 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                           <div className="text-[10px] text-[#6E6A66] mt-0.5">Table-side sensory service, mobile wallet NFC checkout.</div>
                         </div>
 
-                        {/* Option 3 */}
                         <div
                           onClick={() => setRegisterType('express')}
-                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${registerType === 'express'
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+                            registerType === 'express'
                               ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
                               : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                            }`}
+                          }`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <div className="w-8 h-8 rounded-lg bg-[#FAF8F5] border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
@@ -346,7 +341,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                             )}
                           </div>
                           <div className="text-xs font-bold text-[#1A1615]">Express Window</div>
-                          <div className="text-[10px] text-[#6E6A66] mt-0.5">Sub-20s tap & go scan, automated loyalty stamp batching.</div>
+                          <div className="text-[10px] text-[#6E6A66] mt-0.5">Sub-20s tap &amp; go scan, automated loyalty stamp batching.</div>
                         </div>
                       </div>
                     </div>
@@ -354,139 +349,86 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 </>
               )}
 
+              {/* NEW STEP 4: REVIEW & LAUNCH (Replaces old Select Plan & Payment steps) */}
               {activeStep === 4 && (
                 <>
                   <div className="border-b border-[#E5E0D8] pb-4 mb-6">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                      STEP 04 // SUBSCRIPTION
+                      STEP 04 // FINAL PROVISIONING
                     </span>
-                    <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
-                      Choose Your Plan
+                    <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1 flex items-center gap-2">
+                      <span>Review Setup &amp; Launch Merchant Panel</span>
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                     </h2>
                     <p className="text-xs text-[#6E6A66] mt-1">
-                      Select the tier that best fits your business needs.
+                      Verify your business information, flagship outlet configuration, and initial credit wallet setup.
                     </p>
                   </div>
 
                   <div className="space-y-4">
-                    {/* Plan Options */}
-                    <div
-                      onClick={() => setSelectedPlan('starter')}
-                      className={`p-4 rounded-xl border transition-all cursor-pointer ${selectedPlan === 'starter'
-                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
-                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                        }`}
-                    >
-                      <div className="flex items-center justify-between">
+                    {/* Business & Owner Summary */}
+                    <div className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF8F5]">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-xs font-bold text-[#1A1615] uppercase tracking-wider">Business &amp; Owner Profile</div>
+                        <button onClick={() => setActiveStep(1)} className="text-[11px] font-bold text-[#9E782F] hover:underline cursor-pointer">Edit</button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                         <div>
-                          <div className="text-sm font-bold text-[#1A1615]">Starter</div>
-                          <div className="text-[11px] text-[#6E6A66]">Essential tools for single-location shops.</div>
+                          <span className="text-[#6E6A66] block">Business Name</span>
+                          <strong className="text-[#1A1615]">{businessName || 'Blue Bottle Specialty Roasters'}</strong>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm font-bold text-[#1A1615]">₹49<span className="text-[10px] text-[#9E9A93] font-normal">/mo</span></div>
+                        <div>
+                          <span className="text-[#6E6A66] block">Owner / Manager</span>
+                          <strong className="text-[#1A1615]">{ownerName || 'Elena Vance'}</strong>
+                        </div>
+                        <div>
+                          <span className="text-[#6E6A66] block">Category</span>
+                          <strong className="text-[#1A1615]">{businessCategory || 'Coffee Shop & Artisanal Bakery'}</strong>
                         </div>
                       </div>
                     </div>
 
-                    <div
-                      onClick={() => setSelectedPlan('pro')}
-                      className={`p-4 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${selectedPlan === 'pro'
-                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
-                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                        }`}
-                    >
-                      <div className="absolute top-0 right-0 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg">RECOMMENDED</div>
-                      <div className="flex items-center justify-between">
+                    {/* Flagship Outlet Summary */}
+                    <div className="p-4 rounded-xl border border-[#E5E0D8] bg-[#FAF8F5]">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-xs font-bold text-[#1A1615] uppercase tracking-wider">Flagship Outlet &amp; Register</div>
+                        <button onClick={() => setActiveStep(3)} className="text-[11px] font-bold text-[#9E782F] hover:underline cursor-pointer">Edit</button>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                         <div>
-                          <div className="text-sm font-bold text-[#1A1615]">Pro</div>
-                          <div className="text-[11px] text-[#6E6A66]">Advanced loyalty and multi-branch support.</div>
+                          <span className="text-[#6E6A66] block">Branch Name</span>
+                          <strong className="text-[#1A1615]">{branchName}</strong>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm font-bold text-[#1A1615]">₹99<span className="text-[10px] text-[#9E9A93] font-normal">/mo</span></div>
+                        <div>
+                          <span className="text-[#6E6A66] block">Architecture</span>
+                          <strong className="text-[#1A1615] capitalize">{registerType} Register</strong>
+                        </div>
+                        <div className="sm:col-span-2">
+                          <span className="text-[#6E6A66] block">Address</span>
+                          <strong className="text-[#1A1615]">{address}</strong>
                         </div>
                       </div>
                     </div>
 
-                    <div
-                      onClick={() => setSelectedPlan('enterprise')}
-                      className={`p-4 rounded-xl border transition-all cursor-pointer ${selectedPlan === 'enterprise'
-                          ? 'border-[#D4A753] bg-[#FDF8EB]/50 ring-2 ring-[#D4A753]/20'
-                          : 'border-[#E5E0D8] bg-white hover:bg-[#FAF8F5]'
-                        }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="text-sm font-bold text-[#1A1615]">Enterprise</div>
-                          <div className="text-[11px] text-[#6E6A66]">Custom deployments and API access.</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-bold text-[#1A1615]">Custom</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {activeStep === 5 && (
-                <>
-                  <div className="border-b border-[#E5E0D8] pb-4 mb-6">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
-                      STEP 05 // PAYMENT
-                    </span>
-                    <h2 className="text-xl font-bold tracking-tight text-[#1A1615] mt-1">
-                      Payment Details
-                    </h2>
-                    <p className="text-xs text-[#6E6A66] mt-1">
-                      Enter your payment information to finalize your {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} plan subscription.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl p-4 flex items-center justify-between mb-4">
+                    {/* Pay-As-You-Go Wallet Initialization */}
+                    <div className="p-4 rounded-xl border border-[#D4A753]/40 bg-[#FAF6EE] flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-white border border-[#E5E0D8] flex items-center justify-center text-[#9E782F]">
-                          <CreditCard className="w-4 h-4" />
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white flex items-center justify-center shrink-0 shadow-xs">
+                          <Wallet className="w-5 h-5" />
                         </div>
                         <div>
-                          <div className="text-[10px] font-bold text-[#9E9A93] uppercase tracking-wider">Total Due Today</div>
-                          <div className="text-sm font-bold text-[#1A1615]">
-                            {selectedPlan === 'starter' ? '₹49.00' : selectedPlan === 'pro' ? '₹99.00' : 'Contact Sales'}
-                          </div>
+                          <div className="text-xs font-extrabold text-[#1A1615]">Pay-As-You-Go Credit System Initialized</div>
+                          <div className="text-[11px] text-[#6E6A66]">No recurring monthly subscription contracts. Initial <strong>250 credits</strong> loaded.</div>
                         </div>
                       </div>
+                      <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-full uppercase border border-emerald-200 shrink-0">
+                        Ready
+                      </span>
                     </div>
 
-                    {selectedPlan !== 'enterprise' ? (
-                      <>
-                        <div>
-                          <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Cardholder Name</label>
-                          <input type="text" placeholder="Name on card" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
-                        </div>
-                        <div>
-                          <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Card Number</label>
-                          <input type="text" placeholder="0000 0000 0000 0000" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">Expiry Date</label>
-                            <input type="text" placeholder="MM/YY" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">CVC</label>
-                            <input type="text" placeholder="123" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3.5 py-2.5 text-xs font-semibold text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]" />
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 mt-4 text-[#0D7A53] text-[10px] font-bold bg-[#E6F4ED] p-3 rounded-lg border border-[#BCE3D1]">
-                          <Lock className="w-3.5 h-3.5" /> All transactions are secure and encrypted.
-                        </div>
-                      </>
-                    ) : (
-                      <div className="text-center py-8 bg-[#FAF8F5] border border-[#E5E0D8] rounded-xl border-dashed">
-                        <p className="text-sm font-semibold text-[#1A1615]">Enterprise Setup Pending</p>
-                        <p className="text-xs text-[#6E6A66] mt-1">An enterprise sales representative will contact you to set up billing and custom provisioning.</p>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2 mt-4 text-[#0D7A53] text-[11px] font-bold bg-[#E6F4ED] p-3 rounded-lg border border-[#BCE3D1]">
+                      <Lock className="w-4 h-4" /> Environment provisioned with end-to-end SOC-2 Type II data encryption.
+                    </div>
                   </div>
                 </>
               )}
@@ -497,7 +439,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                   <button
                     type="button"
                     onClick={() => setActiveStep(activeStep - 1)}
-                    className="px-4 py-2.5 rounded-lg border border-[#E5E0D8] text-xs font-semibold text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
+                    className="px-4 py-2.5 rounded-lg border border-[#E5E0D8] text-xs font-semibold text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer transition-colors"
                   >
                     ← Back
                   </button>
@@ -507,12 +449,12 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <PrimaryButton
                   type="button"
                   onClick={() => {
-                    if (activeStep < 5) setActiveStep(activeStep + 1);
+                    if (activeStep < 4) setActiveStep(activeStep + 1);
                     else onComplete();
                   }}
-                  className="py-2.5 px-5 text-xs font-semibold"
+                  className="py-2.5 px-5 text-xs font-bold cursor-pointer"
                 >
-                  {activeStep === 5 ? 'Complete Onboarding' : 'Continue →'}
+                  {activeStep === 4 ? 'Launch Merchant Panel →' : 'Continue →'}
                 </PrimaryButton>
               </div>
             </div>
@@ -526,12 +468,12 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">
                   PROGRESS CHECKLIST
                 </span>
-                <span className="text-xs font-bold text-[#9E782F]">{Math.round(((activeStep - 1) / steps.length) * 100)}% Complete</span>
+                <span className="text-xs font-bold text-[#9E782F]">{Math.round(((activeStep - 1) / 3) * 100)}% Complete</span>
               </div>
 
               {/* Progress bar */}
               <div className="w-full h-2 bg-[#FAF8F5] rounded-full overflow-hidden border border-[#E5E0D8] mb-4">
-                <div className={`h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-full`} style={{ width: `${((activeStep - 1) / steps.length) * 100}%` }} />
+                <div className={`h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-full transition-all duration-300`} style={{ width: `${Math.min(100, Math.round(((activeStep - 1) / 3) * 100))}%` }} />
               </div>
 
               <div className="space-y-3 text-xs">
@@ -561,7 +503,7 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                         )}
                         {step.name}
                       </span>
-                      <span className={`text-[10px] font-bold ${isDone ? '' : isCurrent ? 'text-[#9E782F]' : 'font-normal'}`}>
+                      <span className={`text-[10px] font-bold ${isDone ? '' : isCurrent ? 'text-[#9E9A93]' : 'font-normal'}`}>
                         {isDone ? 'DONE' : isCurrent ? 'IN PROGRESS' : 'PENDING'}
                       </span>
                     </div>
