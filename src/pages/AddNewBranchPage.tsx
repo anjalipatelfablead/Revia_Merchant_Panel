@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useWallet } from '../context/WalletContext';
 import {
   ArrowLeft,
   X,
@@ -35,6 +36,8 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
   onNavigate,
   onAddBranch,
 }) => {
+  const { checkAndDeductCredit } = useWallet();
+
   // Form State initialized to exact Figma defaults
   const [branchName, setBranchName] = useState('SoHo Roastery & Tasting Salon');
   const [outletCode, setOutletCode] = useState('REV-NYC-04');
@@ -91,12 +94,18 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
     setOutletCode(`REV-${randomPrefix}-${randomNum}`);
   };
 
-  // Provision and launch branch handler
+  // Provision and launch branch handler (CREDIT GATED)
   const handleProvisionBranch = () => {
+    const branchId = `branch-rev-${Date.now()}`;
+    const allowed = checkAndDeductCredit('branch_setup', 100, branchId, 'New Branch Setup');
+    if (!allowed) {
+      return; // Blocked due to insufficient wallet credits
+    }
+
     setIsSubmitting(true);
 
     const createdOutlet: OutletsData = {
-      id: `branch-rev-${Date.now()}`,
+      id: branchId,
       name: branchName || 'New Outlet',
       shortName: branchName.split(' ')[0] || 'Outlet',
       type: venueProfile === 'roastery' ? 'Primary Hub' : 'Active',

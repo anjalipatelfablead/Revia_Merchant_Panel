@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useWallet } from '../context/WalletContext';
 import {
   Undo2,
   Save,
@@ -35,6 +36,8 @@ const initialTiers: Tier[] = [
 ];
 
 export const LoyaltyPage: React.FC = () => {
+  const { checkAndDeductCredit } = useWallet();
+
   // State for forms
   const [passBrandName, setPassBrandName] = useState('Revia Artisanal Stamp Pass');
   const [qualificationRule, setQualificationRule] = useState('Spend at least ₹6.00 per visit');
@@ -64,6 +67,13 @@ export const LoyaltyPage: React.FC = () => {
 
   const handlePublish = () => {
     if (publishStatus !== 'idle') return;
+
+    // CREDIT CHECK GATING (50 credits)
+    const allowed = checkAndDeductCredit('loyalty_setup', 50, 'loyalty-program-publish', 'Save & Publish Loyalty Program');
+    if (!allowed) {
+      return; // Blocked due to insufficient wallet credits
+    }
+
     setPublishStatus('publishing');
     setTimeout(() => {
       setPublishStatus('published');
