@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   Award,
   BarChart3,
@@ -105,42 +105,62 @@ export const AnalyticsPage: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<'date' | 'venue' | null>(null);
   const [exported, setExported] = useState(false);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (!(event.target as HTMLElement).closest('.dropdown-container')) {
+        setOpenDropdown(null);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const dataMultiplier = useMemo(() => {
+    let mult = 1;
+    if (selectedDateRange.includes('30')) mult *= 0.33;
+    if (selectedDateRange.includes('Year')) mult *= 3.5;
+    if (selectedVenue === 'Downtown Flagship') mult *= 0.5;
+    else if (selectedVenue === 'Roastery Reserve') mult *= 0.3;
+    else if (selectedVenue === 'Northside Pop-up') mult *= 0.2;
+    return mult;
+  }, [selectedDateRange, selectedVenue]);
+
   const kpiCards = useMemo(
     () => [
       {
         label: '30-Day Customer Retention',
-        value: '74.8%',
+        value: (74.8 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1) + '%',
         detail: 'Vs Prev. Quarter',
-        note: 'Benchmark: 58.4%',
+        note: `Benchmark: ${(58.4 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)}%`,
         accent: 'bg-[#9E782F]',
         tone: 'emerald',
       },
       {
         label: 'Obsidian VIP LTV',
-        value: '₹1,480.00',
-        detail: 'Avg 3.8 visits/week',
-        note: '₹38.90 AVG',
+        value: `₹${(1480.00 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        detail: `Avg ${(3.8 * (1 + (dataMultiplier - 1) * 0.1)).toFixed(1)} visits/week`,
+        note: `₹${(38.90 * dataMultiplier).toFixed(2)} AVG`,
         accent: 'bg-[#C9A24F]',
         tone: 'gold',
       },
       {
         label: 'Stamp Velocity',
-        value: '12.4 Days',
+        value: `${(12.4 * (1 - (dataMultiplier - 1) * 0.1)).toFixed(1)} Days`,
         detail: 'Target: 10 Stamps',
-        note: '8.7 Stamps Avg',
+        note: `${(8.7 * (1 - (dataMultiplier - 1) * 0.1)).toFixed(1)} Stamps Avg`,
         accent: 'bg-[#0D7A53]',
         tone: 'stone',
       },
       {
         label: 'Guest Churn Risk',
-        value: '4.2%',
-        detail: '18 dormant guests re-engaged via Flash Perk',
+        value: `${(4.2 * (1 - (dataMultiplier - 1) * 0.2)).toFixed(1)}%`,
+        detail: `${Math.round(18 * dataMultiplier)} dormant guests re-engaged via Flash Perk`,
         note: '',
         accent: 'bg-[#D9A14A]',
         tone: 'amber',
       },
     ],
-    []
+    [dataMultiplier]
   );
 
   const exportDossier = () => {
@@ -163,34 +183,34 @@ export const AnalyticsPage: React.FC = () => {
     window.setTimeout(() => setExported(false), 2200);
   };
 
-  const funnelStages = [
-    { label: '1st QR Counter Scan', value: '100% (2,840)', detail: 'Avg 1.2 items per order', percent: 100, accent: 'bg-[#6E6862]' },
-    { label: 'Privé Member', value: '82.0% Conversion', detail: 'Achieved within 9.4 days of scan', percent: 82, accent: 'bg-[#D4A753]' },
-    { label: 'Black Tier', value: '34.0% Conversion', detail: 'Avg 28 days · 15 roasts logged', percent: 34, accent: 'bg-[#C39A3D]' },
-    { label: 'Obsidian VIP', value: '11.8% Velocity', detail: 'Apex spending tier · 335 total guests', percent: 12, accent: 'bg-[#9E782F]' },
-  ];
+  const funnelStages = useMemo(() => [
+    { label: '1st QR Counter Scan', value: `100% (${Math.round(2840 * dataMultiplier).toLocaleString()})`, detail: `Avg ${(1.2 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)} items per order`, percent: 100, accent: 'bg-[#6E6862]' },
+    { label: 'Privé Member', value: `${(82.0 * (1 + (dataMultiplier - 1) * 0.02)).toFixed(1)}% Conversion`, detail: `Achieved within ${(9.4 * (1 - (dataMultiplier - 1) * 0.05)).toFixed(1)} days of scan`, percent: 82, accent: 'bg-[#D4A753]' },
+    { label: 'Black Tier', value: `${(34.0 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)}% Conversion`, detail: `Avg ${(28 * (1 - (dataMultiplier - 1) * 0.05)).toFixed(0)} days · ${Math.round(15 * dataMultiplier)} roasts logged`, percent: 34, accent: 'bg-[#C39A3D]' },
+    { label: 'Obsidian VIP', value: `${(11.8 * (1 + (dataMultiplier - 1) * 0.08)).toFixed(1)}% Velocity`, detail: `Apex spending tier · ${Math.round(335 * dataMultiplier)} total guests`, percent: 12, accent: 'bg-[#9E782F]' },
+  ], [dataMultiplier]);
 
-  const menuItems = [
-    { name: 'Panama Geisha Reserve', rate: '94%', lift: '+42.8% LTV Lift', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=120&auto=format&fit=crop&q=80' },
-    { name: 'Cardamom Tahini Cruffin', rate: '88%', lift: '+31.2% LTV Lift', image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120&auto=format&fit=crop&q=80' },
-    { name: 'Madagascan Vanilla Oat', rate: '81%', lift: '+26.5% LTV Lift', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=120&auto=format&fit=crop&q=80' },
-    { name: 'Single-Origin Roastery Flight', rate: '79%', lift: '+22.4% LTV Lift', image: 'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=120&auto=format&fit=crop&q=80' },
-  ];
+  const menuItems = useMemo(() => [
+    { name: 'Panama Geisha Reserve', rate: `${(94 * (1 + (dataMultiplier - 1) * 0.02)).toFixed(0)}%`, lift: `+${(42.8 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)}% LTV Lift`, image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=120&auto=format&fit=crop&q=80' },
+    { name: 'Cardamom Tahini Cruffin', rate: `${(88 * (1 + (dataMultiplier - 1) * 0.02)).toFixed(0)}%`, lift: `+${(31.2 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)}% LTV Lift`, image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120&auto=format&fit=crop&q=80' },
+    { name: 'Madagascan Vanilla Oat', rate: `${(81 * (1 + (dataMultiplier - 1) * 0.02)).toFixed(0)}%`, lift: `+${(26.5 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)}% LTV Lift`, image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=120&auto=format&fit=crop&q=80' },
+    { name: 'Single-Origin Roastery Flight', rate: `${(79 * (1 + (dataMultiplier - 1) * 0.02)).toFixed(0)}%`, lift: `+${(22.4 * (1 + (dataMultiplier - 1) * 0.05)).toFixed(1)}% LTV Lift`, image: 'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=120&auto=format&fit=crop&q=80' },
+  ], [dataMultiplier]);
 
-  const revenueSeries = [
-    { label: 'M1', value: 1240 },
-    { label: 'M2', value: 1320 },
-    { label: 'M3', value: 1460 },
-    { label: 'M4', value: 1620 },
-    { label: 'M5', value: 1740 },
-    { label: 'M6', value: 1880 },
-    { label: 'M7', value: 1960 },
-    { label: 'M8', value: 2160 },
-    { label: 'M9', value: 2310 },
-    { label: 'M10', value: 2435 },
-    { label: 'M11', value: 2500 },
-    { label: 'M12', value: 2600 },
-  ];
+  const revenueSeries = useMemo(() => [
+    { label: 'M1', value: Math.round(1240 * dataMultiplier) },
+    { label: 'M2', value: Math.round(1320 * dataMultiplier) },
+    { label: 'M3', value: Math.round(1460 * dataMultiplier) },
+    { label: 'M4', value: Math.round(1620 * dataMultiplier) },
+    { label: 'M5', value: Math.round(1740 * dataMultiplier) },
+    { label: 'M6', value: Math.round(1880 * dataMultiplier) },
+    { label: 'M7', value: Math.round(1960 * dataMultiplier) },
+    { label: 'M8', value: Math.round(2160 * dataMultiplier) },
+    { label: 'M9', value: Math.round(2310 * dataMultiplier) },
+    { label: 'M10', value: Math.round(2435 * dataMultiplier) },
+    { label: 'M11', value: Math.round(2500 * dataMultiplier) },
+    { label: 'M12', value: Math.round(2600 * dataMultiplier) },
+  ], [dataMultiplier]);
 
   const getHeatmapColor = (pct: number) => {
     if (pct === 0) return 'bg-[#F7F5F2] text-[#8F8A84] border border-[#EEE7DD]';
@@ -204,7 +224,7 @@ export const AnalyticsPage: React.FC = () => {
     const width = 620;
     const height = 180;
     const min = 0;
-    const max = 1600;
+    const max = Math.max(1600, ...data.map(d => d.value)) * 1.1 || 1;
     const range = max - min || 1;
 
     const toPoints = (values: number[]) => values
@@ -215,10 +235,10 @@ export const AnalyticsPage: React.FC = () => {
       })
       .join(' ');
 
-    const obsidianValues = [0, 300, 500, 710, 900, 1060, 1190, 1300, 1380, 1440, 1480, 1500];
-    const blackTierValues = [0, 180, 300, 430, 550, 660, 750, 830, 900, 950, 985, 1000];
-    const primeMemberValues = [0, 95, 155, 220, 285, 335, 375, 410, 440, 465, 485, 500];
-    const guestScanValues = [0, 34, 40, 48, 55, 61, 67, 72, 78, 83, 88, 95];
+    const obsidianValues = [0, 300, 500, 710, 900, 1060, 1190, 1300, 1380, 1440, 1480, 1500].map(v => v * dataMultiplier);
+    const blackTierValues = [0, 180, 300, 430, 550, 660, 750, 830, 900, 950, 985, 1000].map(v => v * dataMultiplier);
+    const primeMemberValues = [0, 95, 155, 220, 285, 335, 375, 410, 440, 465, 485, 500].map(v => v * dataMultiplier);
+    const guestScanValues = [0, 34, 40, 48, 55, 61, 67, 72, 78, 83, 88, 95].map(v => v * dataMultiplier);
     const points = toPoints(obsidianValues);
     const blackTier = toPoints(blackTierValues);
     const primeMember = toPoints(primeMemberValues);
@@ -259,18 +279,18 @@ export const AnalyticsPage: React.FC = () => {
         <polyline fill="none" stroke="#D4A753" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" points={primeMember} />
         <polyline fill="none" stroke="#8C847A" strokeWidth="1.1" strokeDasharray="2 4" points={guestScan} />
 
-        <circle cx={width - 15} cy={height - ((1500 - min) / range) * (height - 30) - 15} r="3" fill="#9E782F" />
-        <circle cx={width - 15} cy={height - ((1000 - min) / range) * (height - 30) - 15} r="2.5" fill="#B78625" />
-        <circle cx={width - 15} cy={height - ((500 - min) / range) * (height - 30) - 15} r="2.5" fill="#D4A753" />
-        <circle cx={width - 15} cy={height - ((95 - min) / range) * (height - 30) - 15} r="2.5" fill="#8C847A" />
+        <circle cx={width - 15} cy={height - ((1500 * dataMultiplier - min) / range) * (height - 30) - 15} r="3" fill="#9E782F" />
+        <circle cx={width - 15} cy={height - ((1000 * dataMultiplier - min) / range) * (height - 30) - 15} r="2.5" fill="#B78625" />
+        <circle cx={width - 15} cy={height - ((500 * dataMultiplier - min) / range) * (height - 30) - 15} r="2.5" fill="#D4A753" />
+        <circle cx={width - 15} cy={height - ((95 * dataMultiplier - min) / range) * (height - 30) - 15} r="2.5" fill="#8C847A" />
 
         {data.map((point, index) => (
           <text key={`month-${point.label}`} x={(index / (data.length - 1)) * (width - 30) + 15} y={height - 1} textAnchor="middle" fill="#8C847A" fontSize="8">{point.label}</text>
         ))}
 
-        <text x={width - 16} y="20" textAnchor="end" fill="#B5ADA3" fontSize="8">₹1,500</text>
-        <text x={width - 16} y="65" textAnchor="end" fill="#B5ADA3" fontSize="8">₹1,000</text>
-        <text x={width - 16} y="110" textAnchor="end" fill="#B5ADA3" fontSize="8">₹500</text>
+        <text x={width - 16} y="20" textAnchor="end" fill="#B5ADA3" fontSize="8">₹{(1500 * dataMultiplier).toLocaleString()}</text>
+        <text x={width - 16} y="65" textAnchor="end" fill="#B5ADA3" fontSize="8">₹{(1000 * dataMultiplier).toLocaleString()}</text>
+        <text x={width - 16} y="110" textAnchor="end" fill="#B5ADA3" fontSize="8">₹{(500 * dataMultiplier).toLocaleString()}</text>
 
         {data.map((point, index) => {
           const x = (index / (data.length - 1)) * (width - 30) + 15;
@@ -324,7 +344,7 @@ export const AnalyticsPage: React.FC = () => {
                 </div>
 
                 <div className="hidden md:hidden lg:flex max-w-[380px] flex-wrap items-start justify-end gap-2 self-start lg:grid lg:w-[560px] lg:max-w-full lg:grid-cols-2 lg:self-auto">
-                  <div className="relative z-50 min-w-[230px] lg:min-w-0 lg:w-full">
+                  <div className="relative z-50 min-w-[230px] lg:min-w-0 lg:w-full dropdown-container">
                     <button type="button" onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
                       <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Calendar className="h-2.5 w-2.5" /></span>
                       <span className="flex min-w-0 flex-1 flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Date horizon</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedDateRange}</span></span>
@@ -333,7 +353,7 @@ export const AnalyticsPage: React.FC = () => {
                     {openDropdown === 'date' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[230px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose date horizon</div>{['Last 30 Days', 'Last 90 Days (Aug 15 - Nov 14, 2024)', 'Year to date'].map((range) => <button key={range} type="button" onClick={() => { setSelectedDateRange(range); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedDateRange === range ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{range}</button>)}</div>}
                   </div>
 
-                  <div className="relative z-50 min-w-[120px] lg:min-w-0 lg:w-full">
+                  <div className="relative z-50 min-w-[120px] lg:min-w-0 lg:w-full dropdown-container">
                     <button type="button" onClick={() => setOpenDropdown(openDropdown === 'venue' ? null : 'venue')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
                       <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Filter className="h-2.5 w-2.5" /></span>
                       <span className="flex min-w-0 flex-1 flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Venues</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedVenue}</span></span>
@@ -355,7 +375,7 @@ export const AnalyticsPage: React.FC = () => {
 
                 <div className="hidden md:flex lg:hidden w-full max-w-[760px] flex-wrap items-center gap-2 self-start">
                   <div className="flex w-full flex-wrap items-center gap-2">
-                    <div className="relative z-50 min-w-[180px] flex-1">
+                    <div className="relative z-50 min-w-[180px] flex-1 dropdown-container">
                       <button type="button" onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
                         <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Calendar className="h-2.5 w-2.5" /></span>
                         <span className="flex min-w-0 flex-1 flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Date horizon</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedDateRange}</span></span>
@@ -364,7 +384,7 @@ export const AnalyticsPage: React.FC = () => {
                       {openDropdown === 'date' && <div className="absolute left-0 top-full z-20 mt-1 w-full min-w-[230px] rounded-lg border border-[#E7E0D8] bg-white p-1.5 text-left shadow-lg"><div className="px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#9E782F]">Choose date horizon</div>{['Last 30 Days', 'Last 90 Days (Aug 15 - Nov 14, 2024)', 'Year to date'].map((range) => <button key={range} type="button" onClick={() => { setSelectedDateRange(range); setOpenDropdown(null); }} className={`block w-full rounded-md px-2 py-2 text-left text-[11px] hover:bg-[#FAF5EC] ${selectedDateRange === range ? 'font-semibold text-[#9E782F]' : 'text-[#4F4842]'}`}>{range}</button>)}</div>}
                     </div>
 
-                    <div className="relative z-50 min-w-[150px] flex-1">
+                    <div className="relative z-50 min-w-[150px] flex-1 dropdown-container">
                       <button type="button" onClick={() => setOpenDropdown(openDropdown === 'venue' ? null : 'venue')} className="flex w-full items-center gap-2 rounded-[9px] border border-[#E7E0D8] bg-white px-2.5 py-1.5 text-left shadow-[0_2px_8px_rgba(25,20,18,0.02)] hover:border-[#C9A24F]">
                         <span className="flex h-4 w-4 items-center justify-center rounded-md bg-[#F3EFE9] text-[#7A7269]"><Filter className="h-2.5 w-2.5" /></span>
                         <span className="flex min-w-0 flex-1 flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93]">Venues</span><span className="mt-0.5 truncate text-[11px] font-semibold text-[#1A1615]">{selectedVenue}</span></span>
@@ -508,10 +528,10 @@ export const AnalyticsPage: React.FC = () => {
 
                   <div className="mt-2 grid gap-2 sm:grid-cols-4">
                     {[
-                      { name: 'Obsidian VIP', value: '₹1,480.00', color: 'bg-[#9E782F]' },
-                      { name: 'Black Tier', value: '₹820.00', color: 'bg-[#B29E8F]' },
-                      { name: 'Prime Member', value: '₹410.00', color: 'bg-[#1A1615]' },
-                      { name: 'Guest Scan', value: '₹95.00', color: 'bg-[#D8C7A2]' },
+                      { name: 'Obsidian VIP', value: `₹${(1480 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#9E782F]' },
+                      { name: 'Black Tier', value: `₹${(820 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#B29E8F]' },
+                      { name: 'Prime Member', value: `₹${(410 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#1A1615]' },
+                      { name: 'Guest Scan', value: `₹${(95 * dataMultiplier).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, color: 'bg-[#D8C7A2]' },
                     ].map((item) => (
                       <div key={item.name} className="rounded-[7px] border border-[#EAE3D9] bg-[#FAF8F5] p-2">
                         <div className="mb-1 flex items-center gap-1.5">

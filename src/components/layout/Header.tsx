@@ -77,8 +77,9 @@ export const Header: React.FC<HeaderProps> = ({
       case '/notifications':
         return { category: 'Activity Stream', page: 'Notifications' };
       case '/settings/audit':
-      case '/settings/branding':
         return { category: 'Governance', page: 'Settings & Audit Log' };
+      case '/settings/branding':
+        return { category: 'Governance', page: 'Business Profile & Branding' };
       case '/item-catalog':
         return { category: 'Catalog', page: 'Item Catalog' };
       case '/orders':
