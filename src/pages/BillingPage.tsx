@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { CreditCard, CheckCircle2, Zap, ShieldCheck, ArrowRight, ReceiptText, Search, Download, ChevronRight, LockKeyhole, WalletCards, Users, Server, FileText, Bell, CalendarDays, Building2, MoreVertical } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { useWallet } from '../context/WalletContext';
+import { WalletActionCategory } from '../types/wallet';
+import { CreditCard, CheckCircle2, Zap, ShieldCheck, ArrowRight, ReceiptText, Search, Download, ChevronRight, LockKeyhole, WalletCards, Users, Server, FileText, Bell, CalendarDays, Building2, MoreVertical, PlusCircle, AlertTriangle, PieChart, Settings2, History, Filter, ArrowDownLeft, ArrowUpRight, ChevronLeft } from 'lucide-react';
 
 const MobileBillingPage: React.FC = () => {
   const invoices = [
