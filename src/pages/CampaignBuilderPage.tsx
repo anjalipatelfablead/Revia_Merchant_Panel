@@ -54,7 +54,9 @@ import {
   BellRing,
   Bookmark,
   ChevronRight,
-  Wallet
+  Wallet,
+  Eye,
+  Download
 } from 'lucide-react';
 
 interface CampaignRulesStepProps {
@@ -294,8 +296,8 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
   );
 
   return (
-    <div className="max-w-[1024px] mx-auto w-full flex flex-col lg:flex-row gap-6 items-start">
-      <div className="flex-1 w-full space-y-6 max-w-[700px]">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+      <div className="lg:col-span-8 flex-1 w-full space-y-6">
 
         {/* Trigger & Qualification Rules */}
         <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm overflow-hidden">
@@ -516,7 +518,7 @@ const CampaignRulesStep: React.FC<CampaignRulesStepProps> = ({ campaignType, cur
       </div>
 
       {/* Right side panels */}
-      <div className="w-full lg:w-[320px] shrink-0 space-y-6">
+      <div className="lg:col-span-4 w-full shrink-0 space-y-6">
 
         {/* Audience Impact Panel */}
         <div className="bg-white border border-[#EFECE6] rounded-2xl shadow-sm p-6">
@@ -729,9 +731,9 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
   ];
 
   return (
-    <div className="max-w-[1024px] mx-auto w-full flex flex-col lg:flex-row gap-6 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
       {/* Left Main Config Column */}
-      <div className="flex-1 w-full space-y-6">
+      <div className="lg:col-span-8 flex-1 w-full space-y-6">
 
         {/* Header Banner */}
         <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs">
@@ -1077,8 +1079,8 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
         </div>
       </div>
 
-      {/* Right Side Summary Panel */}
-      <div className="w-full lg:w-[320px] shrink-0 space-y-6">
+      {/* Right Column: Audience Impact & Simulation */}
+      <div className="lg:col-span-4 w-full shrink-0 space-y-6">
         <div className="bg-white border border-[#EFECE6] rounded-2xl p-6 shadow-2xs space-y-5">
           <div className="flex items-center gap-2 pb-3 border-b border-[#EFECE6]">
             <CheckCircle2 className="w-5 h-5 text-[#15803D]" />
@@ -1146,6 +1148,27 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   }, [currentStep]);
 
   const [viewMode, setViewMode] = useState<'dashboard' | 'builder'>(initialViewMode);
+  const [qrModalCampaign, setQrModalCampaign] = useState<any | null>(null);
+
+  const handleDownload = async (campaign: any) => {
+    try {
+      const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${campaign.id || 'promo'}`;
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = `${campaign.name.replace(/\s+/g, '_')}_QR.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download failed', error);
+      // Fallback to opening in a new tab if fetch fails due to CORS
+      window.open(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${campaign.id || 'promo'}`, '_blank');
+    }
+  };
 
   // Sync viewMode whenever initialViewMode prop changes (e.g. route change)
   React.useEffect(() => {
@@ -2534,7 +2557,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       <div className="lg:col-span-8 space-y-6">
 
         {/* Auto-validation Alert */}
-        <div className="bg-white border-l-4 border-l-[#0D7A53] border-y border-r border-[#EFECE6] rounded-r-xl p-5 shadow-sm flex flex-col xl:flex-row xl:items-start justify-between gap-4 relative overflow-hidden">
+        <div className="bg-white border-l-4 border-l-[#0D7A53] border-y border-r border-[#EFECE6] rounded-xl p-5 shadow-sm flex flex-col xl:flex-row xl:items-start justify-between gap-4 relative overflow-hidden">
           <div className="flex items-start gap-3 sm:gap-4">
             <div className="w-8 h-8 rounded-full bg-[#E0F9ED] flex items-center justify-center shrink-0 mt-0.5">
               <Check className="w-5 h-5 text-[#0D7A53]" />
@@ -3066,6 +3089,8 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                       </div>
                     </td>
                     <td className="py-4 px-5 text-right space-x-2 flex justify-end">
+                      <button onClick={() => setQrModalCampaign(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="View QR"><Eye className="w-4 h-4" /></button>
+                      <button onClick={() => handleDownload(c)} className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Download"><Download className="w-4 h-4" /></button>
                       <button onClick={handleOpenBuilder} className="p-1.5 text-[#6E6A66] hover:text-[#D4A753] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Edit"><Edit2 className="w-4 h-4" /></button>
                       <button className="p-1.5 text-[#6E6A66] hover:text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Duplicate"><Copy className="w-4 h-4" /></button>
                       <button className="p-1.5 text-[#6E6A66] hover:text-[#EF4444] bg-white border border-[#EAE6E1] rounded-lg shadow-2xs transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
@@ -3141,14 +3166,20 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 pt-2 border-t border-[#EFECE6]">
-                        <button onClick={handleOpenBuilder} className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#EFECE6]">
+                        <button onClick={() => setQrModalCampaign(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                          <Eye className="w-3.5 h-3.5" /> View
+                        </button>
+                        <button onClick={() => handleDownload(c)} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                          <Download className="w-3.5 h-3.5" /> DL
+                        </button>
+                        <button onClick={handleOpenBuilder} className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Edit2 className="w-3.5 h-3.5" /> Edit
                         </button>
-                        <button className="flex-1 py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
+                        <button className="flex-1 min-w-[30%] py-2 bg-white text-[#1A1615] border border-[#EFECE6] font-semibold text-xs rounded-lg hover:bg-[#FAF8F5] transition-colors flex justify-center items-center gap-1.5">
                           <Copy className="w-3.5 h-3.5" /> Dup
                         </button>
-                        <button className="flex-1 py-2 bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] font-semibold text-xs rounded-lg hover:bg-[#FCA5A5] transition-colors flex justify-center items-center gap-1.5">
+                        <button className="flex-1 min-w-[30%] py-2 bg-[#FEE2E2] text-[#DC2626] border border-[#FECACA] font-semibold text-xs rounded-lg hover:bg-[#FCA5A5] transition-colors flex justify-center items-center gap-1.5">
                           <Trash2 className="w-3.5 h-3.5" /> Del
                         </button>
                       </div>
@@ -3164,7 +3195,31 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
   );
 
   if (viewMode === 'dashboard') {
-    return renderDashboard();
+    return (
+      <>
+        {renderDashboard()}
+        
+        {/* QR Code Modal */}
+        {qrModalCampaign && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm p-6 relative flex flex-col items-center text-center">
+              <button onClick={() => setQrModalCampaign(null)} className="absolute top-4 right-4 text-[#9E9A93] hover:text-[#1A1615] bg-[#FAF8F5] p-2 rounded-full transition-colors cursor-pointer">
+                <X className="w-4 h-4" />
+              </button>
+              <QrCode className="w-12 h-12 text-[#D4A753] mb-4" />
+              <h3 className="text-lg font-bold text-[#1A1615] mb-2">{qrModalCampaign.name}</h3>
+              <p className="text-xs text-[#7C746C] mb-6">Scan this QR code to join the campaign.</p>
+              <div className="w-48 h-48 bg-white border-2 border-[#EFECE6] rounded-xl flex items-center justify-center mb-6 shadow-sm overflow-hidden">
+                 <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://revia.app/c/${qrModalCampaign.id || 'promo'}`} alt="QR Code" className="w-full h-full object-contain p-2" />
+              </div>
+              <button onClick={() => handleDownload(qrModalCampaign)} className="w-full py-3 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-md hover:bg-black transition-colors cursor-pointer flex items-center justify-center gap-2">
+                <Download className="w-4 h-4" /> Download QR Code
+              </button>
+            </div>
+          </div>
+        )}
+      </>
+    );
   }
 
   return (
@@ -3192,22 +3247,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
       )}
 
       {/* 2. SHARED LAYOUT & TOP HEADER BAR */}
-      {/* Mobile Header */}
-      {/* <div className="lg:hidden bg-[#FAF8F5] px-4 py-3 flex items-center justify-between z-20 sticky top-0 border-b border-[#EFECE6]">
-        <button className="w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm">
-          <ArrowLeft className="w-5 h-5 text-[#1A1615]" />
-        </button>
-        <div className="text-center">
-          <div className="text-[10px] font-bold text-[#D4A753] uppercase tracking-widest mb-0.5">Revia Merchant</div>
-          <div className="text-base font-black text-[#1A1615] leading-none">Campaign Wizard</div>
-        </div>
-        <div className="relative">
-          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-sm font-bold text-[#1A1615] shadow-sm">ER</div>
-          <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#0D7A53] rounded-full border-2 border-white"></div>
-        </div>
-      </div> */}
-
-      <div className="hidden lg:flex bg-white border border-[#EAE6E1] rounded-xl px-4 sm:px-6 py-4 flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs mb-4">
+      <div className="p-4 lg:p-6 space-y-5 flex-1 max-w-[1600px] mx-auto w-full">
+        {/* Desktop Header */}
+        <div className="hidden lg:flex bg-white border border-[#EAE6E1] rounded-xl px-4 sm:px-6 py-4 flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs mb-4">
         <div className="flex items-center gap-3">
           <button onClick={handleGoToDashboard} className="p-2 bg-[#FAF8F5] text-[#1A1615] hover:bg-[#FAF6EE] border border-[#EAE6E1] rounded-lg transition-colors cursor-pointer" title="Back to Dashboard">
             <ArrowLeft className="w-5 h-5" />
@@ -3242,9 +3284,6 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
           </div>
         </div>
       </div>
-
-      <div className="p-4 lg:p-6 space-y-5 flex-1 max-w-[1600px] mx-auto w-full">
-
         {/* Stepper Indicator */}
         <div className="lg:hidden flex justify-between items-center mb-4 px-1">
           <div className="flex items-center gap-3">
