@@ -10,7 +10,7 @@ import { MOCK_BUSINESS } from '../../data/mockData';
 import { MOCK_CATALOG_ITEMS } from '../../../data/mockData';
 import { useCustomer } from '../../CustomerContext';
 
-export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
+export const CustomerWizard = ({ onComplete, onNavigate }: { onComplete: () => void, onNavigate?: (route: string) => void }) => {
   const { cartItems, addItem } = useCustomer();
   const [step, setStep] = useState(1);
   const totalSteps = 2;
@@ -18,6 +18,8 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [dob, setDob] = useState('');
   const [gender, setGender] = useState('prefer-not');
 
@@ -57,12 +59,30 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                     </p>
 
                     <div className="flex items-center gap-5 mb-8">
-                      <div className="w-20 h-20 bg-[#FAF8F5] border border-[#E5E0D8] rounded-full flex items-center justify-center relative cursor-pointer group hover:border-[#D4A753] transition-colors shadow-sm">
-                        <User className="w-8 h-8 text-[#9E9A93] group-hover:text-[#D4A753] transition-colors" />
-                        <div className="absolute bottom-0 right-0 bg-[#9A7436] text-white p-1.5 rounded-full shadow-sm">
+                      <label htmlFor="profile-upload" className="relative cursor-pointer group block w-20 h-20">
+                        <div className="w-full h-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-full flex items-center justify-center overflow-hidden group-hover:border-[#D4A753] transition-colors shadow-sm">
+                          {photoUrl ? (
+                            <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
+                          ) : (
+                            <User className="w-8 h-8 text-[#9E9A93] group-hover:text-[#D4A753] transition-colors" />
+                          )}
+                        </div>
+                        <div className="absolute bottom-0 right-0 bg-[#9A7436] text-white p-1.5 rounded-full shadow-sm z-10">
                           <Camera className="w-3.5 h-3.5" />
                         </div>
-                      </div>
+                        <input 
+                          type="file" 
+                          id="profile-upload" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              const url = URL.createObjectURL(e.target.files[0]);
+                              setPhotoUrl(url);
+                            }
+                          }} 
+                        />
+                      </label>
                       <div>
                         <h3 className="text-sm font-bold text-[#111]">Profile Photo</h3>
                         <p className="text-[11px] text-[#6E6A66] mt-1">Upload a recognizable photo for seamless concierge service</p>
@@ -90,15 +110,27 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
                           </div>
                         </div>
                       </div>
-                      <div>
-                        <label htmlFor="email" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">Email Address</label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                            <Mail className="h-4 w-4 text-[#666]" />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                          <label htmlFor="email" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">Email Address</label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                              <Mail className="h-4 w-4 text-[#666]" />
+                            </div>
+                            <input type="email" id="email" name="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="sarah@example.com" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors placeholder:text-[#888]" />
                           </div>
-                          <input type="email" id="email" name="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="sarah@example.com" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors placeholder:text-[#888]" />
+                          <p className="text-[11px] text-[#999] mt-2">We'll send order confirmations and exclusive offers here.</p>
                         </div>
-                        <p className="text-[11px] text-[#999] mt-2">We'll send order confirmations and exclusive offers here.</p>
+                        <div>
+                          <label htmlFor="mobileNumber" className="block text-[12px] font-black uppercase tracking-wider text-[#111] mb-1.5">Mobile Number</label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                              <Phone className="h-4 w-4 text-[#666]" />
+                            </div>
+                            <input type="tel" id="mobileNumber" name="mobileNumber" value={mobileNumber} onChange={e => setMobileNumber(e.target.value)} placeholder="+1 (555) 000-0000" className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg pl-10 pr-3 py-2.5 text-sm font-bold text-[#111] focus:outline-hidden focus:border-[#D4A753] transition-colors placeholder:text-[#888]" />
+                          </div>
+                          <p className="text-[11px] text-[#999] mt-2">Used for SMS updates and instant concierge access.</p>
+                        </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
@@ -261,12 +293,12 @@ export const CustomerWizard = ({ onComplete }: { onComplete: () => void }) => {
           <div className="max-w-[1400px] mx-auto px-6 py-5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold text-[#888] tracking-wide">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 bg-[#9A7436] text-white rounded flex items-center justify-center text-[9px] font-black">R</div>
-              <p>{MOCK_BUSINESS.name} • Powered by Revia</p>
+              <p>Revia</p>
             </div>
             <div className="flex items-center gap-6">
-              <button className="hover:text-[#111] transition-colors">Privacy</button>
-              <button className="hover:text-[#111] transition-colors">Terms</button>
-              <button className="hover:text-[#111] transition-colors">Support</button>
+              <button onClick={() => onNavigate?.('/privacy')} className="hover:text-[#111] transition-colors cursor-pointer">Privacy</button>
+              <button onClick={() => onNavigate?.('/terms')} className="hover:text-[#111] transition-colors cursor-pointer">Terms</button>
+              <button onClick={() => onNavigate?.('/contact')} className="hover:text-[#111] transition-colors cursor-pointer">Support</button>
             </div>
           </div>
         </footer>

@@ -467,6 +467,21 @@ export const OnboardingPage: React.FC<OnboardingPageProps> = ({ onComplete, onCa
                 </PrimaryButton>
               </div>
             </div>
+            
+            {/* Note: System Credit Requirement */}
+            <div className="bg-white border border-[#D4A753]/40 rounded-xl p-4 shadow-xs flex items-start gap-3 relative overflow-hidden">
+               <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-[#D4A753] to-[#9E782F]" />
+               <div className="w-8 h-8 rounded-lg bg-[#FDF8EB] flex items-center justify-center shrink-0">
+                 <Wallet className="w-4 h-4 text-[#9E782F]" />
+               </div>
+               <div>
+                 <h4 className="text-xs font-bold text-[#1A1615]">System Credit Requirement</h4>
+                 <p className="text-[11px] text-[#6E6A66] mt-0.5">
+                   Please note that to start, you need a minimum of <strong>250 credits</strong> in your wallet to run this system.
+                 </p>
+               </div>
+            </div>
+
           </div>
 
           {/* Right Sidebar: Progress Checklist & Trust Benchmarks (4 cols) */}

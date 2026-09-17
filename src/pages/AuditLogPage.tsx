@@ -399,7 +399,7 @@ const PosHardwareSettings: React.FC = () => {
 export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   const [selectedHash, setSelectedHash] = useState<string | null>(null);
   const [copiedHash, setCopiedHash] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'merchant_profile' | 'audit' | 'customer_tiers' | 'general_brand' | 'pos_hardware' | 'api_keys_webhooks' | 'access_control'>('merchant_profile');
+  const [activeTab, setActiveTab] = useState<'merchant_profile' | 'audit' | 'customer_tiers' | 'general_brand' | 'access_control'>('merchant_profile');
 
   // Security Policy Toggles
   const [enforceMfa, setEnforceMfa] = useState<boolean>(true);
@@ -570,7 +570,7 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               >
                 General & Brand
               </button>
-              <button
+              {/* <button
                 className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'pos_hardware' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
                 type="button"
                 onClick={() => setActiveTab('pos_hardware')}
@@ -583,14 +583,14 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                 onClick={() => setActiveTab('api_keys_webhooks')}
               >
                 API Keys & Webhooks
-              </button>
-              <button
+              </button> */}
+              {/* <button
                 onClick={() => setActiveTab('audit')}
                 className={`cursor-pointer min-w-max flex-1 rounded-md px-3 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'audit' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
                 type="button"
               >
                 Security & SOC-2 Audit Stream
-              </button>
+              </button> */}
               <button
                 onClick={() => setActiveTab('customer_tiers')}
                 className={`cursor-pointer min-w-max flex-1 rounded-md px-3 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'customer_tiers' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
@@ -611,10 +611,10 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
 
         {activeTab === 'access_control' ? (
           <AccessControlSettings />
-        ) : activeTab === 'api_keys_webhooks' ? (
-          <ApiKeysWebhooksSettings />
-        ) : activeTab === 'pos_hardware' ? (
-          <PosHardwareSettings />
+        // ) : activeTab === 'api_keys_webhooks' ? (
+        //   <ApiKeysWebhooksSettings />
+        // ) : activeTab === 'pos_hardware' ? (
+        //   <PosHardwareSettings />
         ) : activeTab === 'audit' ? (
           <>
             {/* Governance summary */}

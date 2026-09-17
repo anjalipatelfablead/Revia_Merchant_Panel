@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { ArrowLeft } from 'lucide-react';
 import { MarketingNavbar } from '../components/layout/MarketingNavbar';
 import { MarketingFooter } from '../components/layout/MarketingFooter';
 
@@ -16,6 +17,13 @@ export const PrivacyPolicyPage: React.FC<Props> = ({ onNavigate }) => {
 
          <main className="pt-28 sm:pt-32 pb-12 relative z-10">
             <div className="max-w-3xl mx-auto px-6 lg:px-8">
+               <button 
+                  onClick={() => { if (window.history.length > 2) { window.history.back(); } else { onNavigate?.('/'); } }} 
+                  className="flex items-center gap-2 text-sm font-bold text-[#D9A94E] hover:text-[#241C15] mb-6 transition-colors group cursor-pointer"
+               >
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                  Go Back
+               </button>
                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/60 backdrop-blur-xl rounded-3xl p-10 lg:p-16 shadow-sm border border-gray-100 relative">
                   <div className="absolute -top-4 -left-4 w-16 h-6 bg-[#D9A94E] -rotate-12 rounded-sm opacity-90 shadow-sm" />
                   
