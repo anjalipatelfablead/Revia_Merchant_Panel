@@ -37,7 +37,7 @@ const MobileBillingPage: React.FC = () => {
 };
 
 export const BillingPage: React.FC = () => {
-  const { wallet, transactions, costRules, openTopUpModal, updateCostRule } = useWallet();
+  const { wallet, usableBalance, transactions, costRules, openTopUpModal, updateCostRule } = useWallet();
 
   // Ledger Filter & Pagination States
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -224,11 +224,18 @@ export const BillingPage: React.FC = () => {
               }`}>
                 {wallet.balance.toLocaleString()}
               </span>
-              <span className="text-lg font-bold text-[#6E6A66]">credits</span>
+              <span className="text-lg font-bold text-[#6E6A66]">credits total</span>
             </div>
 
-            <p className="text-[11px] text-[#6E6A66] leading-normal pt-0.5">
-              Low balance threshold set to <strong className="text-[#1A1615]">{wallet.lowBalanceThreshold} credits</strong>. Warning banner triggers automatically when balance drops below threshold.
+            <div className="bg-[#FAF8F5] border border-[#EAE6E1] px-3 py-2 rounded-lg inline-block mt-2">
+              <div className="text-[11px] text-[#6E6A66]">
+                <strong className="text-[#1A1615]">{usableBalance.toLocaleString()} credits</strong> usable for actions.
+                (250 credits are locked for system provisioning).
+              </div>
+            </div>
+
+            <p className="text-[11px] text-[#6E6A66] leading-normal pt-1.5 mt-1">
+              Your first 250 credits (the initial setup grant) are locked and cannot be spent. You must explicitly buy credits to perform actions. A warning banner triggers automatically when your usable balance drops below <strong className="text-[#1A1615]">{wallet.lowBalanceThreshold - 250} credits</strong>.
             </p>
           </div>
 

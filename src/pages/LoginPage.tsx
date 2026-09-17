@@ -9,8 +9,8 @@ interface LoginPageProps {
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnboarding }) => {
   const [authMethod, setAuthMethod] = useState<'sms' | 'whatsapp'>('sms');
-  const [countryCode, setCountryCode] = useState('+1');
-  const [phone, setPhone] = useState('415-892-4102');
+  const [countryCode, setCountryCode] = useState('+91');
+  const [phone, setPhone] = useState('');
   const [pin, setPin] = useState(['4', '8', '2', '', '', '']);
   const [step, setStep] = useState<'input' | 'verify'>('input');
   const [timeLeft, setTimeLeft] = useState(105); // 01:45
@@ -62,9 +62,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">REVIA MERCHANT SUITE</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-white">REVIA</h1>
             <p className="text-[10px] uppercase tracking-widest text-[#9E9A93] font-semibold mt-0.5">
-              Enterprise Commerce & Operations Engine
+              Unified Commerce Ecosystem
             </p>
           </div>
         </div>
@@ -116,8 +116,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
 
         {/* Footer Note */}
         <div className="relative z-10 text-xs text-[#6E6A66] space-y-1">
-          <p>Revia Mesh Network Cryptographic Keypair: Active • Protocol v2.14.0</p>
-          <p className="text-[10px]">Protected by Cloudflare Magic Transit & Hardware Security Enclave (HSM)</p>
+          <p>© {new Date().getFullYear()} Revia Unified Commerce. All rights reserved.</p>
+          <p className="text-[10px]">Need help? Contact support or visit our help center.</p>
         </div>
       </div>
 
@@ -129,9 +129,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           <Sparkles className="w-6 h-6 text-white" />
         </div>
         <div className="text-left">
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">REVIA MERCHANT SUITE</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">REVIA</h1>
           <p className="text-[10px] uppercase tracking-widest text-[#9E9A93] font-semibold mt-0.5">
-            Specialty Coffee & Hospitality Terminal Portal
+            Unified Commerce Ecosystem
           </p>
         </div>
       </div>
@@ -141,10 +141,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
         <div className="flex items-center justify-between mb-5">
           <div>
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#9E9A93]">SECURE AUTH GATEWAY</span>
-            <h2 className="text-lg font-bold text-[#1A1615] tracking-tight">Merchant Operator Sign In</h2>
+            <h2 className="text-lg font-bold text-[#1A1615] tracking-tight">Sign in to Revia</h2>
           </div>
           <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#0D7A53] bg-[#E6F4ED] px-2 py-0.5 rounded-full border border-[#BCE3D1]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]" /> 256-BIT SSL
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]" /> SECURE
           </span>
         </div>
 
@@ -181,20 +181,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
           <div className="space-y-4">
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6E6A66] mb-1.5">
-                Merchant Phone or Operator ID
+                Phone Number
               </label>
               <div className="flex gap-2">
                 <select
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
                   aria-label="Country Dialing Code"
-                  className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-2.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753]"
+                  className="bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-2.5 py-2.5 text-xs font-medium text-[#1A1615] focus:outline-hidden focus:border-[#D4A753] cursor-pointer"
                 >
-                  <option value="+1">🇺🇸 +1 (US/CA)</option>
-                  <option value="+44">🇬🇧 +44 (UK)</option>
-                  <option value="+61">🇦🇺 +61 (AU)</option>
-                  <option value="+81">🇯🇵 +81 (JP)</option>
-                  <option value="+49">🇩🇪 +49 (DE)</option>
+                  <option value="+91">IN +91</option>
+                  <option value="+1">US +1</option>
+                  <option value="+44">UK +44</option>
+                  <option value="+61">AU +61</option>
+                  <option value="+81">JP +81</option>
+                  <option value="+49">DE +49</option>
                 </select>
                 <input
                   type="tel"
@@ -284,21 +285,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
             New Outlet? Start Onboarding
           </button>
         </div>
-        {/* Static Login Bypass for Demo */}
+        {/* Static Registration Bypass for Demo */}
         <div className="mt-6 pt-5 border-t border-[#E5E0D8]">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-3 text-center">Static Demo Access</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-3 text-center">Create New Account</p>
           <div className="flex gap-3">
             <button
               onClick={() => onLoginSuccess('/onboarding')}
               className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
             >
-              Login as Merchant
+              Register as Merchant
             </button>
             <button
               onClick={() => onLoginSuccess('/customer/identify')}
               className="flex-1 bg-white hover:bg-gray-50 text-[#1A1615] border border-[#E5E0D8] px-4 py-2.5 rounded-lg text-xs font-bold transition-colors shadow-sm"
             >
-              Login as Customer
+              Register as Customer
             </button>
           </div>
         </div>

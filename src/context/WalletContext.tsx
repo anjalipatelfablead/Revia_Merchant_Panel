@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Wallet, WalletTransaction, CostRule, WalletActionCategory } from '../types/wallet';
 
+export const LOCKED_BALANCE = 250;
+
 const DEFAULT_COST_RULES: CostRule[] = [
   { action: 'branch_setup', cost: 100, costType: 'flat', label: 'Branch Setup' },
   { action: 'staff_invite', cost: 20, costType: 'flat', label: 'Staff Invitation' },
@@ -103,12 +105,14 @@ interface BlockedActionState {
   isOpen: boolean;
   requiredCost: number;
   currentBalance: number;
+  usableBalance: number;
   actionName: string;
   category: WalletActionCategory;
 }
 
 interface WalletContextType {
   wallet: Wallet;
+  usableBalance: number;
   transactions: WalletTransaction[];
   costRules: CostRule[];
   isBannerDismissed: boolean;
@@ -139,6 +143,8 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     updatedAt: new Date().toISOString()
   });
 
+  const usableBalance = Math.max(0, wallet.balance - LOCKED_BALANCE);
+
   const [transactions, setTransactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
   const [costRules, setCostRules] = useState<CostRule[]>(DEFAULT_COST_RULES);
 
@@ -158,6 +164,7 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isOpen: false,
     requiredCost: 0,
     currentBalance: 0,
+    usableBalance: 0,
     actionName: '',
     category: 'branch_setup'
   });
@@ -185,12 +192,13 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const rule = costRules.find((r) => r.action === category);
     const name = actionDisplayName || rule?.label || 'This Action';
 
-    if (wallet.balance < requiredCost) {
+    if (usableBalance < requiredCost) {
       // BLOCK action, open modal
       setBlockedActionModal({
         isOpen: true,
         requiredCost,
         currentBalance: wallet.balance,
+        usableBalance,
         actionName: name,
         category
       });
@@ -280,6 +288,7 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     <WalletContext.Provider
       value={{
         wallet,
+        usableBalance,
         transactions,
         costRules,
         isBannerDismissed,
