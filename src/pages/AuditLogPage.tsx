@@ -22,7 +22,7 @@ import {
   UserPlus
 } from 'lucide-react';
 import { AuditLogEntry } from '../types';
-import { RoleTemplate, INITIAL_ROLE_TEMPLATES, SYSTEM_CAPABILITIES } from './StaffPage';
+import { RoleTemplate, INITIAL_ROLE_TEMPLATES, SYSTEM_MODULES, TOTAL_PERMISSIONS_COUNT } from './StaffPage';
 import { CustomerTypeSettings } from './CustomerTypeSettings';
 import { MerchantPlatformSettings } from './MerchantPlatformSettings';
 import { MerchantProfileSettings } from './MerchantProfileSettings';
@@ -128,7 +128,7 @@ const AccessControlSettings: React.FC = () => {
       </div>
 
       <div className="grid gap-4 p-4 lg:grid-cols-12">
-        <div className="space-y-3 lg:col-span-8">
+        <div className="space-y-3 lg:col-span-8 min-w-0">
           <div className="rounded-lg border border-[#E5E0D8] bg-[#FAF8F5] p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -149,18 +149,31 @@ const AccessControlSettings: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5E0D8] text-xs">
-                {SYSTEM_CAPABILITIES.map((cap, idx) => (
-                  <tr key={idx}>
-                    <td className="py-2.5 px-3 text-[#1A1615] font-medium">{cap}</td>
-                    {roleTemplates.map(role => (
-                      <td key={role.id} className="py-2.5 px-3 text-center">
-                        {role.permissions[cap] ? (
-                          <CheckCircle2 className="w-4 h-4 text-[#0D7A53] mx-auto" />
-                        ) : (
-                          <span className="w-4 h-4 rounded-full border border-[#E5E0D8] text-[#9E9A93] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                        )}
-                      </td>
-                    ))}
+                {SYSTEM_MODULES.map((mod, modIdx) => (
+                  <tr key={modIdx} className="hover:bg-[#FAF8F5] transition-colors">
+                    <td className="py-3 px-3 text-[#1A1615] font-bold uppercase tracking-wider text-[11px]">{mod.name}</td>
+                    {roleTemplates.map(role => {
+                      const activeActions = mod.actions.filter(action => role.permissions[`${mod.name}_${action}`]);
+
+                      return (
+                        <td key={role.id} className="py-3 px-3">
+                          <div className="flex flex-nowrap items-center justify-center gap-1">
+                            {mod.actions.map(action => {
+                              const hasPermission = role.permissions[`${mod.name}_${action}`];
+                              return (
+                                <span key={action} className={`px-1 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border ${
+                                  hasPermission 
+                                    ? 'bg-[#EBF7F0] text-[#0D7A53] border-[#0D7A53]/20' 
+                                    : 'bg-transparent text-[#9E9A93] border-[#E5E0D8] opacity-60'
+                                }`}>
+                                  {action}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
@@ -270,21 +283,33 @@ const AccessControlSettings: React.FC = () => {
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <h4 className="text-[11px] font-semibold text-[#7C746C] uppercase tracking-wider">System Permissions</h4>
-                  {SYSTEM_CAPABILITIES.map(cap => (
-                    <label key={cap} className="flex items-center justify-between p-2.5 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] cursor-pointer transition-colors">
-                      <span className="text-xs font-medium text-[#1A1615]">{cap}</span>
-                      <input
-                        type="checkbox"
-                        checked={!!editingRole.permissions[cap]}
-                        onChange={(e) => setEditingRole({
-                          ...editingRole,
-                          permissions: { ...editingRole.permissions, [cap]: e.target.checked }
+                  {SYSTEM_MODULES.map(module => (
+                    <div key={module.name} className="border border-[#EAE6E1] rounded-xl overflow-hidden bg-white">
+                      <div className="bg-[#FAF8F5] px-3 py-2 text-xs font-bold text-[#1A1615] border-b border-[#EAE6E1]">
+                        {module.name}
+                      </div>
+                      <div className="p-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        {module.actions.map(action => {
+                          const cap = `${module.name}_${action}`;
+                          return (
+                            <label key={cap} className="flex items-center gap-2 cursor-pointer group">
+                              <input
+                                type="checkbox"
+                                checked={!!editingRole.permissions[cap]}
+                                onChange={(e) => setEditingRole({
+                                  ...editingRole,
+                                  permissions: { ...editingRole.permissions, [cap]: e.target.checked }
+                                })}
+                                className="w-4 h-4 rounded border-[#D1C9BE] text-[#B38637] focus:ring-[#B38637] group-hover:border-[#B38637] transition-colors"
+                              />
+                              <span className="text-[11px] font-medium text-[#3D3732] group-hover:text-[#1A1615]">{action}</span>
+                            </label>
+                          );
                         })}
-                        className="w-4 h-4 rounded border-[#D1C9BE] text-[#B38637] focus:ring-[#B38637]"
-                      />
-                    </label>
+                      </div>
+                    </div>
                   ))}
                 </div>
 
@@ -336,7 +361,7 @@ const AccessControlSettings: React.FC = () => {
                           )}
                         </div>
                         <p className="text-[10px] text-[#7C746C] mt-1">
-                          {Object.values(tmpl.permissions).filter(Boolean).length} of {SYSTEM_CAPABILITIES.length} permissions enabled
+                          {Object.values(tmpl.permissions).filter(Boolean).length} of {TOTAL_PERMISSIONS_COUNT} permissions enabled
                         </p>
                       </div>
                       <div className="flex items-center gap-1.5">

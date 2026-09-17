@@ -57,16 +57,18 @@ interface StaffMemberDetailed {
   recentAudits: StaffSecurityAudit[];
 }
 
-export const SYSTEM_CAPABILITIES = [
-  'Access Dashboard',
-  'Manage Branches',
-  'Manage Customers',
-  'Manage Campaigns',
-  'Manage Staff & RBAC',
-  'Manage Loyalty Program',
-  'Manage Promo Codes',
-  'Manage Reward Catalog'
+export const SYSTEM_MODULES = [
+  { name: 'Dashboard', actions: ['View'] },
+  { name: 'Branches', actions: ['View', 'Add', 'Edit', 'Delete'] },
+  { name: 'Customers', actions: ['View', 'Add', 'Edit', 'Delete'] },
+  { name: 'Campaigns', actions: ['View', 'Add', 'Edit', 'Delete'] },
+  { name: 'Staff & RBAC', actions: ['View', 'Add', 'Edit', 'Delete'] },
+  { name: 'Loyalty Program', actions: ['View', 'Add', 'Edit', 'Delete'] },
+  { name: 'Promo Codes', actions: ['View', 'Add', 'Edit', 'Delete'] },
+  { name: 'Reward Catalog', actions: ['View', 'Add', 'Edit', 'Delete'] }
 ];
+
+export const TOTAL_PERMISSIONS_COUNT = SYSTEM_MODULES.reduce((acc, mod) => acc + mod.actions.length, 0);
 
 export interface RoleTemplate {
   id: string;
@@ -75,66 +77,46 @@ export interface RoleTemplate {
   permissions: Record<string, boolean>;
 }
 
+const generateAllPermissions = (value: boolean) => {
+  const perms: Record<string, boolean> = {};
+  SYSTEM_MODULES.forEach(mod => {
+    mod.actions.forEach(action => {
+      perms[`${mod.name}_${action}`] = value;
+    });
+  });
+  return perms;
+};
+
+const generateBaristaPermissions = () => {
+  const perms = generateAllPermissions(false);
+  perms['Dashboard_View'] = true;
+  return perms;
+};
+
 export const INITIAL_ROLE_TEMPLATES: RoleTemplate[] = [
   {
     id: 'role-owner',
     name: 'Owner (Super Admin)',
     isSystem: true,
-    permissions: {
-      'Access Dashboard': true,
-      'Manage Branches': true,
-      'Manage Customers': true,
-      'Manage Campaigns': true,
-      'Manage Staff & RBAC': true,
-      'Manage Loyalty Program': true,
-      'Manage Promo Codes': true,
-      'Manage Reward Catalog': true
-    }
+    permissions: generateAllPermissions(true)
   },
   {
     id: 'role-manager',
     name: 'Manager',
     isSystem: true,
-    permissions: {
-      'Access Dashboard': true,
-      'Manage Branches': true,
-      'Manage Customers': true,
-      'Manage Campaigns': true,
-      'Manage Staff & RBAC': true,
-      'Manage Loyalty Program': true,
-      'Manage Promo Codes': true,
-      'Manage Reward Catalog': true
-    }
+    permissions: generateAllPermissions(true)
   },
   {
     id: 'role-barista',
     name: 'Barista',
     isSystem: true,
-    permissions: {
-      'Access Dashboard': true,
-      'Manage Branches': false,
-      'Manage Customers': false,
-      'Manage Campaigns': false,
-      'Manage Staff & RBAC': false,
-      'Manage Loyalty Program': false,
-      'Manage Promo Codes': false,
-      'Manage Reward Catalog': false
-    }
+    permissions: generateBaristaPermissions()
   },
   {
     id: 'role-counter',
     name: 'Counter Staff',
     isSystem: true,
-    permissions: {
-      'Access Dashboard': true,
-      'Manage Branches': false,
-      'Manage Customers': false,
-      'Manage Campaigns': false,
-      'Manage Staff & RBAC': false,
-      'Manage Loyalty Program': false,
-      'Manage Promo Codes': false,
-      'Manage Reward Catalog': false
-    }
+    permissions: generateBaristaPermissions()
   }
 ];
 
@@ -638,7 +620,7 @@ export const StaffPage: React.FC = () => {
       {/* Main Split Grid: Table & Matrix (Left 8 cols) + Staff Inspector (Right 4 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column (8 cols) */}
-        <div className="lg:col-span-8 space-y-5">
+        <div className="lg:col-span-8 space-y-5 min-w-0">
           {/* Card A: Staff Directory & Terminals */}
           <div className="bg-white border border-[#EAE6E1] rounded-2xl shadow-2xs overflow-hidden">
             {/* Header */}
@@ -832,18 +814,31 @@ export const StaffPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F5F2EC] text-xs">
-                  {SYSTEM_CAPABILITIES.map((cap, idx) => (
-                    <tr key={idx}>
-                      <td className="py-2.5 pr-4 text-[#1A1615] font-medium">{cap}</td>
-                      {roleTemplates.map(role => (
-                        <td key={role.id} className="py-2.5 px-3 text-center">
-                          {role.permissions[cap] ? (
-                            <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                          ) : (
-                            <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                          )}
-                        </td>
-                      ))}
+                  {SYSTEM_MODULES.map((mod, modIdx) => (
+                    <tr key={modIdx} className="hover:bg-[#FAF8F5] transition-colors">
+                      <td className="py-3 pr-4 text-[#1A1615] font-bold uppercase tracking-wider text-[11px]">{mod.name}</td>
+                      {roleTemplates.map(role => {
+                        const activeActions = mod.actions.filter(action => role.permissions[`${mod.name}_${action}`]);
+
+                        return (
+                          <td key={role.id} className="py-3 px-3">
+                            <div className="flex flex-nowrap items-center justify-center gap-1">
+                              {mod.actions.map(action => {
+                                const hasPermission = role.permissions[`${mod.name}_${action}`];
+                                return (
+                                  <span key={action} className={`px-1 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border ${
+                                    hasPermission 
+                                      ? 'bg-[#EBF7F0] text-[#15803D] border-[#15803D]/20' 
+                                      : 'bg-transparent text-[#D1C9BE] border-[#EAE6E1] opacity-60'
+                                  }`}>
+                                    {action}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </td>
+                        );
+                      })}
                     </tr>
                   ))}
                 </tbody>
@@ -1226,21 +1221,33 @@ export const StaffPage: React.FC = () => {
                   )}
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <h4 className="text-[11px] font-semibold text-[#7C746C] uppercase tracking-wider">System Permissions</h4>
-                  {SYSTEM_CAPABILITIES.map(cap => (
-                    <label key={cap} className="flex items-center justify-between p-2.5 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] cursor-pointer transition-colors">
-                      <span className="text-xs font-medium text-[#1A1615]">{cap}</span>
-                      <input
-                        type="checkbox"
-                        checked={!!editingRole.permissions[cap]}
-                        onChange={(e) => setEditingRole({
-                          ...editingRole,
-                          permissions: { ...editingRole.permissions, [cap]: e.target.checked }
+                  {SYSTEM_MODULES.map(module => (
+                    <div key={module.name} className="border border-[#EAE6E1] rounded-xl overflow-hidden bg-white">
+                      <div className="bg-[#FAF8F5] px-3 py-2 text-xs font-bold text-[#1A1615] border-b border-[#EAE6E1]">
+                        {module.name}
+                      </div>
+                      <div className="p-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                        {module.actions.map(action => {
+                          const cap = `${module.name}_${action}`;
+                          return (
+                            <label key={cap} className="flex items-center gap-2 cursor-pointer group">
+                              <input
+                                type="checkbox"
+                                checked={!!editingRole.permissions[cap]}
+                                onChange={(e) => setEditingRole({
+                                  ...editingRole,
+                                  permissions: { ...editingRole.permissions, [cap]: e.target.checked }
+                                })}
+                                className="w-4 h-4 rounded border-[#D1C9BE] text-[#B38637] focus:ring-[#B38637] group-hover:border-[#B38637] transition-colors"
+                              />
+                              <span className="text-[11px] font-medium text-[#3D3732] group-hover:text-[#1A1615]">{action}</span>
+                            </label>
+                          );
                         })}
-                        className="w-4 h-4 rounded border-[#D1C9BE] text-[#B38637] focus:ring-[#B38637]"
-                      />
-                    </label>
+                      </div>
+                    </div>
                   ))}
                 </div>
 
@@ -1294,7 +1301,7 @@ export const StaffPage: React.FC = () => {
                           )}
                         </div>
                         <p className="text-[10px] text-[#7C746C] mt-1">
-                          {Object.values(tmpl.permissions).filter(Boolean).length} of {SYSTEM_CAPABILITIES.length} permissions enabled
+                          {Object.values(tmpl.permissions).filter(Boolean).length} of {TOTAL_PERMISSIONS_COUNT} permissions enabled
                         </p>
                       </div>
                       <div className="flex items-center gap-1.5">

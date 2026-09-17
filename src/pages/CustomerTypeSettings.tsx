@@ -309,9 +309,9 @@ export const CustomerTypeSettings: React.FC = () => {
                       value={validityDuration}
                       onChange={(e) => setValidityDuration(e.target.value === '' ? '' : Number(e.target.value))}
                       placeholder="1"
-                      className="flex-1 px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
+                      className="flex-1 min-w-0 px-4 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[14px] font-bold text-[#1A1615] focus:outline-none focus:border-[#B8862E] transition-colors"
                     />
-                    <div ref={validityUnitDropdownRef} className="relative flex-1 sm:flex-none sm:w-28 shrink-0">
+                    <div ref={validityUnitDropdownRef} className="relative w-24 sm:w-28 shrink-0">
                       <button
                         type="button"
                         onClick={() => setValidityUnitDropdownOpen(!validityUnitDropdownOpen)}
