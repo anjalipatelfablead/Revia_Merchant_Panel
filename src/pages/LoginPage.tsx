@@ -57,17 +57,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
         <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-[#9E782F] opacity-10 rounded-full blur-[100px]" />
         
         {/* Brand Header */}
-        <div className="flex items-center gap-4 relative z-10">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md">
+        <button 
+          onClick={() => onLoginSuccess('/')}
+          className="flex items-center gap-4 relative z-10 text-left hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-none p-0"
+        >
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md shrink-0">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">REVIA</h1>
-            <p className="text-[10px] uppercase tracking-widest text-[#9E9A93] font-semibold mt-0.5">
+            <h1 className="text-2xl font-bold tracking-tight text-white m-0">REVIA</h1>
+            <p className="text-[10px] uppercase tracking-widest text-[#9E9A93] font-semibold mt-0.5 mb-0">
               Unified Commerce Ecosystem
             </p>
           </div>
-        </div>
+        </button>
 
         {/* Value Proposition & Visuals */}
         <div className="relative z-10 w-full max-w-2xl mt-6 lg:pr-12">
@@ -124,17 +127,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onGoToOnbo
       {/* Right Side: Login Form */}
       <div className="w-full lg:w-1/2 bg-[#FAF8F5] flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 relative h-full overflow-y-auto">
         {/* Mobile Brand Header (Hidden on Desktop) */}
-        <div className="flex lg:hidden items-center justify-center gap-4 mb-6">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md shrink-0">
-          <Sparkles className="w-6 h-6 text-white" />
-        </div>
-        <div className="text-left">
-          <h1 className="text-2xl font-bold tracking-tight text-[#1A1615]">REVIA</h1>
-          <p className="text-[10px] uppercase tracking-widest text-[#9E9A93] font-semibold mt-0.5">
-            Unified Commerce Ecosystem
-          </p>
-        </div>
-      </div>
+        <button 
+          onClick={() => onLoginSuccess('/')}
+          className="flex lg:hidden items-center justify-center gap-4 mb-6 text-left hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-none p-0"
+        >
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white shadow-md shrink-0">
+            <Sparkles className="w-6 h-6 text-white" />
+          </div>
+          <div className="text-left">
+            <h1 className="text-2xl font-bold tracking-tight text-[#1A1615] m-0">REVIA</h1>
+            <p className="text-[10px] uppercase tracking-widest text-[#9E9A93] font-semibold mt-0.5 mb-0">
+              Unified Commerce Ecosystem
+            </p>
+          </div>
+        </button>
 
       {/* Floating Center Auth Card */}
       <div className="w-full max-w-md bg-white border border-[#E5E0D8] rounded-2xl shadow-xl p-6 relative">

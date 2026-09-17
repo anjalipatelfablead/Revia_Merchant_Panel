@@ -546,7 +546,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 className="w-full text-left px-3 py-2 hover:bg-[#FAF8F5] text-[#3D3732] cursor-pointer"
               >
-                Security &amp; Audit Log
+                Settings
               </button>
               <button
                 onClick={() => {

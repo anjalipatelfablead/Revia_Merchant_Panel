@@ -96,7 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { name: 'Analytics & Reports', route: '/analytics', icon: BarChart2 },
         { name: 'Wallet & Credits', route: '/billing', icon: Wallet },
         { name: 'Notifications', route: '/notifications', icon: Bell },
-        { name: 'Settings & Audit Log', route: '/settings/audit', icon: ShieldCheck },
+        { name: 'Settings', route: '/settings/audit', icon: ShieldCheck },
         { name: 'Business Profile & Branding', route: '/settings/branding', icon: Store },
       ],
     },
