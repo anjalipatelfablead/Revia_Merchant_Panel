@@ -119,7 +119,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            </div>
 
                            <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
-                              <Upload className="w-3.5 h-3.5" /> Replace Emblem
+                              <Upload className="w-4 h-4" /> Replace Emblem
                            </button>
                         </div>
 
@@ -138,7 +138,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            </div>
 
                            <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
-                              <Edit2 className="w-3.5 h-3.5" /> Edit Crest Glyph
+                              <Edit2 className="w-4 h-4" /> Edit Crest Glyph
                            </button>
                         </div>
 
@@ -159,7 +159,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            </div>
 
                            <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
-                              <RefreshCw className="w-3.5 h-3.5" /> Generate Sizes
+                              <RefreshCw className="w-4 h-4" /> Generate Sizes
                            </button>
                         </div>
                      </div>

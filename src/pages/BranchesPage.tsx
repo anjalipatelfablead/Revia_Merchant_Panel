@@ -205,9 +205,9 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           {/* Export Ledger button */}
           <button
             onClick={() => showToast('Generating cryptographic ledger snapshot (CSV / PDF)...')}
-            className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] rounded-lg px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+            className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] rounded-lg px-4 py-2 text-[13px] font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
-            <Download className="w-3.5 h-3.5 text-[#5C554E]" />
+            <Download className="w-4 h-4 text-[#5C554E]" />
             <span>Export Ledger</span>
           </button>
 
@@ -220,7 +220,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 setIsAddModalOpen(true);
               }
             }}
-            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white" />
             <span>Add New Branch</span>
@@ -346,10 +346,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           <div className="relative">
             <button
               onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'region' ? null : 'region'); }}
-              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[150px] cursor-pointer"
+              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-4 py-2 text-[13px] font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[150px] cursor-pointer"
             >
               <span>{`Region: ${regionFilter}`}</span>
-              <ChevronDown className={`w-3 h-3 text-[#8C827A] transition-transform ${activeDropdown === 'region' ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-[#8C827A] transition-transform ${activeDropdown === 'region' ? 'rotate-180' : ''}`} />
             </button>
             {activeDropdown === 'region' && (
               <div className="absolute top-full left-0 mt-1 w-full sm:w-48 bg-white border border-[#EFECE6] rounded-md shadow-xl z-50 overflow-hidden text-left">
@@ -378,10 +378,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           <div className="relative">
             <button
               onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'status' ? null : 'status'); }}
-              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[150px] cursor-pointer"
+              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-4 py-2 text-[13px] font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[150px] cursor-pointer"
             >
               <span>{statusFilter === 'All' ? 'Status: All' : statusFilter === 'Active' ? `Status: Active (${outlets.length})` : 'Status: Maintenance'}</span>
-              <ChevronDown className={`w-3 h-3 text-[#8C827A] transition-transform ${activeDropdown === 'status' ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-[#8C827A] transition-transform ${activeDropdown === 'status' ? 'rotate-180' : ''}`} />
             </button>
             {activeDropdown === 'status' && (
               <div className="absolute top-full left-0 mt-1 w-full sm:w-48 bg-white border border-[#EFECE6] rounded-md shadow-xl z-50 overflow-hidden text-left">
@@ -410,7 +410,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
           <div className="relative">
             <button
               onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'sort' ? null : 'sort'); }}
-              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-3 py-2 text-xs font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[180px] cursor-pointer"
+              className="flex items-center justify-between w-full sm:w-auto bg-white border border-[#EAE6E1] rounded-lg px-4 py-2 text-[13px] font-medium text-[#1A1615] shadow-2xs hover:border-[#D4A753] min-w-[180px] cursor-pointer"
             >
               <span>{
                 sortBy === 'revenue-desc' ? 'Sort by: Revenue (High to Low)' :
@@ -418,7 +418,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                     sortBy === 'name-asc' ? 'Sort by: Name (A-Z)' :
                       'Sort by: Name (Z-A)'
               }</span>
-              <Sliders className="w-3 h-3 text-[#8C827A]" />
+              <Sliders className="w-4 h-4 text-[#8C827A]" />
             </button>
             {activeDropdown === 'sort' && (
               <div className="absolute top-full left-0 mt-1 w-full sm:w-56 bg-white border border-[#EFECE6] rounded-md shadow-xl z-50 overflow-hidden text-left">
@@ -720,7 +720,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                   onClick={() => setIsEditModalOpen(true)}
                   className="bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] text-xs font-semibold px-2.5 py-1.5 rounded-lg text-[#1A1615] flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
                 >
-                  <Edit2 className="w-3 h-3 text-[#5C554E]" />
+                  <Edit2 className="w-4 h-4 text-[#5C554E]" />
                   <span>Edit Details</span>
                 </button>
                 <button
@@ -884,7 +884,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                   showToast(`Downloading Printable QR Stands Pack for ${selectedOutlet.shortName}...`);
                 }
               }}
-              className="w-full mt-2 bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-2xs transition-colors cursor-pointer"
+              className="w-full mt-2 bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] text-[#1A1615] px-4 py-2 rounded-xl text-[13px] font-bold flex items-center justify-center gap-2 shadow-2xs transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4 text-[#7C746C]" />
               <span>Generate QR Stand Pack</span>
@@ -953,13 +953,13 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-3 py-1.5 text-xs text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
+                  className="px-4 py-2 text-[13px] text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
+                  className="px-4 py-2 text-[13px] font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
                 >
                   Provision Outlet
                 </button>
@@ -1022,7 +1022,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EAE6E1]">
                 <button
                   onClick={() => setIsEditModalOpen(false)}
-                  className="px-3 py-1.5 text-xs text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
+                  className="px-4 py-2 text-[13px] text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -1031,7 +1031,7 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                     setIsEditModalOpen(false);
                     showToast('Branch details updated successfully.');
                   }}
-                  className="px-4 py-1.5 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
+                  className="px-4 py-2 text-[13px] font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
                 >
                   Save Changes
                 </button>

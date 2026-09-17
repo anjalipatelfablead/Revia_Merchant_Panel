@@ -224,13 +224,13 @@ export const ItemCatalogPage: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0 self-start lg:self-auto">
-          <button className="flex items-center gap-2 px-4 py-2.5 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-sm cursor-pointer">
+          <button className="flex items-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
             <Upload className="w-4 h-4" />
             Bulk Import CSV
           </button>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-xl transition-all shadow-md cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-md cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white" />
             Add New Item
@@ -336,7 +336,7 @@ export const ItemCatalogPage: React.FC = () => {
               className="w-full pl-9 pr-4 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl text-xs font-medium focus:outline-none focus:border-[#B38637] transition-colors"
             />
           </div>
-          <button className="w-9 h-9 flex items-center justify-center bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl hover:bg-[#EAE6E1] transition-colors shrink-0 cursor-pointer">
+          <button className="w-9 h-9 flex items-center justify-center bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg hover:bg-[#EAE6E1] transition-colors shrink-0 cursor-pointer">
             <SlidersHorizontal className="w-4 h-4 text-[#6E6A66]" />
           </button>
         </div>
@@ -516,13 +516,13 @@ export const ItemCatalogPage: React.FC = () => {
                     <div className="flex gap-3">
                       <button
                         onClick={() => editFileInputRef.current?.click()}
-                        className="text-[11px] font-bold text-[#1A1615] bg-white border border-[#EAE6E1] px-3 py-1.5 rounded shadow-sm hover:bg-[#F2EFE9] transition-colors cursor-pointer"
+                        className="px-4 py-2 text-[13px] font-bold text-[#1A1615] bg-white border border-[#EAE6E1] rounded-lg shadow-sm hover:bg-[#F2EFE9] transition-colors cursor-pointer"
                       >
                         Change Image
                       </button>
                       <button
                         onClick={() => setEditingItem({ ...editingItem, image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=200' })}
-                        className="text-[11px] font-bold text-[#DC2626] hover:underline cursor-pointer"
+                        className="text-[13px] font-bold text-[#DC2626] hover:underline cursor-pointer"
                       >
                         Remove
                       </button>
@@ -626,7 +626,7 @@ export const ItemCatalogPage: React.FC = () => {
 
             {/* Footer Actions */}
             <div className="px-5 py-4 border-t border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-between gap-3">
-              <button onClick={handleUpdateItem} className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold rounded-xl transition-all shadow-md cursor-pointer">
+              <button onClick={handleUpdateItem} className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold rounded-lg transition-all shadow-md cursor-pointer">
                 <Upload className="w-4 h-4 text-white" />
                 Save & Publish to POS
               </button>

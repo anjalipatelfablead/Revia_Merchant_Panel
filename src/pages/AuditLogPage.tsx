@@ -67,11 +67,11 @@ const MobileAuditView: React.FC<{ logs: AuditLogEntry[] }> = ({ logs }) => {
 
         <div className="mt-5 flex min-h-[62px] items-center gap-2 rounded-xl bg-[#211C19] px-4 py-3 font-mono text-[10px] text-[#B6AFA8]"><span className="h-2 w-2 shrink-0 rounded-full bg-[#20C99A]" /><span className="shrink-0">WITNESS BLOCK #892,104:</span><b className="min-w-0 truncate text-[#20C99A]">sha:7b91e...4f9c</b><span className="ml-auto shrink-0 rounded border border-[#6D5730] px-1.5 py-1 text-[8px] text-[#C99B42]">SEALED</span></div>
 
-        <section className="mt-5 rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex items-start justify-between"><h2 className="flex items-start gap-2 text-[19px] font-bold leading-none"><Cpu className="mt-1 h-4 w-4 shrink-0 text-[#8B681F]" /><span>Active Hardware<br />Mesh</span></h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Cpu className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Downtown Counter 01</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.1 ·<br />192.168.1.104</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Server className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Roastery Reserve Bar 02</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.0 ·<br />192.168.2.88</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-[10px] border border-[#E1D9D0] bg-[#F3EFEA] py-2.5 text-[12px] font-semibold"><Radio className="mr-1 inline h-4 w-4 text-[#8B681F]" />Ping All 6 Terminals</button></section>
+        <section className="mt-5 rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex items-start justify-between"><h2 className="flex items-start gap-2 text-[19px] font-bold leading-none"><Cpu className="mt-1 h-4 w-4 shrink-0 text-[#8B681F]" /><span>Active Hardware<br />Mesh</span></h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Cpu className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Downtown Counter 01</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.1 ·<br />192.168.1.104</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Server className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Roastery Reserve Bar 02</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.0 ·<br />192.168.2.88</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-lg border border-[#E1D9D0] bg-[#F3EFEA] px-4 py-2 text-[13px] font-bold"><Radio className="mr-1 inline w-4 h-4 text-[#8B681F]" />Ping All 6 Terminals</button></section>
 
         <section className="mt-6"><div className="flex items-center justify-between"><div><h2 className="text-[19px] font-bold">Audit Event Stream</h2><span className="rounded-full bg-[#FFF4DC] px-2 py-1 text-[10px] font-bold text-[#8B681F]">Live SHA-256</span></div><button type="button" aria-label="Filter audit events" className="rounded-[7px] bg-white p-2 shadow-sm"><SlidersHorizontal className="h-4 w-4" /></button></div><label className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E1D9D0] bg-white px-3 py-2 text-[11px] text-[#8E847B]"><Search className="h-4 w-4" /><input className="min-w-0 flex-1 bg-transparent outline-none" placeholder="Filter by operator, IP, or hash key..." /></label><div className="mt-3 space-y-3">{visibleLogs.map((log) => { const flagged = log.cryptoState === 'FLAGGED'; const EventIcon = flagged ? AlertTriangle : log.actor.role === 'Admin' ? Download : log.actor.role === 'System' ? RefreshCw : Key; return <article key={log.id} className={`rounded-[12px] border bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)] ${flagged ? 'border-[#FFB6B0] bg-[#FFF8F7]' : 'border-[#E9E0D7]'}`}><div className="flex items-start gap-2"><span className={`rounded-[7px] p-2 ${flagged ? 'bg-[#FFE3E1] text-[#C2413A]' : log.actor.role === 'System' ? 'bg-[#E5F8F0] text-[#0D8B61]' : 'bg-[#FCF1DF] text-[#8B681F]'}`}><EventIcon className="h-4 w-4" /></span><div className="min-w-0 flex-1"><div className={`text-[12px] font-semibold ${flagged ? 'text-[#C2413A]' : ''}`}>{log.actor.name} <span className="ml-1 rounded bg-[#F2EEE9] px-1.5 py-1 text-[9px] text-[#756D65]">{log.actor.role}</span></div><div className="text-[10px] text-[#756D65]">{log.target}</div></div><span className="text-[10px] text-[#756D65]">{log.timestamp}</span></div><div className={`mt-3 rounded-[8px] p-3 text-[12px] ${flagged ? 'border border-[#FFB6B0] bg-white text-[#C2413A]' : 'bg-[#F3EFEA]'}`}><b>{flagged ? 'Blocked unauthorized IP access attempt' : log.action.replaceAll('_', ' ')}</b><div className="mt-1 text-[10px] text-[#756D65]">{flagged ? log.ip : 'Cryptographic witness verified · hash sealed'}</div></div></article>; })}</div></section>
 
-        <button type="button" className="mt-6 flex w-full items-center justify-center gap-2 rounded-[11px] bg-gradient-to-r from-[#D4A753] to-[#9E782F] py-3.5 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><Download className="h-4 w-4" />Export Immutable Audit Dossier (CSV/PDF)</button><button type="button" className="mt-3 w-full rounded-[11px] border border-[#E1D9D0] bg-white py-3 text-[12px] font-semibold"><Lock className="mr-1 inline h-4 w-4" />Commit &amp; Seal New Policy Hash</button>
+        <button type="button" className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-4 py-2 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><Download className="w-4 h-4" />Export Immutable Audit Dossier (CSV/PDF)</button><button type="button" className="mt-3 w-full rounded-lg border border-[#E1D9D0] bg-white px-4 py-2 text-[13px] font-bold"><Lock className="w-4 h-4 mr-1 inline" />Commit &amp; Seal New Policy Hash</button>
       </div>
     </div>
   );
@@ -107,8 +107,8 @@ const AccessControlSettings: React.FC = () => {
           </div>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">Identity & Permission Matrix</h2>
         </div>
-        <button type="button" onClick={handleInviteAdmin} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66] cursor-pointer">
-          <Lock className="h-3.5 w-3.5 text-[#B7842C]" /> {invitingAdmin ? 'Inviting...' : 'Invite Admin'}
+        <button type="button" onClick={handleInviteAdmin} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] cursor-pointer">
+          <Lock className="w-4 h-4 text-[#B7842C]" /> {invitingAdmin ? 'Inviting...' : 'Invite Admin'}
         </button>
       </div>
 
@@ -192,7 +192,7 @@ const AccessControlSettings: React.FC = () => {
               </div>
             </div>
           </div>
-          <button type="button" onClick={handleReviewPolicies} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615] cursor-pointer">
+          <button type="button" onClick={handleReviewPolicies} className="mt-4 w-full rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] cursor-pointer">
             {reviewingPolicies ? 'Reviewing...' : 'Review Access Policies'}
           </button>
         </aside>
@@ -225,8 +225,8 @@ const ApiKeysWebhooksSettings: React.FC = () => {
           </div>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">API Access & Integration</h2>
         </div>
-        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex w-full sm:w-auto justify-center items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66] cursor-pointer">
-          <Key className="h-3.5 w-3.5 text-[#B7842C]" /> {generatingSecret ? 'Generating...' : 'Generate API Secret'}
+        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex w-full sm:w-auto justify-center items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] cursor-pointer">
+          <Key className="w-4 h-4 text-[#B7842C]" /> {generatingSecret ? 'Generating...' : 'Generate API Secret'}
         </button>
       </div>
 
@@ -286,7 +286,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
               <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">IDLE</span>
             </div>
           </div>
-          <button type="button" onClick={handleRotateSigningSecret} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615] cursor-pointer">
+          <button type="button" onClick={handleRotateSigningSecret} className="mt-4 w-full rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] cursor-pointer">
             {rotatingSigningSecret ? 'Rotating...' : 'Rotate Signing Secret'}
           </button>
         </aside>
@@ -387,7 +387,7 @@ const PosHardwareSettings: React.FC = () => {
               </div>
             </div>
           </div>
-          <button type="button" onClick={handleReviewHardwarePolicy} className="cursor-pointer mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
+          <button type="button" onClick={handleReviewHardwarePolicy} className="cursor-pointer mt-4 w-full rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615]">
             {policyReviewing ? 'Reviewing...' : 'Review Hardware Policy'}
           </button>
         </aside>
@@ -547,9 +547,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
 
             <button
               onClick={exportAuditDossier}
-              className="inline-flex w-fit cursor-pointer items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] font-semibold text-[#1A1615] shadow-2xs transition-colors hover:bg-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#D4A753]/40"
+              className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] shadow-2xs transition-colors hover:bg-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#D4A753]/40"
             >
-              <Download className="h-3.5 w-3.5 text-[#9E782F]" />
+              <Download className="w-4 h-4 text-[#9E782F]" />
               Export Immutable Dossier (CSV/PDF)
             </button>
           </div>
@@ -680,9 +680,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                         Cryptographically chained ledger recording all store administration,<br className="hidden sm:block" /> loyalty redemptions, and hardware handshakes.
                       </p>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <button type="button" onClick={clearFilters} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><SlidersHorizontal className="h-3 w-3" /> Clear Filters</button>
-                      <button type="button" onClick={refreshLogs} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Refreshing...' : 'Live Refresh'}</button>
+                    <div className="flex items-center gap-2">
+                      <button type="button" onClick={clearFilters} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#F5F1EA] cursor-pointer"><SlidersHorizontal className="w-4 h-4" /> Clear Filters</button>
+                      <button type="button" onClick={refreshLogs} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#F5F1EA] cursor-pointer"><RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Refreshing...' : 'Live Refresh'}</button>
                     </div>
                   </div>
                   <div className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-[minmax(0,1.7fr)_1fr_1fr_auto]">

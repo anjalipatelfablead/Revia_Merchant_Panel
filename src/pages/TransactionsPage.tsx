@@ -250,13 +250,13 @@ export const TransactionsPage: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 shrink-0 mt-2 md:mt-0">
-              <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
+              <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
                 <Download className="w-4 h-4 text-[#6E6A66]" />
                 Export Ledger CSV
               </button>
               <button
                 onClick={() => setFastPosModalOpen(true)}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
               >
                 <UserPlus className="w-4 h-4 text-white" />
                 Fast Counter Entry
@@ -513,8 +513,8 @@ export const TransactionsPage: React.FC = () => {
                             <div className="text-[11px] font-bold text-[#1A1615]">{tx.commission || '₹0.00'}</div>
                           </div>
                           <div className="col-span-2 pt-2 border-t border-[#EFECE6] flex justify-end gap-2 mt-2">
-                            <button onClick={(e) => { e.stopPropagation(); setReceiptModalTx(tx); }} className="px-4 py-2 text-xs font-semibold text-[#1A1615] bg-white border border-[#EFECE6] rounded-lg shadow-sm hover:bg-[#FAF8F5]">View Receipt</button>
-                            <button onClick={(e) => { e.stopPropagation(); showToast('Refunding transaction...'); }} className="px-4 py-2 text-xs font-semibold text-[#DC2626] bg-[#FEE2E2] border border-[#FECACA] rounded-lg shadow-sm hover:bg-[#FCA5A5]">Refund</button>
+                            <button onClick={(e) => { e.stopPropagation(); setReceiptModalTx(tx); }} className="px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EFECE6] rounded-lg shadow-sm hover:bg-[#FAF8F5]">View Receipt</button>
+                            <button onClick={(e) => { e.stopPropagation(); showToast('Refunding transaction...'); }} className="px-4 py-2 text-[13px] font-semibold text-[#DC2626] bg-[#FEE2E2] border border-[#FECACA] rounded-lg shadow-sm hover:bg-[#FCA5A5]">Refund</button>
                           </div>
                         </div>
                       )}
@@ -726,9 +726,9 @@ export const TransactionsPage: React.FC = () => {
                   showToast('Transaction submitted successfully.');
                   setFastPosModalOpen(false);
                 }}
-                className="w-full py-3.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[17px] font-bold transition-opacity shadow-md cursor-pointer flex justify-center items-center gap-2"
+                className="w-full px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[13px] font-bold transition-opacity shadow-md cursor-pointer flex justify-center items-center gap-2"
               >
-                <CheckCircle2 className="w-5 h-5" /> Submit Transaction
+                <CheckCircle2 className="w-4 h-4" /> Submit Transaction
               </button>
             </div>
 
@@ -806,7 +806,7 @@ export const TransactionsPage: React.FC = () => {
                 </div>
               </div>
 
-              <button onClick={() => { setReceiptModalTx(null); showToast('Receipt printed'); }} className="w-full mt-6 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-[#EFECE6] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer">
+              <button onClick={() => { setReceiptModalTx(null); showToast('Receipt printed'); }} className="w-full mt-6 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] hover:bg-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold shadow-sm transition-colors cursor-pointer">
                 Print Receipt
               </button>
             </div>

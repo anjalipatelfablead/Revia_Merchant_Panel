@@ -962,7 +962,7 @@ const CampaignRewardStep: React.FC<CampaignRewardStepProps> = ({ campaignType, r
                               setFreeItemDropdownOpen(false);
                             }
                           }}
-                          className="px-3 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[12px] font-bold rounded-lg cursor-pointer hover:shadow-sm transition-all"
+                          className="px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[13px] font-bold rounded-lg cursor-pointer hover:shadow-sm transition-all"
                         >
                           Add
                         </button>
@@ -3245,7 +3245,7 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">Campaign &amp; Loyalty Management</h1>
             <p className="text-xs sm:text-sm text-[#7C746C] mt-1">Create, monitor, and optimize your customer engagement programs.</p>
           </div>
-          <button onClick={handleOpenBuilder} className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl px-4.5 py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto">
+          <button onClick={handleOpenBuilder} className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer whitespace-nowrap self-start sm:self-auto">
             <Plus className="w-4 h-4 text-white" /> Create New Campaign
           </button>
         </div>
@@ -3643,9 +3643,9 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
                   showToast('Campaign deployed & published! 50 credits deducted from wallet.');
                   setTimeout(() => handleGoToDashboard(), 1200);
                 }}
-                className="w-full md:w-auto px-5 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl text-[12px] font-bold shadow-md transition-opacity flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full md:w-auto px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[13px] font-bold shadow-md transition-opacity flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Zap className="w-3.5 h-3.5" /> Deploy &amp; Publish Campaign <ArrowRight className="w-3.5 h-3.5" />
+                <Zap className="w-4 h-4" /> Deploy &amp; Publish Campaign <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -3658,17 +3658,17 @@ export const CampaignBuilderPage: React.FC<CampaignBuilderPageProps> = ({ initia
             </div>
             <div className="flex items-center justify-end gap-3 w-full sm:w-auto">
               {currentStep > 1 && (
-                <button onClick={() => setCurrentStep(prev => prev - 1)} className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors flex items-center gap-1.5 cursor-pointer">
-                  <ArrowLeft className="w-3.5 h-3.5" /> Back
+                <button onClick={() => setCurrentStep(prev => prev - 1)} className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <ArrowLeft className="w-4 h-4" /> Back
                 </button>
               )}
-              <button className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-xs font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors cursor-pointer">
+              <button className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#EFECE6] transition-colors cursor-pointer">
                 Save as Draft
               </button>
               {currentStep < 5 && (
-                <button onClick={() => setCurrentStep(prev => prev + 1)} className="px-5 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-xs font-bold shadow-md transition-opacity flex items-center gap-1.5 cursor-pointer">
+                <button onClick={() => setCurrentStep(prev => prev + 1)} className="px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[13px] font-bold shadow-md transition-opacity flex items-center gap-1.5 cursor-pointer">
                   <span>Continue to {steps.find(s => s.id === currentStep + 1)?.name}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               )}
             </div>

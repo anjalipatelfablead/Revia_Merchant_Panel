@@ -145,8 +145,8 @@ const RewardRequestsView: React.FC<{
               <div className="flex items-center gap-2 sm:gap-3 shrink-0 w-full sm:w-auto mt-3 sm:mt-0">
                 {r.status === 'Pending' && (
                   <>
-                    <button onClick={(e) => handleDecline(r.id, e)} className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold text-[#DC2626] bg-[#FEF2F2] border border-[#FEE2E2] hover:bg-[#FEE2E2] rounded-lg transition-colors cursor-pointer text-center">Decline</button>
-                    <button onClick={(e) => handleAccept(r.id, e)} className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-bold text-white bg-[#0D7A53] hover:bg-[#065F3E] rounded-lg transition-colors cursor-pointer text-center">Accept Request</button>
+                    <button onClick={(e) => handleDecline(r.id, e)} className="flex-1 sm:flex-none px-4 py-2 text-[13px] font-bold text-[#DC2626] bg-[#FEF2F2] border border-[#FEE2E2] hover:bg-[#FEE2E2] rounded-lg transition-colors cursor-pointer text-center">Decline</button>
+                    <button onClick={(e) => handleAccept(r.id, e)} className="flex-1 sm:flex-none px-4 py-2 text-[13px] font-bold text-white bg-[#0D7A53] hover:bg-[#065F3E] rounded-lg transition-colors cursor-pointer text-center">Accept Request</button>
                   </>
                 )}
               </div>
@@ -159,7 +159,7 @@ const RewardRequestsView: React.FC<{
 };
 
 export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = ({ onNavigate }) => {
-  const [activeTab, setActiveTab] = useState('Reward Requests');
+  const [activeTab, setActiveTab] = useState('All Rewards (18)');
   const [rewardRequests, setRewardRequests] = useState<RewardRequest[]>(mockRewardRequests);
   
   const [dynamicQR, setDynamicQR] = useState(true);
@@ -238,7 +238,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
               <div className="bg-[#FAF8F5] w-56 h-56 mx-auto rounded-2xl flex items-center justify-center border border-[#EFECE6] mb-8 shadow-inner">
                 <QrCode className="w-32 h-32 text-[#1A1615]" />
               </div>
-              <button onClick={() => setShowQRPreview(null)} className="w-full py-3.5 bg-[#D4A753] hover:bg-[#C29541] text-white rounded-xl text-[14px] font-bold transition-colors shadow-sm cursor-pointer">Close Preview</button>
+              <button onClick={() => setShowQRPreview(null)} className="w-full px-4 py-2 bg-[#D4A753] hover:bg-[#C29541] text-white rounded-lg text-[13px] font-bold transition-colors shadow-sm cursor-pointer">Close Preview</button>
             </div>
           </div>
         </div>
@@ -269,7 +269,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                   <span className="text-[12px] font-bold text-[#0D7A53] bg-[#E6F4ED] px-3 py-1 rounded-full border border-[#BCE3D1]">2/4 Available</span>
                 </div>
               </div>
-              <button onClick={() => setShowManageSlots(null)} className="w-full py-3.5 bg-[#1A1615] hover:bg-black text-white rounded-xl text-[14px] font-bold transition-colors cursor-pointer">Done</button>
+              <button onClick={() => setShowManageSlots(null)} className="w-full px-4 py-2 bg-[#1A1615] hover:bg-black text-white rounded-lg text-[13px] font-bold transition-colors cursor-pointer">Done</button>
             </div>
           </div>
         </div>
@@ -305,8 +305,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                 </div>
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setShowEdit(null)} className="flex-1 py-3.5 bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-xl text-[14px] font-bold transition-colors cursor-pointer">Cancel</button>
-                <button onClick={() => { setShowEdit(null); showToast('Reward updated successfully!'); }} className="flex-1 py-3.5 bg-[#D4A753] hover:bg-[#C29541] text-white rounded-xl text-[14px] font-bold transition-colors shadow-sm cursor-pointer">Save Changes</button>
+                <button onClick={() => setShowEdit(null)} className="flex-1 px-4 py-2 bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-lg text-[13px] font-bold transition-colors cursor-pointer">Cancel</button>
+                <button onClick={() => { setShowEdit(null); showToast('Reward updated successfully!'); }} className="flex-1 px-4 py-2 bg-[#D4A753] hover:bg-[#C29541] text-white rounded-lg text-[13px] font-bold transition-colors shadow-sm cursor-pointer">Save Changes</button>
               </div>
             </div>
           </div>
@@ -352,10 +352,10 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
           </div>
 
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
-            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-[#EAE6E1] text-[#1A1615] text-xs font-bold rounded-lg shadow-xs hover:bg-[#FAF8F5] transition-colors cursor-pointer">
+            <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] text-[#1A1615] text-[13px] font-bold rounded-lg shadow-xs hover:bg-[#FAF8F5] transition-colors cursor-pointer">
               <Download className="w-4 h-4" /> Export Matrix (CSV)
             </button>
-            <button onClick={() => onNavigate?.('/rewards/new')} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-xs font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
+            <button onClick={() => onNavigate?.('/rewards/new')} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[13px] font-bold rounded-lg shadow-xs hover:opacity-95 transition-opacity cursor-pointer">
               <Plus className="w-4 h-4 text-white" /> Create New Reward
             </button>
           </div>
@@ -437,7 +437,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
         {/* Tabs Row */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EFECE6] pb-1">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            {['Reward Requests', 'All Rewards (18)', 'Vouchers & Items (10)', 'VIP & Tier Perks (5)', 'Flash & Happy Hour (3)', 'Archived'].map(tab => (
+            {['All Rewards (18)', 'Reward Requests', 'Vouchers & Items (10)', 'VIP & Tier Perks (5)', 'Flash & Happy Hour (3)', 'Archived'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -607,7 +607,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Clock className="w-3.5 h-3.5" /> Just Added
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview(card.id)} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer"><QrCode className="w-3 h-3" /> QR Preview</button>
+                    <button onClick={() => setShowQRPreview(card.id)} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer"><QrCode className="w-4 h-4" /> QR Preview</button>
                     <button onClick={() => setShowEdit(card.title)} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, card.id])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
@@ -655,8 +655,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Clock className="w-3.5 h-3.5" /> 30 Days expiry
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview('#REV-041')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-                      <QrCode className="w-3 h-3" /> QR Preview
+                    <button onClick={() => setShowQRPreview('#REV-041')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                      <QrCode className="w-4 h-4" /> QR Preview
                     </button>
                     <button onClick={() => setShowEdit('Complimentary Specialty Flight & Pastry')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-041'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -705,8 +705,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Calendar className="w-3.5 h-3.5" /> Continuous Season
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview('#REV-108')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-                      <QrCode className="w-3 h-3" /> QR Preview
+                    <button onClick={() => setShowQRPreview('#REV-108')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                      <QrCode className="w-4 h-4" /> QR Preview
                     </button>
                     <button onClick={() => setShowEdit('₹10 Off Any Roasted Bean Bag (250g)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-108'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -754,8 +754,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Trophy className="w-3.5 h-3.5" /> Concierge RSVP Required
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowManageSlots('Revia Obsidian Private Tasting Tour')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1615] text-[#D4A753] border border-[#332e2d] text-[11px] font-bold rounded-lg hover:bg-black transition-colors cursor-pointer">
-                      <Calendar className="w-3 h-3" /> Manage Slots
+                    <button onClick={() => setShowManageSlots('Revia Obsidian Private Tasting Tour')} className="flex items-center gap-1.5 px-4 py-2 bg-[#1A1615] text-[#D4A753] border border-[#332e2d] text-[13px] font-bold rounded-lg hover:bg-black transition-colors cursor-pointer">
+                      <Calendar className="w-4 h-4" /> Manage Slots
                     </button>
                     <button onClick={() => setShowEdit('Revia Obsidian Private Tasting Tour')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#VIP-001'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -806,8 +806,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Activity className="w-3.5 h-3.5" /> Recurring Weekly
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview('#REV-012')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-                      <QrCode className="w-3 h-3" /> QR Preview
+                    <button onClick={() => setShowQRPreview('#REV-012')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                      <QrCode className="w-4 h-4" /> QR Preview
                     </button>
                     <button onClick={() => setShowEdit('Artisanal Single-Origin Pour-Over Upgrade')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-012'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -858,8 +858,8 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                     <Clock className="w-3.5 h-3.5" /> Weekend Refresh
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setShowQRPreview('#REV-077')} className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[11px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
-                      <QrCode className="w-3 h-3" /> QR Preview
+                    <button onClick={() => setShowQRPreview('#REV-077')} className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] text-[13px] font-bold rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer">
+                      <QrCode className="w-4 h-4" /> QR Preview
                     </button>
                     <button onClick={() => setShowEdit('Reserve Cold Brew Growler Refill (50% Off)')} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FAF8F5] hover:text-[#1A1615] transition-colors cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
                     <button onClick={() => setDeletedCards([...deletedCards, '#REV-077'])} className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#EFECE6] text-[#6E6A66] hover:bg-[#FEE2E2] hover:text-[#DC2626] hover:border-[#FCA5A5] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -1065,7 +1065,7 @@ export const RewardsPage: React.FC<{ onNavigate?: (route: string) => void }> = (
                 setNewVoucherTitle('');
                 showToast('Voucher created and deployed to wallet!');
               }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white rounded-lg text-xs font-bold shadow-md hover:opacity-95 transition-opacity border border-[#9E782F] cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] text-white rounded-lg text-[13px] font-bold shadow-md hover:opacity-95 transition-opacity border border-[#9E782F] cursor-pointer"
             >
               <ArrowUpFromWalletIcon className="w-4 h-4" /> Save & Deploy to Wallet
             </button>

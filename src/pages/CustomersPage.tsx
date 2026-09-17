@@ -151,13 +151,13 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
-            <button className="flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer">
               <Download className="w-4 h-4 text-[#7C746C]" />
               Export CSV
             </button>
             <button
               onClick={() => setIsRegisterModalOpen(true)}
-              className="flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
             >
               <UserPlus className="w-4 h-4 text-white" />
               Register Customer
@@ -490,13 +490,13 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               <div className="p-5 border-t border-[#EAE6E1] bg-white flex items-center gap-3 shrink-0">
                 <button
                   onClick={handleAddStamp}
-                  className="flex-1 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
+                  className="flex-1 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 rounded-lg transition-all shadow-xs cursor-pointer"
                 >
                   Add Stamp
                 </button>
                 <button
                   onClick={handleEditOpen}
-                  className="px-5 py-2.5 text-xs sm:text-sm font-bold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
+                  className="px-4 py-2 text-[13px] font-bold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
                 >
                   Edit Profile
                 </button>
@@ -531,7 +531,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               <button
                 onClick={handleRegister}
                 disabled={!newCustName || !newCustPhone}
-                className="w-full py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white rounded-lg text-sm font-bold shadow-xs mt-2 hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white rounded-lg text-[13px] font-bold shadow-xs mt-2 hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Register & Create Wallet Pass
               </button>
@@ -563,7 +563,7 @@ export const CustomersPage: React.FC<CustomersPageProps> = ({
               <button
                 onClick={handleEditSave}
                 disabled={!editCustName || !editCustPhone}
-                className="w-full py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white rounded-lg text-sm font-bold shadow-xs mt-2 hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white rounded-lg text-[13px] font-bold shadow-xs mt-2 hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Save Changes
               </button>

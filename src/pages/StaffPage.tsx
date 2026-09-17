@@ -389,15 +389,15 @@ export const StaffPage: React.FC = () => {
         <div className="flex items-center gap-2.5 self-start lg:self-auto">
           <button
             onClick={handleExportAudit}
-            className="px-3.5 py-2 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="px-4 py-2 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-[13px] font-semibold text-[#1A1615] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
           >
-            <Download className="w-3.5 h-3.5 text-[#5C554E]" />
+            <Download className="w-4 h-4 text-[#5C554E]" />
             <span>Export Audit Log</span>
           </button>
 
           <button
             onClick={() => setIsInviteModalOpen(true)}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
             <UserPlus className="w-4 h-4 text-white" />
             <span>Invite Team Member</span>
@@ -1018,14 +1018,14 @@ export const StaffPage: React.FC = () => {
             <div className="pt-3 border-t border-[#F2EFE9] flex items-center justify-between gap-3">
               <button
                 onClick={() => showToast(`Access suspended for ${selectedStaff.name}. All terminals locked.`)}
-                className="px-3.5 py-2 rounded-lg border border-[#F2D6D3] bg-[#FFF5F5] hover:bg-[#FEE2E2] text-xs font-semibold text-[#DC2626] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-lg border border-[#F2D6D3] bg-[#FFF5F5] hover:bg-[#FEE2E2] text-[13px] font-semibold text-[#DC2626] transition-colors cursor-pointer"
               >
                 Suspend Access
               </button>
 
               <button
                 onClick={() => showToast(`Saved permissions for ${selectedStaff.name}. Syncing mesh nodes...`)}
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold transition-all cursor-pointer shadow-sm"
               >
                 Save Changes
               </button>
@@ -1126,13 +1126,13 @@ export const StaffPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsInviteModalOpen(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
+                  className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
+                  className="px-4 py-2 text-[13px] font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
                 >
                   Send Invitation
                 </button>
@@ -1179,7 +1179,7 @@ export const StaffPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsEditTemplatesOpen(false)}
-                className="px-3.5 py-2 text-xs font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
+                className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
               >
                 Close
               </button>
@@ -1189,7 +1189,7 @@ export const StaffPage: React.FC = () => {
                   setIsEditTemplatesOpen(false);
                   showToast('Role templates updated and dispatched to mesh registers.');
                 }}
-                className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
+                className="px-4 py-2 text-[13px] font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
               >
                 Save Role Templates
               </button>
@@ -1307,13 +1307,13 @@ export const StaffPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
+                  className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-xs"
+                  className="px-4 py-2 text-[13px] font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-xs"
                 >
                   Save Changes
                 </button>
