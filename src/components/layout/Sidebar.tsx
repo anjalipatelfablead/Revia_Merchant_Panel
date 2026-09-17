@@ -53,7 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onMobileClose,
 }) => {
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({
-    'CRM & ACTIVITY': false,
+    'SALES & REWARDS': false,
     'INSIGHTS & CONFIG': false,
   });
 
@@ -81,12 +81,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     //   ],
     // },
     {
-      label: 'CRM & ACTIVITY',
+      label: 'SALES & REWARDS',
       items: [
         // { name: 'Customers', route: '/customerlist', icon: Users },
         { name: 'Transactions', route: '/transactions', icon: Receipt },
         // { name: 'Campaigns', route: '/campaigns', icon: Megaphone },
-        { name: 'Redemption Terminal', route: '/terminal', icon: ScanLine },
+        // { name: 'Redemption Terminal', route: '/terminal', icon: ScanLine },
         { name: 'Rewards', route: '/rewards', icon: Award },
       ],
     },
