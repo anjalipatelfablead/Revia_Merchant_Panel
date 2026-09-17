@@ -7,8 +7,8 @@ export const NotEnoughCreditModal: React.FC = () => {
 
   if (!blockedActionModal.isOpen) return null;
 
-  const { requiredCost, currentBalance, actionName } = blockedActionModal;
-  const shortfall = requiredCost - currentBalance;
+  const { requiredCost, currentBalance, usableBalance, actionName } = blockedActionModal;
+  const shortfall = requiredCost - usableBalance;
 
   const handleOpenTopUp = () => {
     closeBlockedActionModal();
@@ -42,18 +42,26 @@ export const NotEnoughCreditModal: React.FC = () => {
         <div className="p-4 sm:p-6 space-y-4 flex-1 overflow-y-auto">
           <p className="text-[13px] sm:text-[14px] text-[#4A433D] leading-relaxed">
             <strong className="text-[#1A1615]">{actionName}</strong> requires{' '}
-            <span className="font-extrabold text-[#1A1615]">{requiredCost} credits</span>. Your current balance is{' '}
-            <span className="font-extrabold text-amber-700">{currentBalance} credits</span>.
+            <span className="font-extrabold text-[#1A1615]">{requiredCost} credits</span>. Your current usable balance is{' '}
+            <span className="font-extrabold text-amber-700">{usableBalance} credits</span>.
           </p>
 
           <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-3.5 space-y-2">
             <div className="flex items-center justify-between text-[12px] sm:text-[13px]">
-              <span className="text-[#6E6A66]">Required Credits:</span>
-              <span className="font-bold text-[#1A1615]">{requiredCost} credits</span>
+              <span className="text-[#6E6A66]">Total Balance:</span>
+              <span className="font-bold text-[#1A1615]">{currentBalance} credits</span>
             </div>
             <div className="flex items-center justify-between text-[12px] sm:text-[13px]">
-              <span className="text-[#6E6A66]">Current Balance:</span>
-              <span className="font-bold text-amber-700">{currentBalance} credits</span>
+              <span className="text-[#6E6A66]">System Provisioning Lock:</span>
+              <span className="font-bold text-[#6E6A66]">-250 credits</span>
+            </div>
+            <div className="flex items-center justify-between text-[12px] sm:text-[13px] border-t border-[#EAE6E1] pt-2">
+              <span className="text-[#1A1615] font-bold">Usable Balance:</span>
+              <span className="font-extrabold text-amber-700">{usableBalance} credits</span>
+            </div>
+            <div className="flex items-center justify-between text-[12px] sm:text-[13px] border-t border-[#EAE6E1] pt-2">
+              <span className="text-[#1A1615] font-bold">Required Credits:</span>
+              <span className="font-bold text-[#1A1615]">{requiredCost} credits</span>
             </div>
             <div className="border-t border-[#EAE6E1] pt-2 flex items-center justify-between text-[12px] sm:text-[13px]">
               <span className="font-bold text-red-700">Shortfall:</span>
