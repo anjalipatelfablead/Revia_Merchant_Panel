@@ -210,7 +210,7 @@ export const MerchantPlatformSettings: React.FC = () => {
         <div className="mt-8 flex justify-end">
           <button
             onClick={handleSave}
-            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[14px] font-bold rounded-xl cursor-pointer hover:opacity-95 transition-opacity shadow-md flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white text-[13px] font-bold rounded-lg cursor-pointer hover:opacity-95 transition-opacity shadow-md flex items-center justify-center gap-2"
           >
             <Save className="w-4 h-4" /> Save Settings
           </button>

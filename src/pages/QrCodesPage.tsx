@@ -242,13 +242,13 @@ export const QrCodesPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-xs cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer">
               <Download className="w-4 h-4" />
               Download Print PDF Pack
             </button>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-2 px-5 py-2 text-sm font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-xl hover:opacity-95 transition-all shadow-xs cursor-pointer">
+              className="flex items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-lg hover:opacity-95 transition-all shadow-xs cursor-pointer">
               <Plus className="w-4 h-4 text-white" />
               Create Dynamic Stand
             </button>
@@ -333,7 +333,7 @@ export const QrCodesPage: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-colors cursor-pointer shrink-0 rounded-lg border ${showFilters
+                  className={`flex items-center gap-2 px-4 py-2 text-[13px] font-semibold transition-colors cursor-pointer shrink-0 rounded-lg border ${showFilters
                     ? 'bg-[#FAF8F5] border-[#D4A753] text-[#D4A753]'
                     : 'bg-white border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615]'
                     }`}>
@@ -610,11 +610,11 @@ export const QrCodesPage: React.FC = () => {
               {/* Action Controls Footer */}
               <div className="p-4 bg-white border-t border-[#EFECE6] shrink-0">
                 <div className="flex items-center gap-3 mb-3">
-                  <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 text-xs font-bold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-xl transition-colors shadow-sm cursor-pointer">
+                  <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2 text-[13px] font-bold text-[#1A1615] bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-sm cursor-pointer">
                     <Download className="w-4 h-4" />
                     Download Vector
                   </button>
-                  <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 text-xs font-bold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-xl transition-opacity shadow-sm cursor-pointer">
+                  <button className="flex-1 flex justify-center items-center gap-2 px-4 py-2 text-[13px] font-bold text-white bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 rounded-lg transition-opacity shadow-sm cursor-pointer">
                     <Save className="w-4 h-4" /> Save &amp; Push Live
                   </button>
                 </div>
@@ -646,7 +646,7 @@ export const QrCodesPage: React.FC = () => {
               </div>
               <button
                 onClick={() => { setIsEditModalOpen(false); showToast('Asset updated successfully.'); }}
-                className="w-full py-2.5 bg-[#1A1615] text-white rounded-lg text-sm font-bold shadow-sm mt-2 hover:bg-black transition-colors"
+                className="w-full px-4 py-2 bg-[#1A1615] text-white rounded-lg text-[13px] font-bold shadow-sm mt-2 hover:bg-black transition-colors"
               >
                 Save Changes
               </button>
@@ -663,10 +663,10 @@ export const QrCodesPage: React.FC = () => {
               <h2 className="text-[15px] font-bold text-[#1A1615]">Download Files</h2>
             </div>
             <div className="p-5 space-y-3">
-              <button onClick={() => { setIsDownloadModalOpen(false); showToast(`Downloading ${selectedActionAsset.title} as PDF (Print Ready)...`); }} className="w-full py-2.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm flex items-center justify-center gap-2 transition-colors">
+              <button onClick={() => { setIsDownloadModalOpen(false); showToast(`Downloading ${selectedActionAsset.title} as PDF (Print Ready)...`); }} className="w-full px-4 py-2 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615] rounded-lg text-[13px] font-bold shadow-sm flex items-center justify-center gap-2 transition-colors">
                 <Download className="w-4 h-4" /> Download Vector PDF
               </button>
-              <button onClick={() => { setIsDownloadModalOpen(false); showToast(`Downloading ${selectedActionAsset.title} as PNG...`); }} className="w-full py-2.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615] rounded-lg text-sm font-bold shadow-sm flex items-center justify-center gap-2 transition-colors">
+              <button onClick={() => { setIsDownloadModalOpen(false); showToast(`Downloading ${selectedActionAsset.title} as PNG...`); }} className="w-full px-4 py-2 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615] rounded-lg text-[13px] font-bold shadow-sm flex items-center justify-center gap-2 transition-colors">
                 <Download className="w-4 h-4" /> Download Web PNG
               </button>
             </div>
@@ -780,14 +780,14 @@ export const QrCodesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsCreateModalOpen(false)}
-                className="flex-1 py-2.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615] rounded-xl text-sm font-bold shadow-sm transition-colors cursor-pointer"
+                className="flex-1 px-4 py-2 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] text-[#1A1615] rounded-lg text-[13px] font-bold shadow-sm transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 form="create-stand-form"
-                className="flex-1 py-2.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 text-white rounded-xl text-sm font-bold shadow-sm transition-opacity cursor-pointer"
+                className="flex-1 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-90 text-white rounded-lg text-[13px] font-bold shadow-sm transition-opacity cursor-pointer"
               >
                 Create Dynamic Stand
               </button>

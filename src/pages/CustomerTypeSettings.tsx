@@ -266,8 +266,8 @@ export const CustomerTypeSettings: React.FC = () => {
                   {editingTier ? 'Edit Tier' : 'Create New Tier'}
                 </h2>
                 {editingTier && (
-                  <button onClick={handleAddNew} className="text-[12px] cursor-pointer font-bold text-[#B8862E] hover:text-[#9E782F] flex items-center gap-1">
-                    <Plus className="w-3.5 h-3.5" /> Add New
+                  <button onClick={handleAddNew} className="px-4 py-2 text-[13px] rounded-lg cursor-pointer font-bold text-[#B8862E] hover:bg-[#FAF8F5] hover:text-[#9E782F] flex items-center gap-2 transition-colors">
+                    <Plus className="w-4 h-4" /> Add New
                   </button>
                 )}
               </div>
@@ -387,7 +387,7 @@ export const CustomerTypeSettings: React.FC = () => {
                 <button
                   onClick={handleSave}
                   disabled={!name || minBilling === '' || validityDuration === ''}
-                  className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold transition-all ${name && minBilling !== '' && validityDuration !== ''
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[13px] font-bold transition-all ${name && minBilling !== '' && validityDuration !== ''
                     ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-md hover:opacity-95 cursor-pointer'
                     : 'bg-[#EFECE6] text-[#9E9A93] cursor-not-allowed'
                     }`}

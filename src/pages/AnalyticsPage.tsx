@@ -281,8 +281,8 @@ export const AnalyticsPage: React.FC = () => {
                   <span className="flex flex-col text-[10px] font-bold uppercase leading-3 tracking-widest text-[#1A1615]"><span className="text-[#8C847A]">Cohort benchmark</span><span>VIP vs New Guests</span></span>
                 </div>
 
-                <button type="button" onClick={exportDossier} className="inline-flex items-center justify-center gap-1.5 rounded-[9px] bg-gradient-to-b from-[#D4A753] to-[#9E782F] px-2.5 py-3 text-[10px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95 lg:w-full">
-                  <Download className="h-3 w-3" />
+                <button type="button" onClick={exportDossier} className="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-[#D4A753] to-[#9E782F] px-4 py-2 text-[13px] font-bold text-white shadow-[0_3px_10px_rgba(158,120,47,0.2)] transition hover:opacity-95 lg:w-full">
+                  <Download className="w-4 h-4" />
                   {exported ? 'Dossier Ready' : 'Export CSV / PDF Dossier'}
                 </button>
               </div>

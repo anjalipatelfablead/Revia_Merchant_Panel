@@ -76,12 +76,12 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                   </p>
                </div>
 
-               <div className="flex items-center gap-3 shrink-0">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer w-full sm:w-auto">
                      <RotateCcw className="w-4 h-4" /> Discard Changes
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
-                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens (⌘S)
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer w-full sm:w-auto">
+                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens
                   </button>
                </div>
             </div>
@@ -119,7 +119,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            </div>
 
                            <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
-                              <Upload className="w-3.5 h-3.5" /> Replace Emblem
+                              <Upload className="w-4 h-4" /> Replace Emblem
                            </button>
                         </div>
 
@@ -138,7 +138,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            </div>
 
                            <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
-                              <Edit2 className="w-3.5 h-3.5" /> Edit Crest Glyph
+                              <Edit2 className="w-4 h-4" /> Edit Crest Glyph
                            </button>
                         </div>
 
@@ -159,7 +159,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                            </div>
 
                            <button className="w-full py-2 bg-white border border-[#EAE6E1] rounded-lg text-[11px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors flex items-center justify-center gap-1.5">
-                              <RefreshCw className="w-3.5 h-3.5" /> Generate Sizes
+                              <RefreshCw className="w-4 h-4" /> Generate Sizes
                            </button>
                         </div>
                      </div>

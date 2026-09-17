@@ -171,11 +171,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           <div className="relative shrink-0">
             <button
               onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-              className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap"
+              className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap"
             >
-              <Calendar className="w-3.5 h-3.5 text-white shrink-0" />
+              <Calendar className="w-4 h-4 text-white shrink-0" />
               <span>{activeDateRange}</span>
-              <ChevronDown className="w-3.5 h-3.5 text-white/80 shrink-0" />
+              <ChevronDown className="w-4 h-4 text-white/80 shrink-0" />
             </button>
 
             {dateDropdownOpen && (
@@ -208,16 +208,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               setExportToast(true);
               setTimeout(() => setExportToast(false), 3000);
             }}
-            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Share2 className="w-3.5 h-3.5 text-white shrink-0" />
+            <Share2 className="w-4 h-4 text-white shrink-0" />
             <span>Export Report</span>
           </button>
 
           {/* Create Campaign Primary Button */}
           <button
             onClick={() => onNavigate('/campaigns/new')}
-            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-xs font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0"
+            className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center gap-1.5 shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 text-white shrink-0" />
             <span>Create Campaign</span>
@@ -685,7 +685,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 onClick={() => onNavigate('/qr-codes')}
                 className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <QrCode className="w-5 h-5 text-white mb-2" />
+                <QrCode className="w-4 h-4 text-white mb-2" />
                 <div>
                   <div className="text-xs font-bold text-white mb-0.5">Scan & Verify</div>
                   <div className="text-[10px] text-white/90 line-clamp-1">Counter camera launch</div>
@@ -697,7 +697,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 onClick={() => onNavigate('/qr-codes')}
                 className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <Share2 className="w-5 h-5 text-white mb-2" />
+                <Share2 className="w-4 h-4 text-white mb-2" />
                 <div>
                   <div className="text-xs font-bold text-white mb-0.5">QR Pack Print</div>
                   <div className="text-[10px] text-white/90 line-clamp-1">Table stand templates</div>
@@ -709,7 +709,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 onClick={() => onNavigate('/staff')}
                 className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <UserPlus className="w-5 h-5 text-white mb-2" />
+                <UserPlus className="w-4 h-4 text-white mb-2" />
                 <div>
                   <div className="text-xs font-bold text-white mb-0.5">Shift Staff</div>
                   <div className="text-[10px] text-white/90 line-clamp-1">4 baristas logged in</div>
@@ -721,7 +721,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 onClick={() => onNavigate('/loyalty')}
                 className="w-full text-left bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-xl p-3 flex flex-col justify-between transition-all shadow-sm h-24 cursor-pointer group"
               >
-                <Zap className="w-5 h-5 text-white mb-2" />
+                <Zap className="w-4 h-4 text-white mb-2" />
                 <div>
                   <div className="text-xs font-bold text-white mb-0.5">Double-Stamp</div>
                   <div className="text-[10px] text-white/90 line-clamp-1">Trigger flash hour boost</div>

@@ -80,22 +80,22 @@ export const RedemptionTerminalPage = () => {
 
       {/* Lookup Bar */}
       <div className="flex flex-col md:flex-row gap-3 w-full">
-        <div className="flex-1 bg-[#F5F2EC] border border-[#EFECE6] rounded-xl flex items-center px-4 py-3 shadow-inner">
-          <Maximize className="w-5 h-5 text-[#9E9A93] mr-3 shrink-0" />
+        <div className="flex-1 bg-[#F5F2EC] border border-[#EFECE6] rounded-lg flex items-center px-4 py-2 shadow-inner">
+          <Maximize className="w-4 h-4 text-[#9E9A93] mr-3 shrink-0" />
           <input
             type="text"
             placeholder="Scan or type voucher code..."
             value="REV - VCH - 8924"
             readOnly
-            className="w-full min-w-0 bg-transparent border-none outline-none text-[14px] font-bold text-[#1A1615] truncate"
+            className="w-full min-w-0 bg-transparent border-none outline-none text-[13px] font-bold text-[#1A1615] truncate"
           />
           <span className="text-[10px] font-bold text-[#9E9A93] tracking-wider ml-3 shrink-0 hidden sm:block">QUICK KEY</span>
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[#D4A753] hover:bg-[#C29541] text-white px-6 py-3 rounded-xl font-bold text-[14px] transition-colors shadow-sm">
+          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[#D4A753] hover:bg-[#C29541] text-white px-4 py-2 rounded-lg font-bold text-[13px] transition-colors shadow-sm">
             <Search className="w-4 h-4 shrink-0" /> <span className="whitespace-nowrap">Lookup Pass</span>
           </button>
-          <button className="flex items-center justify-center bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] px-4 py-3 rounded-xl hover:bg-[#EFECE6] transition-colors shadow-sm shrink-0">
+          <button className="flex items-center justify-center bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] px-4 py-2 rounded-lg hover:bg-[#EFECE6] transition-colors shadow-sm shrink-0">
             <Filter className="w-4 h-4 shrink-0" />
           </button>
         </div>
@@ -173,8 +173,8 @@ export const RedemptionTerminalPage = () => {
               Voucher <strong className="text-[#1A1615]">#REV-9014</strong> was previously flagged: expired 2 days ago at Tribeca Roastery. Overriding counter validation requires authorized Store Manager PIN.
             </p>
             <div className="flex items-center justify-between">
-              <button className="flex items-center gap-1.5 text-[11px] font-bold text-[#D4A753] hover:text-[#9E782F] transition-colors">
-                <Info className="w-3.5 h-3.5" /> Request Manager Override
+              <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#D4A753] hover:text-[#9E782F] transition-colors">
+                <Info className="w-4 h-4" /> Request Manager Override
               </button>
             </div>
           </div>
@@ -272,11 +272,11 @@ export const RedemptionTerminalPage = () => {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2">
               <button
                 onClick={handleSettleReward}
-                className="w-full sm:w-auto flex-1 bg-[#D4A753] hover:bg-[#C29541] text-white h-12 sm:h-14 rounded-xl flex items-center justify-center gap-2 font-bold text-[13px] sm:text-[14px] transition-colors shadow-sm cursor-pointer px-2 sm:px-4"
+                className="w-full sm:w-auto flex-1 bg-[#D4A753] hover:bg-[#C29541] text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 font-bold text-[13px] transition-colors shadow-sm cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4 shrink-0" /> <span className="whitespace-nowrap">Confirm & Settle Reward </span>
               </button>
-              <button className="w-full sm:w-auto px-8 h-12 sm:h-14 bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-xl font-bold text-[13px] sm:text-[14px] transition-colors shadow-sm cursor-pointer shrink-0">
+              <button className="w-full sm:w-auto px-4 py-2 bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#1A1615] border border-[#EFECE6] rounded-lg font-bold text-[13px] transition-colors shadow-sm cursor-pointer shrink-0">
                 Clear
               </button>
             </div>

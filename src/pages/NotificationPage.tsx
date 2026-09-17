@@ -213,9 +213,9 @@ export const NotificationPage: React.FC = () => {
 							type="button"
 							onClick={markAllRead}
 							disabled={unreadCount === 0}
-							className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-3.5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40 cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
+							className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-4 py-2 text-[13px] font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:cursor-default disabled:opacity-40 cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
 						>
-							<CheckCheck className="h-4 w-4" />
+							<CheckCheck className="w-4 h-4" />
 							Mark all as read
 						</button>
 
@@ -223,10 +223,10 @@ export const NotificationPage: React.FC = () => {
 							<button
 								type="button"
 								onClick={restoreDefaults}
-								className="flex items-center justify-center gap-1.5 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-3 py-2.5 text-xs font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
+								className="flex items-center justify-center gap-2 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer whitespace-nowrap flex-1 sm:flex-none"
 								title="Reset mock notifications"
 							>
-								<RotateCcw className="h-3.5 w-3.5" />
+								<RotateCcw className="w-4 h-4" />
 								Reset
 							</button>
 						)}
@@ -276,9 +276,9 @@ export const NotificationPage: React.FC = () => {
 						<button
 							type="button"
 							onClick={openSelectedDeleteModal}
-							className="flex items-center gap-1.5 rounded-lg bg-[#FEE2E2] border border-[#FECACA] px-3 py-1.5 text-xs font-bold text-[#DC2626] hover:bg-[#FCA5A5] transition-colors cursor-pointer shadow-2xs"
+							className="flex items-center gap-2 rounded-lg bg-[#FEE2E2] border border-[#FECACA] px-4 py-2 text-[13px] font-bold text-[#DC2626] hover:bg-[#FCA5A5] transition-colors cursor-pointer shadow-2xs"
 						>
-							<Trash2 className="h-3.5 w-3.5" />
+							<Trash2 className="w-4 h-4" />
 							Delete Selected ({selectedIds.length})
 						</button>
 					) : (
@@ -286,9 +286,9 @@ export const NotificationPage: React.FC = () => {
 							<button
 								type="button"
 								onClick={openClearAllModal}
-								className="flex items-center gap-1.5 rounded-lg border border-[#EFECE6] bg-white px-3 py-1.5 text-xs font-bold text-[#7C746C] hover:text-[#DC2626] hover:bg-[#FFF5F5] hover:border-[#FECACA] transition-colors cursor-pointer"
+								className="flex items-center gap-2 rounded-lg border border-[#EFECE6] bg-white px-4 py-2 text-[13px] font-bold text-[#7C746C] hover:text-[#DC2626] hover:bg-[#FFF5F5] hover:border-[#FECACA] transition-colors cursor-pointer"
 							>
-								<Trash2 className="h-3.5 w-3.5" />
+								<Trash2 className="w-4 h-4" />
 								Clear All
 							</button>
 						)
@@ -363,7 +363,7 @@ export const NotificationPage: React.FC = () => {
 										<button
 											type="button"
 											onClick={() => markRead(item.id)}
-											className="inline-flex items-center gap-1.5 rounded-full border border-[#BCE3D1] bg-[#EAF8F0] px-3 py-1 text-[10px] sm:text-[11px] font-bold text-[#178252] transition-colors hover:border-[#8FD0AE] hover:bg-[#DFF5E8] cursor-pointer"
+											className="inline-flex items-center gap-2 rounded-lg border border-[#BCE3D1] bg-[#EAF8F0] px-4 py-2 text-[13px] font-bold text-[#178252] transition-colors hover:border-[#8FD0AE] hover:bg-[#DFF5E8] cursor-pointer"
 										>
 											<span className="h-1.5 w-1.5 rounded-full bg-[#27A96B]" />
 											Mark Read
@@ -433,14 +433,14 @@ export const NotificationPage: React.FC = () => {
 								<button
 									type="button"
 									onClick={closeModal}
-									className="flex-1 rounded-xl border border-[#EFECE6] bg-[#FAF8F5] py-2.5 text-sm font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer"
+									className="flex-1 rounded-lg border border-[#EFECE6] bg-[#FAF8F5] px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#EFECE6] transition-colors cursor-pointer"
 								>
 									Cancel
 								</button>
 								<button
 									type="button"
 									onClick={confirmDelete}
-									className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-bold text-white shadow-xs hover:bg-red-700 transition-colors cursor-pointer"
+									className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-[13px] font-bold text-white shadow-xs hover:bg-red-700 transition-colors cursor-pointer"
 								>
 									{deleteModal.type === 'clearAll' ? 'Clear All' : 'Delete'}
 								</button>

@@ -186,7 +186,7 @@ export const BillingPage: React.FC = () => {
 
         <button
           onClick={openTopUpModal}
-          className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer self-start sm:self-auto shrink-0"
+          className="bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg px-4 py-2 text-[13px] font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer self-start sm:self-auto shrink-0"
         >
           <PlusCircle className="w-4 h-4 text-white" />
           <span>Add Credit</span>
@@ -472,9 +472,9 @@ export const BillingPage: React.FC = () => {
               {/* Export CSV Button */}
               <button
                 onClick={handleExportCSV}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] hover:bg-[#EAE6E1] text-[#1A1615] rounded-lg font-bold text-[12px] transition-colors cursor-pointer"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-[#FAF8F5] border border-[#EAE6E1] hover:bg-[#EAE6E1] text-[#1A1615] rounded-lg font-bold text-[13px] transition-colors cursor-pointer"
               >
-                <Download className="w-3.5 h-3.5 text-[#6E6A66] shrink-0" />
+                <Download className="w-4 h-4 text-[#6E6A66] shrink-0" />
                 <span className="truncate">Export CSV</span>
               </button>
             </div>
