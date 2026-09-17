@@ -451,7 +451,7 @@ export const StaffPage: React.FC = () => {
     <div className="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-5 animate-in fade-in duration-150">
       {/* Top Toast Feedback */}
       {feedbackToast && (
-        <div className="fixed top-14 right-6 z-50 bg-[#1A1615] text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2.5 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-top-2">
+        <div className="fixed top-14 right-6 z-[100] bg-[#1A1615] text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2.5 text-xs font-semibold border border-[#3D3732] animate-in slide-in-from-top-2">
           <CheckCircle2 className="w-4 h-4 text-[#15803D]" />
           <span>{feedbackToast}</span>
         </div>
@@ -1032,8 +1032,14 @@ export const StaffPage: React.FC = () => {
 
       {/* Invite Team Member Modal */}
       {isInviteModalOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-md shadow-2xl space-y-4">
+        <div 
+          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in"
+          onClick={() => setIsInviteModalOpen(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-md shadow-2xl space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-[#EAE6E1]">
               <div>
                 <h3 className="text-base font-bold text-[#1A1615]">Invite Team Member</h3>
@@ -1169,8 +1175,17 @@ export const StaffPage: React.FC = () => {
 
       {/* Edit Role Templates Modal (Role Builder) */}
       {isEditTemplatesOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-lg shadow-2xl space-y-4">
+        <div 
+          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in"
+          onClick={() => {
+            setIsEditTemplatesOpen(false);
+            setEditingRole(null);
+          }}
+        >
+          <div 
+            className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-lg shadow-2xl space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-[#EAE6E1]">
               <div>
                 <h3 className="text-base font-bold text-[#1A1615]">
@@ -1329,8 +1344,14 @@ export const StaffPage: React.FC = () => {
       )}
       {/* Edit Staff Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in"
+          onClick={() => setIsEditModalOpen(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-[#EAE6E1]">
               <div>
                 <h3 className="text-base font-bold text-[#1A1615]">Edit Staff Profile</h3>
