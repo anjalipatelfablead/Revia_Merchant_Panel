@@ -57,7 +57,7 @@ export const ProfileScreen = ({ onPrivacy, onNavigateApp }: { onPrivacy: () => v
           </div>
         </div>
 
-        <button onClick={() => { setEditForm(profile); setIsEditModalOpen(true); }} className="hidden sm:flex z-10 text-xs font-black text-[#C89B3C] border border-[#C89B3C]/50 px-5 py-2 rounded-full hover:bg-[#C89B3C]/10 transition-all active:scale-95 items-center gap-2">
+        <button onClick={() => { setEditForm(profile); setIsEditModalOpen(true); }} className="cursor-pointer hidden sm:flex z-10 text-xs font-black text-[#C89B3C] border border-[#C89B3C]/50 px-5 py-2 rounded-full hover:bg-[#C89B3C]/10 transition-all active:scale-95 items-center gap-2">
           <Edit2 className="w-3.5 h-3.5" /> Edit Profile
         </button>
       </div>
@@ -123,7 +123,7 @@ export const ProfileScreen = ({ onPrivacy, onNavigateApp }: { onPrivacy: () => v
                 { Icon: Eye, label: 'Data Controls', val: 'View', badge: null, action: true },
               ].map((row, i) => (
                 <button key={i} onClick={row.action ? onPrivacy : undefined} disabled={!row.action}
-                  className={`w-full flex items-center gap-4 px-4 py-4 text-left group ${row.action ? 'hover:bg-[#FAFAFA] active:bg-[#F0F0F0] transition-colors rounded-xl' : ''}`}>
+                  className={`cursor-pointer w-full flex items-center gap-4 px-4 py-4 text-left group ${row.action ? 'hover:bg-[#FAFAFA] active:bg-[#F0F0F0] transition-colors rounded-xl' : ''}`}>
                   <div className="w-10 h-10 bg-[#F8F8F6] rounded-xl flex items-center justify-center shrink-0 group-hover:bg-white transition-colors border border-transparent group-hover:border-[#E6E6E6]">
                     <row.Icon className="w-4 h-4 text-[#999]" />
                   </div>
@@ -136,7 +136,7 @@ export const ProfileScreen = ({ onPrivacy, onNavigateApp }: { onPrivacy: () => v
           </div>
 
           <button onClick={() => onNavigateApp?.('/')}
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl border-2 border-rose-100 text-rose-500 text-xs font-black hover:bg-rose-50 hover:border-rose-200 transition-all shadow-sm bg-white active:scale-95 group">
+            className="cursor-pointer w-full flex items-center justify-center gap-2 py-4 rounded-2xl border-2 border-rose-100 text-rose-500 text-xs font-black hover:bg-rose-50 hover:border-rose-200 transition-all shadow-sm bg-white active:scale-95 group">
             <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Sign Out
           </button>
         </div>
@@ -151,7 +151,7 @@ export const ProfileScreen = ({ onPrivacy, onNavigateApp }: { onPrivacy: () => v
             {/* Modal Header */}
             <div className="px-6 py-5 border-b border-[#F5F5F5] flex justify-between items-center bg-gradient-to-r from-[#1a1a1a] to-[#2d2d2d]">
               <h3 className="text-lg font-black text-white tracking-wide">Edit Profile</h3>
-              <button onClick={() => setIsEditModalOpen(false)} className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
+              <button onClick={() => setIsEditModalOpen(false)} className="cursor-pointer w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -226,13 +226,13 @@ export const ProfileScreen = ({ onPrivacy, onNavigateApp }: { onPrivacy: () => v
             <div className="p-6 pt-2 bg-[#FAFAFA] border-t border-[#F5F5F5] flex gap-3">
               <button 
                 onClick={() => setIsEditModalOpen(false)}
-                className="flex-1 py-3.5 rounded-xl text-xs font-black text-[#666] bg-white border border-[#E6E6E6] hover:bg-[#F0F0F0] transition-colors"
+                className="cursor-pointer flex-1 py-3.5 rounded-xl text-xs font-black text-[#666] bg-white border border-[#E6E6E6] hover:bg-[#F0F0F0] transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSave}
-                className="flex-1 py-3.5 rounded-xl text-xs font-black text-white bg-[#C89B3C] hover:bg-[#b58933] shadow-lg shadow-[#C89B3C]/30 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+                className="cursor-pointer flex-1 py-3.5 rounded-xl text-xs font-black text-white bg-[#C89B3C] hover:bg-[#b58933] shadow-lg shadow-[#C89B3C]/30 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
               >
                 Save Changes
               </button>

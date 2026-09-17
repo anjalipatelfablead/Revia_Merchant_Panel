@@ -57,6 +57,9 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
   const [showRedemption, setShowRedemption] = useState(false);
   const [showRedemptionSuccess, setShowRedemptionSuccess] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  
+  const [selectedMerchant, setSelectedMerchant] = useState('All Merchants');
+  const [selectedBranch, setSelectedBranch] = useState('All Branches');
 
   // Sync state to URL when changed programmatically
   const navigateTo = (path: string) => {
@@ -118,11 +121,15 @@ export const CustomerPanel: React.FC<Props> = ({ currentRoute, onNavigate }) => 
       onBack={() => { if (showPrivacy) setShowPrivacy(false); else setSelectedOffer(null); }}
       onNavigateApp={onNavigate}
       cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+      selectedMerchant={selectedMerchant}
+      setSelectedMerchant={setSelectedMerchant}
+      selectedBranch={selectedBranch}
+      setSelectedBranch={setSelectedBranch}
     >
       {showPrivacy ? (
         <PrivacyScreen onBack={() => setShowPrivacy(false)} />
       ) : activeTab === 'dashboard' ? (
-        <HomeScreen setTab={handleSetActiveTab} setSelectedOffer={id => { setSelectedOffer(id); handleSetActiveTab('offers'); }} setSelectedReward={id => { setSelectedReward(id); handleSetActiveTab('rewards'); }} />
+        <HomeScreen setTab={handleSetActiveTab} setSelectedOffer={id => { setSelectedOffer(id); handleSetActiveTab('offers'); }} setSelectedReward={id => { setSelectedReward(id); handleSetActiveTab('rewards'); }} selectedMerchant={selectedMerchant} />
       ) : activeTab === 'scan' ? (
         <CustomerScanScreen />
       ) : activeTab === 'menu' ? (

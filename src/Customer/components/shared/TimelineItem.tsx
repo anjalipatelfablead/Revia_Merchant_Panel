@@ -2,7 +2,7 @@ import React from 'react';
 import { CheckCircle2, Star, Gift } from 'lucide-react';
 import { MOCK_HISTORY } from '../../data/mockData';
 
-export const TimelineItem: React.FC<{ item: typeof MOCK_HISTORY[0]; isLast: boolean; }> = ({ item, isLast }) => {
+export const TimelineItem: React.FC<{ item: typeof MOCK_HISTORY[0] & { business?: string, branch?: string }; isLast: boolean; showMerchant?: boolean; }> = ({ item, isLast, showMerchant }) => {
   const iconMap: Record<string, { Icon: React.ElementType; bg: string; color: string }> = {
     check: { Icon: CheckCircle2, bg: 'bg-[#F0FFF8]', color: 'text-[#0D7A53]' },
     star: { Icon: Star, bg: 'bg-[#FFF8ED]', color: 'text-[#C89B3C]' },
@@ -21,6 +21,11 @@ export const TimelineItem: React.FC<{ item: typeof MOCK_HISTORY[0]; isLast: bool
       <div className={`flex-1 min-w-0 ${!isLast ? 'pb-5' : 'pb-1'}`}>
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0">
+            {showMerchant && (item.business || item.branch) && (
+              <p className="text-[10px] font-black uppercase text-[#C89B3C] mb-0.5">
+                {item.business}{item.business && item.branch ? ' • ' : ''}{item.branch}
+              </p>
+            )}
             <p className="text-sm font-bold text-[#222]">{item.title}</p>
             <p className="text-xs text-[#666] mt-0.5 truncate">{item.sub}</p>
           </div>

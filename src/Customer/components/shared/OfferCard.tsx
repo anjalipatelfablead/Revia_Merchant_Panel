@@ -3,7 +3,7 @@ import { MapPin, Clock } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 import { MOCK_OFFERS } from '../../data/mockData';
 
-export const OfferCard: React.FC<{ offer: typeof MOCK_OFFERS[0]; onClick?: () => void }> = ({ offer, onClick }) => {
+export const OfferCard: React.FC<{ offer: typeof MOCK_OFFERS[0] & { business?: string }; onClick?: () => void; showMerchant?: boolean }> = ({ offer, onClick, showMerchant }) => {
   const isActive = offer.status === 'active';
   
   const statusPill = {
@@ -30,6 +30,7 @@ export const OfferCard: React.FC<{ offer: typeof MOCK_OFFERS[0]; onClick?: () =>
       
       {/* Body */}
       <div className="p-4">
+        {showMerchant && <div className="text-[10px] font-black uppercase text-[#C89B3C] mb-1">{offer.business || 'Grand Café'}</div>}
         <h4 className={`text-sm font-black mb-1 ${isActive ? 'text-[#222]' : 'text-[#666]'}`}>{offer.title}</h4>
         <p className="text-xs text-[#999] leading-relaxed mb-4">{offer.desc}</p>
         

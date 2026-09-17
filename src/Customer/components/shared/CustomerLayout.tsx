@@ -8,10 +8,14 @@ import { DesktopSidebar } from './DesktopSidebar';
 
 import { NotificationsOverlay } from './NotificationsOverlay';
 
-export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children, onNavigateApp, cartCount }: {
+export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children, onNavigateApp, cartCount, selectedMerchant, setSelectedMerchant, selectedBranch, setSelectedBranch }: {
   tab: MainTab; setTab: (t: MainTab) => void; title?: string; showBack?: boolean;
   onBack?: () => void; children: React.ReactNode; onNavigateApp?: (route: string) => void;
   cartCount?: number;
+  selectedMerchant?: string;
+  setSelectedMerchant?: (m: string) => void;
+  selectedBranch?: string;
+  setSelectedBranch?: (b: string) => void;
 }) => {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -47,6 +51,10 @@ export const CustomerLayout = ({ tab, setTab, title, showBack, onBack, children,
           setTab={setTab}
           cartCount={cartCount}
           onNotificationsClick={() => setIsNotificationsOpen(true)}
+          selectedMerchant={selectedMerchant}
+          setSelectedMerchant={setSelectedMerchant}
+          selectedBranch={selectedBranch}
+          setSelectedBranch={setSelectedBranch}
         />
 
       {/* Mobile Drawer Overlay */}

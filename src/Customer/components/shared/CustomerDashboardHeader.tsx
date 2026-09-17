@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Bell, User, Search, Menu, LogOut, Settings, Heart, ShoppingBag } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Bell, User, Search, Menu, LogOut, Settings, Heart, ShoppingBag, Store, ChevronDown, MapPin, Globe } from 'lucide-react';
 
 import { MainTab } from '../../types';
 
@@ -11,15 +11,43 @@ interface Props {
   setTab?: (t: MainTab) => void;
   cartCount?: number;
   onNotificationsClick?: () => void;
+  selectedMerchant?: string;
+  setSelectedMerchant?: (merchant: string) => void;
+  selectedBranch?: string;
+  setSelectedBranch?: (branch: string) => void;
 }
 
-export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuClick, tabs = [], activeTab, setTab, cartCount, onNotificationsClick }) => {
-  const [selectedMerchant, setSelectedMerchant] = useState('All Merchants');
-  const [selectedBranch, setSelectedBranch] = useState('All Branches');
+export const CustomerDashboardHeader: React.FC<Props> = ({ 
+  onNavigate, onMenuClick, tabs = [], activeTab, setTab, cartCount, onNotificationsClick,
+  selectedMerchant = 'All Merchants',
+  setSelectedMerchant,
+  selectedBranch = 'All Branches',
+  setSelectedBranch
+}) => {
+
 
   // Separate primary tabs from secondary ("More") tabs
   const primaryTabs = tabs.slice(0, 4);
   const moreTabs = tabs.slice(4);
+
+  const [isMerchantOpen, setIsMerchantOpen] = useState(false);
+  const [isBranchOpen, setIsBranchOpen] = useState(false);
+  
+  const merchantRef = useRef<HTMLDivElement>(null);
+  const branchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (merchantRef.current && !merchantRef.current.contains(event.target as Node)) {
+        setIsMerchantOpen(false);
+      }
+      if (branchRef.current && !branchRef.current.contains(event.target as Node)) {
+        setIsBranchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="h-[70px] bg-white border-b border-[#E6E6E6] flex items-center px-4 lg:px-8 sticky top-0 z-50 shrink-0">
@@ -27,7 +55,7 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
       {/* Left Section: Mobile Logo and Hamburger (Hidden on Desktop) */}
       <div className="flex items-center gap-2 md:hidden flex-1">
         {onMenuClick && (
-          <button onClick={onMenuClick} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#222]">
+          <button onClick={onMenuClick} className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#222]">
             <Menu className="w-5 h-5" />
           </button>
         )}
@@ -47,47 +75,104 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
       <div className="flex items-center justify-end gap-2 sm:gap-4 flex-1">
 
         {/* Merchant Dropdown */}
-        <div className="relative hidden sm:block">
-          <select 
-            value={selectedMerchant}
-            onChange={(e) => {
-              setSelectedMerchant(e.target.value);
-              setSelectedBranch('All Branches'); // Reset branch when merchant changes
-            }}
-            className="appearance-none bg-white border border-[#E6E6E6] text-[#222] text-sm font-bold rounded-xl pl-4 pr-10 py-2 focus:outline-none focus:border-[#C89B3C] cursor-pointer shadow-sm hover:bg-[#F8F8F6] transition-colors"
+        <div className="relative hidden sm:block" ref={merchantRef}>
+          <button 
+            onClick={() => { setIsMerchantOpen(!isMerchantOpen); setIsBranchOpen(false); }}
+            className="cursor-pointer flex items-center gap-2 bg-[#F8F8F6] border border-[#E6E6E6] text-[#222] text-sm font-bold rounded-xl px-4 py-2 hover:bg-[#F0F0F0] transition-colors whitespace-nowrap"
           >
-            <option>All Merchants</option>
-            <option>Grand Café</option>
-            <option>Artisan Bakers</option>
-            <option>Urban Eats</option>
-          </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#666]">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </div>
+            <Store className="w-4 h-4 text-[#C89B3C] shrink-0" />
+            <span className="truncate">{selectedMerchant === 'All Merchants' ? 'Switch Store' : selectedMerchant}</span>
+            <ChevronDown className={`w-4 h-4 text-[#666] shrink-0 transition-transform ${isMerchantOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {isMerchantOpen && (
+            <div className="absolute top-[calc(100%+8px)] right-0 w-64 bg-white border border-[#E6E6E6] rounded-2xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-2 flex flex-col">
+              <button 
+                onClick={() => {
+                  setSelectedMerchant?.('All Merchants');
+                  setSelectedBranch?.('All Branches');
+                  setIsMerchantOpen(false);
+                }}
+                className={`cursor-pointer text-left px-4 py-3 flex items-center gap-3 transition-colors ${selectedMerchant === 'All Merchants' ? 'text-[#222] bg-[#F8F8F6]' : 'text-[#222] hover:bg-[#F8F8F6]'}`}
+              >
+                <Store className="w-5 h-5 shrink-0" />
+                <span className="font-black truncate">My Global Wallet</span>
+              </button>
+              
+              <div className="h-[1px] bg-[#E6E6E6] mx-4 my-2 shrink-0" />
+              
+              {['Grand Café', 'Artisan Bakers', 'Urban Eats'].map(merchant => (
+                <button
+                  key={merchant}
+                  onClick={() => {
+                    setSelectedMerchant?.(merchant);
+                    setSelectedBranch?.('All Branches');
+                    setIsMerchantOpen(false);
+                  }}
+                  className={`cursor-pointer text-left px-4 py-2.5 text-sm font-bold mx-2 rounded-xl transition-colors truncate ${
+                    selectedMerchant === merchant 
+                      ? 'bg-[#FFF8F0] text-[#C89B3C]' 
+                      : 'bg-white text-[#666] hover:bg-[#F8F8F6]'
+                  }`}
+                >
+                  {merchant}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Branch Dropdown (Visible only when a specific merchant is selected) */}
         {selectedMerchant !== 'All Merchants' && (
-          <div className="relative hidden sm:block">
-            <select 
-              value={selectedBranch}
-              onChange={(e) => setSelectedBranch(e.target.value)}
-              className="appearance-none bg-white border border-[#E6E6E6] text-[#222] text-sm font-bold rounded-xl pl-4 pr-10 py-2 focus:outline-none focus:border-[#C89B3C] cursor-pointer shadow-sm hover:bg-[#F8F8F6] transition-colors"
+          <div className="relative hidden sm:block" ref={branchRef}>
+            <button 
+              onClick={() => { setIsBranchOpen(!isBranchOpen); setIsMerchantOpen(false); }}
+              className="cursor-pointer flex items-center gap-2 bg-[#F8F8F6] border border-[#E6E6E6] text-[#222] text-sm font-bold rounded-xl px-4 py-2 hover:bg-[#F0F0F0] transition-colors whitespace-nowrap"
             >
-              <option>All Branches</option>
-              <option>Downtown</option>
-              <option>Northside Mall</option>
-              <option>West End Kiosk</option>
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#666]">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </div>
+              <MapPin className="w-4 h-4 text-[#C89B3C] shrink-0" />
+              <span className="truncate">{selectedBranch}</span>
+              <ChevronDown className={`w-4 h-4 text-[#666] shrink-0 transition-transform ${isBranchOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isBranchOpen && (
+              <div className="absolute top-[calc(100%+8px)] right-0 w-56 bg-white border border-[#E6E6E6] rounded-2xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-2 flex flex-col">
+                <button 
+                  onClick={() => {
+                    setSelectedBranch?.('All Branches');
+                    setIsBranchOpen(false);
+                  }}
+                  className={`cursor-pointer text-left px-4 py-3 flex items-center gap-3 transition-colors ${selectedBranch === 'All Branches' ? 'text-[#222] bg-[#F8F8F6]' : 'text-[#222] hover:bg-[#F8F8F6]'}`}
+                >
+                  <Globe className="w-5 h-5 shrink-0" />
+                  <span className="font-black truncate">All Branches</span>
+                </button>
+                
+                <div className="h-[1px] bg-[#E6E6E6] mx-4 my-2 shrink-0" />
+                
+                {['Downtown', 'Northside Mall', 'West End Kiosk'].map(branch => (
+                  <button
+                    key={branch}
+                    onClick={() => {
+                      setSelectedBranch?.(branch);
+                      setIsBranchOpen(false);
+                    }}
+                    className={`cursor-pointer text-left px-4 py-2.5 text-sm font-bold mx-2 rounded-xl transition-colors truncate ${
+                      selectedBranch === branch 
+                        ? 'bg-[#FFF8F0] text-[#C89B3C]' 
+                        : 'bg-white text-[#666] hover:bg-[#F8F8F6]'
+                    }`}
+                  >
+                    {branch}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         <button 
           onClick={onNotificationsClick}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#666] transition-colors relative"
+          className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#F8F8F6] text-[#666] transition-colors relative"
         >
           <Bell className="w-5 h-5" />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#D32F2F] rounded-full border border-white" />
@@ -98,7 +183,7 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
         <div className="relative group">
           <button
             onClick={() => onNavigate?.('/customer/profile')}
-            className="flex items-center gap-3 hover:bg-[#F8F8F6] p-1.5 pr-3 rounded-full transition-colors border border-transparent hover:border-[#E6E6E6]"
+            className="cursor-pointer flex items-center gap-3 hover:bg-[#F8F8F6] p-1.5 pr-3 rounded-full transition-colors border border-transparent hover:border-[#E6E6E6]"
           >
             <div className="w-8 h-8 rounded-full bg-[#F3EFE7] border border-[#E6E6E6] flex items-center justify-center overflow-hidden shrink-0">
               <User className="w-4 h-4 text-[#C89B3C]" />
@@ -115,14 +200,14 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
             
             <button 
               onClick={() => { setTab?.('profile'); onNavigate?.('/customer/profile'); }}
-              className="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-[#666] hover:bg-[#F8F8F6] hover:text-[#222] transition-colors flex items-center gap-3"
+              className="cursor-pointer w-full px-4 py-2.5 rounded-xl text-sm font-bold text-[#666] hover:bg-[#F8F8F6] hover:text-[#222] transition-colors flex items-center gap-3"
             >
               <User className="w-4 h-4" />
               My Profile
             </button>
             <button 
               onClick={() => setTab?.('rewards')}
-              className="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-[#666] hover:bg-[#F8F8F6] hover:text-[#222] transition-colors flex items-center gap-3"
+              className="cursor-pointer w-full px-4 py-2.5 rounded-xl text-sm font-bold text-[#666] hover:bg-[#F8F8F6] hover:text-[#222] transition-colors flex items-center gap-3"
             >
               <Heart className="w-4 h-4" />
               Saved Rewards
@@ -134,7 +219,7 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
                 // Temporary logout bypass for static demo
                 window.location.href = '/';
               }}
-              className="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-[#D32F2F] hover:bg-[#FFF0F0] transition-colors flex items-center gap-3"
+              className="cursor-pointer w-full px-4 py-2.5 rounded-xl text-sm font-bold text-[#D32F2F] hover:bg-[#FFF0F0] transition-colors flex items-center gap-3"
             >
               <LogOut className="w-4 h-4" />
               Log Out

@@ -21,7 +21,7 @@ export const DesktopSidebar: React.FC<SidebarProps> = ({ tabs, activeTab, setTab
       <button
         key={t.id}
         onClick={() => setTab(t.id)}
-        className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold transition-all duration-200 group relative ${
+        className={`cursor-pointer w-full flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold transition-all duration-200 group relative ${
           isActive 
             ? 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white shadow-lg shadow-[#D4A753]/30 font-black scale-[1.01]' 
             : 'text-[#666] hover:bg-[#FAF8F5] hover:text-[#9E782F] hover:translate-x-1'
@@ -86,7 +86,7 @@ export const DesktopSidebar: React.FC<SidebarProps> = ({ tabs, activeTab, setTab
       <div className="p-4 border-t border-[#E6E6E6] bg-[#FAF8F5]">
         <button 
           onClick={() => setTab('membership')}
-          className="w-full bg-[#1A1A1A] hover:bg-black text-white p-3.5 rounded-2xl transition-all shadow-md flex items-center justify-between text-left group border border-[#D4A753]/30"
+          className="cursor-pointer w-full bg-[#1A1A1A] hover:bg-black text-white p-3.5 rounded-2xl transition-all shadow-md flex items-center justify-between text-left group border border-[#D4A753]/30"
         >
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#D4A753] to-[#9E782F] text-white flex items-center justify-center shadow-sm">

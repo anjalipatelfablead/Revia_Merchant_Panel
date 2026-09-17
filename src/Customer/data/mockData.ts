@@ -21,7 +21,7 @@ export const MOCK_REWARDS = {
   available: [
     { id: 'r1', title: 'Free Coffee', value: '10% OFF', source: 'Loyalty Program · 10 Stamps', validity: 'Valid until 30 Sep 2026', code: 'REVIA-8F42K', business: 'Grand Café', branch: 'Downtown Branch' },
     { id: 'r3', title: 'Free Pastry', value: '100% OFF', source: 'Welcome Gift', validity: 'Valid until 15 Oct 2026', code: 'REVIA-X92M1', business: 'Artisan Bakers', branch: 'Connaught Place' },
-    { id: 'r4', title: 'Flat ₹200 Off', value: '₹200 OFF', source: 'VIP Milestone Reward', validity: 'Valid until 31 Dec 2026', code: 'REVIA-BB8PQ', business: 'Elite Roasters', branch: 'Airport Terminal 3' },
+    { id: 'r4', title: 'Flat ₹200 Off', value: '₹200 OFF', source: 'VIP Milestone Reward', validity: 'Valid until 31 Dec 2026', code: 'REVIA-BB8PQ', business: 'Urban Eats', branch: 'Airport Terminal 3' },
     { id: 'r5', title: 'Complimentary Upgrade', value: 'SIZE UP', source: 'Weekend Promo', validity: 'Valid until 22 Sep 2026', code: 'REVIA-UPG22', business: 'Grand Café', branch: 'All Branches' }
   ],
   redeemed: [{ id: 'r2', title: 'Buy 1 Get 1', value: 'BOGO', source: 'Special Campaign', validity: 'Redeemed 2 Sep 2026', code: 'REVIA-7X9PM', business: 'Grand Café', branch: 'All Branches' }],
@@ -30,12 +30,12 @@ export const MOCK_REWARDS = {
 };
 
 export const MOCK_HISTORY = [
-  { id: '1', date: 'Today', type: 'redemption', icon: 'check', title: 'Reward Redeemed', sub: '10% OFF · Grand Café — Downtown', time: '7:42 PM', badge: 'Redeemed' },
-  { id: '2', date: 'Today', type: 'loyalty', icon: 'star', title: 'Loyalty Progress', sub: '8 / 10 Stamps', time: '2:34 PM', badge: '+1 Stamp' },
-  { id: '3', date: 'Yesterday', type: 'reward', icon: 'gift', title: 'Reward Earned', sub: '10% OFF Any Purchase', time: '11:20 AM', badge: 'New' },
-  { id: '4', date: '5 Sep', type: 'visit', icon: 'check', title: 'Visit Recorded', sub: 'Grand Café · Downtown Branch', time: '3:15 PM', badge: null },
-  { id: '5', date: '2 Sep', type: 'loyalty', icon: 'star', title: 'Loyalty Progress', sub: '7 / 10 Stamps', time: '1:00 PM', badge: '+1 Stamp' },
-  { id: '6', date: '2 Sep', type: 'visit', icon: 'check', title: 'Visit Recorded', sub: 'Grand Café · Downtown Branch', time: '12:50 PM', badge: null },
+  { id: '1', date: 'Today', type: 'redemption', icon: 'check', title: 'Reward Redeemed', sub: '10% OFF Any Purchase', time: '7:42 PM', badge: 'Redeemed', business: 'Grand Café', branch: 'Downtown Flagship' },
+  { id: '2', date: 'Today', type: 'loyalty', icon: 'star', title: 'Loyalty Progress', sub: '8 / 10 Stamps', time: '2:34 PM', badge: '+1 Stamp', business: 'Artisan Bakers', branch: 'Central Branch' },
+  { id: '3', date: 'Yesterday', type: 'reward', icon: 'gift', title: 'Reward Earned', sub: '10% OFF Any Purchase', time: '11:20 AM', badge: 'New', business: 'Urban Eats', branch: 'Westside Branch' },
+  { id: '4', date: '5 Sep', type: 'visit', icon: 'check', title: 'Visit Recorded', sub: 'Completed transaction', time: '3:15 PM', badge: null, business: 'Grand Café', branch: 'Downtown Flagship' },
+  { id: '5', date: '2 Sep', type: 'loyalty', icon: 'star', title: 'Loyalty Progress', sub: '7 / 10 Stamps', time: '1:00 PM', badge: '+1 Stamp', business: 'Artisan Bakers', branch: 'Central Branch' },
+  { id: '6', date: '2 Sep', type: 'visit', icon: 'check', title: 'Visit Recorded', sub: 'Completed transaction', time: '12:50 PM', badge: null, business: 'Artisan Bakers', branch: 'Central Branch' },
 ];
 
 import { CustomerMembership, Campaign, CustomerCampaignProgress } from '../../types/campaign';

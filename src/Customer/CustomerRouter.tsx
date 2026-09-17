@@ -45,6 +45,9 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
     hasJoinedLoyalty
   } = useCustomer();
 
+  const [selectedMerchant, setSelectedMerchant] = React.useState('All Merchants');
+  const [selectedBranch, setSelectedBranch] = React.useState('All Branches');
+
   const subRoute = currentRoute.split('/').filter(Boolean)[1] || 'identify';
 
   const navigateTo = (path: string) => {
@@ -76,8 +79,8 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
   if (subRoute === 'redemption-success' || subRoute === 'redemption' || subRoute === 'reward-detail') {
     // Legacy sub-routes redirect cleanly to coupons / rewards tab
     return (
-      <CustomerLayout tab={'coupons'} setTab={navigateTo as any} title="My Rewards" onNavigateApp={onNavigate} cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}>
-        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
+      <CustomerLayout tab={'coupons'} setTab={navigateTo as any} title="My Rewards" onNavigateApp={onNavigate} cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)} selectedMerchant={selectedMerchant} setSelectedMerchant={setSelectedMerchant} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch}>
+        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} selectedMerchant={selectedMerchant} />
       </CustomerLayout>
     );
   }
@@ -109,11 +112,15 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
       }}
       onNavigateApp={onNavigate}
       cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+      selectedMerchant={selectedMerchant}
+      setSelectedMerchant={setSelectedMerchant}
+      selectedBranch={selectedBranch}
+      setSelectedBranch={setSelectedBranch}
     >
       {subRoute === 'privacy' ? (
         <PrivacyScreen onBack={() => navigateTo('profile')} />
       ) : activeTab === 'dashboard' ? (
-        <HomeScreen setTab={navigateTo as any} setSelectedOffer={id => { setSelectedOffer(id); navigateTo('offers'); }} setSelectedReward={id => { setSelectedReward(id); navigateTo('coupons'); }} />
+        <HomeScreen setTab={navigateTo as any} setSelectedOffer={id => { setSelectedOffer(id); navigateTo('offers'); }} setSelectedReward={id => { setSelectedReward(id); navigateTo('coupons'); }} selectedMerchant={selectedMerchant} />
       ) : activeTab === 'scan' ? (
         <CustomerScanScreen />
       ) : activeTab === 'menu' ? (
@@ -131,13 +138,13 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
           addItem={addItem}
         />
       ) : activeTab === 'offers' ? (
-        <OffersScreen type="offers" selectedId={selectedOffer} setSelectedId={setSelectedOffer} setTab={navigateTo} />
+        <OffersScreen type="offers" selectedId={selectedOffer} setSelectedId={setSelectedOffer} setTab={navigateTo} selectedMerchant={selectedMerchant} />
       ) : activeTab === 'coupons' || activeTab === 'rewards' ? (
-        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} />
+        <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} selectedMerchant={selectedMerchant} />
       ) : activeTab === 'membership' ? (
         <MembershipScreen setTab={navigateTo} />
       ) : activeTab === 'history' ? (
-        <HistoryScreen />
+        <HistoryScreen selectedMerchant={selectedMerchant} />
       ) : activeTab === 'profile' ? (
         <ProfileScreen onPrivacy={() => navigateTo('privacy')} onNavigateApp={onNavigate} />
       ) : activeTab === 'checkout' ? (
