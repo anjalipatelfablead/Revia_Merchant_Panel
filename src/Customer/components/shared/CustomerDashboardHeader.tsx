@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Bell, User, Search, Menu, LogOut, Settings, Heart, ShoppingBag } from 'lucide-react';
 
 import { MainTab } from '../../types';
@@ -14,6 +14,9 @@ interface Props {
 }
 
 export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuClick, tabs = [], activeTab, setTab, cartCount, onNotificationsClick }) => {
+  const [selectedMerchant, setSelectedMerchant] = useState('All Merchants');
+  const [selectedBranch, setSelectedBranch] = useState('All Branches');
+
   // Separate primary tabs from secondary ("More") tabs
   const primaryTabs = tabs.slice(0, 4);
   const moreTabs = tabs.slice(4);
@@ -43,7 +46,44 @@ export const CustomerDashboardHeader: React.FC<Props> = ({ onNavigate, onMenuCli
       {/* Right Section: Icons and Profile */}
       <div className="flex items-center justify-end gap-2 sm:gap-4 flex-1">
 
+        {/* Merchant Dropdown */}
+        <div className="relative hidden sm:block">
+          <select 
+            value={selectedMerchant}
+            onChange={(e) => {
+              setSelectedMerchant(e.target.value);
+              setSelectedBranch('All Branches'); // Reset branch when merchant changes
+            }}
+            className="appearance-none bg-white border border-[#E6E6E6] text-[#222] text-sm font-bold rounded-xl pl-4 pr-10 py-2 focus:outline-none focus:border-[#C89B3C] cursor-pointer shadow-sm hover:bg-[#F8F8F6] transition-colors"
+          >
+            <option>All Merchants</option>
+            <option>Grand Café</option>
+            <option>Artisan Bakers</option>
+            <option>Urban Eats</option>
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#666]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
 
+        {/* Branch Dropdown (Visible only when a specific merchant is selected) */}
+        {selectedMerchant !== 'All Merchants' && (
+          <div className="relative hidden sm:block">
+            <select 
+              value={selectedBranch}
+              onChange={(e) => setSelectedBranch(e.target.value)}
+              className="appearance-none bg-white border border-[#E6E6E6] text-[#222] text-sm font-bold rounded-xl pl-4 pr-10 py-2 focus:outline-none focus:border-[#C89B3C] cursor-pointer shadow-sm hover:bg-[#F8F8F6] transition-colors"
+            >
+              <option>All Branches</option>
+              <option>Downtown</option>
+              <option>Northside Mall</option>
+              <option>West End Kiosk</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#666]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+        )}
 
         <button 
           onClick={onNotificationsClick}
