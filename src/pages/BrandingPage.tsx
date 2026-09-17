@@ -76,11 +76,11 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                   </p>
                </div>
 
-               <div className="flex items-center gap-3 shrink-0">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] hover:bg-[#F5F2EB] transition-colors whitespace-nowrap shrink-0 cursor-pointer w-full sm:w-auto">
                      <RotateCcw className="w-4 h-4" /> Discard Changes
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer w-full sm:w-auto">
                      <Sparkles className="w-4 h-4" /> Publish Brand Tokens
                   </button>
                </div>
