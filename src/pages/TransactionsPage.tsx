@@ -34,6 +34,11 @@ export const TransactionsPage: React.FC = () => {
   const [fastPosModalOpen, setFastPosModalOpen] = useState(false);
   const [counterSearch, setCounterSearch] = useState('#REV-8924');
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
+  
+  const [fcCounter, setFcCounter] = useState('Counter 1 (Main)');
+  const [fcEntryType, setFcEntryType] = useState('Sale');
+  const [fcPaymentMethod, setFcPaymentMethod] = useState('Cash');
+  const [fcPaymentStatus, setFcPaymentStatus] = useState('Paid');
 
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 7;
@@ -171,21 +176,21 @@ export const TransactionsPage: React.FC = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const DropdownSelect = ({ id, value, options, onChange }: { id: string, value: string, options: string[], onChange: (v: string) => void }) => (
-    <div className="relative w-full sm:w-auto" ref={openDropdown === id ? dropdownRef : null}>
+  const DropdownSelect = ({ id, value, options, onChange, fullWidth = false }: { id: string, value: string, options: string[], onChange: (v: string) => void, fullWidth?: boolean }) => (
+    <div className={`relative w-full ${!fullWidth ? 'sm:w-auto' : ''}`} ref={openDropdown === id ? dropdownRef : null}>
       <button
         onClick={() => setOpenDropdown(openDropdown === id ? null : id)}
-        className="flex items-center justify-between gap-1.5 px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-xs font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors cursor-pointer w-full sm:w-auto"
+        className={`flex items-center justify-between gap-1.5 px-3 py-2 bg-white border border-[#EFECE6] rounded-lg ${fullWidth ? 'text-sm' : 'text-xs'} font-semibold text-[#1A1615] hover:bg-[#FAF8F5] transition-colors cursor-pointer w-full ${!fullWidth ? 'sm:w-auto' : ''}`}
       >
         <span className="truncate">{value}</span> <ChevronDown className="w-3.5 h-3.5 text-[#9E9A93] shrink-0" />
       </button>
       {openDropdown === id && (
-        <div className="absolute top-full mt-1 left-0 sm:left-auto sm:right-0 w-full min-w-[160px] bg-white border border-[#EFECE6] rounded-lg shadow-lg z-50 py-1 overflow-hidden">
+        <div className={`absolute top-full mt-1 left-0 ${!fullWidth ? 'sm:left-auto sm:right-0' : ''} w-full min-w-[160px] bg-white border border-[#EFECE6] rounded-lg shadow-lg z-50 py-1 overflow-hidden`}>
           {options.map(opt => (
             <button
               key={opt}
-              onClick={() => { onChange(opt); setOpenDropdown(null); }}
-              className={`w-full text-left px-3 py-2 text-xs hover:bg-[#FAF8F5] transition-colors ${value === opt ? 'font-bold text-[#1A1615] bg-[#FAF8F5]' : 'font-medium text-[#6E6A66]'}`}
+              onClick={(e) => { e.preventDefault(); onChange(opt); setOpenDropdown(null); }}
+              className={`w-full text-left px-3 py-2 ${fullWidth ? 'text-sm' : 'text-xs'} hover:bg-[#FAF8F5] transition-colors ${value === opt ? 'font-bold text-[#1A1615] bg-[#FAF8F5]' : 'font-medium text-[#6E6A66]'}`}
             >
               {opt}
             </button>
@@ -368,15 +373,15 @@ export const TransactionsPage: React.FC = () => {
                 <table className="w-full text-left border-collapse min-w-[800px]">
                   <thead>
                     <tr className="bg-[#FAF8F5] border-b border-[#EFECE6]">
-                      <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] w-[18%]">Order / Stamp ID</th>
-                      <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] w-[18%]">Guest / Member</th>
-                      <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] w-[25%]">Type &amp; Items</th>
-                      <th className="py-3 px-3 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93]">Channel / Terminal</th>
-                      <th className="py-3 px-3 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93]">Time</th>
-                      <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93]">Amount</th>
-                      <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93]">Commission</th>
-                      <th className="py-3 px-3 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93]">Status</th>
-                      <th className="py-3 px-3 text-[9px] font-bold uppercase tracking-widest text-[#9E9A93] text-right">Action</th>
+                      <th className="py-3 px-4 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] w-[18%]">Order / Stamp ID</th>
+                      <th className="py-3 px-4 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] w-[18%]">Guest / Member</th>
+                      <th className="py-3 px-4 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] w-[25%]">Type &amp; Items</th>
+                      <th className="py-3 px-3 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Channel / Terminal</th>
+                      <th className="py-3 px-3 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Time</th>
+                      <th className="py-3 px-4 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Amount</th>
+                      <th className="py-3 px-4 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Commission</th>
+                      <th className="py-3 px-3 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93]">Status</th>
+                      <th className="py-3 px-3 text-[11px] font-bold uppercase tracking-widest text-[#9E9A93] text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#EFECE6]">
@@ -576,7 +581,7 @@ export const TransactionsPage: React.FC = () => {
                 <Zap className="w-4 h-4 text-[#D4A753]" />Fast Counter Entry
               </h2>
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <span className="text-[9px] font-bold uppercase tracking-wider text-white/70">QUICK MODE</span>
                   <button
                     onClick={() => setFastEntryMode(!fastEntryMode)}
@@ -584,7 +589,7 @@ export const TransactionsPage: React.FC = () => {
                   >
                     <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${fastEntryMode ? 'translate-x-4.5' : 'translate-x-1'}`} />
                   </button>
-                </div>
+                </div> */}
                 <button onClick={() => setFastPosModalOpen(false)} className="text-[#9E9A93] hover:text-white transition-colors cursor-pointer ml-1 p-1">
                   <X className="w-4 h-4" />
                 </button>
@@ -607,11 +612,7 @@ export const TransactionsPage: React.FC = () => {
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Counter</label>
-                    <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]">
-                      <option>Counter 1 (Main)</option>
-                      <option>Counter 2 (Takeaway)</option>
-                      <option>Counter 3 (Drive-thru)</option>
-                    </select>
+                    <DropdownSelect id="fc-counter" value={fcCounter} options={['Counter 1 (Main)', 'Counter 2 (Takeaway)', 'Counter 3 (Drive-thru)']} onChange={setFcCounter} fullWidth={true} />
                   </div>
                 </div>
               </div>
@@ -637,11 +638,7 @@ export const TransactionsPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Entry Type</label>
-                    <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]">
-                      <option>Sale</option>
-                      <option>Service</option>
-                      <option>Other</option>
-                    </select>
+                    <DropdownSelect id="fc-type" value={fcEntryType} options={['Sale', 'Service', 'Other']} onChange={setFcEntryType} fullWidth={true} />
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Description / Item</label>
@@ -672,19 +669,11 @@ export const TransactionsPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Payment Method</label>
-                    <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]">
-                      <option>Cash</option>
-                      <option>Card</option>
-                      <option>UPI</option>
-                      <option>Other</option>
-                    </select>
+                    <DropdownSelect id="fc-payment-method" value={fcPaymentMethod} options={['Cash', 'Card', 'UPI', 'Other']} onChange={setFcPaymentMethod} fullWidth={true} />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Payment Status</label>
-                    <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]">
-                      <option>Paid</option>
-                      <option>Pending</option>
-                    </select>
+                    <DropdownSelect id="fc-payment-status" value={fcPaymentStatus} options={['Paid', 'Pending']} onChange={setFcPaymentStatus} fullWidth={true} />
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Reference No. (Optional)</label>
