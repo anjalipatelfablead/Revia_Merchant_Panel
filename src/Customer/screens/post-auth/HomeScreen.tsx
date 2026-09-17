@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Star, Gift, Users, Store, ArrowRight, ChevronLeft, ChevronRight, BarChart2, TrendingUp, Calendar, MapPin, Sparkles, QrCode, Utensils, Award, Clock, ChevronDown, Compass, Heart, ShoppingBag } from 'lucide-react';
+import { Star, Gift, Users, Store, ArrowRight, ChevronLeft, ChevronRight, BarChart2, TrendingUp, Calendar, MapPin, Sparkles, QrCode, Utensils, Award, Clock, ChevronDown, Compass, Heart, ShoppingBag, History } from 'lucide-react';
 import { MainTab } from '../../types';
 import { LoyaltyCard } from '../../components/shared/LoyaltyCard';
 
@@ -115,149 +115,221 @@ const AllMerchantsView = ({ setTab }: { setTab: (t: MainTab) => void }) => {
       {/* Split Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        {/* LEFT COLUMN */}
+        {/* LEFT COLUMN: Rewards & Discovery */}
         <div className="lg:col-span-7 space-y-8">
           
-          {/* Active Memberships */}
+          {/* Rewards Ready to Redeem */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-[#C89B3C]" />
-                <h3 className="text-xl font-black text-[#222]">My Memberships</h3>
+                <Gift className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="text-xl font-black text-[#222]">Rewards Ready to Redeem</h3>
               </div>
-              <button onClick={() => setTab('membership')} className="text-xs font-bold text-[#C89B3C] hover:text-[#B88A2B] uppercase tracking-wider flex items-center gap-1 cursor-pointer">
-                View All <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LoyaltyCard stamps={8} total={10} name="Rohit Sharma" businessName="Grand Café" branchName="All Branches" compact />
-              <LoyaltyCard stamps={3} total={5} name="Rohit Sharma" businessName="Urban Eats" branchName="Eastside" compact />
-            </div>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#E6E6E6] space-y-6">
-            <div className="flex justify-between items-center border-b border-[#F0F0F0] pb-4">
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-[#C89B3C]" />
-                <h3 className="text-xl font-black text-[#222]">Recent Global Activity</h3>
-              </div>
-              <button onClick={() => setTab('history')} className="text-xs font-bold text-[#C89B3C] hover:text-[#B88A2B] uppercase tracking-wider flex items-center gap-1 cursor-pointer">
-                Full History <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-[#F8F8F6] border border-[#E6E6E6] hover:border-[#C89B3C] transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#F0FFF8] border border-[#BCE3D1] flex items-center justify-center shrink-0">
-                    <Gift className="w-5 h-5 text-[#0D7A53]" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-[#222] text-sm">Reward Redeemed</p>
-                    <p className="text-xs text-[#666]">10% OFF • Grand Café</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs text-[#999] font-medium">Yesterday, 7:42 PM</p>
-                  <p className="text-[10px] font-black text-[#0D7A53] uppercase">Redeemed</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-[#F8F8F6] border border-[#E6E6E6] hover:border-[#C89B3C] transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#FFF8ED] border border-[#F5DEB3] flex items-center justify-center shrink-0">
-                    <Star className="w-5 h-5 text-[#C89B3C]" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-[#222] text-sm">Loyalty Stamp Added</p>
-                    <p className="text-xs text-[#666]">3 / 5 Stamps • Urban Eats</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs text-[#999] font-medium">Tue, 2:34 PM</p>
-                  <p className="text-[10px] font-black text-[#C89B3C] uppercase">+1 Stamp</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN */}
-        <div className="lg:col-span-5 space-y-8">
-          
-          {/* Top Global Offer */}
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#D32F2F] animate-pulse" />
-                <h3 className="text-xl font-black text-[#222]">Top Global Offer</h3>
-              </div>
-              <button onClick={() => setTab('offers')} className="text-xs font-bold text-[#C89B3C] hover:text-[#B88A2B] uppercase tracking-wider flex items-center gap-1 cursor-pointer">
-                View All <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#E6E6E6] space-y-4">
-              <div className="flex gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#3B5BDB] text-white flex items-center justify-center shrink-0 shadow-md">
-                  <span className="font-black text-xl">15%</span>
-                </div>
-                <div className="flex-1">
-                  <span className="inline-block bg-[#F0F5FF] text-[#3B5BDB] border border-[#C5D5FF] text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full mb-1">
-                    Storewide
-                  </span>
-                  <p className="font-black text-[#222] text-base leading-tight">Weekend Special</p>
-                  <p className="text-xs text-[#666] leading-relaxed mt-1">Get 15% off your entire order at Artisan Bakers.</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between text-[10px] font-bold text-[#999] uppercase tracking-wider border-t border-[#F0F0F0] pt-4">
-                <div className="flex items-center gap-1"><Store className="w-3.5 h-3.5 text-[#C89B3C]" /> Artisan Bakers</div>
-                <div className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-[#C89B3C]" /> Ends Sunday</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Active Global Reward */}
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-black text-[#222]">Available Reward</h3>
               <button onClick={() => setTab('coupons')} className="text-xs font-bold text-[#C89B3C] hover:text-[#B88A2B] uppercase tracking-wider flex items-center gap-1 cursor-pointer">
                 My Wallet <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
-
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-3xl p-6 shadow-xl relative overflow-hidden text-white border border-white/10">
-              <Sparkles className="absolute -right-6 -bottom-6 w-44 h-44 text-[#C89B3C] opacity-15 pointer-events-none" />
-              <div className="relative z-10 space-y-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-[#C89B3C] text-white flex items-center justify-center shadow-lg shrink-0">
-                      <Gift className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h4 className="text-3xl font-black leading-none mb-1 text-transparent bg-clip-text bg-gradient-to-r from-[#E0B85E] to-[#C89B3C]">BOGO</h4>
-                      <p className="font-bold text-white text-base">Buy 1 Get 1 Free</p>
+            
+            {/* Horizontal Scroll for Rewards */}
+            <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar items-stretch">
+              {/* Reward 1 */}
+              <div className="min-w-[280px] bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-3xl p-6 shadow-xl relative overflow-hidden text-white border border-white/10 shrink-0 snap-start cursor-pointer hover:scale-[1.02] transition-transform">
+                <Sparkles className="absolute -right-6 -bottom-6 w-44 h-44 text-[#C89B3C] opacity-15 pointer-events-none" />
+                <div className="relative z-10 space-y-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-[#C89B3C] text-white flex items-center justify-center shadow-lg shrink-0">
+                        <Utensils className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h4 className="text-3xl font-black leading-none mb-1 text-transparent bg-clip-text bg-gradient-to-r from-[#E0B85E] to-[#C89B3C]">BOGO</h4>
+                        <p className="font-bold text-white text-base">Buy 1 Get 1 Free</p>
+                      </div>
                     </div>
                   </div>
-                  <span className="bg-[#94F1C6] text-[#0D7A53] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
-                    Ready
-                  </span>
+                  <div className="space-y-1 border-t border-white/10 pt-4">
+                    <p className="text-xs font-medium text-white/80"><Store className="w-3 h-3 inline mr-1 text-[#C89B3C]" /> Grand Café</p>
+                    <span className="inline-block mt-2 bg-[#94F1C6] text-[#0D7A53] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                      Ready to Use
+                    </span>
+                  </div>
                 </div>
-                <div className="space-y-1 border-t border-white/10 pt-4">
-                  <p className="text-xs font-medium text-white/80">Grand Café • All Branches</p>
-                  <p className="text-[10px] text-white/60 flex items-center gap-1">
-                    <Calendar className="w-3 h-3 text-[#C89B3C]" /> Valid until Dec 31
-                  </p>
+              </div>
+
+              {/* Reward 2 */}
+              <div className="min-w-[280px] bg-gradient-to-br from-[#FFF8ED] to-[#FFF0D6] rounded-3xl p-6 shadow-md relative overflow-hidden border border-[#C89B3C]/30 shrink-0 snap-start cursor-pointer hover:scale-[1.02] transition-transform">
+                <div className="relative z-10 space-y-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-white text-[#C89B3C] flex items-center justify-center shadow-sm shrink-0">
+                        <span className="text-2xl">🥐</span>
+                      </div>
+                      <div>
+                        <h4 className="text-3xl font-black leading-none mb-1 text-[#222]">20% OFF</h4>
+                        <p className="font-bold text-[#666] text-base">Any Pastry</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1 border-t border-[#C89B3C]/20 pt-4">
+                    <p className="text-xs font-medium text-[#222]"><Store className="w-3 h-3 inline mr-1 text-[#C89B3C]" /> Artisan Bakers</p>
+                    <span className="inline-block mt-2 bg-[#94F1C6] text-[#0D7A53] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                      Ready to Use
+                    </span>
+                  </div>
                 </div>
-                <button 
-                  onClick={() => { setTab('coupons'); }} 
-                  className="w-full py-3.5 rounded-2xl font-black text-xs text-[#222] bg-gradient-to-r from-[#C89B3C] to-[#E0B85E] hover:from-[#B88A2B] hover:to-[#D0A74D] transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <QrCode className="w-4 h-4" /> Use Now
-                </button>
               </div>
             </div>
           </div>
+
+          {/* Discover New Merchants */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <Compass className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="text-xl font-black text-[#222]">Trending Near You</h3>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               {/* Merchant 1 */}
+               <div className="bg-white rounded-3xl p-5 border border-[#E6E6E6] shadow-sm flex items-center gap-4 hover:border-[#C89B3C] cursor-pointer transition-colors">
+                 <div className="w-14 h-14 bg-[#F8F8F6] rounded-2xl flex items-center justify-center text-2xl">🍕</div>
+                 <div className="flex-1">
+                   <h4 className="font-black text-[#222] text-lg">Luigi's Pizza</h4>
+                   <p className="text-xs text-[#666] flex items-center gap-1"><MapPin className="w-3 h-3"/> 0.8 miles away</p>
+                 </div>
+                 <button className="w-8 h-8 rounded-full bg-[#FAF8F5] text-[#C89B3C] flex items-center justify-center hover:bg-[#F0E6D2]">
+                   <ArrowRight className="w-4 h-4" />
+                 </button>
+               </div>
+               
+               {/* Merchant 2 */}
+               <div className="bg-white rounded-3xl p-5 border border-[#E6E6E6] shadow-sm flex items-center gap-4 hover:border-[#C89B3C] cursor-pointer transition-colors">
+                 <div className="w-14 h-14 bg-[#F8F8F6] rounded-2xl flex items-center justify-center text-2xl">🥗</div>
+                 <div className="flex-1">
+                   <h4 className="font-black text-[#222] text-lg">Green Bowl</h4>
+                   <p className="text-xs text-[#666] flex items-center gap-1"><MapPin className="w-3 h-3"/> 1.2 miles away</p>
+                 </div>
+                 <button className="w-8 h-8 rounded-full bg-[#FAF8F5] text-[#C89B3C] flex items-center justify-center hover:bg-[#F0E6D2]">
+                   <ArrowRight className="w-4 h-4" />
+                 </button>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: Memberships, Urgency, Activity */}
+        <div className="lg:col-span-5 space-y-8">
+          
+          {/* Jump Back In (Memberships) */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <Store className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="text-xl font-black text-[#222]">Jump Back In</h3>
+              </div>
+              <button onClick={() => setTab('membership')} className="text-xs font-bold text-[#C89B3C] hover:text-[#B88A2B] uppercase tracking-wider flex items-center gap-1 cursor-pointer">
+                All <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="bg-white rounded-2xl p-4 border border-[#E6E6E6] shadow-sm flex justify-between items-center cursor-pointer hover:border-[#C89B3C] transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#FFF8ED] rounded-xl flex items-center justify-center text-xl">☕</div>
+                  <div>
+                    <h4 className="font-black text-[#222]">Grand Café</h4>
+                    <p className="text-[10px] font-bold text-[#C89B3C] uppercase tracking-widest">Gold Tier</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-[#666] font-bold uppercase mb-0.5">Progress</p>
+                  <p className="text-sm font-black text-[#222]">8/10 Stamps</p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-4 border border-[#E6E6E6] shadow-sm flex justify-between items-center cursor-pointer hover:border-[#C89B3C] transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#F0F5FF] rounded-xl flex items-center justify-center text-xl">🍔</div>
+                  <div>
+                    <h4 className="font-black text-[#222]">Urban Eats</h4>
+                    <p className="text-[10px] font-bold text-[#3B5BDB] uppercase tracking-widest">Silver Member</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-[#666] font-bold uppercase mb-0.5">Points</p>
+                  <p className="text-sm font-black text-[#222]">500 pts</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Expiring Soon */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#D32F2F] animate-pulse" />
+                <h3 className="text-xl font-black text-[#222]">Expiring Soon</h3>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#E6E6E6] hover:border-[#D32F2F]/30 transition-colors cursor-pointer group">
+              <div className="flex gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#FFF0F0] text-[#D32F2F] flex items-center justify-center shrink-0 border border-[#FFE0E0]">
+                  <Clock className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <span className="inline-block bg-[#D32F2F] text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full mb-1">
+                    Expires in 2 days
+                  </span>
+                  <p className="font-black text-[#222] text-base leading-tight">Anniversary 20% Off</p>
+                  <p className="text-xs text-[#666] leading-relaxed mt-1">Don't miss your special anniversary discount at Artisan Bakers.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Global Activity */}
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#E6E6E6] space-y-6">
+            <div className="flex justify-between items-center border-b border-[#F0F0F0] pb-4">
+              <div className="flex items-center gap-2">
+                <History className="w-5 h-5 text-[#C89B3C]" />
+                <h3 className="text-xl font-black text-[#222]">Recent Activity</h3>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#F8F8F6] transition-colors cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#F0FFF8] flex items-center justify-center shrink-0">
+                    <Gift className="w-4 h-4 text-[#0D7A53]" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#222] text-xs">Reward Redeemed</p>
+                    <p className="text-[10px] text-[#666]">Grand Café</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-[#999] font-medium">Yesterday</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#F8F8F6] transition-colors cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#FFF8ED] flex items-center justify-center shrink-0">
+                    <Star className="w-4 h-4 text-[#C89B3C]" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-[#222] text-xs">+1 Stamp Added</p>
+                    <p className="text-[10px] text-[#666]">Urban Eats</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-[#999] font-medium">Tue, 2:34 PM</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
