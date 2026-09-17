@@ -142,7 +142,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
       ) : activeTab === 'coupons' || activeTab === 'rewards' ? (
         <RewardsScreen selectedId={selectedReward} setSelectedId={setSelectedReward} selectedMerchant={selectedMerchant} />
       ) : activeTab === 'membership' ? (
-        <MembershipScreen setTab={navigateTo} />
+        <MembershipScreen setTab={navigateTo} selectedMerchant={selectedMerchant} setSelectedMerchant={setSelectedMerchant} />
       ) : activeTab === 'history' ? (
         <HistoryScreen selectedMerchant={selectedMerchant} />
       ) : activeTab === 'profile' ? (

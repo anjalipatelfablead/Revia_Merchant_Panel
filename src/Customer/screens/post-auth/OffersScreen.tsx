@@ -21,21 +21,18 @@ const AllMerchantsOffersView = ({ type = 'offers', selectedId, setSelectedId, se
   const [activeRedeemRewardId, setActiveRedeemRewardId] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
   
-  const [localMerchant, setLocalMerchant] = useState('All Merchants');
-  const [localBranch, setLocalBranch] = useState('All Branches');
-  const [isMerchantOpen, setIsMerchantOpen] = useState(false);
-  const [isBranchOpen, setIsBranchOpen] = useState(false);
-  const merchantRef = React.useRef<HTMLDivElement>(null);
-  const branchRef = React.useRef<HTMLDivElement>(null);
+  const [categoryFilter, setCategoryFilter] = useState('All Categories');
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const categoryRef = React.useRef<HTMLDivElement>(null);
+
+  const [sortFilter, setSortFilter] = useState('Ending Soon');
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const sortRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (merchantRef.current && !merchantRef.current.contains(event.target as Node)) {
-        setIsMerchantOpen(false);
-      }
-      if (branchRef.current && !branchRef.current.contains(event.target as Node)) {
-        setIsBranchOpen(false);
-      }
+      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) setIsCategoryOpen(false);
+      if (sortRef.current && !sortRef.current.contains(event.target as Node)) setIsSortOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -57,16 +54,6 @@ const AllMerchantsOffersView = ({ type = 'offers', selectedId, setSelectedId, se
     { id: 'all-3', type: 'Discount', value: '$10', title: '$10 Off Dinner', desc: 'Valid at Grand Café', status: 'expired' as any, branch: 'Grand Café', business: 'Grand Café' },
     { id: 'all-4', type: 'Discount', value: '20%', title: '20% Off Coffee', desc: 'Valid at Artisan Bakers', status: 'paused' as any, branch: 'Artisan Bakers', business: 'Artisan Bakers' }
   ];
-
-  if (localMerchant !== 'All Merchants') {
-    expandedCampaigns = expandedCampaigns.filter(c => c.business === localMerchant);
-    expandedBaseData = expandedBaseData.filter(o => o.business === localMerchant);
-  }
-
-  if (localBranch !== 'All Branches') {
-    // Note: mock campaigns don't have branch info, so we only filter baseData
-    expandedBaseData = expandedBaseData.filter(o => o.branch === localBranch);
-  }
 
   const activeUnredeemed = expandedBaseData.filter(o => o.status === 'active' && !redeemedRewardIds.includes(o.id));
   const redeemedItems = expandedBaseData.filter(o => redeemedRewardIds.includes(o.id) || o.status === ('redeemed' as any));
@@ -115,71 +102,62 @@ const AllMerchantsOffersView = ({ type = 'offers', selectedId, setSelectedId, se
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Local Merchant Filter */}
-            <div className="relative" ref={merchantRef}>
+            {/* Category Filter */}
+            <div className="relative" ref={categoryRef}>
               <button 
-                onClick={() => { setIsMerchantOpen(!isMerchantOpen); setIsBranchOpen(false); }}
+                onClick={() => { setIsCategoryOpen(!isCategoryOpen); setIsSortOpen(false); }}
                 className="cursor-pointer flex items-center gap-2 bg-white border border-[#E6E6E6] text-[#222] text-xs font-bold rounded-xl px-4 py-2 hover:bg-[#F8F8F6] transition-colors whitespace-nowrap shadow-sm"
               >
                 <Store className="w-3.5 h-3.5 text-[#C89B3C]" />
-                <span>{localMerchant}</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-[#666] transition-transform ${isMerchantOpen ? 'rotate-180' : ''}`} />
+                <span>{categoryFilter}</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-[#666] transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
               </button>
-              {isMerchantOpen && (
-                <div className="absolute top-[calc(100%+8px)] left-0 w-48 bg-white border border-[#E6E6E6] rounded-2xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-2">
+              {isCategoryOpen && (
+                <div className="absolute top-[calc(100%+8px)] right-0 w-48 bg-white border border-[#E6E6E6] rounded-2xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-2">
                   <button 
-                    onClick={() => { setLocalMerchant('All Merchants'); setLocalBranch('All Branches'); setIsMerchantOpen(false); }}
-                    className={`cursor-pointer w-full text-left px-4 py-2 text-xs font-bold transition-colors ${localMerchant === 'All Merchants' ? 'text-[#222] bg-[#F8F8F6]' : 'text-[#666] hover:bg-[#F8F8F6]'}`}
+                    onClick={() => { setCategoryFilter('All Categories'); setIsCategoryOpen(false); }}
+                    className={`cursor-pointer w-full text-left px-4 py-2 text-xs font-bold transition-colors ${categoryFilter === 'All Categories' ? 'text-[#222] bg-[#F8F8F6]' : 'text-[#666] hover:bg-[#F8F8F6]'}`}
                   >
-                    All Merchants
+                    All Categories
                   </button>
                   <div className="h-[1px] bg-[#E6E6E6] mx-4 my-1" />
-                  {['Grand Café', 'Artisan Bakers', 'Urban Eats'].map(m => (
+                  {['Food & Beverage', 'Retail & Shopping', 'Health & Wellness', 'Services'].map(c => (
                     <button
-                      key={m}
-                      onClick={() => { setLocalMerchant(m); setLocalBranch('All Branches'); setIsMerchantOpen(false); }}
-                      className={`cursor-pointer w-full text-left px-4 py-2 text-xs font-bold transition-colors ${localMerchant === m ? 'text-[#C89B3C] bg-[#FFF8F0]' : 'text-[#666] hover:bg-[#F8F8F6]'}`}
+                      key={c}
+                      onClick={() => { setCategoryFilter(c); setIsCategoryOpen(false); }}
+                      className={`cursor-pointer w-full text-left px-4 py-2 text-xs font-bold transition-colors ${categoryFilter === c ? 'text-[#C89B3C] bg-[#FFF8F0]' : 'text-[#666] hover:bg-[#F8F8F6]'}`}
                     >
-                      {m}
+                      {c}
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Local Branch Filter (Only shows if specific merchant selected) */}
-            {localMerchant !== 'All Merchants' && (
-              <div className="relative" ref={branchRef}>
-                <button 
-                  onClick={() => { setIsBranchOpen(!isBranchOpen); setIsMerchantOpen(false); }}
-                  className="cursor-pointer flex items-center gap-2 bg-white border border-[#E6E6E6] text-[#222] text-xs font-bold rounded-xl px-4 py-2 hover:bg-[#F8F8F6] transition-colors whitespace-nowrap shadow-sm"
-                >
-                  <MapPin className="w-3.5 h-3.5 text-[#C89B3C]" />
-                  <span>{localBranch}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-[#666] transition-transform ${isBranchOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {isBranchOpen && (
-                  <div className="absolute top-[calc(100%+8px)] left-0 w-48 bg-white border border-[#E6E6E6] rounded-2xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-2">
-                    <button 
-                      onClick={() => { setLocalBranch('All Branches'); setIsBranchOpen(false); }}
-                      className={`cursor-pointer w-full text-left px-4 py-2 text-xs font-bold transition-colors ${localBranch === 'All Branches' ? 'text-[#222] bg-[#F8F8F6]' : 'text-[#666] hover:bg-[#F8F8F6]'}`}
+            {/* Sort Filter */}
+            <div className="relative" ref={sortRef}>
+              <button 
+                onClick={() => { setIsSortOpen(!isSortOpen); setIsCategoryOpen(false); }}
+                className="cursor-pointer flex items-center gap-2 bg-white border border-[#E6E6E6] text-[#222] text-xs font-bold rounded-xl px-4 py-2 hover:bg-[#F8F8F6] transition-colors whitespace-nowrap shadow-sm"
+              >
+                <Target className="w-3.5 h-3.5 text-[#C89B3C]" />
+                <span>{sortFilter}</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-[#666] transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {isSortOpen && (
+                <div className="absolute top-[calc(100%+8px)] right-0 w-48 bg-white border border-[#E6E6E6] rounded-2xl shadow-xl z-50 py-2 animate-in fade-in slide-in-from-top-2">
+                  {['Ending Soon', 'Highest Value', 'Newest First'].map(s => (
+                    <button
+                      key={s}
+                      onClick={() => { setSortFilter(s); setIsSortOpen(false); }}
+                      className={`cursor-pointer w-full text-left px-4 py-2 text-xs font-bold transition-colors ${sortFilter === s ? 'text-[#C89B3C] bg-[#FFF8F0]' : 'text-[#666] hover:bg-[#F8F8F6]'}`}
                     >
-                      All Branches
+                      {s}
                     </button>
-                    <div className="h-[1px] bg-[#E6E6E6] mx-4 my-1" />
-                    {['Downtown Flagship', 'Northside Mall', 'West End Kiosk'].map(b => (
-                      <button
-                        key={b}
-                        onClick={() => { setLocalBranch(b); setIsBranchOpen(false); }}
-                        className={`cursor-pointer w-full text-left px-4 py-2 text-xs font-bold transition-colors ${localBranch === b ? 'text-[#C89B3C] bg-[#FFF8F0]' : 'text-[#666] hover:bg-[#F8F8F6]'}`}
-                      >
-                        {b}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex bg-[#F8F8F6] p-1 rounded-2xl border border-[#E6E6E6] self-start md:self-auto">
@@ -201,25 +179,46 @@ const AllMerchantsOffersView = ({ type = 'offers', selectedId, setSelectedId, se
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {expandedCampaigns.map(camp => {
               const percent = Math.min((camp.currentProgress / camp.targetProgress) * 100, 100);
+              const isReady = percent === 100;
+              
+              // Get a mock logo based on business name
+              let Logo = Store;
+              let logoColor = "text-[#C89B3C]";
+              let logoBg = "bg-[#FFF8ED]";
+              if (camp.business === 'Artisan Bakers') { Logo = Store; logoColor = "text-[#8A2BE2]"; logoBg = "bg-[#F5F0FF]"; }
+              if (camp.business === 'Urban Eats') { Logo = MapPin; logoColor = "text-[#3B5BDB]"; logoBg = "bg-[#F0F5FF]"; }
+
               return (
-                <div key={camp.campaignId} onClick={() => { if (setTab) setTab('membership'); }} className="bg-white rounded-2xl border border-[#E6E6E6] p-5 flex flex-col hover:border-[#C89B3C] transition-colors cursor-pointer shadow-sm">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#C89B3C] mb-1">{camp.type} Campaign • {camp.business || 'Grand Café'}</p>
-                      <h4 className="font-bold text-[#222] text-base leading-tight">{camp.campaignName}</h4>
+                <div key={camp.campaignId} onClick={() => { if (setTab) setTab('membership'); }} className={`bg-white rounded-3xl border p-6 flex flex-col transition-all cursor-pointer shadow-sm group ${isReady ? 'border-[#0D7A53] hover:shadow-md hover:-translate-y-0.5' : 'border-[#E6E6E6] hover:border-[#C89B3C]'}`}>
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-12 h-12 rounded-2xl ${logoBg} flex items-center justify-center shrink-0`}>
+                        <Logo className={`w-6 h-6 ${logoColor}`} />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#666] mb-0.5">{camp.business || 'Grand Café'}</p>
+                        <h4 className="font-black text-[#222] text-lg leading-tight group-hover:text-[#C89B3C] transition-colors">{camp.campaignName}</h4>
+                      </div>
                     </div>
-                    <div className="bg-[#EBF7F0] text-[#0D7A53] text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border border-[#BCE3D1]">Active</div>
+                    {isReady ? (
+                       <div className="bg-[#0D7A53] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm animate-pulse">Ready to Claim</div>
+                    ) : (
+                       <div className="bg-[#F8F8F6] text-[#666] text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-[#E6E6E6]">In Progress</div>
+                    )}
                   </div>
                   
-                  <p className="text-sm text-[#666] mb-5 font-medium">Reward: <span className="text-[#222] font-bold">{camp.rewardValue}</span></p>
+                  <div className="mb-6">
+                    <p className="text-[10px] font-bold text-[#999] uppercase tracking-wider mb-1">Reward</p>
+                    <p className={`text-xl font-black ${isReady ? 'text-[#0D7A53]' : 'text-[#222]'}`}>{camp.rewardValue}</p>
+                  </div>
                   
-                  <div className="mt-auto bg-[#F8F8F6] p-3 rounded-xl border border-[#E6E6E6]">
+                  <div className="mt-auto">
                     <div className="flex justify-between text-xs font-bold mb-2">
-                      <span className="text-[#222]">{camp.progressText}</span>
-                      <span className="text-[#C89B3C]">{Math.round(percent)}%</span>
+                      <span className={isReady ? "text-[#0D7A53]" : "text-[#666]"}>{camp.progressText}</span>
+                      <span className={isReady ? "text-[#0D7A53]" : "text-[#C89B3C]"}>{Math.round(percent)}%</span>
                     </div>
-                    <div className="w-full h-2 bg-[#E6E6E6] rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-[#E0B85E] to-[#C89B3C] rounded-full" style={{ width: `${percent}%` }} />
+                    <div className="w-full h-2.5 bg-[#F0F0F0] rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${isReady ? 'bg-[#0D7A53]' : 'bg-gradient-to-r from-[#E0B85E] to-[#C89B3C]'}`} style={{ width: `${percent}%` }} />
                     </div>
                   </div>
                 </div>

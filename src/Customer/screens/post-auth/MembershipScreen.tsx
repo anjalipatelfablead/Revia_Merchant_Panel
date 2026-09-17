@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, Check, Crown, CreditCard, QrCode, Award, Zap, ChevronRight, X, Sparkles, Store, ChevronDown, Info, ArrowRight, Gift } from 'lucide-react';
+import { Star, Check, Crown, CreditCard, QrCode, Award, Zap, ChevronRight, X, Sparkles, Store, ChevronDown, Info, ArrowRight, Gift, ChevronLeft } from 'lucide-react';
 import { MOCK_MEMBERSHIP, MOCK_BUSINESS, MOCK_ACTIVE_CAMPAIGNS, MOCK_CAMPAIGN_PROGRESS } from '../../data/mockData';
 
 const TIER_BENEFITS = [
@@ -37,7 +37,51 @@ const TIER_BENEFITS = [
   }
 ];
 
-export const MembershipScreen = ({ setTab }: { setTab?: (tab: string) => void }) => {
+const WALLET_MERCHANTS = [
+  {
+    id: 'm1',
+    name: 'The Coffee House',
+    tier: 'Gold Tier',
+    progress: '8/10 Stamps',
+    balance: '2,450 pts',
+    image: '☕',
+    color: 'from-[#FFF8ED] to-[#FFF0D6]',
+    borderColor: 'border-[#C89B3C]',
+    textColor: 'text-[#C89B3C]'
+  },
+  {
+    id: 'm2',
+    name: 'Urban Grill',
+    tier: 'Silver Member',
+    progress: '500 / 1000 pts',
+    balance: '500 pts',
+    image: '🍔',
+    color: 'from-gray-50 to-gray-100',
+    borderColor: 'border-gray-300',
+    textColor: 'text-gray-600'
+  },
+  {
+    id: 'm3',
+    name: 'Artisan Pastries',
+    tier: 'VIP Platinum',
+    progress: '4/5 Stamps',
+    balance: '12,000 pts',
+    image: '🥐',
+    color: 'from-gray-900 to-black',
+    borderColor: 'border-gray-700',
+    textColor: 'text-white'
+  }
+];
+
+export const MembershipScreen = ({ 
+  setTab,
+  selectedMerchant,
+  setSelectedMerchant 
+}: { 
+  setTab?: (tab: string) => void;
+  selectedMerchant?: string;
+  setSelectedMerchant?: (m: string) => void;
+}) => {
   const [showPassModal, setShowPassModal] = useState(false);
   const [showBusinessDropdown, setShowBusinessDropdown] = useState(false);
   const membership = MOCK_MEMBERSHIP;
@@ -51,10 +95,120 @@ export const MembershipScreen = ({ setTab }: { setTab?: (tab: string) => void })
 
   const stampCampaigns = MOCK_ACTIVE_CAMPAIGNS.filter(c => (c as any).type === 'Stamp');
 
+  // If selectedMerchant is 'All Merchants' or undefined, show the Digital Wallet Grid
+  const isGlobalWallet = !selectedMerchant || selectedMerchant === 'All Merchants';
+
+  if (isGlobalWallet) {
+    return (
+      <div className="max-w-[1280px] mx-auto pb-12 space-y-6 animate-in fade-in duration-500">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E6E6E6] pb-6">
+          <div>
+            <h1 className="text-3xl font-black text-[#222]">Digital Wallet</h1>
+            <p className="text-sm text-[#666] mt-1">Manage your memberships across all Revia partners.</p>
+          </div>
+        </div>
+        
+        {/* Aggregate Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="bg-white rounded-2xl p-5 border border-[#E6E6E6] shadow-sm">
+            <p className="text-[10px] text-[#666] font-bold uppercase tracking-wider mb-1">Active Memberships</p>
+            <p className="text-2xl font-black text-[#222]">3</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 border border-[#E6E6E6] shadow-sm">
+            <p className="text-[10px] text-[#666] font-bold uppercase tracking-wider mb-1">Available Rewards</p>
+            <p className="text-2xl font-black text-[#222]">7</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 border border-[#E6E6E6] shadow-sm">
+            <p className="text-[10px] text-[#666] font-bold uppercase tracking-wider mb-1">Total Points Value</p>
+            <p className="text-2xl font-black text-[#C89B3C]">$124.50</p>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {WALLET_MERCHANTS.map(merchant => (
+            <div 
+              key={merchant.id}
+              onClick={() => setSelectedMerchant?.(merchant.name)}
+              className={`relative overflow-hidden rounded-3xl border ${merchant.borderColor} p-6 cursor-pointer transform transition-all hover:scale-[1.02] hover:shadow-xl bg-gradient-to-br ${merchant.color}`}
+            >
+              <div className="flex justify-between items-start mb-8">
+                <div className="w-12 h-12 bg-white/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm backdrop-blur-sm">
+                  {merchant.image}
+                </div>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setShowPassModal(true); }}
+                  className="p-2 bg-white/50 hover:bg-white rounded-full transition-colors backdrop-blur-sm cursor-pointer"
+                  title="Show QR Code"
+                >
+                  <QrCode className="w-5 h-5 text-[#222]" />
+                </button>
+              </div>
+              
+              <div>
+                <h3 className={`text-xl font-black mb-1 ${merchant.textColor === 'text-white' ? 'text-white' : 'text-[#222]'}`}>
+                  {merchant.name}
+                </h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <Crown className={`w-4 h-4 ${merchant.textColor}`} />
+                  <span className={`text-sm font-bold ${merchant.textColor}`}>{merchant.tier}</span>
+                </div>
+                
+                <div className="flex justify-between items-end">
+                  <div>
+                    <p className={`text-[10px] uppercase tracking-wider font-bold opacity-70 mb-0.5 ${merchant.textColor === 'text-white' ? 'text-white' : 'text-[#666]'}`}>Progress</p>
+                    <p className={`text-sm font-black ${merchant.textColor === 'text-white' ? 'text-white' : 'text-[#222]'}`}>{merchant.progress}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-[10px] uppercase tracking-wider font-bold opacity-70 mb-0.5 ${merchant.textColor === 'text-white' ? 'text-white' : 'text-[#666]'}`}>Balance</p>
+                    <p className={`text-sm font-black ${merchant.textColor === 'text-white' ? 'text-white' : 'text-[#222]'}`}>{merchant.balance}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Modal handling for wallet screen */}
+        {showPassModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPassModal(false)} />
+            <div className="relative bg-white rounded-[32px] w-full max-w-sm overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+              <div className="bg-[#222] p-6 text-center">
+                <h3 className="text-white font-black text-xl mb-1">Digital Pass</h3>
+                <p className="text-white/60 text-xs">Scan at the counter</p>
+              </div>
+              <div className="p-8 flex flex-col items-center gap-6">
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-[#E6E6E6]">
+                  <QrCode className="w-48 h-48 text-[#222]" />
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-[#666] uppercase tracking-wider font-bold mb-1">Member ID</p>
+                  <p className="text-lg font-black text-[#222] tracking-[0.2em]">#MEM-88219</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowPassModal(false)}
+                className="absolute top-4 right-4 p-2 text-white/60 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-[1280px] mx-auto pb-12 space-y-6 animate-in fade-in duration-500">
       
-      {/* Business Context Header (Hidden for now) */}
+      {/* Back to Wallet Button */}
+      <button 
+        onClick={() => setSelectedMerchant?.('All Merchants')}
+        className="text-xs font-bold text-[#666] hover:text-[#222] flex items-center gap-1.5 transition-colors cursor-pointer mb-2"
+      >
+        <ChevronLeft className="w-4 h-4" /> Back to Digital Wallet
+      </button>
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E6E6E6] pb-6">
