@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Phone, Mail, Clock, HelpCircle, MessageCircle, ChevronDown } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, HelpCircle, MessageCircle, ChevronDown, ArrowLeft } from 'lucide-react';
 import { MarketingNavbar } from '../components/layout/MarketingNavbar';
 import { MarketingFooter } from '../components/layout/MarketingFooter';
 
@@ -18,6 +18,13 @@ export const ContactPage: React.FC<Props> = ({ onNavigate }) => {
 
          <main className="pt-28 sm:pt-32 pb-12 relative z-10">
             <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
+               <button 
+                  onClick={() => { if (window.history.length > 2) { window.history.back(); } else { onNavigate?.('/'); } }} 
+                  className="flex items-center gap-2 text-sm font-bold text-[#D9A94E] hover:text-[#241C15] mb-6 transition-colors group cursor-pointer"
+               >
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                  Go Back
+               </button>
 
                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[2rem] shadow-sm border border-gray-100 flex flex-col lg:flex-row overflow-hidden relative">
                   {/* Decorative Brand Tape */}

@@ -73,6 +73,7 @@ export const Header: React.FC<HeaderProps> = ({
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const redeemDropdownRef = useRef<HTMLDivElement>(null);
   const walletDropdownRef = useRef<HTMLDivElement>(null);
+  const notificationsDropdownRef = useRef<HTMLDivElement>(null);
 
   const pendingCount = redeemRequests.filter(r => r.status === 'pending').length;
 
@@ -95,16 +96,19 @@ export const Header: React.FC<HeaderProps> = ({
       if (walletDropdownRef.current && !walletDropdownRef.current.contains(event.target as Node)) {
         setWalletOpen(false);
       }
+      if (notificationsDropdownRef.current && !notificationsDropdownRef.current.contains(event.target as Node)) {
+        setNotificationsOpen(false);
+      }
     };
 
-    if (profileDropdownOpen || redeemOpen || walletOpen) {
+    if (profileDropdownOpen || redeemOpen || walletOpen || notificationsOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [profileDropdownOpen, redeemOpen, walletOpen]);
+  }, [profileDropdownOpen, redeemOpen, walletOpen, notificationsOpen]);
 
   // Dynamic breadcrumb matching current route and Figma specs
   const getBreadcrumbs = () => {
@@ -413,7 +417,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Notifications Bell with Badge */}
-        <div className="relative">
+        <div className="relative" ref={notificationsDropdownRef}>
           <button
             onClick={() => { setNotificationsOpen(!notificationsOpen); setRedeemOpen(false); }}
             className="p-2 rounded-lg text-[#5C554E] hover:bg-[#FAF8F5] relative transition-colors cursor-pointer"

@@ -63,7 +63,7 @@ const CustomerRoutesInner: React.FC<Props> = ({ currentRoute, onNavigate }) => {
 
   if (!isPostAuthRoute) {
 
-    return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} />;
+    return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('dashboard'); }} onNavigate={onNavigate} />;
 
     // return <CustomerWizard onComplete={() => { setIsAuthenticated(true); navigateTo('menu'); }} />;
 
