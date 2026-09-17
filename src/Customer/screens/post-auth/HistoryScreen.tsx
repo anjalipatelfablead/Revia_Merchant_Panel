@@ -14,7 +14,7 @@ export const HistoryScreen = ({ selectedMerchant = 'All Merchants' }: { selected
 const AllMerchantsHistoryView = () => {
   const [filter, setFilter] = useState<'all' | 'loyalty' | 'rewards' | 'visits' | 'transactions'>('all');
   const filters: (typeof filter)[] = ['all', 'visits', 'loyalty', 'rewards', 'transactions'];
-  
+
   let expandedHistory = [
     ...MOCK_HISTORY,
     { id: '10', date: 'Yesterday', type: 'visit', icon: 'check', title: 'Visit Recorded', sub: 'Completed transaction', time: '1:15 PM', badge: null, business: 'Urban Eats', branch: 'Central Branch' },
@@ -97,7 +97,7 @@ const AllMerchantsHistoryView = () => {
 const SpecificMerchantHistoryView = ({ merchantName }: { merchantName: string }) => {
   const [filter, setFilter] = useState<'all' | 'loyalty' | 'rewards' | 'visits' | 'transactions'>('all');
   const filters: (typeof filter)[] = ['all', 'visits', 'loyalty', 'rewards', 'transactions'];
-  
+
   // Modify MOCK_HISTORY slightly to reflect the specific merchant name
   const specificHistory = MOCK_HISTORY.map(h => ({
     ...h,

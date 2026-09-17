@@ -186,31 +186,67 @@ const AllMerchantsView = ({ setTab }: { setTab: (t: MainTab) => void }) => {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <Compass className="w-5 h-5 text-[#C89B3C]" />
-                <h3 className="text-xl font-black text-[#222]">Trending Near You</h3>
+                <h3 className="text-xl font-black text-[#222]">Explore Partner Merchants</h3>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                {/* Merchant 1 */}
-               <div className="bg-white rounded-3xl p-5 border border-[#E6E6E6] shadow-sm flex items-center gap-4 hover:border-[#C89B3C] cursor-pointer transition-colors">
-                 <div className="w-14 h-14 bg-[#F8F8F6] rounded-2xl flex items-center justify-center text-2xl">🍕</div>
+               <div 
+                 onClick={() => setTab('offers')}
+                 className="bg-white rounded-3xl p-5 border border-[#E6E6E6] shadow-sm flex items-center gap-4 hover:border-[#C89B3C] cursor-pointer transition-colors group"
+               >
+                 <div className="w-14 h-14 bg-[#FFF8ED] text-[#C89B3C] rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">☕</div>
                  <div className="flex-1">
-                   <h4 className="font-black text-[#222] text-lg">Luigi's Pizza</h4>
-                   <p className="text-xs text-[#666] flex items-center gap-1"><MapPin className="w-3 h-3"/> 0.8 miles away</p>
+                   <h4 className="font-black text-[#222] text-lg leading-tight">Grand Café</h4>
+                   <p className="text-xs text-[#666] flex items-center gap-1 mt-0.5"><MapPin className="w-3 h-3"/> 0.5 miles away</p>
                  </div>
-                 <button className="w-8 h-8 rounded-full bg-[#FAF8F5] text-[#C89B3C] flex items-center justify-center hover:bg-[#F0E6D2]">
+                 <button className="w-8 h-8 rounded-full bg-[#FAF8F5] text-[#C89B3C] flex items-center justify-center group-hover:bg-[#F0E6D2] transition-colors">
                    <ArrowRight className="w-4 h-4" />
                  </button>
                </div>
                
                {/* Merchant 2 */}
-               <div className="bg-white rounded-3xl p-5 border border-[#E6E6E6] shadow-sm flex items-center gap-4 hover:border-[#C89B3C] cursor-pointer transition-colors">
-                 <div className="w-14 h-14 bg-[#F8F8F6] rounded-2xl flex items-center justify-center text-2xl">🥗</div>
+               <div 
+                 onClick={() => setTab('offers')}
+                 className="bg-white rounded-3xl p-5 border border-[#E6E6E6] shadow-sm flex items-center gap-4 hover:border-[#C89B3C] cursor-pointer transition-colors group"
+               >
+                 <div className="w-14 h-14 bg-[#F0F5FF] text-[#3B5BDB] rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">🍔</div>
                  <div className="flex-1">
-                   <h4 className="font-black text-[#222] text-lg">Green Bowl</h4>
-                   <p className="text-xs text-[#666] flex items-center gap-1"><MapPin className="w-3 h-3"/> 1.2 miles away</p>
+                   <h4 className="font-black text-[#222] text-lg leading-tight">Urban Eats</h4>
+                   <p className="text-xs text-[#666] flex items-center gap-1 mt-0.5"><MapPin className="w-3 h-3"/> 1.2 miles away</p>
                  </div>
-                 <button className="w-8 h-8 rounded-full bg-[#FAF8F5] text-[#C89B3C] flex items-center justify-center hover:bg-[#F0E6D2]">
+                 <button className="w-8 h-8 rounded-full bg-[#FAF8F5] text-[#C89B3C] flex items-center justify-center group-hover:bg-[#F0E6D2] transition-colors">
+                   <ArrowRight className="w-4 h-4" />
+                 </button>
+               </div>
+
+               {/* Merchant 3 */}
+               <div 
+                 onClick={() => setTab('offers')}
+                 className="bg-white rounded-3xl p-5 border border-[#E6E6E6] shadow-sm flex items-center gap-4 hover:border-[#C89B3C] cursor-pointer transition-colors group"
+               >
+                 <div className="w-14 h-14 bg-[#FFF0F0] text-[#D32F2F] rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">🥐</div>
+                 <div className="flex-1">
+                   <h4 className="font-black text-[#222] text-lg leading-tight">Artisan Bakers</h4>
+                   <p className="text-xs text-[#666] flex items-center gap-1 mt-0.5"><MapPin className="w-3 h-3"/> 2.1 miles away</p>
+                 </div>
+                 <button className="w-8 h-8 rounded-full bg-[#FAF8F5] text-[#C89B3C] flex items-center justify-center group-hover:bg-[#F0E6D2] transition-colors">
+                   <ArrowRight className="w-4 h-4" />
+                 </button>
+               </div>
+
+               {/* Merchant 4 */}
+               <div 
+                 onClick={() => setTab('offers')}
+                 className="bg-white rounded-3xl p-5 border border-[#E6E6E6] shadow-sm flex items-center gap-4 hover:border-[#C89B3C] cursor-pointer transition-colors group"
+               >
+                 <div className="w-14 h-14 bg-[#F0FFF8] text-[#0D7A53] rounded-2xl flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">🥗</div>
+                 <div className="flex-1">
+                   <h4 className="font-black text-[#222] text-lg leading-tight">Green Bowl</h4>
+                   <p className="text-xs text-[#666] flex items-center gap-1 mt-0.5"><MapPin className="w-3 h-3"/> 3.4 miles away</p>
+                 </div>
+                 <button className="w-8 h-8 rounded-full bg-[#FAF8F5] text-[#C89B3C] flex items-center justify-center group-hover:bg-[#F0E6D2] transition-colors">
                    <ArrowRight className="w-4 h-4" />
                  </button>
                </div>
@@ -273,7 +309,10 @@ const AllMerchantsView = ({ setTab }: { setTab: (t: MainTab) => void }) => {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#E6E6E6] hover:border-[#D32F2F]/30 transition-colors cursor-pointer group">
+            <div 
+              onClick={() => setTab('offers')}
+              className="bg-white rounded-3xl p-6 shadow-sm border border-[#E6E6E6] hover:border-[#D32F2F]/30 transition-colors cursor-pointer group"
+            >
               <div className="flex gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-[#FFF0F0] text-[#D32F2F] flex items-center justify-center shrink-0 border border-[#FFE0E0]">
                   <Clock className="w-6 h-6" />
@@ -296,6 +335,9 @@ const AllMerchantsView = ({ setTab }: { setTab: (t: MainTab) => void }) => {
                 <History className="w-5 h-5 text-[#C89B3C]" />
                 <h3 className="text-xl font-black text-[#222]">Recent Activity</h3>
               </div>
+              <button onClick={() => setTab('history')} className="text-xs font-bold text-[#C89B3C] hover:text-[#B88A2B] uppercase tracking-wider flex items-center gap-1 cursor-pointer">
+                See All <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             <div className="space-y-3">
@@ -344,6 +386,13 @@ const SpecificMerchantView = ({ setTab, setSelectedOffer, setSelectedReward, mer
 }) => {
 
   const [showWelcome, setShowWelcome] = useState(false);
+  const [cardIndex, setCardIndex] = useState(0);
+
+  const loyaltyCards = [
+    { stamps: 8, total: 10, branchName: "Main Branch" },
+    { stamps: 3, total: 10, branchName: "Airport Branch" },
+    { stamps: 10, total: 10, branchName: "Downtown Branch" },
+  ];
 
   return (
     <div className="max-w-[1280px] mx-auto pb-24 space-y-8 animate-in fade-in duration-500">
@@ -473,16 +522,26 @@ const SpecificMerchantView = ({ setTab, setSelectedOffer, setSelectedReward, mer
                 <h3 className="text-xl font-black text-[#222]">{merchantName} Loyalty Card</h3>
               </div>
               <div className="flex gap-2">
-                <button className="w-8 h-8 rounded-full bg-white border border-[#E6E6E6] flex items-center justify-center hover:bg-[#F8F8F6] text-[#666]">
+                <button 
+                  onClick={() => setCardIndex(prev => Math.max(0, prev - 1))}
+                  disabled={cardIndex === 0}
+                  className="w-8 h-8 rounded-full bg-white border border-[#E6E6E6] flex items-center justify-center hover:bg-[#F8F8F6] text-[#666] disabled:opacity-50 cursor-pointer transition-colors"
+                >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <button className="w-8 h-8 rounded-full bg-white border border-[#E6E6E6] flex items-center justify-center hover:bg-[#F8F8F6] text-[#666]">
+                <button 
+                  onClick={() => setCardIndex(prev => Math.min(loyaltyCards.length - 2, prev + 1))}
+                  disabled={cardIndex >= loyaltyCards.length - 2}
+                  className="w-8 h-8 rounded-full bg-white border border-[#E6E6E6] flex items-center justify-center hover:bg-[#F8F8F6] text-[#666] disabled:opacity-50 cursor-pointer transition-colors"
+                >
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <LoyaltyCard stamps={8} total={10} name="Rohit Sharma" businessName={merchantName} branchName="Main Branch" compact />
+              {loyaltyCards.slice(cardIndex, cardIndex + 2).map((card, i) => (
+                <LoyaltyCard key={card.branchName} stamps={card.stamps} total={card.total} name="Rohit Sharma" businessName={merchantName} branchName={card.branchName} compact />
+              ))}
             </div>
           </div>
 
