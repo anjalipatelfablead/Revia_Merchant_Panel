@@ -1,5 +1,57 @@
 import React, { useState } from 'react';
-import { CalendarHeart, Gift, PartyPopper, CheckCircle2, Plus, Trash2 } from 'lucide-react';
+import { CalendarHeart, Gift, PartyPopper, CheckCircle2, Plus, Trash2, ChevronDown } from 'lucide-react';
+
+const CustomSelect = ({ 
+  value, 
+  onChange, 
+  options 
+}: { 
+  value: string; 
+  onChange: (val: string) => void; 
+  options: { label: string; value: string }[] 
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedLabel = options.find(o => o.value === value)?.label || value;
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#B7842C] transition-colors cursor-pointer"
+      >
+        <span className="truncate">{selectedLabel}</span>
+        <ChevronDown className={`w-4 h-4 shrink-0 text-[#9E9A93] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      {isOpen && (
+        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-[#EAE6E1] bg-white py-1 shadow-lg shadow-black/5 ring-1 ring-black/5">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => { onChange(opt.value); setIsOpen(false); }}
+              className={`w-full cursor-pointer px-3 py-2 text-left text-[13px] hover:bg-[#F5F1EA] ${value === opt.value ? 'bg-[#F5F1EA] font-bold text-[#1A1615]' : 'font-semibold text-[#6E6A66]'}`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const AutomatedEventsSettings: React.FC = () => {
   const [birthdayEnabled, setBirthdayEnabled] = useState(true);
@@ -76,16 +128,9 @@ export const AutomatedEventsSettings: React.FC = () => {
         {/* Birthday Settings */}
         {!birthdayDeleted && (
           <div className={`relative rounded-xl border ${birthdayEnabled ? 'border-[#B7842C] shadow-sm' : 'border-[#E5E0D8]'} p-4 sm:p-5 bg-white transition-all`}>
-            <button 
-              onClick={() => setBirthdayDeleted(true)} 
-              className="absolute top-4 right-16 p-1.5 text-[#9E9A93] hover:text-[#DC2626] hover:bg-[#FEE2E2] rounded-md transition-colors cursor-pointer"
-              title="Remove Automation"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-            <div className="flex items-start justify-between gap-4 mb-4 pr-[70px]">
+            <div className="flex items-start justify-between gap-4 mb-4">
               <div className="flex items-start gap-3">
-                <div className={`p-2.5 rounded-lg ${birthdayEnabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
+                <div className={`p-2.5 rounded-lg shrink-0 ${birthdayEnabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
                   <Gift className="w-5 h-5" />
                 </div>
                 <div>
@@ -93,42 +138,51 @@ export const AutomatedEventsSettings: React.FC = () => {
                   <p className="text-xs text-[#6E6A66] mt-0.5">Send a reward leading up to the customer's special day.</p>
                 </div>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer absolute right-4 top-4">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer"
-                  checked={birthdayEnabled}
-                  onChange={() => setBirthdayEnabled(!birthdayEnabled)}
-                />
-                <div className="w-9 h-5 bg-[#E5E0D8] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0D7A53]"></div>
-              </label>
+              <div className="flex items-center gap-3 shrink-0">
+                <button 
+                  onClick={() => setBirthdayDeleted(true)} 
+                  className="p-1.5 text-[#9E9A93] hover:text-[#DC2626] hover:bg-[#FEE2E2] rounded-md transition-colors cursor-pointer"
+                  title="Remove Automation"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer"
+                    checked={birthdayEnabled}
+                    onChange={() => setBirthdayEnabled(!birthdayEnabled)}
+                  />
+                  <div className="w-9 h-5 bg-[#E5E0D8] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0D7A53]"></div>
+                </label>
+              </div>
             </div>
 
             <div className={`grid sm:grid-cols-2 gap-4 ${birthdayEnabled ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider">Send Timing</label>
-                <select 
+                <CustomSelect 
                   value={birthdayTiming}
-                  onChange={(e) => setBirthdayTiming(e.target.value)}
-                  className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#B7842C] transition-colors"
-                >
-                  <option value="on_day">On their birthday</option>
-                  <option value="7_days_before">7 days before</option>
-                  <option value="14_days_before">14 days before</option>
-                  <option value="30_days_before">30 days before</option>
-                </select>
+                  onChange={setBirthdayTiming}
+                  options={[
+                    { value: 'on_day', label: 'On their birthday' },
+                    { value: '7_days_before', label: '7 days before' },
+                    { value: '14_days_before', label: '14 days before' },
+                    { value: '30_days_before', label: '30 days before' }
+                  ]}
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider">Campaign to Send</label>
-                <select 
+                <CustomSelect 
                   value={birthdayCampaign}
-                  onChange={(e) => setBirthdayCampaign(e.target.value)}
-                  className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#B7842C] transition-colors"
-                >
-                  <option value="Free Birthday Coffee">Free Birthday Coffee</option>
-                  <option value="Birthday 50% Off">Birthday 50% Off</option>
-                  <option value="Double Stamps Day">Double Stamps Day</option>
-                </select>
+                  onChange={setBirthdayCampaign}
+                  options={[
+                    { value: 'Free Birthday Coffee', label: 'Free Birthday Coffee' },
+                    { value: 'Birthday 50% Off', label: 'Birthday 50% Off' },
+                    { value: 'Double Stamps Day', label: 'Double Stamps Day' }
+                  ]}
+                />
               </div>
             </div>
           </div>
@@ -137,16 +191,9 @@ export const AutomatedEventsSettings: React.FC = () => {
         {/* Anniversary Settings */}
         {!anniversaryDeleted && (
           <div className={`relative rounded-xl border ${anniversaryEnabled ? 'border-[#B7842C] shadow-sm' : 'border-[#E5E0D8]'} p-4 sm:p-5 bg-white transition-all`}>
-            <button 
-              onClick={() => setAnniversaryDeleted(true)} 
-              className="absolute top-4 right-16 p-1.5 text-[#9E9A93] hover:text-[#DC2626] hover:bg-[#FEE2E2] rounded-md transition-colors cursor-pointer"
-              title="Remove Automation"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-            <div className="flex items-start justify-between gap-4 mb-4 pr-[70px]">
+            <div className="flex items-start justify-between gap-4 mb-4">
               <div className="flex items-start gap-3">
-                <div className={`p-2.5 rounded-lg ${anniversaryEnabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
+                <div className={`p-2.5 rounded-lg shrink-0 ${anniversaryEnabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
                   <PartyPopper className="w-5 h-5" />
                 </div>
                 <div>
@@ -154,42 +201,51 @@ export const AutomatedEventsSettings: React.FC = () => {
                   <p className="text-xs text-[#6E6A66] mt-0.5">Celebrate the anniversary of when the customer joined your loyalty program.</p>
                 </div>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer absolute right-4 top-4">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer"
-                  checked={anniversaryEnabled}
-                  onChange={() => setAnniversaryEnabled(!anniversaryEnabled)}
-                />
-                <div className="w-9 h-5 bg-[#E5E0D8] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0D7A53]"></div>
-              </label>
+              <div className="flex items-center gap-3 shrink-0">
+                <button 
+                  onClick={() => setAnniversaryDeleted(true)} 
+                  className="p-1.5 text-[#9E9A93] hover:text-[#DC2626] hover:bg-[#FEE2E2] rounded-md transition-colors cursor-pointer"
+                  title="Remove Automation"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer"
+                    checked={anniversaryEnabled}
+                    onChange={() => setAnniversaryEnabled(!anniversaryEnabled)}
+                  />
+                  <div className="w-9 h-5 bg-[#E5E0D8] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0D7A53]"></div>
+                </label>
+              </div>
             </div>
 
             <div className={`grid sm:grid-cols-2 gap-4 ${anniversaryEnabled ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider">Send Timing</label>
-                <select 
+                <CustomSelect 
                   value={anniversaryTiming}
-                  onChange={(e) => setAnniversaryTiming(e.target.value)}
-                  className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#B7842C] transition-colors"
-                >
-                  <option value="on_day">On the anniversary date</option>
-                  <option value="7_days_before">7 days before</option>
-                  <option value="14_days_before">14 days before</option>
-                  <option value="30_days_before">30 days before</option>
-                </select>
+                  onChange={setAnniversaryTiming}
+                  options={[
+                    { value: 'on_day', label: 'On the anniversary date' },
+                    { value: '7_days_before', label: '7 days before' },
+                    { value: '14_days_before', label: '14 days before' },
+                    { value: '30_days_before', label: '30 days before' }
+                  ]}
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider">Campaign to Send</label>
-                <select 
+                <CustomSelect 
                   value={anniversaryCampaign}
-                  onChange={(e) => setAnniversaryCampaign(e.target.value)}
-                  className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#B7842C] transition-colors"
-                >
-                  <option value="Anniversary 20% Off">Anniversary 20% Off</option>
-                  <option value="Anniversary Free Upgrade">Anniversary Free Upgrade</option>
-                  <option value="Double Stamps Day">Double Stamps Day</option>
-                </select>
+                  onChange={setAnniversaryCampaign}
+                  options={[
+                    { value: 'Anniversary 20% Off', label: 'Anniversary 20% Off' },
+                    { value: 'Anniversary Free Upgrade', label: 'Anniversary Free Upgrade' },
+                    { value: 'Double Stamps Day', label: 'Double Stamps Day' }
+                  ]}
+                />
               </div>
             </div>
           </div>
@@ -198,16 +254,9 @@ export const AutomatedEventsSettings: React.FC = () => {
         {/* Custom Settings */}
         {customEvents.map((evt) => (
           <div key={evt.id} className={`rounded-xl border ${evt.enabled ? 'border-[#B7842C] shadow-sm' : 'border-[#E5E0D8]'} p-4 sm:p-5 bg-white transition-all relative`}>
-            <button 
-              onClick={() => deleteCustomEvent(evt.id)} 
-              className="absolute top-4 right-16 p-1.5 text-[#9E9A93] hover:text-[#DC2626] hover:bg-[#FEE2E2] rounded-md transition-colors cursor-pointer"
-              title="Remove Automation"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-            <div className="flex items-start justify-between gap-4 mb-4 pr-[70px]">
+            <div className="flex items-start justify-between gap-4 mb-4">
               <div className="flex items-start gap-3 w-full max-w-sm">
-                <div className={`p-2.5 rounded-lg ${evt.enabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
+                <div className={`p-2.5 rounded-lg shrink-0 ${evt.enabled ? 'bg-[#FCF1DF] text-[#B7842C]' : 'bg-[#F5F1EA] text-[#9E9A93]'}`}>
                   <CalendarHeart className="w-5 h-5" />
                 </div>
                 <div className="w-full">
@@ -221,45 +270,54 @@ export const AutomatedEventsSettings: React.FC = () => {
                   <p className="text-xs text-[#6E6A66] mt-0.5">Custom milestone trigger</p>
                 </div>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer absolute right-4 top-4">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer"
-                  checked={evt.enabled}
-                  onChange={() => updateCustomEvent(evt.id, 'enabled', !evt.enabled)}
-                />
-                <div className="w-9 h-5 bg-[#E5E0D8] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0D7A53]"></div>
-              </label>
+              <div className="flex items-center gap-3 shrink-0">
+                <button 
+                  onClick={() => deleteCustomEvent(evt.id)} 
+                  className="p-1.5 text-[#9E9A93] hover:text-[#DC2626] hover:bg-[#FEE2E2] rounded-md transition-colors cursor-pointer"
+                  title="Remove Automation"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer"
+                    checked={evt.enabled}
+                    onChange={() => updateCustomEvent(evt.id, 'enabled', !evt.enabled)}
+                  />
+                  <div className="w-9 h-5 bg-[#E5E0D8] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0D7A53]"></div>
+                </label>
+              </div>
             </div>
 
             <div className={`grid sm:grid-cols-2 gap-4 ${evt.enabled ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider">Send Timing</label>
-                <select 
+                <CustomSelect 
                   value={evt.timing}
-                  onChange={(e) => updateCustomEvent(evt.id, 'timing', e.target.value)}
-                  className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#B7842C]"
-                >
-                  <option value="on_day">On the date</option>
-                  <option value="7_days_before">7 days before</option>
-                  <option value="14_days_before">14 days before</option>
-                  <option value="30_days_before">30 days before</option>
-                </select>
+                  onChange={(val) => updateCustomEvent(evt.id, 'timing', val)}
+                  options={[
+                    { value: 'on_day', label: 'On the date' },
+                    { value: '7_days_before', label: '7 days before' },
+                    { value: '14_days_before', label: '14 days before' },
+                    { value: '30_days_before', label: '30 days before' }
+                  ]}
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-[#6E6A66] uppercase tracking-wider">Campaign to Send</label>
-                <select 
+                <CustomSelect 
                   value={evt.campaign}
-                  onChange={(e) => updateCustomEvent(evt.id, 'campaign', e.target.value)}
-                  className="w-full bg-[#FAF8F5] border border-[#E5E0D8] rounded-lg px-3 py-2 text-[13px] font-semibold text-[#1A1615] focus:outline-none focus:border-[#B7842C]"
-                >
-                  <option value="Free Birthday Coffee">Free Birthday Coffee</option>
-                  <option value="Birthday 50% Off">Birthday 50% Off</option>
-                  <option value="Anniversary 20% Off">Anniversary 20% Off</option>
-                  <option value="Anniversary Free Upgrade">Anniversary Free Upgrade</option>
-                  <option value="Double Stamps Day">Double Stamps Day</option>
-                  <option value="Custom Event Promo">Custom Event Promo</option>
-                </select>
+                  onChange={(val) => updateCustomEvent(evt.id, 'campaign', val)}
+                  options={[
+                    { value: 'Free Birthday Coffee', label: 'Free Birthday Coffee' },
+                    { value: 'Birthday 50% Off', label: 'Birthday 50% Off' },
+                    { value: 'Anniversary 20% Off', label: 'Anniversary 20% Off' },
+                    { value: 'Anniversary Free Upgrade', label: 'Anniversary Free Upgrade' },
+                    { value: 'Double Stamps Day', label: 'Double Stamps Day' },
+                    { value: 'Custom Event Promo', label: 'Custom Event Promo' }
+                  ]}
+                />
               </div>
             </div>
           </div>

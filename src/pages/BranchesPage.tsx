@@ -24,7 +24,8 @@ import {
   Sparkles,
   Table as TableIcon,
   Map,
-  Check
+  Check,
+  Trash2
 } from 'lucide-react';
 import { NavRoute, OutletsData } from '../types';
 import { INITIAL_OUTLETS } from '../data/outletsData';
@@ -81,6 +82,22 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
   const [newName, setNewName] = useState('');
   const [newAddress, setNewAddress] = useState('');
   const [newManager, setNewManager] = useState('');
+
+  const [branchToDelete, setBranchToDelete] = useState<string | null>(null);
+
+  const handleDeleteBranch = (id: string) => {
+    setOutlets(outlets.filter(o => o.id !== id));
+    if (selectedOutletId === id) {
+      const remaining = outlets.filter(o => o.id !== id);
+      if (remaining.length > 0) {
+        setSelectedOutletId(remaining[0].id);
+      } else {
+        setInspectorVisible(false);
+      }
+    }
+    setBranchToDelete(null);
+    showToast('Branch deleted successfully.');
+  };
 
   const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
 
@@ -547,6 +564,16 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
 
                     {/* Top Right Action button */}
                     <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setBranchToDelete(outlet.id);
+                        }}
+                        className="bg-white hover:bg-[#FEE2E2] border border-[#EAE6E1] hover:border-[#DC2626] text-[#DC2626] p-1.5 rounded-lg shadow-2xs transition-colors cursor-pointer"
+                        title="Delete Branch"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                       {isSelected ? (
                         <button
                           onClick={(e) => {
@@ -1036,6 +1063,32 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                   Save Changes
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {branchToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 animate-in zoom-in-95">
+            <h3 className="text-lg font-bold text-[#1A1615] mb-2">Delete Branch</h3>
+            <p className="text-sm text-[#6E6A66] mb-6">
+              Are you sure you want to delete this branch? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setBranchToDelete(null)}
+                className="px-4 py-2 text-sm font-semibold text-[#1A1615] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteBranch(branchToDelete)}
+                className="px-4 py-2 text-sm font-bold text-white bg-[#DC2626] hover:bg-[#B91C1C] rounded-lg transition-colors shadow-sm cursor-pointer"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
