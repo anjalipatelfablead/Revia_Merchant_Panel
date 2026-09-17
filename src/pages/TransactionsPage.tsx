@@ -66,10 +66,10 @@ export const TransactionsPage: React.FC = () => {
       tier: 'BLACK TIER',
       type: 'Purchase + 2 Stamps',
       items: '2x Panama Geisha Pour-Over',
-      channel: 'POS-01 (Barista Counter)',
+      channel: 'Mobile App Redeem',
       time: '2m ago',
       amount: '₹18.50',
-      commission: '₹1.85',
+      commission: '1.85',
       stamps: '+2 Stamps',
       status: 'Completed',
     },
@@ -83,7 +83,7 @@ export const TransactionsPage: React.FC = () => {
       channel: 'Mobile App Redeem',
       time: '8m ago',
       amount: 'Free Perk',
-      commission: '₹0.00',
+      commission: '0.00',
       stamps: '-10 Stamps',
       status: 'Verified',
     },
@@ -94,10 +94,10 @@ export const TransactionsPage: React.FC = () => {
       tier: 'MEMBER',
       type: 'Stamp Earn Only',
       items: 'Counter Scan [Cold Brew Growler]',
-      channel: 'POS-02 (Roastery Bar)',
+      channel: 'Mobile App Redeem',
       time: '14m ago',
       amount: '₹24.00',
-      commission: '₹2.40',
+      commission: '2.40',
       stamps: '+1 Stamp',
       status: 'Completed',
     },
@@ -108,10 +108,10 @@ export const TransactionsPage: React.FC = () => {
       tier: 'BLACK TIER',
       type: 'Single Origin Tasting Flight',
       items: '3-Varietal Cup Tasting + Beans',
-      channel: 'POS-01 (Barista Counter)',
+      channel: 'Mobile App Redeem',
       time: '22m ago',
       amount: '₹36.50',
-      commission: '₹3.65',
+      commission: '3.65',
       stamps: '+3 Stamps',
       status: 'Completed',
     },
@@ -121,11 +121,11 @@ export const TransactionsPage: React.FC = () => {
       avatar: 'GW',
       tier: 'NON-MEMBER',
       type: 'Espresso Romano + Croissant',
-      items: 'Direct POS Register Entry',
-      channel: 'POS-03 (Takeaway Window)',
+      items: 'Direct Register Entry',
+      channel: '2-Varietal Cup Tasting ',
       time: '31m ago',
       amount: '₹11.20',
-      commission: '₹1.12',
+      commission: '1.12',
       stamps: '0 Stamps',
       status: 'Completed',
     },
@@ -238,13 +238,14 @@ export const TransactionsPage: React.FC = () => {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1">
-                <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Transactions &amp; POS Counter Entry</h1>
+                {/* <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Transactions &amp; POS Counter Entry</h1> */}
+                <h1 className="text-2xl sm:text-[28px] font-bold text-[#1A1615] tracking-tight">Transactions</h1>
                 <span className="w-fit px-2.5 py-1 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded-full uppercase tracking-wider border border-[#F3E5C8]">
                   Live Terminal Feed
                 </span>
               </div>
               <p className="text-sm text-[#6E6A66] max-w-2xl">
-                Live register stream, counter check-ins, customer stamp logging, and instant POS fast entry.
+                Live register stream, counter check-ins, customer stamp logging.
               </p>
             </div>
 
@@ -264,50 +265,47 @@ export const TransactionsPage: React.FC = () => {
           </div>
 
           {/* Stat Metrics Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-4 shadow-2xs">
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Today Revenue</div>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded flex items-center gap-1">
-                  <TrendingUp className="w-3 h-3" /> +18% vs avg
-                </span>
               </div>
-              <div className="text-[26px] font-bold text-[#1A1615] mb-1">₹8,420</div>
+              <div className="text-[24px] font-bold text-[#1A1615] mb-1">₹8,420</div>
               <div className="text-[11px] font-semibold text-[#6E6A66]">142 total register events</div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs">
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-4 shadow-2xs">
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Stamps Issued Today</div>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-[#FDF8EB] text-[#9E782F] rounded flex items-center gap-1">
-                  ◷ 94% NFC/QR tap
-                </span>
               </div>
-              <div className="text-[26px] font-bold text-[#1A1615] mb-1">384</div>
+              <div className="text-[24px] font-bold text-[#1A1615] mb-1">384</div>
               <div className="text-[11px] font-semibold text-[#6E6A66]">+42 stamps vs yesterday peak</div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs">
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-4 shadow-2xs">
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Redemptions Completed</div>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-[#F5F4F0] text-[#6E6A66] rounded">
-                  ₹410 value claimed
-                </span>
               </div>
-              <div className="text-[26px] font-bold text-[#1A1615] mb-1">28</div>
-              <div className="text-[11px] font-semibold text-[#6E6A66]">Complimentary pour-overs &amp; beans</div>
+              <div className="text-[24px] font-bold text-[#1A1615] mb-1">28</div>
+              <div className="text-[11px] font-semibold text-[#6E6A66]">Free items redeemed</div>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 shadow-2xs">
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-4 shadow-2xs">
               <div className="flex justify-between items-start mb-2">
                 <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Avg Transaction Speed</div>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-[#E6F4ED] text-[#0D7A53] rounded flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0D7A53]"></span> Terminal mesh
-                </span>
               </div>
-              <div className="text-[26px] font-bold text-[#1A1615] mb-1">1.8s</div>
+              <div className="text-[24px] font-bold text-[#1A1615] mb-1">1.8s</div>
               <div className="text-[11px] font-semibold text-[#6E6A66]">Zero offline queue drops</div>
             </div>
+
+            <div className="bg-white rounded-xl border border-[#EAE6E1] p-4 shadow-2xs">
+              <div className="flex justify-between items-start mb-2">
+                <div className="text-[10px] uppercase font-bold tracking-widest text-[#9E9A93]">Total Commission</div>
+              </div>
+              <div className="text-[24px] font-bold text-[#D93025] mb-1">-842</div>
+              <div className="text-[11px] font-semibold text-[#6E6A66]">10% debit on today's revenue</div>
+            </div>
+
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
@@ -595,174 +593,147 @@ export const TransactionsPage: React.FC = () => {
 
             <div className="p-5 space-y-6 bg-[#FDFBF7]">
 
-              {/* Section 1: Customer Lookup / Scan */}
+              {/* 1. Transaction Details */}
               <div className="space-y-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9E9A93]" />
-                  <input
-                    type="text"
-                    value={counterSearch}
-                    onChange={e => setCounterSearch(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') showToast(`Found member: ${counterSearch}`); }}
-                    className="w-full pl-9 pr-10 py-2.5 bg-white border border-[#EFECE6] rounded-xl text-[15px] font-mono font-bold text-[#1A1615] focus:outline-none focus:border-[#D4A753] shadow-inner"
-                  />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#FAF8F5] p-1 rounded border border-[#EFECE6]">
-                    <Wifi className="w-3.5 h-3.5 text-[#1A1615]" />
+                <h3 className="text-[13px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 border-b border-[#EFECE6] pb-1">1. Transaction Details</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Entry Date &amp; Time</label>
+                    <input type="text" readOnly defaultValue={new Date().toLocaleString()} className="w-full px-3 py-2 bg-[#EFECE6] border border-[#D1CDC7] rounded-lg text-sm font-semibold text-[#6E6A66] focus:outline-none" />
                   </div>
-                </div>
-
-                {/* Active Customer Card */}
-                <div className="bg-white border-2 border-[#D4A753] rounded-xl p-4 shadow-sm relative overflow-hidden">
-                  <div className="flex justify-between items-start gap-2 mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-[#1A1615] border-2 border-[#D4A753] flex items-center justify-center text-white font-bold text-lg shrink-0">MV</div>
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-base font-bold text-[#1A1615]">Marcus Vance</h3>
-                          <span className="px-1.5 py-0.5 rounded bg-[#1A1615] text-[#D4AF37] text-[9px] font-bold tracking-wider uppercase whitespace-nowrap">BLACK TIER</span>
-                        </div>
-                        <div className="text-[11px] font-mono font-semibold text-[#6E6A66] mt-0.5">ID: #REV-8924 • +1 (555) 392-8819</div>
-                      </div>
-                    </div>
-                    <div className="shrink-0 mt-1">
-                      <span className="px-2 py-0.5 bg-[#E6F4ED] text-[#0D7A53] rounded text-[9px] font-bold uppercase tracking-widest border border-[#BCE3D1] whitespace-nowrap">Active Pass</span>
-                    </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Staff / Cashier</label>
+                    <input type="text" readOnly defaultValue="Logged-in Staff" className="w-full px-3 py-2 bg-[#EFECE6] border border-[#D1CDC7] rounded-lg text-sm font-semibold text-[#6E6A66] focus:outline-none" />
                   </div>
-
-                  <div className="mb-2">
-                    <div className="flex items-center justify-between text-[11px] font-bold mb-1">
-                      <span className="text-[#1A1615]">8 of 10 Collected</span>
-                    </div>
-                    <div className="w-full h-2 bg-[#FAF8F5] rounded-full overflow-hidden border border-[#EFECE6]">
-                      <div className="h-full bg-gradient-to-r from-[#D4A753] to-[#9E782F] rounded-full" style={{ width: '80%' }}></div>
-                    </div>
-                  </div>
-
-                  <div className="text-[10px] font-semibold text-[#8A6A32] bg-[#FDF8EB] px-2 py-1 rounded border border-[#F3E5C8] inline-block">
-                    Favorite: Panama Geisha Reserve
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Counter</label>
+                    <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]">
+                      <option>Counter 1 (Main)</option>
+                      <option>Counter 2 (Takeaway)</option>
+                      <option>Counter 3 (Drive-thru)</option>
+                    </select>
                   </div>
                 </div>
               </div>
 
-              {/* Section 2: Rapid Stamp Action */}
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2">Rapid Stamp Action</div>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <button
-                    onClick={() => { setSelectedStampsAction(1); setCustomStamps(''); }}
-                    className={`p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm cursor-pointer relative overflow-hidden ${selectedStampsAction === 1 ? 'bg-[#FDF8EB]/30 border-2 border-[#D4A753]' : 'bg-white border border-[#EFECE6] hover:border-[#D4A753] hover:bg-[#FDF8EB] group'}`}
-                  >
-                    {selectedStampsAction === 1 && (
-                      <div className="absolute top-2 right-2">
-                        <div className="w-4 h-4 rounded-full bg-[#D4A753] text-white flex items-center justify-center"><Check className="w-2.5 h-2.5" /></div>
-                      </div>
-                    )}
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${selectedStampsAction === 1 ? 'bg-[#D4A753]' : 'bg-[#FAF8F5] group-hover:bg-[#D4A753]'}`}>
-                      <Coffee className={`w-4 h-4 ${selectedStampsAction === 1 ? 'text-white' : 'text-[#1A1615] group-hover:text-white'}`} />
-                    </div>
-                    <span className="text-sm font-bold text-[#1A1615]">+1 Stamp</span>
-                    <span className={`text-[10px] font-semibold ${selectedStampsAction === 1 ? 'text-[#9E782F]' : 'text-[#6E6A66]'}`}>Drip / Espresso</span>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedStampsAction(2); setCustomStamps(''); }}
-                    className={`p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all shadow-sm cursor-pointer relative overflow-hidden ${selectedStampsAction === 2 ? 'bg-[#FDF8EB]/30 border-2 border-[#D4A753]' : 'bg-white border border-[#EFECE6] hover:border-[#D4A753] hover:bg-[#FDF8EB] group'}`}
-                  >
-                    {selectedStampsAction === 2 && (
-                      <div className="absolute top-2 right-2">
-                        <div className="w-4 h-4 rounded-full bg-[#D4A753] text-white flex items-center justify-center"><Check className="w-2.5 h-2.5" /></div>
-                      </div>
-                    )}
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${selectedStampsAction === 2 ? 'bg-[#D4A753]' : 'bg-[#FAF8F5] group-hover:bg-[#D4A753]'}`}>
-                      <Coffee className={`w-4 h-4 ${selectedStampsAction === 2 ? 'text-white' : 'text-[#1A1615] group-hover:text-white'}`} />
-                    </div>
-                    <span className="text-sm font-bold text-[#1A1615]">+2 Stamps</span>
-                    <span className={`text-[10px] font-semibold ${selectedStampsAction === 2 ? 'text-[#9E782F]' : 'text-[#6E6A66]'}`}>Pour-Over / Beans</span>
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between px-1">
-                  <span className="text-[11px] font-semibold text-[#6E6A66]">Need custom count?</span>
-                  <input
-                    type="text"
-                    value={customStamps}
-                    onChange={e => { setCustomStamps(e.target.value); setSelectedStampsAction(0); }}
-                    placeholder="Enter Custom Stamps"
-                    className="w-36 px-2 py-1 bg-white border border-[#EFECE6] rounded text-xs font-mono text-right focus:outline-none focus:border-[#D4A753]"
-                  />
-                </div>
-              </div>
-
-              {/* Section 3: Order Value */}
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2">Order Value (Optional Sync)</div>
-                <input type="text" defaultValue="₹ 18.50" className="w-full px-4 py-3 bg-white border border-[#EFECE6] rounded-xl text-xl font-bold font-mono text-[#1A1615] focus:outline-none shadow-inner mb-2" />
-                <div className="grid grid-cols-4 gap-2">
-                  {['₹5', '₹10', '₹25', '₹50'].map((val) => (
-                    <button key={val} className="py-1.5 bg-white border border-[#EFECE6] hover:bg-[#FAF8F5] rounded-lg text-xs font-bold text-[#6E6A66] transition-colors cursor-pointer">
-                      {val}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Section 4: Available Reward Box */}
-              <div className="bg-[#E6F4ED] border border-[#BCE3D1] rounded-xl p-4 flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <div className="text-[11px] font-bold text-[#0D7A53] flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4" /> Complimentary Flight &amp; Pastry voucher unlocked.
+              {/* 2. Customer Details */}
+              <div className="space-y-3">
+                <h3 className="text-[13px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 border-b border-[#EFECE6] pb-1">2. Customer Details</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Customer Name (Optional)</label>
+                    <input type="text" placeholder="e.g. John Doe" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
                   </div>
-                  <span className="px-2 py-0.5 bg-[#0D7A53] text-white rounded text-[9px] font-bold uppercase tracking-widest">READY</span>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Customer Phone (Optional)</label>
+                    <input type="text" placeholder="+1 555-0000" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
                 </div>
-                <button className="w-full py-2 bg-white border border-[#BCE3D1] hover:bg-[#FAF8F5] rounded-lg text-xs font-bold text-[#0D7A53] transition-colors cursor-pointer mt-1 shadow-xs">
-                  Redeem Voucher on Order
-                </button>
+              </div>
+
+              {/* 3. Transaction */}
+              <div className="space-y-3">
+                <h3 className="text-[13px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 border-b border-[#EFECE6] pb-1">3. Transaction</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Entry Type</label>
+                    <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]">
+                      <option>Sale</option>
+                      <option>Service</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Description / Item</label>
+                    <input type="text" placeholder="Item details..." className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Amount *</label>
+                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Discount</label>
+                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Tax</label>
+                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#1A1615] mb-1">Final Amount</label>
+                    <input type="text" readOnly placeholder="0.00" className="w-full px-3 py-2 bg-[#EFECE6] border border-[#D1CDC7] rounded-lg text-sm font-bold text-[#1A1615] focus:outline-none" />
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Payment */}
+              <div className="space-y-3">
+                <h3 className="text-[13px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 border-b border-[#EFECE6] pb-1">4. Payment</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Payment Method</label>
+                    <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]">
+                      <option>Cash</option>
+                      <option>Card</option>
+                      <option>UPI</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Payment Status</label>
+                    <select className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]">
+                      <option>Paid</option>
+                      <option>Pending</option>
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Reference No. (Optional)</label>
+                    <input type="text" placeholder="Transaction ID / UPI Ref" className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753]" />
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. Additional */}
+              <div className="space-y-3">
+                <h3 className="text-[13px] font-bold uppercase tracking-widest text-[#9E9A93] mb-2 border-b border-[#EFECE6] pb-1">5. Additional</h3>
+                <div>
+                  <label className="block text-xs font-semibold text-[#6E6A66] mb-1">Notes (Optional)</label>
+                  <textarea rows={2} placeholder="Add any extra notes here..." className="w-full px-3 py-2 bg-white border border-[#EFECE6] rounded-lg text-sm font-semibold text-[#1A1615] focus:outline-none focus:border-[#D4A753] resize-none"></textarea>
+                </div>
               </div>
 
             </div>
 
-            {/* Section 5: Primary Submission Button & POS Status */}
-            <div className="p-5 border-t border-[#EFECE6] bg-white mt-auto">
+            {/* Section 6: Primary Submission Button */}
+            <div className="p-5 border-t border-[#EFECE6] bg-white mt-auto sticky bottom-0 z-10 shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
               <button
                 onClick={() => {
-                  const finalStampsCount = customStamps ? parseInt(customStamps) || 0 : selectedStampsAction;
-                  const stampsString = finalStampsCount > 0 ? `+${finalStampsCount} Stamp${finalStampsCount > 1 ? 's' : ''}` : '0 Stamps';
-
                   const newTx = {
                     id: `#ORD-${Math.floor(10000 + Math.random() * 90000)} (FAST-COUNTER)`,
-                    guestName: counterSearch.includes('REV') ? 'Marcus Vance' : 'Guest Walk-in',
-                    avatar: counterSearch.includes('REV') ? 'MV' : 'GW',
-                    tier: counterSearch.includes('REV') ? 'BLACK TIER' : 'NON-MEMBER',
-                    type: 'Direct Fast POS Entry',
-                    items: 'Manual Counter Entry',
-                    channel: 'POS-02 (Downtown Flagship)',
+                    guestName: 'Walk-in Customer',
+                    avatar: 'WC',
+                    tier: 'NON-MEMBER',
+                    type: 'Manual Sale',
+                    items: 'Counter Transaction',
+                    channel: 'Counter 1 (Main)',
                     time: 'Just now',
-                    amount: orderValue || '$0.00',
-                    commission: '₹0.00',
-                    stamps: stampsString,
+                    amount: '₹0.00',
+                    commission: '0.00',
+                    stamps: '0 Stamps',
                     status: 'Completed',
                   };
                   setTransactions([newTx, ...transactions]);
-                  showToast('Processed and logged stamp successfully.');
-                  setCounterSearch('');
-                  setSelectedStampsAction(2);
-                  setCustomStamps('');
-                  setOrderValue('$18.50');
+                  showToast('Transaction submitted successfully.');
                   setFastPosModalOpen(false);
                 }}
-                className="w-full py-3.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[15px] font-bold transition-opacity shadow-md mb-3 cursor-pointer flex justify-center items-center gap-2"
+                className="w-full py-3.5 bg-gradient-to-b from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg text-[17px] font-bold transition-opacity shadow-md cursor-pointer flex justify-center items-center gap-2"
               >
-                <CheckCircle2 className="w-5 h-5" /> Process &amp; Log Stamp
+                <CheckCircle2 className="w-5 h-5" /> Submit Transaction
               </button>
-              <div className="flex flex-col sm:flex-row items-center justify-between text-[10px] font-semibold text-[#6E6A66]">
-                <span className="flex items-center gap-1">
-                  <Activity className="w-3.5 h-3.5 text-[#0D7A53]" /> POS Scanner #02 • Downtown Flagship
-                </span>
-                <span className="text-[#1A1615]">NFC Active (99.4%)</span>
-              </div>
             </div>
 
             {/* Section 6: Counter Hotkeys Footer */}
-            <div className="px-5 py-3 border-t border-[#EFECE6] bg-[#FAF8F5]">
+            {/* <div className="px-5 py-3 border-t border-[#EFECE6] bg-[#FAF8F5]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#1A1615]">Counter Hotkeys</span>
                 <span className="px-2 py-0.5 bg-white border border-[#EFECE6] rounded text-[9px] font-bold text-[#9E9A93] uppercase tracking-wider flex items-center gap-1">
@@ -783,7 +754,7 @@ export const TransactionsPage: React.FC = () => {
                   <kbd className="px-1.5 py-0.5 bg-[#1A1615] text-white border border-[#1A1615] rounded shadow-xs font-mono font-bold">Enter ↵</kbd>
                 </div>
               </div>
-            </div>
+            </div> */}
 
           </div>
         </div>
