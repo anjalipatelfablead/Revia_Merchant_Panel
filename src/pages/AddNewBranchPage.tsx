@@ -207,18 +207,18 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => onNavigate('/branches')}
-            className="px-3.5 py-2 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-[13px] font-semibold text-[#1A1615] flex items-center gap-2 transition-colors cursor-pointer"
           >
-            <X className="w-3.5 h-3.5 text-[#6E6A66]" />
+            <X className="w-4 h-4 text-[#6E6A66]" />
             <span>Discard Draft</span>
           </button>
 
           <button
             onClick={handleProvisionBranch}
             disabled={isSubmitting}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
           >
-            <Plus className="w-3.5 h-3.5 text-white" />
+            <Plus className="w-4 h-4 text-white" />
             <span>Provision &amp; Launch Branch</span>
           </button>
         </div>
@@ -838,7 +838,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           <button
             type="button"
             onClick={handleDownloadKit}
-            className="w-full py-2.5 px-4 bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl text-xs font-bold text-[#1A1615] flex items-center justify-center gap-2 shadow-2xs transition-colors cursor-pointer"
+            className="w-full px-4 py-2 bg-white hover:bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[13px] font-bold text-[#1A1615] flex items-center justify-center gap-2 shadow-2xs transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4 text-[#6E6A66]" />
             <span>Download Display Print Kit (.PDF)</span>

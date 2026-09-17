@@ -19,6 +19,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CustomersPage } from './pages/CustomersPage';
+import { CustomerDetailPage } from './pages/CustomerDetailPage';
 
 import { MarketingLandingPage } from './pages/MarketingLandingPage';
 import { CustomerRouter } from './Customer/CustomerRouter';
@@ -124,7 +125,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/');
+  const isValidRoute = VALID_ROUTES.includes(currentRoute) || currentRoute.startsWith('/customer/') || currentRoute.startsWith('/customerlist/detail');
   if (!isValidRoute) {
     return <NotFoundPage onNavigate={(route) => handleNavigate(route as NavRoute)} />;
   }
@@ -291,6 +292,17 @@ export default function App() {
                 onAddCustomer={(newCustomer) => {
                   setCustomers((currentCustomers) => [newCustomer, ...currentCustomers]);
                 }}
+                onViewCustomer={(id) => handleNavigate(`/customerlist/detail?id=${id}` as NavRoute)}
+              />
+            )}
+
+            {currentRoute.startsWith('/customerlist/detail') && (
+              <CustomerDetailPage 
+                onNavigate={handleNavigate}
+                customer={customers.find(c => {
+                  const searchParams = new URLSearchParams(window.location.search);
+                  return c.id === searchParams.get('id');
+                })}
               />
             )}
 

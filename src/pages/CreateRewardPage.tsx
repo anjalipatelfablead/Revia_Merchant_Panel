@@ -310,16 +310,16 @@ export const CreateRewardPage: React.FC<{ onNavigate?: (route: string) => void }
         <div className="max-w-[1200px] mx-auto flex items-center justify-between">
           <button
             onClick={() => onNavigate?.('/rewards')}
-            className="hidden sm:block px-6 py-2.5 text-sm font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors"
+            className="hidden sm:block px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:text-[#1A1615] transition-colors"
           >
             Cancel
           </button>
 
           <div className="flex items-center gap-3">
-            <button className="px-6 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-xl text-sm font-bold hover:bg-[#EFECE6] transition-colors shadow-sm cursor-pointer">
+            <button className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-lg text-[13px] font-bold hover:bg-[#EFECE6] transition-colors shadow-sm cursor-pointer">
               Save as Draft
             </button>
-            <button className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white rounded-xl text-sm font-bold shadow-md hover:opacity-95 transition-opacity cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D4A753] to-[#9E782F] text-white rounded-lg text-[13px] font-bold shadow-md hover:opacity-95 transition-opacity cursor-pointer">
               <CheckCircle2 className="w-4 h-4" /> Create & Activate Reward
             </button>
           </div>

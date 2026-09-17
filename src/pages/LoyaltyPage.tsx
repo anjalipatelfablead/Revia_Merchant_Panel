@@ -142,25 +142,24 @@ export const LoyaltyPage: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 lg:gap-3 self-start lg:self-auto w-full lg:w-auto">
-          <button className="flex-none px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
-            <span className="hidden sm:inline">Discard Changes</span>
-            <span className="sm:hidden">Discard</span>
+          <button className="px-4 py-2 text-[13px] font-semibold text-[#6E6A66] hover:bg-[#EFECE6] rounded-lg transition-colors cursor-pointer text-center">
+            Discard Changes
           </button>
-          <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer whitespace-nowrap">
-            <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <button className="flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] rounded-lg transition-colors shadow-xs cursor-pointer whitespace-nowrap">
+            <Save className="w-4 h-4" />
             Save Draft
           </button>
           <button
             onClick={handlePublish}
             disabled={publishStatus !== 'idle'}
-            className={`flex items-center justify-center gap-2 px-3 sm:px-5 py-2 text-xs sm:text-sm font-bold text-white rounded-lg transition-all shadow-xs ${publishStatus === 'published'
+            className={`flex items-center justify-center gap-2 px-4 py-2 text-[13px] font-bold text-white rounded-lg transition-all shadow-xs ${publishStatus === 'published'
               ? 'bg-[#15803D] cursor-default'
               : publishStatus === 'publishing'
                 ? 'bg-[#1A1615] opacity-80 cursor-wait'
                 : 'bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 cursor-pointer'
               }`}
           >
-            {publishStatus === 'idle' && <><Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Publish Program Changes</span><span className="sm:hidden">Publish</span></>}
+            {publishStatus === 'idle' && <><Sparkles className="w-4 h-4" /> Publish Program Changes</>}
             {publishStatus === 'publishing' && <span className="animate-pulse flex items-center gap-2">Publishing...</span>}
             {publishStatus === 'published' && <><Check className="w-4 h-4" /> Published Successfully</>}
           </button>
@@ -362,9 +361,9 @@ export const LoyaltyPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsAddingTier(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FAF8F5] hover:bg-[#EFECE6] border border-[#EFECE6] rounded-lg text-xs font-semibold text-[#1A1615] transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#FAF8F5] hover:bg-[#EFECE6] border border-[#EFECE6] rounded-lg text-[13px] font-semibold text-[#1A1615] transition-colors cursor-pointer"
               >
-                <Plus className="w-3.5 h-3.5" /> Add Level
+                <Plus className="w-4 h-4" /> Add Level
               </button>
             </div>
 
@@ -464,8 +463,8 @@ export const LoyaltyPage: React.FC = () => {
                       <input type="text" value={newTierDesc} onChange={(e) => setNewTierDesc(e.target.value)} className="w-full text-xs text-[#6E6A66] bg-[#FAF8F5] border border-[#EFECE6] rounded-md px-2.5 py-1.5 focus:outline-none focus:border-[#D4A753]" placeholder="e.g. 2x stamp earning, free merchandise." />
                     </div>
                     <div className="flex justify-end gap-2 pt-2">
-                      <button onClick={() => setIsAddingTier(false)} className="px-3 py-1.5 text-xs font-semibold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-md transition-colors cursor-pointer">Cancel</button>
-                      <button onClick={handleAddTier} className="px-3 py-1.5 bg-[#1A1615] hover:bg-black text-white text-xs font-bold rounded-md transition-colors cursor-pointer">Save Tier</button>
+                      <button onClick={() => setIsAddingTier(false)} className="px-4 py-2 text-[13px] font-semibold text-[#6E6A66] hover:bg-[#FAF8F5] rounded-lg transition-colors cursor-pointer">Cancel</button>
+                      <button onClick={handleAddTier} className="px-4 py-2 bg-[#1A1615] hover:bg-black text-white text-[13px] font-bold rounded-lg transition-colors cursor-pointer">Save Tier</button>
                     </div>
                   </div>
                 </div>
@@ -651,7 +650,7 @@ export const LoyaltyPage: React.FC = () => {
             <div className="p-5 bg-white border-t border-[#EFECE6]">
               <button
                 onClick={handleAddToWallet}
-                className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer ${isAddedToWallet
+                className={`w-full px-4 py-2 rounded-lg text-[13px] font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer ${isAddedToWallet
                   ? 'bg-[#0D7A53] hover:bg-[#0D7A53]/90 text-white'
                   : 'bg-black hover:bg-black/90 text-white'
                   }`}

@@ -41,7 +41,7 @@ interface StaffMemberDetailed {
   name: string;
   email: string;
   phone: string;
-  role: 'Manager' | 'Barista' | 'Counter Staff' | 'Owner (Super Admin)';
+  role: string;
   roleTierLabel: string;
   roleTierClass: string;
   assignedVenues: string;
@@ -56,6 +56,77 @@ interface StaffMemberDetailed {
   venuePermissions: StaffVenuePermission[];
   recentAudits: StaffSecurityAudit[];
 }
+
+export const SYSTEM_CAPABILITIES = [
+  'POS Manual Stamp Issuance',
+  'Issue Reward / Redeem Voucher',
+  'Void / Refund Customer Transactions',
+  'Edit Loyalty Rules & Multipliers',
+  'View Gross Revenue & Audit Logs',
+  'Modify Branch Hardware & Beacons'
+];
+
+export interface RoleTemplate {
+  id: string;
+  name: string;
+  isSystem: boolean; // cannot be deleted
+  permissions: Record<string, boolean>;
+}
+
+export const INITIAL_ROLE_TEMPLATES: RoleTemplate[] = [
+  {
+    id: 'role-owner',
+    name: 'Owner (Super Admin)',
+    isSystem: true,
+    permissions: {
+      'POS Manual Stamp Issuance': true,
+      'Issue Reward / Redeem Voucher': true,
+      'Void / Refund Customer Transactions': true,
+      'Edit Loyalty Rules & Multipliers': true,
+      'View Gross Revenue & Audit Logs': true,
+      'Modify Branch Hardware & Beacons': true,
+    }
+  },
+  {
+    id: 'role-manager',
+    name: 'Manager',
+    isSystem: true,
+    permissions: {
+      'POS Manual Stamp Issuance': true,
+      'Issue Reward / Redeem Voucher': true,
+      'Void / Refund Customer Transactions': true,
+      'Edit Loyalty Rules & Multipliers': true,
+      'View Gross Revenue & Audit Logs': true,
+      'Modify Branch Hardware & Beacons': true,
+    }
+  },
+  {
+    id: 'role-barista',
+    name: 'Barista',
+    isSystem: true,
+    permissions: {
+      'POS Manual Stamp Issuance': true,
+      'Issue Reward / Redeem Voucher': true,
+      'Void / Refund Customer Transactions': false,
+      'Edit Loyalty Rules & Multipliers': false,
+      'View Gross Revenue & Audit Logs': false,
+      'Modify Branch Hardware & Beacons': false,
+    }
+  },
+  {
+    id: 'role-counter',
+    name: 'Counter Staff',
+    isSystem: true,
+    permissions: {
+      'POS Manual Stamp Issuance': true,
+      'Issue Reward / Redeem Voucher': true,
+      'Void / Refund Customer Transactions': false,
+      'Edit Loyalty Rules & Multipliers': false,
+      'View Gross Revenue & Audit Logs': false,
+      'Modify Branch Hardware & Beacons': false,
+    }
+  }
+];
 
 const INITIAL_STAFF_MEMBERS: StaffMemberDetailed[] = [
   {
@@ -214,6 +285,8 @@ const INITIAL_STAFF_MEMBERS: StaffMemberDetailed[] = [
 export const StaffPage: React.FC = () => {
   const { checkAndDeductCredit } = useWallet();
   const [staffList, setStaffList] = useState<StaffMemberDetailed[]>(INITIAL_STAFF_MEMBERS);
+  const [roleTemplates, setRoleTemplates] = useState<RoleTemplate[]>(INITIAL_ROLE_TEMPLATES);
+  const [editingRole, setEditingRole] = useState<RoleTemplate | null>(null);
   const [selectedStaffId, setSelectedStaffId] = useState<string>('STF-1042');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [roleFilter, setRoleFilter] = useState<string>('All');
@@ -229,15 +302,17 @@ export const StaffPage: React.FC = () => {
   // New team member invite form state
   const [inviteName, setInviteName] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'Manager' | 'Barista' | 'Counter Staff'>('Barista');
+  const [inviteRole, setInviteRole] = useState<string>('Manager');
   const [inviteBranch, setInviteBranch] = useState('Downtown Flagship');
+  const [invitePhone, setInvitePhone] = useState('');
+  const [invitePassword, setInvitePassword] = useState('');
 
   // Edit staff form state
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editPhone, setEditPhone] = useState('');
-  const [editRole, setEditRole] = useState<'Manager' | 'Barista' | 'Counter Staff' | 'Owner (Super Admin)'>('Barista');
+  const [editRole, setEditRole] = useState<string>('Manager');
   const [editBranch, setEditBranch] = useState('');
   const [editNfc, setEditNfc] = useState('');
 
@@ -291,7 +366,7 @@ export const StaffPage: React.FC = () => {
       id: newId,
       name: inviteName,
       email: inviteEmail,
-      phone: '+1 (415) 890–' + Math.floor(1000 + Math.random() * 9000),
+      phone: invitePhone || '+1 (415) 890–' + Math.floor(1000 + Math.random() * 9000),
       role: inviteRole,
       roleTierLabel: inviteRole,
       roleTierClass:
@@ -318,8 +393,10 @@ export const StaffPage: React.FC = () => {
     setSelectedStaffId(newId);
     setInviteName('');
     setInviteEmail('');
+    setInvitePhone('');
+    setInvitePassword('');
     setIsInviteModalOpen(false);
-    showToast(`Invitation sent to ${inviteEmail} with temporary POS PIN credentials.`);
+    showToast(`Invitation sent to ${inviteEmail} with temporary password credentials.`);
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
@@ -353,7 +430,7 @@ export const StaffPage: React.FC = () => {
   };
 
   const handleResetPin = () => {
-    showToast(`New 4-digit PIN generated and dispatched to ${selectedStaff.email}.`);
+    showToast(`New temporary password generated and dispatched to ${selectedStaff.email}.`);
   };
 
   const handleExportAudit = () => {
@@ -382,22 +459,22 @@ export const StaffPage: React.FC = () => {
             </span>
           </div>
           <p className="text-xs text-[#7C746C] mt-1 max-w-2xl leading-relaxed">
-            Manage multi-location staff credentials, role-based access tiers, terminal quick-switch PINs, and audit security events across all merchant venues.
+            Manage multi-location staff credentials, role-based access tiers, and audit security events across all merchant venues.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 self-start lg:self-auto">
           <button
             onClick={handleExportAudit}
-            className="px-3.5 py-2 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-xs font-semibold text-[#1A1615] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            className="px-4 py-2 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] text-[13px] font-semibold text-[#1A1615] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
           >
-            <Download className="w-3.5 h-3.5 text-[#5C554E]" />
+            <Download className="w-4 h-4 text-[#5C554E]" />
             <span>Export Audit Log</span>
           </button>
 
           <button
             onClick={() => setIsInviteModalOpen(true)}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
             <UserPlus className="w-4 h-4 text-white" />
             <span>Invite Team Member</span>
@@ -447,11 +524,11 @@ export const StaffPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 3: TERMINAL PINS */}
+        {/* Card 3: ACCOUNT STATUS */}
         <div className="bg-white border border-[#EAE6E1] rounded-2xl p-4 shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-[#8C827A] tracking-wider">
-              TERMINAL PINS
+              ACCOUNT STATUS
             </span>
             <div className="w-7 h-7 rounded-full bg-[#FAF6EE] flex items-center justify-center text-[#B38637]">
               <KeyRound className="w-3.5 h-3.5" />
@@ -459,11 +536,11 @@ export const StaffPage: React.FC = () => {
           </div>
           <div>
             <div className="text-3xl font-bold text-[#1A1615]">14 / 14</div>
-            <div className="text-[11px] text-[#7C746C] mt-0.5">100% hardware terminal compliance</div>
+            <div className="text-[11px] text-[#7C746C] mt-0.5">100% active credentials</div>
           </div>
           <div className="pt-2 border-t border-[#F5F2EC] flex items-center gap-1.5 text-[11px] text-[#15803D] font-medium">
             <Check className="w-3.5 h-3.5 text-[#15803D]" />
-            <span>POS Switch Ready</span>
+            <span>Ready for Login</span>
           </div>
         </div>
 
@@ -479,7 +556,7 @@ export const StaffPage: React.FC = () => {
           </div>
           <div>
             <div className="text-3xl font-bold text-[#1A1615]">99.4%</div>
-            <div className="text-[11px] text-[#7C746C] mt-0.5">Zero failed PIN lockouts in 30d</div>
+            <div className="text-[11px] text-[#7C746C] mt-0.5">Zero failed lockouts in 30d</div>
           </div>
           <div className="pt-2 border-t border-[#F5F2EC] flex items-center gap-1.5 text-[11px] text-[#5C554E]">
             <ShieldCheck className="w-3.5 h-3.5 text-[#15803D]" />
@@ -509,11 +586,10 @@ export const StaffPage: React.FC = () => {
               onChange={(e) => setRoleFilter(e.target.value)}
               className="bg-white border border-[#EAE6E1] hover:bg-[#FAF8F5] px-3 py-1.5 rounded-lg text-xs font-semibold text-[#3D3732] appearance-none pr-7 cursor-pointer focus:outline-none focus:border-[#B38637]"
             >
-              <option value="All">Role: All (4)</option>
-              <option value="Owner">Owner</option>
-              <option value="Manager">Manager</option>
-              <option value="Barista">Barista</option>
-              <option value="Counter Staff">Counter Staff</option>
+              <option value="All">Role: All ({roleTemplates.length})</option>
+              {roleTemplates.map(rt => (
+                <option key={rt.id} value={rt.name}>{rt.name}</option>
+              ))}
             </select>
             <ChevronDown className="w-3 h-3 text-[#8C827A] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
@@ -578,7 +654,7 @@ export const StaffPage: React.FC = () => {
                     <th className="py-2.5 px-5">STAFF MEMBER</th>
                     <th className="py-2.5 px-4">ROLE TIER</th>
                     <th className="py-2.5 px-4">ASSIGNED VENUES</th>
-                    <th className="py-2.5 px-5 text-right">TERMINAL PIN</th>
+                    <th className="py-2.5 px-5 text-right">ACCOUNT STATUS</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F5F2EC] text-xs">
@@ -633,9 +709,8 @@ export const StaffPage: React.FC = () => {
                           {member.assignedVenues}
                         </td>
 
-                        {/* Terminal PIN */}
+                        {/* Account Status */}
                         <td className="py-3 px-5 text-right font-mono">
-                          <span className="text-[#8C827A] mr-1.5 font-bold">••••</span>
                           <span className="text-[#15803D] font-medium text-xs">Active</span>
                         </td>
                       </tr>
@@ -698,9 +773,8 @@ export const StaffPage: React.FC = () => {
                           <div className="font-medium text-[#3D3732] text-xs">{member.assignedVenues}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Terminal PIN</div>
+                          <div className="text-[9px] uppercase font-bold text-[#8C827A] mb-1 tracking-wider">Account Status</div>
                           <div className="font-mono">
-                            <span className="text-[#8C827A] mr-1.5 font-bold">••••</span>
                             <span className="text-[#15803D] font-medium text-xs">Active</span>
                           </div>
                         </div>
@@ -742,114 +816,26 @@ export const StaffPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-[#F2EFE9] text-[10px] uppercase font-bold tracking-wider text-[#8C827A]">
                     <th className="py-2.5 pr-4">SYSTEM PERMISSION CAPABILITY</th>
-                    <th className="py-2.5 px-3 text-center">OWNER</th>
-                    <th className="py-2.5 px-3 text-center">MANAGER</th>
-                    <th className="py-2.5 px-3 text-center">BARISTA</th>
-                    <th className="py-2.5 pl-3 text-center">COUNTER ST.</th>
+                    {roleTemplates.map(role => (
+                      <th key={role.id} className="py-2.5 px-3 text-center">{role.name.toUpperCase()}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F5F2EC] text-xs">
-                  {/* Row 1 */}
-                  <tr>
-                    <td className="py-2.5 pr-4 text-[#1A1615] font-medium">POS Manual Stamp Issuance</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 pl-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                  </tr>
-
-                  {/* Row 2 */}
-                  <tr>
-                    <td className="py-2.5 pr-4 text-[#1A1615] font-medium">Issue Reward / Redeem Voucher</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 pl-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                  </tr>
-
-                  {/* Row 3 */}
-                  <tr>
-                    <td className="py-2.5 pr-4 text-[#1A1615] font-medium">Void / Refund Customer Transactions</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                    </td>
-                    <td className="py-2.5 pl-3 text-center">
-                      <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                    </td>
-                  </tr>
-
-                  {/* Row 4 */}
-                  <tr>
-                    <td className="py-2.5 pr-4 text-[#1A1615] font-medium">Edit Loyalty Rules &amp; Multipliers</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                    </td>
-                    <td className="py-2.5 pl-3 text-center">
-                      <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                    </td>
-                  </tr>
-
-                  {/* Row 5 */}
-                  <tr>
-                    <td className="py-2.5 pr-4 text-[#1A1615] font-medium">View Gross Revenue &amp; Audit Logs</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span className="text-[#9E782F] font-semibold text-[11px]">Aggregated</span>
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                    </td>
-                    <td className="py-2.5 pl-3 text-center">
-                      <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                    </td>
-                  </tr>
-
-                  {/* Row 6 */}
-                  <tr>
-                    <td className="py-2.5 pr-4 text-[#1A1615] font-medium">Modify Branch Hardware &amp; Beacons</td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
-                    </td>
-                    <td className="py-2.5 px-3 text-center">
-                      <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                    </td>
-                    <td className="py-2.5 pl-3 text-center">
-                      <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
-                    </td>
-                  </tr>
+                  {SYSTEM_CAPABILITIES.map((cap, idx) => (
+                    <tr key={idx}>
+                      <td className="py-2.5 pr-4 text-[#1A1615] font-medium">{cap}</td>
+                      {roleTemplates.map(role => (
+                        <td key={role.id} className="py-2.5 px-3 text-center">
+                          {role.permissions[cap] ? (
+                            <CheckCircle2 className="w-4 h-4 text-[#15803D] mx-auto" />
+                          ) : (
+                            <span className="w-4 h-4 rounded-full border border-[#D1C9BE] text-[#A8A29E] flex items-center justify-center text-[10px] mx-auto">✕</span>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -920,12 +906,12 @@ export const StaffPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Terminal Quick-Switch Module */}
+            {/* Authentication & Access Module */}
             <div className="pt-3 border-t border-[#F2EFE9] space-y-2.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[#1A1615]">
                   <KeyRound className="w-3.5 h-3.5 text-[#8C827A]" />
-                  <span>Terminal Quick-Switch</span>
+                  <span>Authentication &amp; Access</span>
                 </div>
                 <span className="text-[11px] text-[#15803D] font-medium">
                   Active at {selectedStaff.activeRegistersCount} Registers
@@ -935,14 +921,14 @@ export const StaffPage: React.FC = () => {
               <div className="bg-[#FAF8F5] p-3 rounded-xl border border-[#EAE6E1] space-y-2 text-xs">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-[10px] font-semibold text-[#7C746C]">Terminal 4-Digit PIN</div>
-                    <div className="font-mono text-sm tracking-widest text-[#1A1615] font-bold">••••</div>
+                    <div className="text-[10px] font-semibold text-[#7C746C]">Password</div>
+                    <div className="font-mono text-sm tracking-widest text-[#1A1615] font-bold">••••••••</div>
                   </div>
                   <button
                     onClick={handleResetPin}
                     className="px-2.5 py-1 bg-white hover:bg-[#F5F2EC] border border-[#EAE6E1] rounded-md text-[11px] font-semibold text-[#1A1615] transition-colors cursor-pointer shadow-2xs"
                   >
-                    Reset PIN
+                    Reset Password
                   </button>
                 </div>
 
@@ -1018,14 +1004,14 @@ export const StaffPage: React.FC = () => {
             <div className="pt-3 border-t border-[#F2EFE9] flex items-center justify-between gap-3">
               <button
                 onClick={() => showToast(`Access suspended for ${selectedStaff.name}. All terminals locked.`)}
-                className="px-3.5 py-2 rounded-lg border border-[#F2D6D3] bg-[#FFF5F5] hover:bg-[#FEE2E2] text-xs font-semibold text-[#DC2626] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-lg border border-[#F2D6D3] bg-[#FFF5F5] hover:bg-[#FEE2E2] text-[13px] font-semibold text-[#DC2626] transition-colors cursor-pointer"
               >
                 Suspend Access
               </button>
 
               <button
                 onClick={() => showToast(`Saved permissions for ${selectedStaff.name}. Syncing mesh nodes...`)}
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold transition-all cursor-pointer shadow-sm"
               >
                 Save Changes
               </button>
@@ -1041,7 +1027,7 @@ export const StaffPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-[#EAE6E1]">
               <div>
                 <h3 className="text-base font-bold text-[#1A1615]">Invite Team Member</h3>
-                <p className="text-xs text-[#7C746C]">Issue credentials &amp; provision PIN for POS quick-switch</p>
+                <p className="text-xs text-[#7C746C]">Issue credentials &amp; provision password for POS access</p>
               </div>
               <button
                 onClick={() => setIsInviteModalOpen(false)}
@@ -1083,16 +1069,45 @@ export const StaffPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                    Mobile Number
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="e.g. +1 (555) 123-4567"
+                    value={invitePhone}
+                    onChange={(e) => setInvitePhone(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter secure password"
+                    value={invitePassword}
+                    onChange={(e) => setInvitePassword(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#D4A753]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
                     Role Tier
                   </label>
                   <select
                     value={inviteRole}
-                    onChange={(e) => setInviteRole(e.target.value as any)}
+                    onChange={(e) => setInviteRole(e.target.value)}
                     className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#D4A753]"
                   >
-                    <option value="Manager">Manager</option>
-                    <option value="Barista">Barista</option>
-                    <option value="Counter Staff">Counter Staff</option>
+                    {roleTemplates.map(rt => (
+                      <option key={rt.id} value={rt.name}>{rt.name}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -1118,7 +1133,7 @@ export const StaffPage: React.FC = () => {
                   <span>Automated Cryptographic Provisioning</span>
                 </div>
                 <p>
-                  A temporary 4-digit PIN and digital invitation will be emailed automatically to activate their pass.
+                  A temporary password and digital invitation will be emailed automatically to activate their pass.
                 </p>
               </div>
 
@@ -1126,13 +1141,13 @@ export const StaffPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsInviteModalOpen(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
+                  className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
+                  className="px-4 py-2 text-[13px] font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
                 >
                   Send Invitation
                 </button>
@@ -1142,58 +1157,163 @@ export const StaffPage: React.FC = () => {
         </div>
       )}
 
-      {/* Edit Role Templates Modal */}
+      {/* Edit Role Templates Modal (Role Builder) */}
       {isEditTemplatesOpen && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in">
           <div className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-lg shadow-2xl space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#EAE6E1]">
               <div>
-                <h3 className="text-base font-bold text-[#1A1615]">Role Templates &amp; Capabilities</h3>
-                <p className="text-xs text-[#7C746C]">Configure permission policies for all store roles</p>
+                <h3 className="text-base font-bold text-[#1A1615]">
+                  {editingRole ? (editingRole.id ? 'Edit Role Template' : 'Create Custom Role') : 'Role Templates & Capabilities'}
+                </h3>
+                <p className="text-xs text-[#7C746C]">
+                  {editingRole ? 'Configure permissions for this specific role tier' : 'Manage permission policies for all store roles'}
+                </p>
               </div>
               <button
-                onClick={() => setIsEditTemplatesOpen(false)}
+                onClick={() => {
+                  setIsEditTemplatesOpen(false);
+                  setEditingRole(null);
+                }}
                 className="text-[#8C827A] hover:text-[#1A1615] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs max-h-96 overflow-y-auto pr-1">
-              {[
-                { name: 'Store Manager', perms: 'Full register access, overrides, till reconciliation, inventory' },
-                { name: 'Barista', perms: 'Quick stamp issuance, voucher redemption, profile lookup' },
-                { name: 'Counter Staff', perms: 'Express stamp scan, order entry only' },
-              ].map((tmpl, idx) => (
-                <div key={idx} className="p-3 rounded-xl border border-[#EAE6E1] bg-[#FAF8F5] space-y-1">
-                  <div className="flex items-center justify-between font-bold text-[#1A1615]">
-                    <span>{tmpl.name}</span>
-                    <span className="text-[10px] text-[#15803D] bg-[#EBF7F0] px-2 py-0.5 rounded font-semibold">Active</span>
-                  </div>
-                  <p className="text-[11px] text-[#7C746C]">{tmpl.perms}</p>
+            {editingRole ? (
+              /* Role Editor Form */
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                <div>
+                  <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                    Role Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editingRole.name}
+                    disabled={editingRole.isSystem}
+                    onChange={(e) => setEditingRole({ ...editingRole, name: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637] disabled:opacity-50"
+                    placeholder="e.g., Shift Supervisor"
+                  />
+                  {editingRole.isSystem && (
+                    <p className="text-[10px] text-[#A37837] mt-1">System role names cannot be changed.</p>
+                  )}
                 </div>
-              ))}
-            </div>
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EAE6E1]">
-              <button
-                type="button"
-                onClick={() => setIsEditTemplatesOpen(false)}
-                className="px-3.5 py-2 text-xs font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsEditTemplatesOpen(false);
-                  showToast('Role templates updated and dispatched to mesh registers.');
-                }}
-                className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white rounded-lg cursor-pointer transition-all shadow-sm"
-              >
-                Save Role Templates
-              </button>
-            </div>
+                <div className="space-y-2">
+                  <h4 className="text-[11px] font-semibold text-[#7C746C] uppercase tracking-wider">System Permissions</h4>
+                  {SYSTEM_CAPABILITIES.map(cap => (
+                    <label key={cap} className="flex items-center justify-between p-2.5 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] cursor-pointer transition-colors">
+                      <span className="text-xs font-medium text-[#1A1615]">{cap}</span>
+                      <input
+                        type="checkbox"
+                        checked={!!editingRole.permissions[cap]}
+                        onChange={(e) => setEditingRole({
+                          ...editingRole,
+                          permissions: { ...editingRole.permissions, [cap]: e.target.checked }
+                        })}
+                        className="w-4 h-4 rounded border-[#D1C9BE] text-[#B38637] focus:ring-[#B38637]"
+                      />
+                    </label>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EAE6E1]">
+                  <button
+                    type="button"
+                    onClick={() => setEditingRole(null)}
+                    className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!editingRole.name.trim()) {
+                        showToast('Role name is required.');
+                        return;
+                      }
+                      
+                      let updatedTemplates;
+                      if (editingRole.id) {
+                        // Update existing
+                        updatedTemplates = roleTemplates.map(rt => rt.id === editingRole.id ? editingRole : rt);
+                      } else {
+                        // Create new
+                        const newRole = { ...editingRole, id: `role-${Date.now()}` };
+                        updatedTemplates = [...roleTemplates, newRole];
+                      }
+                      
+                      setRoleTemplates(updatedTemplates);
+                      setEditingRole(null);
+                      showToast(`Role template "${editingRole.name}" saved successfully.`);
+                    }}
+                    className="px-4 py-2 text-[13px] font-bold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-sm"
+                  >
+                    Save Role
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Role Templates List */
+              <div className="space-y-3">
+                <div className="max-h-96 overflow-y-auto pr-1 space-y-2">
+                  {roleTemplates.map((tmpl) => (
+                    <div key={tmpl.id} className="p-3 rounded-xl border border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-[#1A1615] text-xs">{tmpl.name}</span>
+                          {tmpl.isSystem && (
+                            <span className="text-[9px] text-[#15803D] bg-[#EBF7F0] px-1.5 py-0.5 rounded font-semibold uppercase">System</span>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-[#7C746C] mt-1">
+                          {Object.values(tmpl.permissions).filter(Boolean).length} of {SYSTEM_CAPABILITIES.length} permissions enabled
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => setEditingRole({ ...tmpl })}
+                          className="px-2.5 py-1.5 bg-white border border-[#EAE6E1] rounded text-[11px] font-semibold text-[#1A1615] hover:bg-[#F5F2EC] transition-colors cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                        {!tmpl.isSystem && (
+                          <button
+                            onClick={() => {
+                              setRoleTemplates(roleTemplates.filter(rt => rt.id !== tmpl.id));
+                              showToast(`Role "${tmpl.name}" deleted.`);
+                            }}
+                            className="px-2.5 py-1.5 bg-white border border-[#F2D6D3] rounded text-[11px] font-semibold text-[#DC2626] hover:bg-[#FEE2E2] transition-colors cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-[#EAE6E1]">
+                  <button
+                    type="button"
+                    onClick={() => setEditingRole({ id: '', name: '', isSystem: false, permissions: {} })}
+                    className="px-4 py-2 text-[12px] font-bold text-[#A37837] hover:bg-[#FAF8F5] rounded-lg cursor-pointer flex items-center gap-1"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>Create Custom Role</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditTemplatesOpen(false)}
+                    className="px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-[#EAE6E1] hover:bg-[#D1C9BE] rounded-lg cursor-pointer transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1261,13 +1381,12 @@ export const StaffPage: React.FC = () => {
                   </label>
                   <select
                     value={editRole}
-                    onChange={(e) => setEditRole(e.target.value as any)}
+                    onChange={(e) => setEditRole(e.target.value)}
                     className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] cursor-pointer focus:outline-none focus:border-[#B38637]"
                   >
-                    <option value="Owner (Super Admin)">Owner (Super Admin)</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Barista">Barista</option>
-                    <option value="Counter Staff">Counter Staff</option>
+                    {roleTemplates.map(rt => (
+                      <option key={rt.id} value={rt.name}>{rt.name}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -1307,13 +1426,13 @@ export const StaffPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="px-3.5 py-2 text-xs font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
+                  className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-xs"
+                  className="px-4 py-2 text-[13px] font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-xs"
                 >
                   Save Changes
                 </button>

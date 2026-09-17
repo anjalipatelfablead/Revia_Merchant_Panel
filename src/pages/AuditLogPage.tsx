@@ -17,12 +17,16 @@ import {
   Clock3,
   Wifi,
   Webhook,
-  Server
+  Server,
+  X,
+  UserPlus
 } from 'lucide-react';
 import { AuditLogEntry } from '../types';
+import { RoleTemplate, INITIAL_ROLE_TEMPLATES, SYSTEM_CAPABILITIES } from './StaffPage';
 import { CustomerTypeSettings } from './CustomerTypeSettings';
 import { MerchantPlatformSettings } from './MerchantPlatformSettings';
 import { MerchantProfileSettings } from './MerchantProfileSettings';
+import { AutomatedEventsSettings } from './AutomatedEventsSettings';
 
 interface AuditLogPageProps {
   logs: AuditLogEntry[];
@@ -67,19 +71,29 @@ const MobileAuditView: React.FC<{ logs: AuditLogEntry[] }> = ({ logs }) => {
 
         <div className="mt-5 flex min-h-[62px] items-center gap-2 rounded-xl bg-[#211C19] px-4 py-3 font-mono text-[10px] text-[#B6AFA8]"><span className="h-2 w-2 shrink-0 rounded-full bg-[#20C99A]" /><span className="shrink-0">WITNESS BLOCK #892,104:</span><b className="min-w-0 truncate text-[#20C99A]">sha:7b91e...4f9c</b><span className="ml-auto shrink-0 rounded border border-[#6D5730] px-1.5 py-1 text-[8px] text-[#C99B42]">SEALED</span></div>
 
-        <section className="mt-5 rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex items-start justify-between"><h2 className="flex items-start gap-2 text-[19px] font-bold leading-none"><Cpu className="mt-1 h-4 w-4 shrink-0 text-[#8B681F]" /><span>Active Hardware<br />Mesh</span></h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Cpu className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Downtown Counter 01</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.1 ·<br />192.168.1.104</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Server className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Roastery Reserve Bar 02</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.0 ·<br />192.168.2.88</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-[10px] border border-[#E1D9D0] bg-[#F3EFEA] py-2.5 text-[12px] font-semibold"><Radio className="mr-1 inline h-4 w-4 text-[#8B681F]" />Ping All 6 Terminals</button></section>
+        <section className="mt-5 rounded-xl border border-[#EAE6E1] bg-white p-4 shadow-2xs"><div className="flex items-start justify-between"><h2 className="flex items-start gap-2 text-[19px] font-bold leading-none"><Cpu className="mt-1 h-4 w-4 shrink-0 text-[#8B681F]" /><span>Active Hardware<br />Mesh</span></h2><span className="rounded-full bg-[#F2EEE9] px-3 py-1 text-[11px] leading-tight text-[#756D65]">Auto-Ping<br />30s</span></div><div className="mt-4 space-y-2"><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Cpu className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Downtown Counter 01</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.1 ·<br />192.168.1.104</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">12ms latency</span></span></div><div className="flex min-h-[94px] items-center gap-3 rounded-[10px] bg-[#F3EFEA] p-3"><span className="rounded-[7px] bg-white p-2 text-[#8B681F]"><Server className="h-4 w-4" /></span><div className="min-w-0 flex-1 text-[12px]"><b className="block whitespace-nowrap">Roastery Reserve Bar 02</b><div className="text-[10px] leading-relaxed text-[#756D65]">RevOS v4.2.0 ·<br />192.168.2.88</div></div><span className="shrink-0 text-right text-[10px] text-[#087B55]">• Online<br /><span className="text-[#756D65]">18ms latency</span></span></div></div><button type="button" className="mt-3 w-full rounded-lg border border-[#E1D9D0] bg-[#F3EFEA] px-4 py-2 text-[13px] font-bold"><Radio className="mr-1 inline w-4 h-4 text-[#8B681F]" />Ping All 6 Terminals</button></section>
 
         <section className="mt-6"><div className="flex items-center justify-between"><div><h2 className="text-[19px] font-bold">Audit Event Stream</h2><span className="rounded-full bg-[#FFF4DC] px-2 py-1 text-[10px] font-bold text-[#8B681F]">Live SHA-256</span></div><button type="button" aria-label="Filter audit events" className="rounded-[7px] bg-white p-2 shadow-sm"><SlidersHorizontal className="h-4 w-4" /></button></div><label className="mt-3 flex items-center gap-2 rounded-[10px] border border-[#E1D9D0] bg-white px-3 py-2 text-[11px] text-[#8E847B]"><Search className="h-4 w-4" /><input className="min-w-0 flex-1 bg-transparent outline-none" placeholder="Filter by operator, IP, or hash key..." /></label><div className="mt-3 space-y-3">{visibleLogs.map((log) => { const flagged = log.cryptoState === 'FLAGGED'; const EventIcon = flagged ? AlertTriangle : log.actor.role === 'Admin' ? Download : log.actor.role === 'System' ? RefreshCw : Key; return <article key={log.id} className={`rounded-[12px] border bg-white p-4 shadow-[0_4px_15px_rgba(60,38,20,0.04)] ${flagged ? 'border-[#FFB6B0] bg-[#FFF8F7]' : 'border-[#E9E0D7]'}`}><div className="flex items-start gap-2"><span className={`rounded-[7px] p-2 ${flagged ? 'bg-[#FFE3E1] text-[#C2413A]' : log.actor.role === 'System' ? 'bg-[#E5F8F0] text-[#0D8B61]' : 'bg-[#FCF1DF] text-[#8B681F]'}`}><EventIcon className="h-4 w-4" /></span><div className="min-w-0 flex-1"><div className={`text-[12px] font-semibold ${flagged ? 'text-[#C2413A]' : ''}`}>{log.actor.name} <span className="ml-1 rounded bg-[#F2EEE9] px-1.5 py-1 text-[9px] text-[#756D65]">{log.actor.role}</span></div><div className="text-[10px] text-[#756D65]">{log.target}</div></div><span className="text-[10px] text-[#756D65]">{log.timestamp}</span></div><div className={`mt-3 rounded-[8px] p-3 text-[12px] ${flagged ? 'border border-[#FFB6B0] bg-white text-[#C2413A]' : 'bg-[#F3EFEA]'}`}><b>{flagged ? 'Blocked unauthorized IP access attempt' : log.action.replaceAll('_', ' ')}</b><div className="mt-1 text-[10px] text-[#756D65]">{flagged ? log.ip : 'Cryptographic witness verified · hash sealed'}</div></div></article>; })}</div></section>
 
-        <button type="button" className="mt-6 flex w-full items-center justify-center gap-2 rounded-[11px] bg-gradient-to-r from-[#D4A753] to-[#9E782F] py-3.5 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><Download className="h-4 w-4" />Export Immutable Audit Dossier (CSV/PDF)</button><button type="button" className="mt-3 w-full rounded-[11px] border border-[#E1D9D0] bg-white py-3 text-[12px] font-semibold"><Lock className="mr-1 inline h-4 w-4" />Commit &amp; Seal New Policy Hash</button>
+        <button type="button" className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] px-4 py-2 text-[13px] font-bold text-white shadow-[0_5px_12px_rgba(158,120,47,0.2)]"><Download className="w-4 h-4" />Export Immutable Audit Dossier (CSV/PDF)</button><button type="button" className="mt-3 w-full rounded-lg border border-[#E1D9D0] bg-white px-4 py-2 text-[13px] font-bold"><Lock className="w-4 h-4 mr-1 inline" />Commit &amp; Seal New Policy Hash</button>
       </div>
     </div>
   );
 };
 
 const AccessControlSettings: React.FC = () => {
-  const [invitingAdmin, setInvitingAdmin] = useState(false);
   const [reviewingPolicies, setReviewingPolicies] = useState(false);
+
+  // Role Builder State
+  const [roleTemplates, setRoleTemplates] = useState<RoleTemplate[]>(INITIAL_ROLE_TEMPLATES);
+  const [editingRole, setEditingRole] = useState<RoleTemplate | null>(null);
+  const [isRoleBuilderOpen, setIsRoleBuilderOpen] = useState(false);
+  const [feedbackToast, setFeedbackToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setFeedbackToast(msg);
+    setTimeout(() => setFeedbackToast(null), 3000);
+  };
 
   const identities = [
     { name: 'Elena Rostova', role: 'General Manager', email: 'elena@revia.co', scopes: 'store:owner', status: 'Active' },
@@ -87,14 +101,8 @@ const AccessControlSettings: React.FC = () => {
     { name: 'Avery Chen', role: 'Finance Reviewer', email: 'finance@revia.co', scopes: 'billing:read', status: 'Pending' },
   ];
 
-  const handleInviteAdmin = () => {
-    setInvitingAdmin(true);
-    window.setTimeout(() => setInvitingAdmin(false), 700);
-  };
-
   const handleReviewPolicies = () => {
-    setReviewingPolicies(true);
-    window.setTimeout(() => setReviewingPolicies(false), 700);
+    setIsRoleBuilderOpen(true);
   };
 
   return (
@@ -107,8 +115,15 @@ const AccessControlSettings: React.FC = () => {
           </div>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">Identity & Permission Matrix</h2>
         </div>
-        <button type="button" onClick={handleInviteAdmin} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66] cursor-pointer">
-          <Lock className="h-3.5 w-3.5 text-[#B7842C]" /> {invitingAdmin ? 'Inviting...' : 'Invite Admin'}
+        <button
+          type="button"
+          onClick={() => {
+            setEditingRole({ id: '', name: '', isSystem: false, permissions: {} });
+            setIsRoleBuilderOpen(true);
+          }}
+          className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#FAF8F5] cursor-pointer"
+        >
+          <UserPlus className="w-4 h-4 text-[#B7842C]" /> Create Custom Role
         </button>
       </div>
 
@@ -123,21 +138,34 @@ const AccessControlSettings: React.FC = () => {
               <span className="rounded-full bg-[#E6F4ED] px-2 py-1 text-[8px] font-bold text-[#0D7A53]">3 ACTIVE</span>
             </div>
           </div>
-          {identities.map((person) => (
-            <div key={person.name} className="flex items-center justify-between rounded-lg border border-[#E5E0D8] bg-white p-3">
-              <div className="flex items-center gap-3">
-                <span className="rounded-full bg-[#F5F1EA] px-3 py-2 text-[#B7842C] font-bold text-[10px]">{person.name.split(' ').map((s) => s[0]).join('')}</span>
-                <div>
-                  <div className="text-[12px] font-bold text-[#1A1615]">{person.name}</div>
-                  <div className="text-[10px] text-[#6E6A66]">{person.role} · {person.email}</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="rounded-full bg-[#FAF8F5] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">{person.scopes}</span>
-                <span className={`rounded-full px-2 py-1 text-[8px] font-bold ${person.status === 'Pending' ? 'bg-[#FFF4DC] text-[#B7842C]' : 'bg-[#E6F4ED] text-[#0D7A53]'}`}>{person.status}</span>
-              </div>
-            </div>
-          ))}
+          <div className="overflow-x-auto rounded-lg border border-[#E5E0D8] bg-white">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-[#E5E0D8] bg-[#FAF8F5] text-[10px] uppercase font-bold tracking-wider text-[#6E6A66]">
+                  <th className="py-2.5 px-3">SYSTEM PERMISSION CAPABILITY</th>
+                  {roleTemplates.map(role => (
+                    <th key={role.id} className="py-2.5 px-3 text-center">{role.name.toUpperCase()}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E5E0D8] text-xs">
+                {SYSTEM_CAPABILITIES.map((cap, idx) => (
+                  <tr key={idx}>
+                    <td className="py-2.5 px-3 text-[#1A1615] font-medium">{cap}</td>
+                    {roleTemplates.map(role => (
+                      <td key={role.id} className="py-2.5 px-3 text-center">
+                        {role.permissions[cap] ? (
+                          <CheckCircle2 className="w-4 h-4 text-[#0D7A53] mx-auto" />
+                        ) : (
+                          <span className="w-4 h-4 rounded-full border border-[#E5E0D8] text-[#9E9A93] flex items-center justify-center text-[10px] mx-auto">✕</span>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="rounded-lg border border-[#E5E0D8] bg-[#FCFBF9] p-3">
             <div className="flex items-center justify-between">
@@ -192,11 +220,175 @@ const AccessControlSettings: React.FC = () => {
               </div>
             </div>
           </div>
-          <button type="button" onClick={handleReviewPolicies} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615] cursor-pointer">
-            {reviewingPolicies ? 'Reviewing...' : 'Review Access Policies'}
+          <button type="button" onClick={handleReviewPolicies} className="mt-4 w-full rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] cursor-pointer">
+            Review Access Policies
           </button>
         </aside>
       </div>
+
+      {/* Role Builder Modal */}
+      {isRoleBuilderOpen && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 backdrop-blur-2xs animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-[#EAE6E1] p-5 w-full max-w-lg shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EAE6E1]">
+              <div>
+                <h3 className="text-base font-bold text-[#1A1615]">
+                  {editingRole ? (editingRole.id ? 'Edit Role Template' : 'Create Custom Role') : 'Role Templates & Capabilities'}
+                </h3>
+                <p className="text-xs text-[#7C746C]">
+                  {editingRole ? 'Configure permissions for this specific role tier' : 'Manage permission policies for all store roles'}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setIsRoleBuilderOpen(false);
+                  setEditingRole(null);
+                }}
+                className="text-[#8C827A] hover:text-[#1A1615] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {editingRole ? (
+              /* Role Editor Form */
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                <div>
+                  <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
+                    Role Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editingRole.name}
+                    disabled={editingRole.isSystem}
+                    onChange={(e) => setEditingRole({ ...editingRole, name: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-[#1A1615] focus:outline-none focus:border-[#B38637] disabled:opacity-50"
+                    placeholder="e.g., Shift Supervisor"
+                  />
+                  {editingRole.isSystem && (
+                    <p className="text-[10px] text-[#A37837] mt-1">System role names cannot be changed.</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-[11px] font-semibold text-[#7C746C] uppercase tracking-wider">System Permissions</h4>
+                  {SYSTEM_CAPABILITIES.map(cap => (
+                    <label key={cap} className="flex items-center justify-between p-2.5 rounded-lg border border-[#EAE6E1] bg-white hover:bg-[#FAF8F5] cursor-pointer transition-colors">
+                      <span className="text-xs font-medium text-[#1A1615]">{cap}</span>
+                      <input
+                        type="checkbox"
+                        checked={!!editingRole.permissions[cap]}
+                        onChange={(e) => setEditingRole({
+                          ...editingRole,
+                          permissions: { ...editingRole.permissions, [cap]: e.target.checked }
+                        })}
+                        className="w-4 h-4 rounded border-[#D1C9BE] text-[#B38637] focus:ring-[#B38637]"
+                      />
+                    </label>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EAE6E1]">
+                  <button
+                    type="button"
+                    onClick={() => setEditingRole(null)}
+                    className="px-4 py-2 text-[13px] font-semibold text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!editingRole.name.trim()) {
+                        showToast('Role name is required.');
+                        return;
+                      }
+
+                      let updatedTemplates;
+                      if (editingRole.id) {
+                        updatedTemplates = roleTemplates.map(rt => rt.id === editingRole.id ? editingRole : rt);
+                      } else {
+                        const newRole = { ...editingRole, id: `role-${Date.now()}` };
+                        updatedTemplates = [...roleTemplates, newRole];
+                      }
+
+                      setRoleTemplates(updatedTemplates);
+                      setEditingRole(null);
+                      showToast(`Role template "${editingRole.name}" saved successfully.`);
+                    }}
+                    className="px-4 py-2 text-[13px] font-bold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer transition-colors shadow-sm"
+                  >
+                    Save Role
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Role Templates List */
+              <div className="space-y-3">
+                <div className="max-h-96 overflow-y-auto pr-1 space-y-2">
+                  {roleTemplates.map((tmpl) => (
+                    <div key={tmpl.id} className="p-3 rounded-xl border border-[#EAE6E1] bg-[#FAF8F5] flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-[#1A1615] text-xs">{tmpl.name}</span>
+                          {tmpl.isSystem && (
+                            <span className="text-[9px] text-[#15803D] bg-[#EBF7F0] px-1.5 py-0.5 rounded font-semibold uppercase">System</span>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-[#7C746C] mt-1">
+                          {Object.values(tmpl.permissions).filter(Boolean).length} of {SYSTEM_CAPABILITIES.length} permissions enabled
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => setEditingRole({ ...tmpl })}
+                          className="px-2.5 py-1.5 bg-white border border-[#EAE6E1] rounded text-[11px] font-semibold text-[#1A1615] hover:bg-[#F5F2EC] transition-colors cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                        {!tmpl.isSystem && (
+                          <button
+                            onClick={() => {
+                              setRoleTemplates(roleTemplates.filter(rt => rt.id !== tmpl.id));
+                              showToast(`Role "${tmpl.name}" deleted.`);
+                            }}
+                            className="px-2.5 py-1.5 bg-white border border-[#F2D6D3] rounded text-[11px] font-semibold text-[#DC2626] hover:bg-[#FEE2E2] transition-colors cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-[#EAE6E1]">
+                  <button
+                    type="button"
+                    onClick={() => setEditingRole({ id: '', name: '', isSystem: false, permissions: {} })}
+                    className="px-4 py-2 text-[12px] font-bold text-[#A37837] hover:bg-[#FAF8F5] rounded-lg cursor-pointer flex items-center gap-1"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>Create Custom Role</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsRoleBuilderOpen(false)}
+                    className="px-4 py-2 text-[13px] font-semibold text-[#1A1615] bg-[#EAE6E1] hover:bg-[#D1C9BE] rounded-lg cursor-pointer transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {feedbackToast && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm shadow-xl z-50 animate-in fade-in slide-in-from-bottom-4">
+          {feedbackToast}
+        </div>
+      )}
     </div>
   );
 };
@@ -225,8 +417,8 @@ const ApiKeysWebhooksSettings: React.FC = () => {
           </div>
           <h2 className="mt-1 text-[22px] font-bold tracking-tight text-[#1A1615]">API Access & Integration</h2>
         </div>
-        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex w-full sm:w-auto justify-center items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-3 py-1.5 text-[10px] font-bold text-[#6E6A66] cursor-pointer">
-          <Key className="h-3.5 w-3.5 text-[#B7842C]" /> {generatingSecret ? 'Generating...' : 'Generate API Secret'}
+        <button type="button" onClick={handleGenerateApiSecret} className="inline-flex w-full sm:w-auto justify-center items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] cursor-pointer">
+          <Key className="w-4 h-4 text-[#B7842C]" /> {generatingSecret ? 'Generating...' : 'Generate API Secret'}
         </button>
       </div>
 
@@ -286,7 +478,7 @@ const ApiKeysWebhooksSettings: React.FC = () => {
               <span className="rounded-full bg-[#F5F1EA] px-2 py-1 text-[8px] font-bold text-[#6E6A66]">IDLE</span>
             </div>
           </div>
-          <button type="button" onClick={handleRotateSigningSecret} className="mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615] cursor-pointer">
+          <button type="button" onClick={handleRotateSigningSecret} className="mt-4 w-full rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] cursor-pointer">
             {rotatingSigningSecret ? 'Rotating...' : 'Rotate Signing Secret'}
           </button>
         </aside>
@@ -387,7 +579,7 @@ const PosHardwareSettings: React.FC = () => {
               </div>
             </div>
           </div>
-          <button type="button" onClick={handleReviewHardwarePolicy} className="cursor-pointer mt-4 w-full rounded-md border border-[#E5E0D8] bg-white px-3 py-2 text-[10px] font-bold text-[#1A1615]">
+          <button type="button" onClick={handleReviewHardwarePolicy} className="cursor-pointer mt-4 w-full rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615]">
             {policyReviewing ? 'Reviewing...' : 'Review Hardware Policy'}
           </button>
         </aside>
@@ -399,7 +591,7 @@ const PosHardwareSettings: React.FC = () => {
 export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
   const [selectedHash, setSelectedHash] = useState<string | null>(null);
   const [copiedHash, setCopiedHash] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'merchant_profile' | 'audit' | 'customer_tiers' | 'general_brand' | 'access_control'>('merchant_profile');
+  const [activeTab, setActiveTab] = useState<'merchant_profile' | 'audit' | 'customer_tiers' | 'general_brand' | 'access_control' | 'automated_events'>('merchant_profile');
 
   // Security Policy Toggles
   const [enforceMfa, setEnforceMfa] = useState<boolean>(true);
@@ -541,15 +733,15 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                   <span className="text-[8px] text-[#A09A91]">• Revision v2.14r4</span>
                 </div> */}
               <h1 className="mt-0.5 text-2xl sm:text-[28px] font-bold tracking-tight text-[#1A1615]">
-                Merchant Settings & Security Audit Log
+                Merchant Settings
               </h1>
             </div>
 
             <button
               onClick={exportAuditDossier}
-              className="inline-flex w-fit cursor-pointer items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2.5 py-1.5 text-[9px] font-semibold text-[#1A1615] shadow-2xs transition-colors hover:bg-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#D4A753]/40"
+              className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#1A1615] shadow-2xs transition-colors hover:bg-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#D4A753]/40"
             >
-              <Download className="h-3.5 w-3.5 text-[#9E782F]" />
+              <Download className="w-4 h-4 text-[#9E782F]" />
               Export Immutable Dossier (CSV/PDF)
             </button>
           </div>
@@ -605,16 +797,25 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
               >
                 Access Control
               </button>
+              <button
+                className={`cursor-pointer min-w-max flex-1 rounded-md px-2.5 py-1.5 text-[11px] sm:text-[11px] ${activeTab === 'automated_events' ? 'bg-[#C99B42] font-bold text-white shadow-sm' : 'font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]'}`}
+                type="button"
+                onClick={() => setActiveTab('automated_events')}
+              >
+                Automated Events
+              </button>
             </div>
           </nav>
         </header>
 
         {activeTab === 'access_control' ? (
           <AccessControlSettings />
-        // ) : activeTab === 'api_keys_webhooks' ? (
-        //   <ApiKeysWebhooksSettings />
-        // ) : activeTab === 'pos_hardware' ? (
-        //   <PosHardwareSettings />
+        ) : activeTab === 'automated_events' ? (
+          <AutomatedEventsSettings />
+          // ) : activeTab === 'api_keys_webhooks' ? (
+          //   <ApiKeysWebhooksSettings />
+          // ) : activeTab === 'pos_hardware' ? (
+          //   <PosHardwareSettings />
         ) : activeTab === 'audit' ? (
           <>
             {/* Governance summary */}
@@ -680,9 +881,9 @@ export const AuditLogPage: React.FC<AuditLogPageProps> = ({ logs }) => {
                         Cryptographically chained ledger recording all store administration,<br className="hidden sm:block" /> loyalty redemptions, and hardware handshakes.
                       </p>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <button type="button" onClick={clearFilters} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><SlidersHorizontal className="h-3 w-3" /> Clear Filters</button>
-                      <button type="button" onClick={refreshLogs} className="inline-flex items-center gap-1 rounded-md border border-[#E5E0D8] bg-white px-2 py-1.5 text-[9px] font-semibold text-[#6E6A66] hover:bg-[#F5F1EA]"><RefreshCw className={`h-3 w-3 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Refreshing...' : 'Live Refresh'}</button>
+                    <div className="flex items-center gap-2">
+                      <button type="button" onClick={clearFilters} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#F5F1EA] cursor-pointer"><SlidersHorizontal className="w-4 h-4" /> Clear Filters</button>
+                      <button type="button" onClick={refreshLogs} className="inline-flex items-center gap-2 rounded-lg border border-[#E5E0D8] bg-white px-4 py-2 text-[13px] font-bold text-[#6E6A66] hover:bg-[#F5F1EA] cursor-pointer"><RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Refreshing...' : 'Live Refresh'}</button>
                     </div>
                   </div>
                   <div className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-[minmax(0,1.7fr)_1fr_1fr_auto]">

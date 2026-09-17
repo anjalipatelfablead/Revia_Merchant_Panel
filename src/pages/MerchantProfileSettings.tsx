@@ -44,7 +44,7 @@ export const MerchantProfileSettings: React.FC = () => {
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
-              className="px-5 py-2.5 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-xl font-bold text-sm hover:bg-[#F5F1EA] transition-colors cursor-pointer"
+              className="px-4 py-2 bg-[#FAF8F5] border border-[#EFECE6] text-[#1A1615] rounded-lg font-bold text-[13px] hover:bg-[#F5F1EA] transition-colors cursor-pointer"
             >
               Edit Profile
             </button>
@@ -52,13 +52,13 @@ export const MerchantProfileSettings: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-5 py-2.5 bg-white border border-[#EFECE6] text-[#6E6A66] rounded-xl font-bold text-sm hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                className="px-4 py-2 bg-white border border-[#EFECE6] text-[#6E6A66] rounded-lg font-bold text-[13px] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
-                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white rounded-xl font-bold text-sm shadow-lg shadow-[#D9A94E]/20 hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#D9A94E] to-[#B8862E] text-white rounded-lg font-bold text-[13px] shadow-lg shadow-[#D9A94E]/20 hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 Save Changes
