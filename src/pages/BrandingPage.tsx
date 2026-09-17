@@ -81,7 +81,7 @@ export const BrandingPage: React.FC<BrandingPageProps> = ({ onNavigate }) => {
                      <RotateCcw className="w-4 h-4" /> Discard Changes
                   </button>
                   <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[#D4A753] to-[#B38637] border border-[#A37837] rounded-lg text-[13px] font-bold text-white shadow-sm hover:from-[#DFB35A] hover:to-[#C0903B] transition-colors whitespace-nowrap shrink-0 cursor-pointer">
-                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens (⌘S)
+                     <Sparkles className="w-4 h-4" /> Publish Brand Tokens
                   </button>
                </div>
             </div>
