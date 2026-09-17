@@ -58,12 +58,14 @@ interface StaffMemberDetailed {
 }
 
 export const SYSTEM_CAPABILITIES = [
-  'POS Manual Stamp Issuance',
-  'Issue Reward / Redeem Voucher',
-  'Void / Refund Customer Transactions',
-  'Edit Loyalty Rules & Multipliers',
-  'View Gross Revenue & Audit Logs',
-  'Modify Branch Hardware & Beacons'
+  'Access Dashboard',
+  'Manage Branches',
+  'Manage Customers',
+  'Manage Campaigns',
+  'Manage Staff & RBAC',
+  'Manage Loyalty Program',
+  'Manage Promo Codes',
+  'Manage Reward Catalog'
 ];
 
 export interface RoleTemplate {
@@ -79,12 +81,14 @@ export const INITIAL_ROLE_TEMPLATES: RoleTemplate[] = [
     name: 'Owner (Super Admin)',
     isSystem: true,
     permissions: {
-      'POS Manual Stamp Issuance': true,
-      'Issue Reward / Redeem Voucher': true,
-      'Void / Refund Customer Transactions': true,
-      'Edit Loyalty Rules & Multipliers': true,
-      'View Gross Revenue & Audit Logs': true,
-      'Modify Branch Hardware & Beacons': true,
+      'Access Dashboard': true,
+      'Manage Branches': true,
+      'Manage Customers': true,
+      'Manage Campaigns': true,
+      'Manage Staff & RBAC': true,
+      'Manage Loyalty Program': true,
+      'Manage Promo Codes': true,
+      'Manage Reward Catalog': true
     }
   },
   {
@@ -92,12 +96,14 @@ export const INITIAL_ROLE_TEMPLATES: RoleTemplate[] = [
     name: 'Manager',
     isSystem: true,
     permissions: {
-      'POS Manual Stamp Issuance': true,
-      'Issue Reward / Redeem Voucher': true,
-      'Void / Refund Customer Transactions': true,
-      'Edit Loyalty Rules & Multipliers': true,
-      'View Gross Revenue & Audit Logs': true,
-      'Modify Branch Hardware & Beacons': true,
+      'Access Dashboard': true,
+      'Manage Branches': true,
+      'Manage Customers': true,
+      'Manage Campaigns': true,
+      'Manage Staff & RBAC': true,
+      'Manage Loyalty Program': true,
+      'Manage Promo Codes': true,
+      'Manage Reward Catalog': true
     }
   },
   {
@@ -105,12 +111,14 @@ export const INITIAL_ROLE_TEMPLATES: RoleTemplate[] = [
     name: 'Barista',
     isSystem: true,
     permissions: {
-      'POS Manual Stamp Issuance': true,
-      'Issue Reward / Redeem Voucher': true,
-      'Void / Refund Customer Transactions': false,
-      'Edit Loyalty Rules & Multipliers': false,
-      'View Gross Revenue & Audit Logs': false,
-      'Modify Branch Hardware & Beacons': false,
+      'Access Dashboard': true,
+      'Manage Branches': false,
+      'Manage Customers': false,
+      'Manage Campaigns': false,
+      'Manage Staff & RBAC': false,
+      'Manage Loyalty Program': false,
+      'Manage Promo Codes': false,
+      'Manage Reward Catalog': false
     }
   },
   {
@@ -118,12 +126,14 @@ export const INITIAL_ROLE_TEMPLATES: RoleTemplate[] = [
     name: 'Counter Staff',
     isSystem: true,
     permissions: {
-      'POS Manual Stamp Issuance': true,
-      'Issue Reward / Redeem Voucher': true,
-      'Void / Refund Customer Transactions': false,
-      'Edit Loyalty Rules & Multipliers': false,
-      'View Gross Revenue & Audit Logs': false,
-      'Modify Branch Hardware & Beacons': false,
+      'Access Dashboard': true,
+      'Manage Branches': false,
+      'Manage Customers': false,
+      'Manage Campaigns': false,
+      'Manage Staff & RBAC': false,
+      'Manage Loyalty Program': false,
+      'Manage Promo Codes': false,
+      'Manage Reward Catalog': false
     }
   }
 ];
