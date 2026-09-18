@@ -14,6 +14,7 @@ import {
   Mail,
   Minus,
   Plus,
+  Rocket,
   Radio,
   Wifi,
   ChevronDown,
@@ -128,13 +129,13 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
         },
         ...(posCount > 1
           ? [
-              {
-                name: `Terminal 2 (Mobile Order Pickup)`,
-                badge: 'Clover' as const,
-                detail: `Clover Mini POS • Online, just now`,
-                icon: 'pos' as const,
-              },
-            ]
+            {
+              name: `Terminal 2 (Mobile Order Pickup)`,
+              badge: 'Clover' as const,
+              detail: `Clover Mini POS • Online, just now`,
+              icon: 'pos' as const,
+            },
+          ]
           : []),
         {
           name: `Beacon #${outletCode.replace('REV-', '')} (Front NFC Stand)`,
@@ -218,7 +219,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
             disabled={isSubmitting}
             className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#D4A753] to-[#9E782F] hover:opacity-95 text-white text-[13px] font-bold flex items-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
           >
-            <Plus className="w-4 h-4 text-white" />
+            <Rocket className="w-4 h-4 text-white" />
             <span>Provision &amp; Launch Branch</span>
           </button>
         </div>
@@ -294,11 +295,10 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setVenueProfile('roastery')}
-                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${
-                      venueProfile === 'roastery'
-                        ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
-                        : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
-                    }`}
+                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${venueProfile === 'roastery'
+                      ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
+                      : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
+                      }`}
                   >
                     <Coffee className={`w-4 h-4 mb-2 ${venueProfile === 'roastery' ? 'text-white' : 'text-[#8C827A]'}`} />
                     <div className="text-xs font-bold leading-tight">
@@ -313,11 +313,10 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setVenueProfile('boutique')}
-                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${
-                      venueProfile === 'boutique'
-                        ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
-                        : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
-                    }`}
+                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${venueProfile === 'boutique'
+                      ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
+                      : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
+                      }`}
                   >
                     <Store className={`w-4 h-4 mb-2 ${venueProfile === 'boutique' ? 'text-white' : 'text-[#8C827A]'}`} />
                     <div className="text-xs font-bold leading-tight">
@@ -332,11 +331,10 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setVenueProfile('tasting')}
-                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${
-                      venueProfile === 'tasting'
-                        ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
-                        : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
-                    }`}
+                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${venueProfile === 'tasting'
+                      ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
+                      : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
+                      }`}
                   >
                     <Wine className={`w-4 h-4 mb-2 ${venueProfile === 'tasting' ? 'text-white' : 'text-[#8C827A]'}`} />
                     <div className="text-xs font-bold leading-tight">
@@ -351,11 +349,10 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setVenueProfile('popup')}
-                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${
-                      venueProfile === 'popup'
-                        ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
-                        : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
-                    }`}
+                    className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${venueProfile === 'popup'
+                      ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
+                      : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
+                      }`}
                   >
                     <Tent className={`w-4 h-4 mb-2 ${venueProfile === 'popup' ? 'text-white' : 'text-[#8C827A]'}`} />
                     <div className="text-xs font-bold leading-tight">
@@ -439,11 +436,10 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                         key={day}
                         type="button"
                         onClick={() => toggleDay(day)}
-                        className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
-                          isSelected
-                            ? 'bg-[#B38637] text-white'
-                            : 'bg-white text-[#7C746C] border border-[#EAE6E1] hover:bg-[#F5F2EC]'
-                        }`}
+                        className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${isSelected
+                          ? 'bg-[#B38637] text-white'
+                          : 'bg-white text-[#7C746C] border border-[#EAE6E1] hover:bg-[#F5F2EC]'
+                          }`}
                       >
                         {day}
                       </button>
@@ -510,9 +506,8 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           </div>
 
           {/* ================= PHASE 02 CARD ================= */}
-          <div className="bg-white border border-[#EAE6E1] rounded-2xl shadow-2xs overflow-hidden border-l-4 border-l-[#15803D]">
+          {/* <div className="bg-white border border-[#EAE6E1] rounded-2xl shadow-2xs overflow-hidden border-l-4 border-l-[#15803D]">
             <div className="p-6 space-y-6">
-              {/* Card Header with Phase Pill and Mesh Ready Pill */}
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                 <div>
                   <span className="inline-block bg-[#FAF6EE] text-[#9E782F] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase mb-1">
@@ -526,16 +521,13 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                   </p>
                 </div>
 
-                {/* Mesh Ready Pill */}
                 <div className="flex items-center gap-1.5 bg-[#EBF7F0] border border-[#CEEBD9] px-2.5 py-0.5 rounded-full text-[11px] font-bold text-[#15803D] shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] animate-pulse" />
                   <span>Mesh Ready</span>
                 </div>
               </div>
 
-              {/* 2 Hardware Boxes */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Box 1: Counter POS Terminals */}
                 <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between space-y-3">
                   <div className="flex items-start justify-between">
                     <div>
@@ -547,7 +539,6 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       </div>
                     </div>
 
-                    {/* Stepper controls */}
                     <div className="flex items-center gap-2 bg-white border border-[#EAE6E1] rounded-lg p-1 shadow-2xs">
                       <button
                         type="button"
@@ -571,14 +562,12 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                     </div>
                   </div>
 
-                  {/* Footnote note */}
                   <div className="pt-2 border-t border-[#EAE6E1] text-[11px] text-[#7C746C] flex items-center gap-1.5">
                     <Radio className="w-3.5 h-3.5 text-[#15803D] shrink-0" />
                     <span>Includes {posCount} dedicated receipt printers &amp; customer displays.</span>
                   </div>
                 </div>
 
-                {/* Box 2: NFC Tap-to-Stamp Station */}
                 <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 flex flex-col justify-between space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
@@ -590,7 +579,6 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                       </div>
                     </div>
 
-                    {/* Toggle Switch */}
                     <button
                       type="button"
                       onClick={() => setNfcEnabled(!nfcEnabled)}
@@ -612,7 +600,6 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                 </div>
               </div>
 
-              {/* Designated Head of Atelier (General Manager) */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[#3D3732] block">
                   Designated General Manager
@@ -640,7 +627,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Right Column: Counter Stand Preview & Deployment Kit */}
@@ -845,7 +832,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
           </button>
 
           {/* STANDARD BLUEPRINT Card */}
-          <div className="bg-white border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-2xs">
+          {/* <div className="bg-white border border-[#EAE6E1] rounded-xl p-3 flex items-center gap-3 shadow-2xs">
             <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-[#EAE6E1]">
               <img
                 src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=150&auto=format&fit=crop&q=80"
@@ -864,7 +851,7 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
                 Pre-approved acoustics &amp; bar flow layout applied.
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
