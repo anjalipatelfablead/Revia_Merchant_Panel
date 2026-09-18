@@ -25,7 +25,12 @@ import {
   Table as TableIcon,
   Map,
   Check,
-  Trash2
+  Trash2,
+  RotateCw,
+  Wine,
+  Tent,
+  Phone,
+  Mail
 } from 'lucide-react';
 import { NavRoute, OutletsData } from '../types';
 import { INITIAL_OUTLETS } from '../data/outletsData';
@@ -83,6 +88,57 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
   const [newAddress, setNewAddress] = useState('');
   const [newManager, setNewManager] = useState('');
 
+  const [editBranchName, setEditBranchName] = useState('SoHo Roastery & Tasting Salon');
+  const [editOutletCode, setEditOutletCode] = useState('REV-NYC-04');
+  const [editVenueProfile, setEditVenueProfile] = useState<'roastery' | 'boutique' | 'tasting' | 'popup'>('roastery');
+  const [editStreetAddress, setEditStreetAddress] = useState('482 Broome Street, Floor 1');
+  const [editCity, setEditCity] = useState('New York');
+  const [editState, setEditState] = useState('NY');
+  const [editZipCode, setEditZipCode] = useState('10013');
+  const [editCountry, setEditCountry] = useState('United States');
+  const [editSelectedDays, setEditSelectedDays] = useState<string[]>(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+  const [editOpenTime, setEditOpenTime] = useState('07:30 AM');
+  const [editCloseTime, setEditCloseTime] = useState('08:00 PM');
+  const [editPhone, setEditPhone] = useState('+1 (212) 555-0198');
+  const [editEmail, setEditEmail] = useState('soho.roastery@revia.coffee');
+
+  const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  const toggleEditDay = (day: string) => {
+    if (editSelectedDays.includes(day)) {
+      if (editSelectedDays.length > 1) {
+        setEditSelectedDays(editSelectedDays.filter((d) => d !== day));
+      }
+    } else {
+      setEditSelectedDays([...editSelectedDays, day]);
+    }
+  };
+
+  const handleEditRegenerateCode = () => {
+    const prefixes = ['NYC', 'SOHO', 'MANH', 'BKLYN', 'WST'];
+    const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const randomNum = String(Math.floor(Math.random() * 90) + 10);
+    setEditOutletCode(`REV-${randomPrefix}-${randomNum}`);
+  };
+
+  const selectedOutlet = outlets.find((o) => o.id === selectedOutletId) || outlets[0];
+
+  // Populate edit modal state when opened
+  useEffect(() => {
+    if (isEditModalOpen && selectedOutlet) {
+      setEditBranchName(selectedOutlet.name);
+      setEditOutletCode(selectedOutlet.id || 'REV-NYC-04');
+      setEditVenueProfile('roastery');
+      const parts = selectedOutlet.address.split(', ');
+      setEditStreetAddress(parts[0] || '');
+      setEditCity(parts[1] || '');
+      const stateZip = (parts[2] || '').split(' ');
+      setEditState(stateZip[0] || '');
+      setEditZipCode(stateZip[1] || '');
+      setEditCountry('United States');
+    }
+  }, [isEditModalOpen, selectedOutlet]);
+
   const [branchToDelete, setBranchToDelete] = useState<string | null>(null);
 
   const handleDeleteBranch = (id: string) => {
@@ -105,8 +161,6 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
     setFeedbackToast(msg);
     setTimeout(() => setFeedbackToast(null), 3000);
   };
-
-  const selectedOutlet = outlets.find((o) => o.id === selectedOutletId) || outlets[0];
 
   const filteredOutlets = outlets.filter((outlet) => {
     const matchesSearch =
@@ -799,10 +853,10 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
                 <span className="text-[10px] uppercase font-bold text-[#8C827A] tracking-wider">
                   HARDWARE &amp; DYNAMIC BEACONS ({selectedOutlet.hardware.length})
                 </span>
-                <span className="text-[11px] text-[#15803D] font-semibold flex items-center gap-1">
+                {/* <span className="text-[11px] text-[#15803D] font-semibold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
                   All Healthy
-                </span>
+                </span> */}
               </div>
 
               <div className="space-y-2">
@@ -999,69 +1053,280 @@ export const BranchesPage: React.FC<BranchesPageProps> = ({
       {/* Edit Details Modal */}
       {isEditModalOpen && selectedOutlet && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl border border-[#EAE6E1] p-5 w-full max-w-md shadow-2xl space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-[#1A1615]">
-                Edit {selectedOutlet.shortName} Details
-              </h3>
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="text-[#8C827A] hover:text-[#1A1615] cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+          <div className="bg-white rounded-xl border border-[#EAE6E1] p-0 w-full max-w-3xl shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            {/* The form from AddNewBranchPage */}
+            <div className="bg-white rounded-xl overflow-hidden border-l-4 border-l-[#B38637]">
+              <div className="p-6 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
 
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
-                  Operating Window
-                </label>
-                <input
-                  type="text"
-                  defaultValue={selectedOutlet.hours}
-                  className="w-full px-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs"
-                />
-              </div>
+                      <button
+                        onClick={() => setIsEditModalOpen(false)}
+                        className="text-[#8C827A] hover:text-[#1A1615] cursor-pointer sm:hidden"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <h2 className="text-base font-bold text-[#1A1615]">
+                      Basic Identity &amp; Location
+                    </h2>
+                    <p className="text-xs text-[#7C746C] mt-0.5">
+                      Establish venue registry, physical geography, and guest contact points.
+                    </p>
+                  </div>
 
-              <div>
-                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
-                  Assigned Store Manager
-                </label>
-                <input
-                  type="text"
-                  defaultValue={selectedOutlet.manager}
-                  className="w-full px-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs"
-                />
-              </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 bg-[#FAF8F5] border border-[#EAE6E1] px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold text-[#5C554E] shrink-0">
+                      <span>CODE: {editOutletCode}</span>
+                      <button
+                        onClick={handleEditRegenerateCode}
+                        title="Generate new outlet code"
+                        className="p-0.5 hover:text-[#1A1615] transition-colors cursor-pointer"
+                      >
+                        <RotateCw className="w-3 h-3 text-[#8C827A]" />
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setIsEditModalOpen(false)}
+                      className="text-[#8C827A] hover:text-[#1A1615] cursor-pointer hidden sm:block ml-2"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
 
-              <div>
-                <label className="text-[11px] font-semibold text-[#7C746C] block mb-1">
-                  Tax Profile
-                </label>
-                <input
-                  type="text"
-                  defaultValue={selectedOutlet.taxProfile}
-                  className="w-full px-3 py-1.5 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs"
-                />
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                  <div className="md:col-span-7 space-y-1.5">
+                    <label className="text-xs font-semibold text-[#3D3732] flex items-center gap-1">
+                      Branch Display Name <span className="text-[#D32F2F]">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={editBranchName}
+                      onChange={(e) => setEditBranchName(e.target.value)}
+                      placeholder="e.g. SoHo Roastery & Tasting Salon"
+                      className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                    />
+                  </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EAE6E1]">
-                <button
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="px-4 py-2 text-[13px] text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    setIsEditModalOpen(false);
-                    showToast('Branch details updated successfully.');
-                  }}
-                  className="px-4 py-2 text-[13px] font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
-                >
-                  Save Changes
-                </button>
+                  <div className="md:col-span-5 space-y-1.5">
+                    <label className="text-xs font-semibold text-[#3D3732]">
+                      Outlet Identifier
+                    </label>
+                    <div className="flex items-center px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#5C554E] font-mono font-medium">
+                      <span className="text-[#8C827A] mr-1">#</span>
+                      <span>{editOutletCode}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-[#3D3732] block">
+                    Venue Classification Profile
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setEditVenueProfile('roastery')}
+                      className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${editVenueProfile === 'roastery'
+                        ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
+                        : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
+                        }`}
+                    >
+                      <Coffee className={`w-4 h-4 mb-2 ${editVenueProfile === 'roastery' ? 'text-white' : 'text-[#8C827A]'}`} />
+                      <div className="text-xs font-bold leading-tight">Flagship Roastery</div>
+                      <div className={`text-[10px] mt-0.5 ${editVenueProfile === 'roastery' ? 'text-white/80' : 'text-[#7C746C]'}`}>Full production</div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setEditVenueProfile('boutique')}
+                      className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${editVenueProfile === 'boutique'
+                        ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
+                        : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
+                        }`}
+                    >
+                      <Store className={`w-4 h-4 mb-2 ${editVenueProfile === 'boutique' ? 'text-white' : 'text-[#8C827A]'}`} />
+                      <div className="text-xs font-bold leading-tight">Boutique Cafe</div>
+                      <div className={`text-[10px] mt-0.5 ${editVenueProfile === 'boutique' ? 'text-white/80' : 'text-[#7C746C]'}`}>Express format</div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setEditVenueProfile('tasting')}
+                      className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${editVenueProfile === 'tasting'
+                        ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
+                        : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
+                        }`}
+                    >
+                      <Wine className={`w-4 h-4 mb-2 ${editVenueProfile === 'tasting' ? 'text-white' : 'text-[#8C827A]'}`} />
+                      <div className="text-xs font-bold leading-tight">Tasting Room</div>
+                      <div className={`text-[10px] mt-0.5 ${editVenueProfile === 'tasting' ? 'text-white/80' : 'text-[#7C746C]'}`}>Invitation only</div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setEditVenueProfile('popup')}
+                      className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${editVenueProfile === 'popup'
+                        ? 'bg-[#B38637] text-white border-[#B38637] shadow-xs'
+                        : 'bg-white border-[#EAE6E1] text-[#1A1615] hover:bg-[#FAF8F5]'
+                        }`}
+                    >
+                      <Tent className={`w-4 h-4 mb-2 ${editVenueProfile === 'popup' ? 'text-white' : 'text-[#8C827A]'}`} />
+                      <div className="text-xs font-bold leading-tight">Pop-Up Kiosk</div>
+                      <div className={`text-[10px] mt-0.5 ${editVenueProfile === 'popup' ? 'text-white/80' : 'text-[#7C746C]'}`}>Seasonal space</div>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5">
+                  <label className="text-xs font-semibold text-[#3D3732] block">
+                    Physical Address
+                  </label>
+                  <input
+                    type="text"
+                    value={editStreetAddress}
+                    onChange={(e) => setEditStreetAddress(e.target.value)}
+                    placeholder="Street Address, Suite / Floor"
+                    className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                  />
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <input
+                      type="text"
+                      value={editCity}
+                      onChange={(e) => setEditCity(e.target.value)}
+                      placeholder="City"
+                      className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                    />
+                    <input
+                      type="text"
+                      value={editState}
+                      onChange={(e) => setEditState(e.target.value)}
+                      placeholder="State"
+                      className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                    />
+                    <input
+                      type="text"
+                      value={editZipCode}
+                      onChange={(e) => setEditZipCode(e.target.value)}
+                      placeholder="Zip Code"
+                      className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                    />
+                    <input
+                      type="text"
+                      value={editCountry}
+                      onChange={(e) => setEditCountry(e.target.value)}
+                      placeholder="Country"
+                      className="w-full px-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-[#FAF8F5] border border-[#EAE6E1] rounded-xl p-4 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-[#B38637]" />
+                      <span className="text-xs font-bold text-[#1A1615]">
+                        Standard Operating Hours &amp; Sync Window
+                      </span>
+                    </div>
+                    <span className="text-xs text-[#7C746C]">
+                      Timezone: Eastern Daylight (UTC-4)
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {DAYS.map((day) => {
+                      const isSelected = editSelectedDays.includes(day);
+                      return (
+                        <button
+                          key={day}
+                          type="button"
+                          onClick={() => toggleEditDay(day)}
+                          className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer ${isSelected
+                            ? 'bg-[#B38637] text-white'
+                            : 'bg-white text-[#7C746C] border border-[#EAE6E1] hover:bg-[#F5F2EC]'
+                            }`}
+                        >
+                          {day}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-1">
+                    <div className="flex items-center gap-2 bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5">
+                      <span className="text-xs text-[#7C746C]">Open:</span>
+                      <input
+                        type="text"
+                        value={editOpenTime}
+                        onChange={(e) => setEditOpenTime(e.target.value)}
+                        className="text-xs font-bold text-[#1A1615] w-20 focus:outline-none bg-transparent"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 bg-white border border-[#EAE6E1] rounded-lg px-3 py-1.5">
+                      <span className="text-xs text-[#7C746C]">Close:</span>
+                      <input
+                        type="text"
+                        value={editCloseTime}
+                        onChange={(e) => setEditCloseTime(e.target.value)}
+                        className="text-xs font-bold text-[#1A1615] w-20 focus:outline-none bg-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-[#3D3732] block">
+                      Concierge &amp; Order Phone
+                    </label>
+                    <div className="relative">
+                      <Phone className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A]" />
+                      <input
+                        type="text"
+                        value={editPhone}
+                        onChange={(e) => setEditPhone(e.target.value)}
+                        className="w-full pl-8 pr-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-[#3D3732] block">
+                      Dedicated Outlet Mailbox
+                    </label>
+                    <div className="relative">
+                      <Mail className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C827A]" />
+                      <input
+                        type="email"
+                        value={editEmail}
+                        onChange={(e) => setEditEmail(e.target.value)}
+                        className="w-full pl-8 pr-3 py-2 bg-[#FAF8F5] border border-[#EAE6E1] rounded-lg text-xs text-[#1A1615] focus:outline-none focus:border-[#B38637] transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EAE6E1]">
+                  <button
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="px-4 py-2 text-[13px] text-[#7C746C] hover:bg-[#FAF8F5] rounded-lg cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsEditModalOpen(false);
+                      showToast('Branch details updated successfully.');
+                    }}
+                    className="px-4 py-2 text-[13px] font-semibold bg-[#B38637] text-white rounded-lg hover:bg-[#A37837] cursor-pointer"
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
             </div>
           </div>

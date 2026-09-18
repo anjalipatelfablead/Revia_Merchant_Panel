@@ -235,9 +235,9 @@ export const AddNewBranchPage: React.FC<AddNewBranchPageProps> = ({
               {/* Card Header with Phase Pill and Code Pill */}
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                 <div>
-                  <span className="inline-block bg-[#FAF6EE] text-[#9E782F] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase mb-1">
+                  {/* <span className="inline-block bg-[#FAF6EE] text-[#9E782F] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded uppercase mb-1">
                     PHASE 01
-                  </span>
+                  </span> */}
                   <h2 className="text-base font-bold text-[#1A1615]">
                     Basic Identity &amp; Location
                   </h2>
